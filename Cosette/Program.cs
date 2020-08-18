@@ -8,6 +8,7 @@ namespace Cosette
         static void Main(string[] args)
         {
             KingMovesGenerator.Init();
+            KnightMovesGenerator.Init();
 
             new InteractiveConsole().Run();
         }
