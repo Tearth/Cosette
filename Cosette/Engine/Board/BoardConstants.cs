@@ -2,6 +2,9 @@
 {
     public static class BoardConstants
     {
+        public const ulong Full = ulong.MaxValue;
+        public const ulong Empty = 0;
+
         public const ulong AFile = 0x8080808080808080;
         public const ulong BFile = 0x4040404040404040;
         public const ulong CFile = 0x2020202020202020;
@@ -20,7 +23,8 @@
         public const ulong GRank = 0x00FF000000000000;
         public const ulong HRank = 0xFF00000000000000;
 
-        public const ulong BitboardWithoutEdges = ~AFile & ~HFile & ~ARank & ~HRank;
+        public const ulong Edges = AFile | HFile | ARank | HRank;
+        public const ulong BitboardWithoutEdges = Full & ~Edges;
         public const ulong RightLeftEdge = AFile | HFile;
         public const ulong TopBottomEdge = ARank | HRank;
     }

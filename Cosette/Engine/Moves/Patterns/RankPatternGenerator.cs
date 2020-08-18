@@ -5,21 +5,19 @@ namespace Cosette.Engine.Moves.Patterns
 {
     public static class RankPatternGenerator
     {
-        private static ulong[] _patterns;
+        private static readonly ulong[] Patterns = new ulong[64];
 
-        public static void Init()
+        static RankPatternGenerator()
         {
-            _patterns = new ulong[64];
-
-            for (var i = 0; i < _patterns.Length; i++)
+            for (var i = 0; i < Patterns.Length; i++)
             {
-                _patterns[i] = GetPatternForField(i) & ~(1ul << i);
+                Patterns[i] = GetPatternForField(i) & ~(1ul << i);
             }
         }
 
         public static ulong GetPattern(int fieldIndex)
         {
-            return _patterns[fieldIndex];
+            return Patterns[fieldIndex];
         }
 
         private static ulong GetPatternForField(int fieldIndex)

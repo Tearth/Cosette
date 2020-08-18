@@ -4,21 +4,19 @@ namespace Cosette.Engine.Moves.Patterns
 {
     public static class JumpPatternGenerator
     {
-        private static ulong[] _patterns;
+        private static readonly ulong[] Patterns = new ulong[64];
 
-        public static void Init()
+        static JumpPatternGenerator()
         {
-            _patterns = new ulong[64];
-
-            for (var i = 0; i < _patterns.Length; i++)
+            for (var i = 0; i < Patterns.Length; i++)
             {
-                _patterns[i] = GetPatternForField(i);
+                Patterns[i] = GetPatternForField(i);
             }
         }
 
         public static ulong GetPattern(int fieldIndex)
         {
-            return _patterns[fieldIndex];
+            return Patterns[fieldIndex];
         }
 
         private static ulong GetPatternForField(int fieldIndex)
