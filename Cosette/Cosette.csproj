@@ -8,6 +8,7 @@
   <ItemGroup>
     <Folder Include="Engine\Common\" />
     <Folder Include="Engine\Moves\Magic\" />
+    <Folder Include="Engine\Moves\Simple\" />
     <Folder Include="Uci\" />
   </ItemGroup>
 

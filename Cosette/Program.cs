@@ -1,4 +1,4 @@
-﻿using Cosette.Engine.Moves.Simple;
+﻿using Cosette.Engine.Moves.Patterns;
 using Cosette.Interactive;
 
 namespace Cosette
@@ -7,8 +7,8 @@ namespace Cosette
     {
         static void Main(string[] args)
         {
-            KingMovesGenerator.Init();
-            KnightMovesGenerator.Init();
+            BoxPatternGenerator.Init();
+            JumpPatternGenerator.Init();
 
             new InteractiveConsole().Run();
         }
