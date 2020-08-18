@@ -8,6 +8,7 @@ namespace Cosette
         static void Main(string[] args)
         {
             BoxPatternGenerator.Init();
+            DiagonalPatternGenerator.Init();
             JumpPatternGenerator.Init();
 
             new InteractiveConsole().Run();
