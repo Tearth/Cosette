@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Cosette.Engine.Moves.Simple;
 using Cosette.Interactive;
 
 namespace Cosette
@@ -7,6 +7,8 @@ namespace Cosette
     {
         static void Main(string[] args)
         {
+            KingMovesGenerator.Init();
+
             new InteractiveConsole().Run();
         }
     }

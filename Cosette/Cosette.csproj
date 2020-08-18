@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Engine\" />
+    <Folder Include="Engine\Common\" />
+    <Folder Include="Engine\Moves\Magic\" />
     <Folder Include="Uci\" />
   </ItemGroup>
 
