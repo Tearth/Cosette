@@ -18,12 +18,12 @@
 
         public int ToFieldIndex()
         {
-            return X + Y * 8;
+            return (7 - X) + Y * 8;
         }
 
         public static Position FromFieldIndex(int fieldIndex)
         {
-            return new Position(fieldIndex % 8, fieldIndex / 8);
+            return new Position(7 - fieldIndex % 8, fieldIndex / 8);
         }
 
         public static Position operator +(Position a, Position b)

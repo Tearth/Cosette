@@ -9,7 +9,9 @@ namespace Cosette
         {
             BoxPatternGenerator.Init();
             DiagonalPatternGenerator.Init();
+            FilePatternGenerator.Init();
             JumpPatternGenerator.Init();
+            RankPatternGenerator.Init();
 
             new InteractiveConsole().Run();
         }
