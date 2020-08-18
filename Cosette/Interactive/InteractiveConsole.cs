@@ -22,7 +22,7 @@ namespace Cosette.Interactive
             {
                 Console.Write("> ");
 
-                var command = Console.ReadLine();
+                var command = Console.ReadLine()?.ToLower();
                 if (command == null)
                 {
                     break;
@@ -43,6 +43,7 @@ namespace Cosette.Interactive
         {
             Console.WriteLine($"Cosette Chess Engine @ {Environment.OSVersion}");
             Console.WriteLine("Homepage and source code: https://github.com/Tearth/Cosette");
+            Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
         }
     }
