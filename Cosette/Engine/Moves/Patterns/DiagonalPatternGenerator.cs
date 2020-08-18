@@ -36,9 +36,8 @@ namespace Cosette.Engine.Moves.Patterns
             while (currentPosition.IsValid())
             {
                 var positionBitIndex = currentPosition.ToFieldIndex();
-                var bit = 1ul << positionBitIndex;
-                attacks |= bit;
 
+                attacks |= 1ul << positionBitIndex;
                 currentPosition += shift;
             }
 

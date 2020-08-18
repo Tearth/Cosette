@@ -10,11 +10,9 @@ namespace Cosette.Engine.Moves.Patterns
         {
             _patterns = new ulong[64];
 
-            ulong field = 1;
             for (var i = 0; i < _patterns.Length; i++)
             {
-                _patterns[i] = GetPatternForField(field);
-                field <<= 1;
+                _patterns[i] = GetPatternForField(i);
             }
         }
 
@@ -23,8 +21,9 @@ namespace Cosette.Engine.Moves.Patterns
             return _patterns[fieldIndex];
         }
 
-        private static ulong GetPatternForField(ulong field)
+        private static ulong GetPatternForField(int fieldIndex)
         {
+            var field = 1ul << fieldIndex;
             return ((field & ~BoardConstants.AFile) << 17) |
                    ((field & ~BoardConstants.HFile) << 15) |
                    ((field & ~BoardConstants.AFile & ~BoardConstants.BFile) << 10) |
