@@ -1,5 +1,4 @@
-﻿using Cosette.Engine.Moves.Patterns;
-using Cosette.Interactive;
+﻿using Cosette.Interactive;
 
 namespace Cosette
 {
