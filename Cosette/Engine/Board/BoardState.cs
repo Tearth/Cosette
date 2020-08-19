@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
@@ -36,10 +37,11 @@ namespace Cosette.Engine.Board
             Occupancy = 18446462598732906495;
         }
 
-        public int GetAvailableMoves(Span<Move> moves)
+        public int GetAvailableMoves(Span<Move> moves, Color color)
         {
-            moves[0].From = 123;
-            return 10;
+            var movesCount = PawnOperator.GetAvailableMoves(this, color, moves, 0);
+
+            return movesCount;
         }
 
         public void MakeMove(Move move)

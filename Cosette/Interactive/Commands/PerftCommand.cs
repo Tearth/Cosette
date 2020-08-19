@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using Cosette.Engine.Board;
+using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Engine.Moves.Magic;
 
@@ -24,23 +25,23 @@ namespace Cosette.Interactive.Commands
                 return;
             }
 
-            for (var i = 1; i < depth; i++)
+            for (var i = 1; i <= depth; i++)
             {
                 var boardState = new BoardState();
                 boardState.SetDefaultState();
 
                 var stopwatch = Stopwatch.StartNew();
-                var leafsCount = Perft(boardState, i);
+                var leafsCount = Perft(boardState, Color.White, i);
                 var time = (double) stopwatch.ElapsedMilliseconds / 1000;
 
                 Console.WriteLine($"Depth {i}: {leafsCount} leafs ({time:F} s)");
             }
         }
 
-        private ulong Perft(BoardState boardState, int depth)
+        private ulong Perft(BoardState boardState, Color color, int depth)
         {
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAvailableMoves(moves, color);
 
             if (depth <= 1)
             {
@@ -51,7 +52,7 @@ namespace Cosette.Interactive.Commands
             for (var i = 0; i < movesCount; i++)
             {
                 boardState.MakeMove(moves[i]);
-                nodes += Perft(boardState, depth - 1);
+                nodes += Perft(boardState, ColorOperations.Invert(color), depth - 1);
                 boardState.UndoMove(moves[i]);
             }
 
