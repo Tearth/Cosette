@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cosette.Interactive.Commands;
 
 namespace Cosette.Interactive
@@ -24,15 +25,14 @@ namespace Cosette.Interactive
             {
                 Console.Write("> ");
 
-                var command = Console.ReadLine()?.ToLower();
-                if (command == null)
-                {
-                    break;
-                }
+                var input = Console.ReadLine();
+                var splitInput = input.Split(' ');
+                var command = splitInput[0].ToLower();
+                var parameters = splitInput.Skip(1).ToArray();
 
                 if (_commands.ContainsKey(command))
                 {
-                    _commands[command].Run();
+                    _commands[command].Run(parameters);
                 }
                 else
                 {

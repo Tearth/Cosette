@@ -36,9 +36,20 @@ namespace Cosette.Engine.Board
             Occupancy = 18446462598732906495;
         }
 
-        public void GetAvailableMoves(Span<Move> moves)
+        public int GetAvailableMoves(Span<Move> moves)
         {
             moves[0].From = 123;
+            return 10;
+        }
+
+        public void MakeMove(Move move)
+        {
+
+        }
+
+        public void UndoMove(Move move)
+        {
+
         }
     }
 }

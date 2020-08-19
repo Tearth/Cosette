@@ -3,7 +3,6 @@
     public interface ICommand
     {
         string Description { get; }
-
-        void Run();
+        void Run(params string[] parameters);
     }
 }

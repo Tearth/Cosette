@@ -15,7 +15,7 @@ namespace Cosette.Interactive.Commands
             Description = "Display all available commands";
         }
 
-        public void Run()
+        public void Run(params string[] parameters)
         {
             Console.WriteLine("List of Cosette commands in the interactive mode");
 

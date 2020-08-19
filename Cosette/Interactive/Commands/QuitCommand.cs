@@ -11,7 +11,7 @@ namespace Cosette.Interactive.Commands
             Description = "Quit from Cosette";
         }
 
-        public void Run()
+        public void Run(params string[] parameters)
         {
             Environment.Exit(0);
         }

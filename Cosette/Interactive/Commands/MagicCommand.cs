@@ -13,7 +13,7 @@ namespace Cosette.Interactive.Commands
             Description = "Generate new magic numbers and display them";
         }
 
-        public void Run()
+        public void Run(params string[] parameters)
         {
             Console.WriteLine("Generating...");
             var rookAttacks = MagicBitboards.GenerateRookAttacks();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Cosette.Engine.Board;
 using Cosette.Engine.Moves;
@@ -15,13 +16,46 @@ namespace Cosette.Interactive.Commands
             Description = "Test performance of the moves generator";
         }
 
-        public unsafe void Run()
+        public void Run(params string[] parameters)
         {
-            var boardState = new BoardState();
-            boardState.SetDefaultState();
+            if (parameters.Length < 1 || !int.TryParse(parameters[0], out var depth))
+            {
+                Console.WriteLine("No depth specified");
+                return;
+            }
 
+            for (var i = 1; i < depth; i++)
+            {
+                var boardState = new BoardState();
+                boardState.SetDefaultState();
+
+                var stopwatch = Stopwatch.StartNew();
+                var leafsCount = Perft(boardState, i);
+                var time = (double) stopwatch.ElapsedMilliseconds / 1000;
+
+                Console.WriteLine($"Depth {i}: {leafsCount} leafs ({time:F} s)");
+            }
+        }
+
+        private ulong Perft(BoardState boardState, int depth)
+        {
             Span<Move> moves = stackalloc Move[128];
-            boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAvailableMoves(moves);
+
+            if (depth <= 1)
+            {
+                return (ulong) movesCount;
+            }
+
+            ulong nodes = 0;
+            for (var i = 0; i < movesCount; i++)
+            {
+                boardState.MakeMove(moves[i]);
+                nodes += Perft(boardState, depth - 1);
+                boardState.UndoMove(moves[i]);
+            }
+
+            return nodes;
         }
     }
 }
