@@ -24,7 +24,7 @@
         public const ulong HRank = 0xFF00000000000000;
 
         public const ulong Edges = AFile | HFile | ARank | HRank;
-        public const ulong BitboardWithoutEdges = Full & ~Edges;
+        public const ulong BoardWithoutEdges = Full & ~Edges;
         public const ulong RightLeftEdge = AFile | HFile;
         public const ulong TopBottomEdge = ARank | HRank;
     }
