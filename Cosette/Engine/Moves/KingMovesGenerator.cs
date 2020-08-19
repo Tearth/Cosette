@@ -1,6 +1,6 @@
 ﻿using Cosette.Engine.Moves.Patterns;
 
-namespace Cosette.Engine.Moves.Simple
+namespace Cosette.Engine.Moves
 {
     public static class KingMovesGenerator
     {
