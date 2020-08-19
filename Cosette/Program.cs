@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Moves.Magic;
+﻿using Cosette.Engine.Moves;
+using Cosette.Engine.Moves.Magic;
 using Cosette.Interactive;
 
 namespace Cosette

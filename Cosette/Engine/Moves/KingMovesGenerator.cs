@@ -4,7 +4,7 @@ namespace Cosette.Engine.Moves
 {
     public static class KingMovesGenerator
     {
-        public static ulong GetMove(int fieldIndex)
+        public static ulong GetMoves(int fieldIndex)
         {
             return BoxPatternGenerator.GetPattern(fieldIndex);
         }

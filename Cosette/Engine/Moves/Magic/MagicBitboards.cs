@@ -11,30 +11,6 @@ namespace Cosette.Engine.Moves.Magic
         private static MagicContainer[] _bishopMagicArray;
         private static Random _random;
 
-        private static int[] _rookShifts =
-        {
-            12, 11, 11, 11, 11, 11, 11, 12,
-            11, 10, 10, 10, 10, 10, 10, 11,
-            11, 10, 10, 10, 10, 10, 10, 11,
-            11, 10, 10, 10, 10, 10, 10, 11,
-            11, 10, 10, 10, 10, 10, 10, 11,
-            11, 10, 10, 10, 10, 10, 10, 11,
-            11, 10, 10, 10, 10, 10, 10, 11,
-            12, 11, 11, 11, 11, 11, 11, 12
-        };
-
-        private static int[] _bishopShifts =
-        {
-            6, 5, 5, 5, 5, 5, 5, 6,
-            5, 5, 5, 5, 5, 5, 5, 5,
-            5, 5, 7, 7, 7, 7, 5, 5,
-            5, 5, 7, 9, 9, 7, 5, 5,
-            5, 5, 7, 9, 9, 7, 5, 5,
-            5, 5, 7, 7, 7, 7, 5, 5,
-            5, 5, 5, 5, 5, 5, 5, 5,
-            6, 5, 5, 5, 5, 5, 5, 6
-        };
-
         static MagicBitboards()
         {
             _random = new Random();
@@ -44,6 +20,22 @@ namespace Cosette.Engine.Moves.Magic
         {
             GenerateRookAttacks(MagicKeys.RookKeys);
             GenerateBishopAttacks(MagicKeys.BishopKeys);
+        }
+
+        public static ulong GetRookMoves(ulong board, int fieldIndex)
+        {
+            board &= _rookMagicArray[fieldIndex].Mask;
+            board *= _rookMagicArray[fieldIndex].MagicNumber;
+            board >>= _rookMagicArray[fieldIndex].Shift;
+            return _rookMagicArray[fieldIndex].Attacks[board];
+        }
+
+        public static ulong GetBishopMoves(ulong board, int fieldIndex)
+        {
+            board &= _bishopMagicArray[fieldIndex].Mask;
+            board *= _bishopMagicArray[fieldIndex].MagicNumber;
+            board >>= _bishopMagicArray[fieldIndex].Shift;
+            return _bishopMagicArray[fieldIndex].Attacks[board];
         }
 
         public static MagicContainer[] GenerateRookAttacks(ulong[] keys = null)
@@ -57,8 +49,8 @@ namespace Cosette.Engine.Moves.Magic
                 masks[fieldIndex] = (FilePatternGenerator.GetPattern(fieldIndex) & ~BoardConstants.TopBottomEdge) |
                                     (RankPatternGenerator.GetPattern(fieldIndex) & ~BoardConstants.RightLeftEdge);
 
-                permutations[fieldIndex] = new ulong[1 << _rookShifts[fieldIndex]];
-                attacks[fieldIndex] = new ulong[1 << _rookShifts[fieldIndex]];
+                permutations[fieldIndex] = new ulong[1 << MagicShifts.RookShifts[fieldIndex]];
+                attacks[fieldIndex] = new ulong[1 << MagicShifts.RookShifts[fieldIndex]];
 
                 for (var permutationIndex = 0; permutationIndex < permutations[fieldIndex].Length; permutationIndex++)
                 {
@@ -67,7 +59,7 @@ namespace Cosette.Engine.Moves.Magic
                 }
             }
 
-            return _rookMagicArray = GenerateAttacks(masks, permutations, attacks, _rookShifts, keys);
+            return _rookMagicArray = GenerateAttacks(masks, permutations, attacks, MagicShifts.RookShifts, keys);
         }
 
         public static MagicContainer[] GenerateBishopAttacks(ulong[] keys = null)
@@ -79,8 +71,8 @@ namespace Cosette.Engine.Moves.Magic
             for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
             {
                 masks[fieldIndex] = DiagonalPatternGenerator.GetPattern(fieldIndex) & ~BoardConstants.Edges;
-                permutations[fieldIndex] = new ulong[1 << _bishopShifts[fieldIndex]];
-                attacks[fieldIndex] = new ulong[1 << _bishopShifts[fieldIndex]];
+                permutations[fieldIndex] = new ulong[1 << MagicShifts.BishopShifts[fieldIndex]];
+                attacks[fieldIndex] = new ulong[1 << MagicShifts.BishopShifts[fieldIndex]];
 
                 for (var permutationIndex = 0; permutationIndex < permutations[fieldIndex].Length; permutationIndex++)
                 {
@@ -89,7 +81,7 @@ namespace Cosette.Engine.Moves.Magic
                 }
             }
 
-            return _bishopMagicArray = GenerateAttacks(masks, permutations, attacks, _bishopShifts, keys);
+            return _bishopMagicArray = GenerateAttacks(masks, permutations, attacks, MagicShifts.BishopShifts, keys);
         }
 
         private static MagicContainer[] GenerateAttacks(ulong[] masks, ulong[][] permutations, ulong[][] attacks, int[] shifts, ulong[] keys = null)
