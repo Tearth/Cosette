@@ -40,7 +40,13 @@ namespace Cosette.Engine.Moves.Magic
             _random = new Random();
         }
 
-        public static MagicContainer[] GenerateRookAttacks()
+        public static void InitWithInternalKeys()
+        {
+            GenerateRookAttacks(MagicKeys.RookKeys);
+            GenerateBishopAttacks(MagicKeys.BishopKeys);
+        }
+
+        public static MagicContainer[] GenerateRookAttacks(ulong[] keys = null)
         {
             var masks = new ulong[64];
             var permutations = new ulong[64][];
@@ -61,10 +67,10 @@ namespace Cosette.Engine.Moves.Magic
                 }
             }
 
-            return _rookMagicArray = GenerateAttacks(masks, permutations, attacks, _rookShifts);
+            return _rookMagicArray = GenerateAttacks(masks, permutations, attacks, _rookShifts, keys);
         }
 
-        public static MagicContainer[] GenerateBishopAttacks()
+        public static MagicContainer[] GenerateBishopAttacks(ulong[] keys = null)
         {
             var masks = new ulong[64];
             var permutations = new ulong[64][];
@@ -83,10 +89,10 @@ namespace Cosette.Engine.Moves.Magic
                 }
             }
 
-            return _bishopMagicArray = GenerateAttacks(masks, permutations, attacks, _bishopShifts);
+            return _bishopMagicArray = GenerateAttacks(masks, permutations, attacks, _bishopShifts, keys);
         }
 
-        private static MagicContainer[] GenerateAttacks(ulong[] masks, ulong[][] permutations, ulong[][] attacks, int[] shifts)
+        private static MagicContainer[] GenerateAttacks(ulong[] masks, ulong[][] permutations, ulong[][] attacks, int[] shifts, ulong[] keys = null)
         {
             var magicArray = new MagicContainer[64];
 
@@ -103,7 +109,7 @@ namespace Cosette.Engine.Moves.Magic
                 while (!success)
                 {
                     success = true;
-                    magicArray[fieldIndex].MagicNumber = GetRandomMagicNumber();
+                    magicArray[fieldIndex].MagicNumber = keys?[fieldIndex] ?? GetRandomMagicNumber();
 
                     for (var permutationIndex = 0; permutationIndex < permutations[fieldIndex].Length; permutationIndex++)
                     {

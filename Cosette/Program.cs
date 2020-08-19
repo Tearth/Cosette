@@ -7,6 +7,7 @@ namespace Cosette
     {
         static void Main(string[] args)
         {
+            MagicBitboards.InitWithInternalKeys();
             new InteractiveConsole().Run();
         }
     }
