@@ -32,9 +32,12 @@ namespace Cosette.Interactive.Commands
 
                 var stopwatch = Stopwatch.StartNew();
                 var leafsCount = Perft(boardState, Color.White, i);
-                var time = (double) stopwatch.ElapsedMilliseconds / 1000;
+                var time = stopwatch.Elapsed.TotalMilliseconds / 1000;
 
-                Console.WriteLine($"Depth {i}: {leafsCount} leafs ({time:F} s)");
+                var leafsPerSecond = leafsCount / time / 1000000;
+                var timePerLeaf = time / leafsCount * 1000000000;
+
+                Console.WriteLine($"Depth {i} - Leafs: {leafsCount}, Time: {time:F} s, LPS: {leafsPerSecond:F} mL/s, TPL: {timePerLeaf:F} ns");
             }
         }
 
