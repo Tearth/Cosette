@@ -13,6 +13,8 @@ namespace Cosette.Engine.Board
         public ulong BlackOccupancy { get; set; }
         public ulong Occupancy { get; set; }
 
+        private FastStack<Piece> _killedPieces;
+
         public void SetDefaultState()
         {
             WhitePieces = new ulong[6];
@@ -35,6 +37,8 @@ namespace Cosette.Engine.Board
             WhiteOccupancy = 65535;
             BlackOccupancy = 18446462598732840960;
             Occupancy = WhiteOccupancy | BlackOccupancy;
+
+            _killedPieces = new FastStack<Piece>(16);
         }
 
         public int GetAvailableMoves(Span<Move> moves, Color color)
@@ -51,44 +55,103 @@ namespace Cosette.Engine.Board
 
         public void MakeMove(Move move, Color color)
         {
-            var pieces = color == Color.White ? WhitePieces : BlackPieces;
-            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
-
             if (move.Flags == MoveFlags.None)
             {
-                pieces[move.Piece] &= ~(1ul << move.From);
-                pieces[move.Piece] |= 1ul << move.To;
-
-                occupancy &= ~(1ul << move.From);
-                occupancy |= 1ul << move.To;
-
+                MovePiece(color, move.Piece, move.From, move.To);
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
+                var enemyColor = ColorOperations.Invert(color);
+                var killedPiece = GetPiece(enemyColor, move.To);
+
+                RemovePiece(enemyColor, (byte) killedPiece, move.To);
+                MovePiece(color, move.Piece, move.From, move.To);
+
+                _killedPieces.Push(killedPiece);
+            }
+
+            if ((BlackPieces[0] & 1) == 1)
+            {
 
             }
+        }
+
+        public void UndoMove(Move move, Color color)
+        {
+            if (move.Flags == MoveFlags.None)
+            {
+                MovePiece(color, move.Piece, move.To, move.From);
+            }
+            else if ((move.Flags & MoveFlags.Kill) != 0)
+            {
+                var enemyColor = ColorOperations.Invert(color);
+                var killedPiece = _killedPieces.Pop();
+
+                MovePiece(color, move.Piece, move.To, move.From);
+                AddPiece(enemyColor, killedPiece, move.To);
+            }
+
+            if ((BlackPieces[0] & 1) == 1)
+            {
+
+            }
+        }
+
+        private void MovePiece(Color color, Piece piece, byte from, byte to)
+        {
+            var pieces = color == Color.White ? WhitePieces : BlackPieces;
+            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
+
+            pieces[(int) piece] &= ~(1ul << from);
+            pieces[(int) piece] |= 1ul << to;
+
+            occupancy &= ~(1ul << from);
+            occupancy |= 1ul << to;
 
             WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
             BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
             Occupancy = WhiteOccupancy | BlackOccupancy;
         }
 
-        public void UndoMove(Move move, Color color)
+        private Piece GetPiece(Color color, byte from)
+        {
+            var pieces = color == Color.White ? WhitePieces : BlackPieces;
+            var field = 1ul << from;
+
+            for (var i = 0; i < pieces.Length; i++)
+            {
+                if ((pieces[i] & field) != 0)
+                {
+                    return (Piece) i;
+                }
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        private void AddPiece(Color color, Piece piece, byte field)
         {
             var pieces = color == Color.White ? WhitePieces : BlackPieces;
             var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
 
-            if (move.Flags == MoveFlags.None)
-            {
-                pieces[move.Piece] &= ~(1ul << move.To);
-                pieces[move.Piece] |= 1ul << move.From;
-
-                occupancy &= ~(1ul << move.To);
-                occupancy |= 1ul << move.From;
-            }
+            pieces[(byte) piece] |= 1ul << field;
+            occupancy |= 1ul << field;
 
             WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
-            WhiteOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
+            BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
+            Occupancy = WhiteOccupancy | BlackOccupancy;
+        }
+
+        private void RemovePiece(Color color, byte piece, byte from)
+        {
+            var pieces = color == Color.White ? WhitePieces : BlackPieces;
+            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
+
+            pieces[piece] &= ~(1ul << from);
+            occupancy &= ~(1ul << from);
+
+            WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
+            BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
             Occupancy = WhiteOccupancy | BlackOccupancy;
         }
     }

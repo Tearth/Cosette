@@ -1,6 +1,6 @@
 ﻿namespace Cosette.Engine.Common
 {
-    public enum Piece
+    public enum Piece : byte
     {
         Pawn,
         Rook,

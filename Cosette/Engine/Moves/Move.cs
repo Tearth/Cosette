@@ -6,10 +6,10 @@ namespace Cosette.Engine.Moves
     {
         public byte From { get; set; }
         public byte To { get; set; }
-        public byte Piece { get; set; }
+        public Piece Piece { get; set; }
         public MoveFlags Flags { get; set; }
 
-        public Move(byte from, byte to, byte piece, MoveFlags flags)
+        public Move(byte from, byte to, Piece piece, MoveFlags flags)
         {
             From = from;
             To = to;
@@ -21,7 +21,7 @@ namespace Cosette.Engine.Moves
         {
             From = (byte) from;
             To = (byte) to;
-            Piece = (byte) piece;
+            Piece = piece;
             Flags = flags;
         }
     }
