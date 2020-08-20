@@ -34,7 +34,7 @@ namespace Cosette.Engine.Board
 
             WhiteOccupancy = 65535;
             BlackOccupancy = 18446462598732840960;
-            Occupancy = 18446462598732906495;
+            Occupancy = WhiteOccupancy | BlackOccupancy;
         }
 
         public int GetAvailableMoves(Span<Move> moves, Color color)
@@ -49,14 +49,47 @@ namespace Cosette.Engine.Board
             return movesCount;
         }
 
-        public void MakeMove(Move move)
+        public void MakeMove(Move move, Color color)
         {
+            var pieces = color == Color.White ? WhitePieces : BlackPieces;
+            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
 
+            if (move.Flags == MoveFlags.None)
+            {
+                pieces[move.Piece] &= ~(1ul << move.From);
+                pieces[move.Piece] |= 1ul << move.To;
+
+                occupancy &= ~(1ul << move.From);
+                occupancy |= 1ul << move.To;
+
+            }
+            else if ((move.Flags & MoveFlags.Kill) != 0)
+            {
+
+            }
+
+            WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
+            BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
+            Occupancy = WhiteOccupancy | BlackOccupancy;
         }
 
-        public void UndoMove(Move move)
+        public void UndoMove(Move move, Color color)
         {
+            var pieces = color == Color.White ? WhitePieces : BlackPieces;
+            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
 
+            if (move.Flags == MoveFlags.None)
+            {
+                pieces[move.Piece] &= ~(1ul << move.To);
+                pieces[move.Piece] |= 1ul << move.From;
+
+                occupancy &= ~(1ul << move.To);
+                occupancy |= 1ul << move.From;
+            }
+
+            WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
+            WhiteOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
+            Occupancy = WhiteOccupancy | BlackOccupancy;
         }
     }
 }

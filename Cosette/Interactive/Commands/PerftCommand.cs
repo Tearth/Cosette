@@ -51,9 +51,9 @@ namespace Cosette.Interactive.Commands
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)
             {
-                boardState.MakeMove(moves[i]);
+                boardState.MakeMove(moves[i], color);
                 nodes += Perft(boardState, ColorOperations.Invert(color), depth - 1);
-                boardState.UndoMove(moves[i]);
+                boardState.UndoMove(moves[i], color);
             }
 
             return nodes;
