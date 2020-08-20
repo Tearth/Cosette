@@ -40,6 +40,11 @@ namespace Cosette.Engine.Board
         public int GetAvailableMoves(Span<Move> moves, Color color)
         {
             var movesCount = PawnOperator.GetAvailableMoves(this, color, moves, 0);
+            movesCount = RookOperator.GetAvailableMoves(this, color, moves, movesCount);
+            movesCount = BishopOperator.GetAvailableMoves(this, color, moves, movesCount);
+            movesCount = QueenOperator.GetAvailableMoves(this, color, moves, movesCount);
+            movesCount = KnightOperator.GetAvailableMoves(this, color, moves, movesCount);
+            movesCount = KingOperator.GetAvailableMoves(this, color, moves, movesCount);
 
             return movesCount;
         }
