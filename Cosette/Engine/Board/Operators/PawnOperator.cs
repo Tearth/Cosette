@@ -10,6 +10,8 @@ namespace Cosette.Engine.Board.Operators
         {
             offset = GetSinglePush(boardState, color, moves, offset);
             offset = GetDoublePush(boardState, color, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : -7, BoardConstants.AFile, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : -9, BoardConstants.HFile, moves, offset);
 
             return offset;
         }
@@ -64,6 +66,37 @@ namespace Cosette.Engine.Board.Operators
                 var to = BitOperations.BitScan(piece);
 
                 moves[offset++] = new Move(from, to, Piece.Pawn, 0);
+            }
+
+            return offset;
+        }
+
+        private static int GetDiagonalAttacks(BoardState boardState, Color color, int shift, ulong prohibitedFile, Span<Move> moves, int offset)
+        {
+            var enemyOccupancy = color == Color.White ? boardState.BlackOccupancy : boardState.WhiteOccupancy;
+            var promotionRank = color == Color.White ? BoardConstants.HRank : BoardConstants.ARank;
+            var pawns = color == Color.White ? boardState.WhitePieces[(int)Piece.Pawn] : boardState.BlackPieces[(int)Piece.Pawn];
+
+            var attacks = ((pawns & ~prohibitedFile) << shift) & enemyOccupancy;
+            while (attacks != 0)
+            {
+                var piece = BitOperations.GetLsb(attacks);
+                attacks = BitOperations.PopLsb(attacks);
+
+                var from = BitOperations.BitScan(piece >> shift);
+                var to = BitOperations.BitScan(piece);
+
+                if ((piece & promotionRank) != 0)
+                {
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.KnightPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.BishopPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.RookPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.QueenPromotion);
+                }
+                else
+                {
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill);
+                }
             }
 
             return offset;
