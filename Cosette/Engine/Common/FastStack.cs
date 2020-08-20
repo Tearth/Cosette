@@ -17,7 +17,7 @@
 
         public T Pop()
         {
-            return _stack[_pointer--];
+            return _stack[--_pointer];
         }
     }
 }

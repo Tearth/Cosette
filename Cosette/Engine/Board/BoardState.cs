@@ -64,15 +64,10 @@ namespace Cosette.Engine.Board
                 var enemyColor = ColorOperations.Invert(color);
                 var killedPiece = GetPiece(enemyColor, move.To);
 
-                RemovePiece(enemyColor, (byte) killedPiece, move.To);
+                RemovePiece(enemyColor, killedPiece, move.To);
                 MovePiece(color, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
-            }
-
-            if ((BlackPieces[0] & 1) == 1)
-            {
-
             }
         }
 
@@ -89,11 +84,6 @@ namespace Cosette.Engine.Board
 
                 MovePiece(color, move.Piece, move.To, move.From);
                 AddPiece(enemyColor, killedPiece, move.To);
-            }
-
-            if ((BlackPieces[0] & 1) == 1)
-            {
-
             }
         }
 
@@ -142,12 +132,12 @@ namespace Cosette.Engine.Board
             Occupancy = WhiteOccupancy | BlackOccupancy;
         }
 
-        private void RemovePiece(Color color, byte piece, byte from)
+        private void RemovePiece(Color color, Piece piece, byte from)
         {
             var pieces = color == Color.White ? WhitePieces : BlackPieces;
             var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
 
-            pieces[piece] &= ~(1ul << from);
+            pieces[(byte) piece] &= ~(1ul << from);
             occupancy &= ~(1ul << from);
 
             WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
