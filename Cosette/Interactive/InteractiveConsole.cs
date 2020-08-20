@@ -14,6 +14,7 @@ namespace Cosette.Interactive
             _commands = new Dictionary<string, ICommand>();
             _commands["help"] = new HelpCommand(_commands);
             _commands["magic"] = new MagicCommand();
+            _commands["aperft"] = new APerftCommand();
             _commands["perft"] = new PerftCommand();
             _commands["quit"] = new QuitCommand();
         }
