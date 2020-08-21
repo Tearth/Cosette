@@ -15,8 +15,14 @@ namespace Cosette.Engine.Board
         public ulong WhiteEnPassant { get; set; }
         public ulong BlackEnPassant { get; set; }
 
+        public bool WhiteShortCastlingPossible { get; set; }
+        public bool WhiteLongCastlingPossible { get; set; }
+        public bool BlackShortCastlingPossible { get; set; }
+        public bool BlackLongCastlingPossible { get; set; }
+
         private FastStack<Piece> _killedPieces;
         private FastStack<ulong> _enPassants;
+        private FastStack<bool> _castlingFlags;
 
         public void SetDefaultState()
         {
@@ -41,8 +47,14 @@ namespace Cosette.Engine.Board
             BlackOccupancy = 18446462598732840960;
             Occupancy = WhiteOccupancy | BlackOccupancy;
 
+            WhiteShortCastlingPossible = true;
+            WhiteLongCastlingPossible = true;
+            BlackShortCastlingPossible = true;
+            BlackLongCastlingPossible = true;
+
             _killedPieces = new FastStack<Piece>(16);
             _enPassants = new FastStack<ulong>(16);
+            _castlingFlags = new FastStack<bool>(128);
         }
 
         public int GetAvailableMoves(Span<Move> moves, Color color)
@@ -61,6 +73,10 @@ namespace Cosette.Engine.Board
         {
             var enPassant = color == Color.White ? WhiteEnPassant : BlackEnPassant;
             _enPassants.Push(enPassant);
+            _castlingFlags.Push(WhiteShortCastlingPossible);
+            _castlingFlags.Push(WhiteLongCastlingPossible);
+            _castlingFlags.Push(BlackShortCastlingPossible);
+            _castlingFlags.Push(BlackLongCastlingPossible);
 
             if (move.Flags == MoveFlags.None)
             {
@@ -84,6 +100,48 @@ namespace Cosette.Engine.Board
 
                 _killedPieces.Push(killedPiece);
             }
+            else if ((move.Flags & MoveFlags.Castling) != 0)
+            {
+                // Short castling
+                if (move.From > move.To)
+                {
+                    if (color == Color.White)
+                    {
+                        MovePiece(Color.White, Piece.King, 3, 1);
+                        MovePiece(Color.White, Piece.Rook, 0, 2);
+                    }
+                    else
+                    {
+                        MovePiece(Color.Black, Piece.King, 59, 57);
+                        MovePiece(Color.Black, Piece.Rook, 56, 58);
+                    }
+                }
+                // Long castling
+                else
+                {
+                    if (color == Color.White)
+                    {
+                        MovePiece(Color.White, Piece.King, 3, 5);
+                        MovePiece(Color.White, Piece.Rook, 7, 4);
+                    }
+                    else
+                    {
+                        MovePiece(Color.Black, Piece.King, 59, 61);
+                        MovePiece(Color.Black, Piece.Rook, 63, 60);
+                    }
+                }
+
+                if (color == Color.White)
+                {
+                    WhiteShortCastlingPossible = false;
+                    WhiteLongCastlingPossible = false;
+                }
+                else
+                {
+                    BlackShortCastlingPossible = false;
+                    BlackLongCastlingPossible = false;
+                }
+            }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
             {
                 var enemyColor = ColorOperations.Invert(color);
@@ -94,6 +152,46 @@ namespace Cosette.Engine.Board
                 MovePiece(color, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
+            }
+
+            if (move.Piece == Piece.King && move.Flags != MoveFlags.Castling)
+            {
+                if (color == Color.White)
+                {
+                    WhiteShortCastlingPossible = false;
+                    WhiteLongCastlingPossible = false;
+                }
+                else
+                {
+                    BlackShortCastlingPossible = false;
+                    BlackLongCastlingPossible = false;
+                }
+            }
+
+            if (move.Piece == Piece.Rook)
+            {
+                if (color == Color.White)
+                {
+                    if (move.From == 0)
+                    {
+                        WhiteShortCastlingPossible = false;
+                    }
+                    else if (move.From == 7)
+                    {
+                        WhiteLongCastlingPossible = false;
+                    }
+                }
+                else if (color == Color.Black)
+                {
+                    if (move.From == 56)
+                    {
+                        BlackShortCastlingPossible = false;
+                    }
+                    else if (move.From == 63)
+                    {
+                        BlackLongCastlingPossible = false;
+                    }
+                }
             }
 
             WhiteEnPassant = color == Color.White ? WhiteEnPassant : 0;
@@ -118,6 +216,37 @@ namespace Cosette.Engine.Board
                 MovePiece(color, move.Piece, move.To, move.From);
                 AddPiece(enemyColor, killedPiece, move.To);
             }
+            else if ((move.Flags & MoveFlags.Castling) != 0)
+            {
+                // Short castling
+                if (move.From > move.To)
+                {
+                    if (color == Color.White)
+                    {
+                        MovePiece(Color.White, Piece.King, 1, 3);
+                        MovePiece(Color.White, Piece.Rook, 2, 0);
+                    }
+                    else
+                    {
+                        MovePiece(Color.Black, Piece.King, 57, 59);
+                        MovePiece(Color.Black, Piece.Rook, 58, 56);
+                    }
+                }
+                // Long castling
+                else
+                {
+                    if (color == Color.White)
+                    {
+                        MovePiece(Color.White, Piece.King, 5, 3);
+                        MovePiece(Color.White, Piece.Rook, 4, 7);
+                    }
+                    else
+                    {
+                        MovePiece(Color.Black, Piece.King, 61, 59);
+                        MovePiece(Color.Black, Piece.Rook, 60, 63);
+                    }
+                }
+            }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
             {
                 var enemyColor = ColorOperations.Invert(color);
@@ -129,6 +258,11 @@ namespace Cosette.Engine.Board
             }
 
             var enPassant = _enPassants.Pop();
+            BlackLongCastlingPossible = _castlingFlags.Pop();
+            BlackShortCastlingPossible = _castlingFlags.Pop();
+            WhiteLongCastlingPossible = _castlingFlags.Pop();
+            WhiteShortCastlingPossible = _castlingFlags.Pop();
+
             WhiteEnPassant = color == Color.White ? enPassant : WhiteEnPassant;
             BlackEnPassant = color == Color.Black ? enPassant : BlackEnPassant;
         }
