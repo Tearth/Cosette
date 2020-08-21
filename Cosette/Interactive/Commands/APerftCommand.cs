@@ -90,6 +90,7 @@ namespace Cosette.Interactive.Commands
                     if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
                     {
                         statistics.EnPassants++;
+                        statistics.Captures++;
                     }
 
                     if (boardState.IsKingChecked(ColorOperations.Invert(color)))

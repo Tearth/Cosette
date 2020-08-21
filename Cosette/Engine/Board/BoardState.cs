@@ -133,21 +133,26 @@ namespace Cosette.Engine.Board
             BlackEnPassant = color == Color.Black ? enPassant : BlackEnPassant;
         }
 
-        public int GetAttackingPiecesAtField(Color color, byte field, Span<Piece> attackingPieces)
+        public int GetAttackingPiecesAtField(Color color, byte fieldIndex, Span<Piece> attackingPieces)
         {
             var attackingPiecesCount = 0;
             var enemyPieces = color == Color.White ? BlackPieces : WhitePieces;
             var enemyOccupancy = color == Color.White ? BlackOccupancy : WhiteOccupancy;
 
-            var fileRankAttacks = RookMovesGenerator.GetMoves(Occupancy, field) & enemyOccupancy;
-            var diagonalAttacks = BishopMovesGenerator.GetMoves(Occupancy, field) & enemyOccupancy;
+            var fileRankAttacks = RookMovesGenerator.GetMoves(Occupancy, fieldIndex) & enemyOccupancy;
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(Occupancy, fieldIndex) & enemyOccupancy;
 
             var attackingRooks = fileRankAttacks & enemyPieces[(int) Piece.Rook];
             var attackingBishops = diagonalAttacks & enemyPieces[(int) Piece.Bishop];
             var attackingQueens = (fileRankAttacks | diagonalAttacks) & enemyPieces[(int) Piece.Queen];
-            var attackingKnights = KnightMovesGenerator.GetMoves(field) & enemyPieces[(int) Piece.Knight];
-            var attackingKings = KingMovesGenerator.GetMoves(field) & enemyPieces[(int) Piece.King];
-            //var attackingPawns = 
+            var attackingKnights = KnightMovesGenerator.GetMoves(fieldIndex) & enemyPieces[(int) Piece.Knight];
+            var attackingKings = KingMovesGenerator.GetMoves(fieldIndex) & enemyPieces[(int) Piece.King];
+
+            var field = 1ul << fieldIndex;
+            var potentialPawns = KingMovesGenerator.GetMoves(fieldIndex) & enemyPieces[(int)Piece.Pawn];
+            var attackingPawns = color == Color.White ?
+                field & ((potentialPawns >> 7) | (potentialPawns >> 9)) :
+                field & ((potentialPawns << 7) | (potentialPawns << 9));
 
             if (attackingRooks != 0)
             {
@@ -168,6 +173,11 @@ namespace Cosette.Engine.Board
             if (attackingKings != 0)
             {
                 attackingPieces[attackingPiecesCount++] = Piece.King;
+            }
+
+            if (attackingPawns != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Pawn;
             }
 
             return attackingPiecesCount;
