@@ -9,10 +9,10 @@ namespace Cosette.Engine.Perft
 {
     public static class SimplePerft
     {
-        public static SimplePerftResult Run(BoardState boardState, int depth)
+        public static SimplePerftResult Run(BoardState boardState, Color color, int depth)
         {
             var stopwatch = Stopwatch.StartNew();
-            var leafsCount = Perft(boardState, Color.White, depth);
+            var leafsCount = Perft(boardState, color, depth);
             stopwatch.Stop();
 
             var totalSeconds = stopwatch.Elapsed.TotalSeconds;

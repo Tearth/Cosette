@@ -2,7 +2,7 @@
 {
     public class AdvancedPerftResult
     {
-        public ulong Nodes { get; set; }
+        public ulong Leafs { get; set; }
         public ulong Captures { get; set; }
         public ulong EnPassants { get; set; }
         public ulong Castles { get; set; }

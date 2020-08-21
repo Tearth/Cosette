@@ -9,11 +9,11 @@ namespace Cosette.Engine.Perft
 {
     public static class AdvancedPerft
     {
-        public static AdvancedPerftResult Run(BoardState boardState, int depth)
+        public static AdvancedPerftResult Run(BoardState boardState, Color color, int depth)
         {
             var result = new AdvancedPerftResult();
             var stopwatch = Stopwatch.StartNew();
-            Perft(boardState, Color.White, depth, result);
+            Perft(boardState, color, depth, result);
             result.Time = stopwatch.Elapsed.TotalSeconds;
 
             return result;
@@ -25,6 +25,12 @@ namespace Cosette.Engine.Perft
             var movesCount = boardState.GetAvailableMoves(moves, color);
 
             if (depth <= 1)
+            {
+                result.Leafs++;
+                return;
+            }
+
+            if (depth == 2)
             {
                 UpdateResult(boardState, color, moves, movesCount, result);
                 return;
@@ -71,7 +77,7 @@ namespace Cosette.Engine.Perft
                         result.Checks++;
                     }
 
-                    result.Nodes++;
+                    result.Leafs++;
                     legalMoveFound = true;
                 }
 

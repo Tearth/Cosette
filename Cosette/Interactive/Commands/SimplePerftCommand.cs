@@ -31,7 +31,7 @@ namespace Cosette.Interactive.Commands
 
             for (var i = 1; i <= depth; i++)
             {
-                var result = SimplePerft.Run(boardState, i);
+                var result = SimplePerft.Run(boardState, Color.White, i);
                 var megaLeafsPerSecond = result.LeafsPerSecond / 1_000_000;
                 var nanosecondsPerLeaf = result.TimePerLeaf * 1_000_000_000;
 
