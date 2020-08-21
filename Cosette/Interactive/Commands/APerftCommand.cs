@@ -34,8 +34,8 @@ namespace Cosette.Interactive.Commands
                 var time = (double)stopwatch.ElapsedMilliseconds / 1000;
 
                 Console.WriteLine($"Depth {i}: {statistics.Nodes} leafs ({time:F} s), Captures: {statistics.Captures}, " +
-                                  $"Promotions: {statistics.Promotions}, Castlings: {statistics.Castles}, " +
-                                  $"En passants: {statistics.EnPassants}");
+                                  $"Checkmates: {statistics.Checkmates}, Castlings: {statistics.Castles}, " +
+                                  $"En passants: {statistics.EnPassants}, Checks: {statistics.Checks}");
             }
         }
 
@@ -46,44 +46,68 @@ namespace Cosette.Interactive.Commands
 
             if (depth <= 1)
             {
-                UpdateStatistics(moves, movesCount, statistics);
+                UpdateStatistics(boardState, color, moves, movesCount, statistics);
                 return;
             }
 
+            var legalMoveFound = false;
             for (var i = 0; i < movesCount; i++)
             {
                 boardState.MakeMove(moves[i], color);
-                Perft(boardState, ColorOperations.Invert(color), depth - 1, statistics);
+                if (!boardState.IsKingChecked(color))
+                {
+                    Perft(boardState, ColorOperations.Invert(color), depth - 1, statistics);
+                    legalMoveFound = true;
+                }
                 boardState.UndoMove(moves[i], color);
+            }
+
+            if (!legalMoveFound)
+            {
+                //statistics.Checkmates++;
             }
         }
 
-        private void UpdateStatistics(Span<Move> moves, int movesCount, APerftStatistics statistics)
+        private void UpdateStatistics(BoardState boardState, Color color, Span<Move> moves, int movesCount, APerftStatistics statistics)
         {
+            var legalMoveFound = false;
             for (var i = 0; i < movesCount; i++)
             {
-                if ((moves[i].Flags & MoveFlags.Kill) != 0)
-                {
-                    statistics.Captures++;
-                }
+                boardState.MakeMove(moves[i], color);
 
-                if ((moves[i].Flags & MoveFlags.Promotion) != 0)
+                if (!boardState.IsKingChecked(color))
                 {
-                    statistics.Promotions++;
-                }
+                    if ((moves[i].Flags & MoveFlags.Kill) != 0)
+                    {
+                        statistics.Captures++;
+                    }
 
-                if ((moves[i].Flags & MoveFlags.Castling) != 0)
-                {
-                    statistics.Castles++;
-                }
+                    if ((moves[i].Flags & MoveFlags.Castling) != 0)
+                    {
+                        statistics.Castles++;
+                    }
 
-                if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
-                {
-                    statistics.EnPassants++;
+                    if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
+                    {
+                        statistics.EnPassants++;
+                    }
+
+                    if (boardState.IsKingChecked(ColorOperations.Invert(color)))
+                    {
+                        statistics.Checks++;
+                    }
+
+                    statistics.Nodes++;
+                    legalMoveFound = true;
                 }
+                
+                boardState.UndoMove(moves[i], color);
             }
 
-            statistics.Nodes += (ulong) movesCount;
+            if (!legalMoveFound)
+            {
+                statistics.Checkmates++;
+            }
         }
     }
 }
