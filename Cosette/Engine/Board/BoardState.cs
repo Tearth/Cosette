@@ -90,7 +90,7 @@ namespace Cosette.Engine.Board
                 var enemyPieceField = color == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
                 var killedPiece = GetPiece(enemyColor, enemyPieceField);
 
-                RemovePiece(enemyColor, killedPiece, move.To);
+                RemovePiece(enemyColor, killedPiece, enemyPieceField);
                 MovePiece(color, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
