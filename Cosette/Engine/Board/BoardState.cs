@@ -23,6 +23,7 @@ namespace Cosette.Engine.Board
         private FastStack<Piece> _killedPieces;
         private FastStack<ulong> _enPassants;
         private FastStack<bool> _castlingFlags;
+        private FastStack<Piece> _promotedPieces;
 
         public void SetDefaultState()
         {
@@ -55,6 +56,7 @@ namespace Cosette.Engine.Board
             _killedPieces = new FastStack<Piece>(16);
             _enPassants = new FastStack<ulong>(16);
             _castlingFlags = new FastStack<bool>(128);
+            _promotedPieces = new FastStack<Piece>(16);
         }
 
         public int GetAvailableMoves(Span<Move> moves, Color color)
@@ -96,7 +98,46 @@ namespace Cosette.Engine.Board
                 var killedPiece = GetPiece(enemyColor, move.To);
 
                 RemovePiece(enemyColor, killedPiece, move.To);
-                MovePiece(color, move.Piece, move.From, move.To);
+
+                if (killedPiece == Piece.Rook)
+                {
+                    switch (move.To)
+                    {
+                        case 0:
+                        {
+                            WhiteShortCastlingPossible = false;
+                            break;
+                        }
+                        case 7:
+                        {
+                            WhiteLongCastlingPossible = false;
+                            break;
+                        }
+                        case 56:
+                        {
+                            BlackShortCastlingPossible = false;
+                            break;
+                        }
+                        case 63:
+                        {
+                            BlackLongCastlingPossible = false;
+                            break;
+                        }
+                    }
+                }
+
+                // Promotion
+                if ((byte)move.Flags >= 16)
+                {
+                    var promotionPiece = GetPromotionPiece(move.Flags);
+                    RemovePiece(color, move.Piece, move.From);
+                    AddPiece(color, promotionPiece, move.To);
+                    _promotedPieces.Push(promotionPiece);
+                }
+                else
+                {
+                    MovePiece(color, move.Piece, move.From, move.To);
+                }
 
                 _killedPieces.Push(killedPiece);
             }
@@ -152,6 +193,13 @@ namespace Cosette.Engine.Board
                 MovePiece(color, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
+            }
+            else if ((byte)move.Flags  >= 16)
+            {
+                var promotionPiece = GetPromotionPiece(move.Flags);
+                RemovePiece(color, move.Piece, move.From);
+                AddPiece(color, promotionPiece, move.To);
+                _promotedPieces.Push(promotionPiece);
             }
 
             if (move.Piece == Piece.King && move.Flags != MoveFlags.Castling)
@@ -213,7 +261,18 @@ namespace Cosette.Engine.Board
                 var enemyColor = ColorOperations.Invert(color);
                 var killedPiece = _killedPieces.Pop();
 
-                MovePiece(color, move.Piece, move.To, move.From);
+                // Promotion
+                if ((byte)move.Flags >= 16)
+                {
+                    var promotionPiece = _promotedPieces.Pop();
+                    RemovePiece(color, promotionPiece, move.To);
+                    AddPiece(color, move.Piece, move.From);
+                }
+                else
+                {
+                    MovePiece(color, move.Piece, move.To, move.From);
+                }
+
                 AddPiece(enemyColor, killedPiece, move.To);
             }
             else if ((move.Flags & MoveFlags.Castling) != 0)
@@ -255,6 +314,12 @@ namespace Cosette.Engine.Board
 
                 MovePiece(color, move.Piece, move.To, move.From);
                 AddPiece(enemyColor, killedPiece, enemyPieceField);
+            }
+            else if ((byte)move.Flags >= 16)
+            {
+                var promotionPiece = _promotedPieces.Pop();
+                RemovePiece(color, promotionPiece, move.To);
+                AddPiece(color, move.Piece, move.From);
             }
 
             var enPassant = _enPassants.Pop();
@@ -392,6 +457,28 @@ namespace Cosette.Engine.Board
             WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
             BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
             Occupancy = WhiteOccupancy | BlackOccupancy;
+        }
+
+        private Piece GetPromotionPiece(MoveFlags flags)
+        {
+            if ((flags & MoveFlags.KnightPromotion) != 0)
+            {
+                return Piece.Knight;
+            }
+            else if ((flags & MoveFlags.BishopPromotion) != 0)
+            {
+                return Piece.Bishop;
+            }
+            else if ((flags & MoveFlags.RookPromotion) != 0)
+            {
+                return Piece.Rook;
+            }
+            else if ((flags & MoveFlags.QueenPromotion) != 0)
+            {
+                return Piece.Queen;
+            }
+
+            throw new InvalidOperationException();
         }
     }
 }
