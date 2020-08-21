@@ -12,8 +12,11 @@ namespace Cosette.Engine.Board
         public ulong WhiteOccupancy { get; set; }
         public ulong BlackOccupancy { get; set; }
         public ulong Occupancy { get; set; }
+        public ulong WhiteEnPassant { get; set; }
+        public ulong BlackEnPassant { get; set; }
 
         private FastStack<Piece> _killedPieces;
+        private FastStack<ulong> _enPassants;
 
         public void SetDefaultState()
         {
@@ -39,6 +42,7 @@ namespace Cosette.Engine.Board
             Occupancy = WhiteOccupancy | BlackOccupancy;
 
             _killedPieces = new FastStack<Piece>(16);
+            _enPassants = new FastStack<ulong>(16);
         }
 
         public int GetAvailableMoves(Span<Move> moves, Color color)
@@ -55,9 +59,20 @@ namespace Cosette.Engine.Board
 
         public void MakeMove(Move move, Color color)
         {
+            var enPassant = color == Color.White ? WhiteEnPassant : BlackEnPassant;
+            _enPassants.Push(enPassant);
+
             if (move.Flags == MoveFlags.None)
             {
                 MovePiece(color, move.Piece, move.From, move.To);
+            }
+            else if ((move.Flags & MoveFlags.DoublePush) != 0)
+            {
+                MovePiece(color, move.Piece, move.From, move.To);
+                enPassant |= color == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
+
+                WhiteEnPassant = color == Color.White ? enPassant : WhiteEnPassant;
+                BlackEnPassant = color == Color.Black ? enPassant : BlackEnPassant;
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
@@ -69,11 +84,29 @@ namespace Cosette.Engine.Board
 
                 _killedPieces.Push(killedPiece);
             }
+            else if ((move.Flags & MoveFlags.EnPassant) != 0)
+            {
+                var enemyColor = ColorOperations.Invert(color);
+                var enemyPieceField = color == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
+                var killedPiece = GetPiece(enemyColor, enemyPieceField);
+
+                RemovePiece(enemyColor, killedPiece, move.To);
+                MovePiece(color, move.Piece, move.From, move.To);
+
+                _killedPieces.Push(killedPiece);
+            }
+
+            WhiteEnPassant = color == Color.White ? WhiteEnPassant : 0;
+            BlackEnPassant = color == Color.Black ? BlackEnPassant : 0;
         }
 
         public void UndoMove(Move move, Color color)
         {
             if (move.Flags == MoveFlags.None)
+            {
+                MovePiece(color, move.Piece, move.To, move.From);
+            }
+            else if ((move.Flags & MoveFlags.DoublePush) != 0)
             {
                 MovePiece(color, move.Piece, move.To, move.From);
             }
@@ -85,6 +118,19 @@ namespace Cosette.Engine.Board
                 MovePiece(color, move.Piece, move.To, move.From);
                 AddPiece(enemyColor, killedPiece, move.To);
             }
+            else if ((move.Flags & MoveFlags.EnPassant) != 0)
+            {
+                var enemyColor = ColorOperations.Invert(color);
+                var enemyPieceField = color == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
+                var killedPiece = _killedPieces.Pop();
+
+                MovePiece(color, move.Piece, move.To, move.From);
+                AddPiece(enemyColor, killedPiece, enemyPieceField);
+            }
+
+            var enPassant = _enPassants.Pop();
+            WhiteEnPassant = color == Color.White ? enPassant : WhiteEnPassant;
+            BlackEnPassant = color == Color.Black ? enPassant : BlackEnPassant;
         }
 
         public int GetAttackingPiecesAtField(Color color, byte field, Span<Piece> attackingPieces)

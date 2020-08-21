@@ -46,10 +46,10 @@ namespace Cosette.Engine.Board.Operators
 
                 if ((piece & promotionRank) != 0)
                 {
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.KnightPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.BishopPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Promotion | MoveFlags.QueenPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.KnightPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.BishopPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.RookPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.QueenPromotion);
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace Cosette.Engine.Board.Operators
                 var from = BitOperations.BitScan(piece) - shift;
                 var to = BitOperations.BitScan(piece);
 
-                moves[offset++] = new Move(from, to, Piece.Pawn, 0);
+                moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.DoublePush);
             }
 
             return offset;
@@ -99,13 +99,14 @@ namespace Cosette.Engine.Board.Operators
         private static int GetDiagonalAttacks(BoardState boardState, Color color, int dir, ulong prohibitedFile, Span<Move> moves, int offset)
         {
             int shift;
-            ulong promotionRank, enemyOccupancy, pawns;
+            ulong promotionRank, enemyOccupancy, enemyEnPassant, pawns;
 
             if (color == Color.White)
             {
                 shift = dir;
                 promotionRank = BoardConstants.HRank;
-                enemyOccupancy = boardState.BlackOccupancy;
+                enemyOccupancy = boardState.BlackOccupancy | boardState.BlackEnPassant;
+                enemyEnPassant = boardState.BlackEnPassant;
                 pawns = boardState.WhitePieces[(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) << dir) & enemyOccupancy;
             }
@@ -113,7 +114,8 @@ namespace Cosette.Engine.Board.Operators
             {
                 shift = -dir;
                 promotionRank = BoardConstants.ARank;
-                enemyOccupancy = boardState.WhiteOccupancy;
+                enemyOccupancy = boardState.WhiteOccupancy | boardState.WhiteEnPassant;
+                enemyEnPassant = boardState.WhiteEnPassant;
                 pawns = boardState.BlackPieces[(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;
             }
@@ -128,14 +130,21 @@ namespace Cosette.Engine.Board.Operators
 
                 if ((piece & promotionRank) != 0)
                 {
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.Promotion | MoveFlags.KnightPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.Promotion | MoveFlags.BishopPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.Promotion | MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.Promotion | MoveFlags.QueenPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.KnightPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.BishopPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.RookPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.QueenPromotion);
                 }
                 else
                 {
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill);
+                    if ((piece & enemyEnPassant) != 0)
+                    {
+                        moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.EnPassant);
+                    }
+                    else
+                    {
+                        moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill);
+                    }
                 }
             }
 
