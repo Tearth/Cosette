@@ -15,14 +15,11 @@ namespace Cosette.Engine.Board
         public ulong WhiteEnPassant { get; set; }
         public ulong BlackEnPassant { get; set; }
 
-        public bool WhiteShortCastlingPossible { get; set; }
-        public bool WhiteLongCastlingPossible { get; set; }
-        public bool BlackShortCastlingPossible { get; set; }
-        public bool BlackLongCastlingPossible { get; set; }
+        public Castling Castling { get; set; }
 
         private FastStack<Piece> _killedPieces;
         private FastStack<ulong> _enPassants;
-        private FastStack<bool> _castlingFlags;
+        private FastStack<Castling> _Castling;
         private FastStack<Piece> _promotedPieces;
 
         public void SetDefaultState()
@@ -48,14 +45,11 @@ namespace Cosette.Engine.Board
             BlackOccupancy = 18446462598732840960;
             Occupancy = WhiteOccupancy | BlackOccupancy;
 
-            WhiteShortCastlingPossible = true;
-            WhiteLongCastlingPossible = true;
-            BlackShortCastlingPossible = true;
-            BlackLongCastlingPossible = true;
+            Castling = Castling.Everything;
 
             _killedPieces = new FastStack<Piece>(16);
             _enPassants = new FastStack<ulong>(16);
-            _castlingFlags = new FastStack<bool>(128);
+            _Castling = new FastStack<Castling>(128);
             _promotedPieces = new FastStack<Piece>(16);
         }
 
@@ -75,10 +69,7 @@ namespace Cosette.Engine.Board
         {
             var enPassant = color == Color.White ? WhiteEnPassant : BlackEnPassant;
             _enPassants.Push(enPassant);
-            _castlingFlags.Push(WhiteShortCastlingPossible);
-            _castlingFlags.Push(WhiteLongCastlingPossible);
-            _castlingFlags.Push(BlackShortCastlingPossible);
-            _castlingFlags.Push(BlackLongCastlingPossible);
+            _Castling.Push(Castling);
 
             if (move.Flags == MoveFlags.None)
             {
@@ -105,22 +96,22 @@ namespace Cosette.Engine.Board
                     {
                         case 0:
                         {
-                            WhiteShortCastlingPossible = false;
+                            Castling &= ~Castling.WhiteShort;
                             break;
                         }
                         case 7:
                         {
-                            WhiteLongCastlingPossible = false;
+                            Castling &= ~Castling.WhiteLong;
                             break;
                         }
                         case 56:
                         {
-                            BlackShortCastlingPossible = false;
+                            Castling &= ~Castling.BlackShort;
                             break;
                         }
                         case 63:
                         {
-                            BlackLongCastlingPossible = false;
+                            Castling &= ~Castling.BlackLong;
                             break;
                         }
                     }
@@ -174,13 +165,13 @@ namespace Cosette.Engine.Board
 
                 if (color == Color.White)
                 {
-                    WhiteShortCastlingPossible = false;
-                    WhiteLongCastlingPossible = false;
+                    Castling &= ~Castling.WhiteShort;
+                    Castling &= ~Castling.WhiteLong;
                 }
                 else
                 {
-                    BlackShortCastlingPossible = false;
-                    BlackLongCastlingPossible = false;
+                    Castling &= ~Castling.BlackShort;
+                    Castling &= ~Castling.BlackLong;
                 }
             }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
@@ -206,13 +197,13 @@ namespace Cosette.Engine.Board
             {
                 if (color == Color.White)
                 {
-                    WhiteShortCastlingPossible = false;
-                    WhiteLongCastlingPossible = false;
+                    Castling &= ~Castling.WhiteShort;
+                    Castling &= ~Castling.WhiteLong;
                 }
                 else
                 {
-                    BlackShortCastlingPossible = false;
-                    BlackLongCastlingPossible = false;
+                    Castling &= ~Castling.BlackShort;
+                    Castling &= ~Castling.BlackLong;
                 }
             }
 
@@ -222,22 +213,22 @@ namespace Cosette.Engine.Board
                 {
                     if (move.From == 0)
                     {
-                        WhiteShortCastlingPossible = false;
+                        Castling &= ~Castling.WhiteShort;
                     }
                     else if (move.From == 7)
                     {
-                        WhiteLongCastlingPossible = false;
+                        Castling &= ~Castling.WhiteLong;
                     }
                 }
                 else if (color == Color.Black)
                 {
                     if (move.From == 56)
                     {
-                        BlackShortCastlingPossible = false;
+                        Castling &= ~Castling.BlackShort;
                     }
                     else if (move.From == 63)
                     {
-                        BlackLongCastlingPossible = false;
+                        Castling &= ~Castling.BlackLong;
                     }
                 }
             }
@@ -323,10 +314,7 @@ namespace Cosette.Engine.Board
             }
 
             var enPassant = _enPassants.Pop();
-            BlackLongCastlingPossible = _castlingFlags.Pop();
-            BlackShortCastlingPossible = _castlingFlags.Pop();
-            WhiteLongCastlingPossible = _castlingFlags.Pop();
-            WhiteShortCastlingPossible = _castlingFlags.Pop();
+            Castling = _Castling.Pop();
 
             WhiteEnPassant = color == Color.White ? enPassant : WhiteEnPassant;
             BlackEnPassant = color == Color.Black ? enPassant : BlackEnPassant;
