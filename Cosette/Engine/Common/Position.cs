@@ -43,7 +43,7 @@
 
         public override string ToString()
         {
-            return $"[{X} {Y}]";
+            return $"{(char)('a' + X)}{Y + 1}";
         }
     }
 }

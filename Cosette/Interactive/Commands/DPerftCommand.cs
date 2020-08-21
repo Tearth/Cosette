@@ -8,13 +8,13 @@ using Cosette.Engine.Moves.Magic;
 
 namespace Cosette.Interactive.Commands
 {
-    public class PerftCommand : ICommand
+    public class DPerftCommand : ICommand
     {
         public string Description { get; }
 
-        public PerftCommand()
+        public DPerftCommand()
         {
-            Description = "Test performance of the moves generator";
+            Description = "Test performance of the moves generator split into categories";
         }
 
         public void Run(params string[] parameters)
@@ -25,20 +25,28 @@ namespace Cosette.Interactive.Commands
                 return;
             }
 
-            for (var i = 1; i <= depth; i++)
+            var boardState = new BoardState();
+            boardState.SetDefaultState();
+
+            Span<Move> moves = stackalloc Move[128];
+            var movesCount = boardState.GetAvailableMoves(moves, Color.White);
+
+            var totalLeafsCount = 0ul;
+            for (var i = 0; i < movesCount; i++)
             {
-                var boardState = new BoardState();
-                boardState.SetDefaultState();
+                var from = Position.FromFieldIndex(moves[i].From).ToString();
+                var to = Position.FromFieldIndex(moves[i].To).ToString();
 
-                var stopwatch = Stopwatch.StartNew();
-                var leafsCount = Perft(boardState, Color.White, i);
-                var time = stopwatch.Elapsed.TotalMilliseconds / 1000;
+                boardState.MakeMove(moves[i], Color.White);
+                var leafsCount = Perft(boardState, Color.Black, depth);
+                boardState.UndoMove(moves[i], Color.White);
 
-                var leafsPerSecond = leafsCount / time / 1000000;
-                var timePerLeaf = time / leafsCount * 1000000000;
-
-                Console.WriteLine($"Depth {i} - Leafs: {leafsCount}, Time: {time:F} s, LPS: {leafsPerSecond:F} mL/s, TPL: {timePerLeaf:F} ns");
+                Console.WriteLine($"{from}{to}: {leafsCount}");
+                totalLeafsCount += leafsCount;
             }
+
+            Console.WriteLine();
+            Console.WriteLine($"Total leafs: {totalLeafsCount}");
         }
 
         private ulong Perft(BoardState boardState, Color color, int depth)
