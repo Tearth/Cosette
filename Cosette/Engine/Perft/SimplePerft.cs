@@ -11,9 +11,13 @@ namespace Cosette.Engine.Perft
     {
         public static SimplePerftResult Run(BoardState boardState, Color color, int depth)
         {
+            GC.TryStartNoGCRegion(1024 * 1024 * 16);
+
             var stopwatch = Stopwatch.StartNew();
             var leafsCount = Perft(boardState, color, depth);
             stopwatch.Stop();
+
+            GC.EndNoGCRegion();
 
             var totalSeconds = stopwatch.Elapsed.TotalSeconds;
             return new SimplePerftResult
