@@ -11,8 +11,7 @@ namespace Cosette.Engine.Board
         public ulong[] BlackPieces { get; set; }
         public ulong[] ColorOccupancy { get; set; }
         public ulong Occupancy { get; set; }
-        public ulong WhiteEnPassant { get; set; }
-        public ulong BlackEnPassant { get; set; }
+        public ulong[] ColorEnPassant { get; set; }
 
         public Castling Castling { get; set; }
 
@@ -26,6 +25,7 @@ namespace Cosette.Engine.Board
             WhitePieces = new ulong[6];
             BlackPieces = new ulong[6];
             ColorOccupancy = new ulong[2];
+            ColorEnPassant = new ulong[2];
 
             WhitePieces[(int) Piece.Pawn] = 65280;
             WhitePieces[(int) Piece.Rook] = 129;
@@ -67,7 +67,7 @@ namespace Cosette.Engine.Board
 
         public void MakeMove(Move move, Color color)
         {
-            var enPassant = color == Color.White ? WhiteEnPassant : BlackEnPassant;
+            var enPassant = ColorEnPassant[(int)color];
             _enPassants.Push(enPassant);
             _Castling.Push(Castling);
 
@@ -80,8 +80,7 @@ namespace Cosette.Engine.Board
                 MovePiece(color, move.Piece, move.From, move.To);
                 enPassant |= color == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
 
-                WhiteEnPassant = color == Color.White ? enPassant : WhiteEnPassant;
-                BlackEnPassant = color == Color.Black ? enPassant : BlackEnPassant;
+                ColorEnPassant[(int) color] = enPassant;
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
@@ -233,8 +232,7 @@ namespace Cosette.Engine.Board
                 }
             }
 
-            WhiteEnPassant = color == Color.White ? WhiteEnPassant : 0;
-            BlackEnPassant = color == Color.Black ? BlackEnPassant : 0;
+            ColorEnPassant[(int)ColorOperations.Invert(color)] = 0;
         }
 
         public void UndoMove(Move move, Color color)
@@ -316,8 +314,7 @@ namespace Cosette.Engine.Board
             var enPassant = _enPassants.Pop();
             Castling = _Castling.Pop();
 
-            WhiteEnPassant = color == Color.White ? enPassant : WhiteEnPassant;
-            BlackEnPassant = color == Color.Black ? enPassant : BlackEnPassant;
+            ColorEnPassant[(int)color] = enPassant;
         }
 
         public int GetAttackingPiecesAtField(Color color, byte fieldIndex, Span<Piece> attackingPieces)
