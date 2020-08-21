@@ -87,6 +87,65 @@ namespace Cosette.Engine.Board
             }
         }
 
+        public int GetAttackingPiecesAtField(Color color, byte field, Span<Piece> attackingPieces)
+        {
+            var attackingPiecesCount = 0;
+            var enemyPieces = color == Color.White ? BlackPieces : WhitePieces;
+            var enemyOccupancy = color == Color.White ? BlackOccupancy : WhiteOccupancy;
+
+            var fileRankAttacks = RookMovesGenerator.GetMoves(Occupancy, field) & enemyOccupancy;
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(Occupancy, field) & enemyOccupancy;
+
+            var attackingRooks = fileRankAttacks & enemyPieces[(int) Piece.Rook];
+            var attackingBishops = diagonalAttacks & enemyPieces[(int) Piece.Bishop];
+            var attackingQueens = (fileRankAttacks | diagonalAttacks) & enemyPieces[(int) Piece.Queen];
+            var attackingKnights = KnightMovesGenerator.GetMoves(field) & enemyPieces[(int) Piece.Knight];
+            var attackingKings = KingMovesGenerator.GetMoves(field) & enemyPieces[(int) Piece.King];
+            //var attackingPawns = 
+
+            if (attackingRooks != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Rook;
+            }
+            if (attackingBishops != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Bishop;
+            }
+            if (attackingQueens != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Queen;
+            }
+            if (attackingKnights != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Knight;
+            }
+            if (attackingKings != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.King;
+            }
+
+            return attackingPiecesCount;
+        }
+
+        public bool IsKingChecked(Color color)
+        {
+            Span<Piece> attackingPieces = stackalloc Piece[6];
+            var king = color == Color.White ? WhitePieces[(int)Piece.King] : BlackPieces[(int)Piece.King];
+
+            if (king != 0)
+            {
+                var kingField = BitOperations.BitScan(king);
+                var attackingPiecesCount = GetAttackingPiecesAtField(color, (byte)kingField, attackingPieces);
+
+                if (attackingPiecesCount != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void MovePiece(Color color, Piece piece, byte from, byte to)
         {
             var pieces = color == Color.White ? WhitePieces : BlackPieces;
