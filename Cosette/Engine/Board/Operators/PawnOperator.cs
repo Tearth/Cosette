@@ -105,7 +105,7 @@ namespace Cosette.Engine.Board.Operators
             {
                 shift = dir;
                 promotionRank = BoardConstants.HRank;
-                enemyOccupancy = boardState.BlackOccupancy | boardState.BlackEnPassant;
+                enemyOccupancy = boardState.ColorOccupancy[(int)Color.Black] | boardState.BlackEnPassant;
                 enemyEnPassant = boardState.BlackEnPassant;
                 pawns = boardState.WhitePieces[(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) << dir) & enemyOccupancy;
@@ -114,7 +114,7 @@ namespace Cosette.Engine.Board.Operators
             {
                 shift = -dir;
                 promotionRank = BoardConstants.ARank;
-                enemyOccupancy = boardState.WhiteOccupancy | boardState.WhiteEnPassant;
+                enemyOccupancy = boardState.ColorOccupancy[(int)Color.White] | boardState.WhiteEnPassant;
                 enemyEnPassant = boardState.WhiteEnPassant;
                 pawns = boardState.BlackPieces[(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;

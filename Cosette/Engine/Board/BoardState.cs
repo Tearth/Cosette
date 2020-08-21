@@ -9,8 +9,7 @@ namespace Cosette.Engine.Board
     {
         public ulong[] WhitePieces { get; set; }
         public ulong[] BlackPieces { get; set; }
-        public ulong WhiteOccupancy { get; set; }
-        public ulong BlackOccupancy { get; set; }
+        public ulong[] ColorOccupancy { get; set; }
         public ulong Occupancy { get; set; }
         public ulong WhiteEnPassant { get; set; }
         public ulong BlackEnPassant { get; set; }
@@ -26,6 +25,7 @@ namespace Cosette.Engine.Board
         {
             WhitePieces = new ulong[6];
             BlackPieces = new ulong[6];
+            ColorOccupancy = new ulong[2];
 
             WhitePieces[(int) Piece.Pawn] = 65280;
             WhitePieces[(int) Piece.Rook] = 129;
@@ -41,9 +41,9 @@ namespace Cosette.Engine.Board
             BlackPieces[(int) Piece.Queen] = 1152921504606846976;
             BlackPieces[(int) Piece.King] = 576460752303423488;
 
-            WhiteOccupancy = 65535;
-            BlackOccupancy = 18446462598732840960;
-            Occupancy = WhiteOccupancy | BlackOccupancy;
+            ColorOccupancy[(int)Color.White] = 65535;
+            ColorOccupancy[(int)Color.Black] = 18446462598732840960;
+            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
 
             Castling = Castling.Everything;
 
@@ -324,7 +324,7 @@ namespace Cosette.Engine.Board
         {
             var attackingPiecesCount = 0;
             var enemyPieces = color == Color.White ? BlackPieces : WhitePieces;
-            var enemyOccupancy = color == Color.White ? BlackOccupancy : WhiteOccupancy;
+            var enemyOccupancy = ColorOccupancy[(int)ColorOperations.Invert(color)];
 
             var fileRankAttacks = RookMovesGenerator.GetMoves(Occupancy, fieldIndex) & enemyOccupancy;
             var diagonalAttacks = BishopMovesGenerator.GetMoves(Occupancy, fieldIndex) & enemyOccupancy;
@@ -392,7 +392,7 @@ namespace Cosette.Engine.Board
         private void MovePiece(Color color, Piece piece, byte from, byte to)
         {
             var pieces = color == Color.White ? WhitePieces : BlackPieces;
-            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
+            var occupancy = ColorOccupancy[(int)color];
 
             pieces[(int) piece] &= ~(1ul << from);
             pieces[(int) piece] |= 1ul << to;
@@ -400,9 +400,8 @@ namespace Cosette.Engine.Board
             occupancy &= ~(1ul << from);
             occupancy |= 1ul << to;
 
-            WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
-            BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
-            Occupancy = WhiteOccupancy | BlackOccupancy;
+            ColorOccupancy[(int) color] = occupancy;
+            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
         }
 
         private Piece GetPiece(Color color, byte from)
@@ -424,27 +423,25 @@ namespace Cosette.Engine.Board
         private void AddPiece(Color color, Piece piece, byte field)
         {
             var pieces = color == Color.White ? WhitePieces : BlackPieces;
-            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
+            var occupancy = ColorOccupancy[(int)color];
 
             pieces[(byte) piece] |= 1ul << field;
             occupancy |= 1ul << field;
 
-            WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
-            BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
-            Occupancy = WhiteOccupancy | BlackOccupancy;
+            ColorOccupancy[(int)color] = occupancy;
+            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
         }
 
         private void RemovePiece(Color color, Piece piece, byte from)
         {
             var pieces = color == Color.White ? WhitePieces : BlackPieces;
-            var occupancy = color == Color.White ? WhiteOccupancy : BlackOccupancy;
+            var occupancy = ColorOccupancy[(int)color];
 
             pieces[(byte) piece] &= ~(1ul << from);
             occupancy &= ~(1ul << from);
 
-            WhiteOccupancy = color == Color.White ? occupancy : WhiteOccupancy;
-            BlackOccupancy = color == Color.Black ? occupancy : BlackOccupancy;
-            Occupancy = WhiteOccupancy | BlackOccupancy;
+            ColorOccupancy[(int)color] = occupancy;
+            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
         }
 
         private Piece GetPromotionPiece(MoveFlags flags)
