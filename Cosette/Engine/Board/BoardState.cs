@@ -7,49 +7,50 @@ namespace Cosette.Engine.Board
 {
     public class BoardState
     {
-        public ulong[] WhitePieces { get; set; }
-        public ulong[] BlackPieces { get; set; }
-        public ulong[] ColorOccupancy { get; set; }
-        public ulong Occupancy { get; set; }
-        public ulong[] ColorEnPassant { get; set; }
+        public ulong[][] Pieces { get; set; }
+        public ulong[] Occupancy { get; set; }
+        public ulong OccupancySummary { get; set; }
+        public ulong[] EnPassant { get; set; }
 
         public Castling Castling { get; set; }
 
         private FastStack<Piece> _killedPieces;
         private FastStack<ulong> _enPassants;
-        private FastStack<Castling> _Castling;
+        private FastStack<Castling> _castlings;
         private FastStack<Piece> _promotedPieces;
 
         public void SetDefaultState()
         {
-            WhitePieces = new ulong[6];
-            BlackPieces = new ulong[6];
-            ColorOccupancy = new ulong[2];
-            ColorEnPassant = new ulong[2];
+            Pieces = new ulong[2][];
+            Pieces[(int)Color.White] = new ulong[6];
+            Pieces[(int)Color.Black] = new ulong[6];
 
-            WhitePieces[(int) Piece.Pawn] = 65280;
-            WhitePieces[(int) Piece.Rook] = 129;
-            WhitePieces[(int) Piece.Knight] = 66;
-            WhitePieces[(int) Piece.Bishop] = 36;
-            WhitePieces[(int) Piece.Queen] = 16;
-            WhitePieces[(int) Piece.King] = 8;
+            Occupancy = new ulong[2];
+            EnPassant = new ulong[2];
 
-            BlackPieces[(int) Piece.Pawn] = 71776119061217280;
-            BlackPieces[(int) Piece.Rook] = 9295429630892703744;
-            BlackPieces[(int) Piece.Knight] = 4755801206503243776;
-            BlackPieces[(int) Piece.Bishop] = 2594073385365405696;
-            BlackPieces[(int) Piece.Queen] = 1152921504606846976;
-            BlackPieces[(int) Piece.King] = 576460752303423488;
+            Pieces[(int)Color.White][(int) Piece.Pawn] = 65280;
+            Pieces[(int)Color.White][(int) Piece.Rook] = 129;
+            Pieces[(int)Color.White][(int) Piece.Knight] = 66;
+            Pieces[(int)Color.White][(int) Piece.Bishop] = 36;
+            Pieces[(int)Color.White][(int) Piece.Queen] = 16;
+            Pieces[(int)Color.White][(int) Piece.King] = 8;
 
-            ColorOccupancy[(int)Color.White] = 65535;
-            ColorOccupancy[(int)Color.Black] = 18446462598732840960;
-            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
+            Pieces[(int)Color.Black][(int) Piece.Pawn] = 71776119061217280;
+            Pieces[(int)Color.Black][(int) Piece.Rook] = 9295429630892703744;
+            Pieces[(int)Color.Black][(int) Piece.Knight] = 4755801206503243776;
+            Pieces[(int)Color.Black][(int) Piece.Bishop] = 2594073385365405696;
+            Pieces[(int)Color.Black][(int) Piece.Queen] = 1152921504606846976;
+            Pieces[(int)Color.Black][(int) Piece.King] = 576460752303423488;
+
+            Occupancy[(int)Color.White] = 65535;
+            Occupancy[(int)Color.Black] = 18446462598732840960;
+            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
 
             Castling = Castling.Everything;
 
             _killedPieces = new FastStack<Piece>(16);
             _enPassants = new FastStack<ulong>(16);
-            _Castling = new FastStack<Castling>(128);
+            _castlings = new FastStack<Castling>(128);
             _promotedPieces = new FastStack<Piece>(16);
         }
 
@@ -67,9 +68,8 @@ namespace Cosette.Engine.Board
 
         public void MakeMove(Move move, Color color)
         {
-            var enPassant = ColorEnPassant[(int)color];
-            _enPassants.Push(enPassant);
-            _Castling.Push(Castling);
+            _enPassants.Push(EnPassant[(int)color]);
+            _castlings.Push(Castling);
 
             if (move.Flags == MoveFlags.None)
             {
@@ -78,9 +78,7 @@ namespace Cosette.Engine.Board
             else if ((move.Flags & MoveFlags.DoublePush) != 0)
             {
                 MovePiece(color, move.Piece, move.From, move.To);
-                enPassant |= color == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
-
-                ColorEnPassant[(int) color] = enPassant;
+                EnPassant[(int)color] |= color == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
@@ -232,7 +230,7 @@ namespace Cosette.Engine.Board
                 }
             }
 
-            ColorEnPassant[(int)ColorOperations.Invert(color)] = 0;
+            EnPassant[(int)ColorOperations.Invert(color)] = 0;
         }
 
         public void UndoMove(Move move, Color color)
@@ -311,29 +309,29 @@ namespace Cosette.Engine.Board
                 AddPiece(color, move.Piece, move.From);
             }
 
-            var enPassant = _enPassants.Pop();
-            Castling = _Castling.Pop();
-
-            ColorEnPassant[(int)color] = enPassant;
+            Castling = _castlings.Pop();
+            EnPassant[(int)color] = _enPassants.Pop();
         }
 
         public int GetAttackingPiecesAtField(Color color, byte fieldIndex, Span<Piece> attackingPieces)
         {
             var attackingPiecesCount = 0;
-            var enemyPieces = color == Color.White ? BlackPieces : WhitePieces;
-            var enemyOccupancy = ColorOccupancy[(int)ColorOperations.Invert(color)];
+            var enemyColor = ColorOperations.Invert(color);
+            var enemyOccupancy = Occupancy[(int)ColorOperations.Invert(color)];
 
-            var fileRankAttacks = RookMovesGenerator.GetMoves(Occupancy, fieldIndex) & enemyOccupancy;
-            var diagonalAttacks = BishopMovesGenerator.GetMoves(Occupancy, fieldIndex) & enemyOccupancy;
+            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & enemyOccupancy;
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & enemyOccupancy;
+            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+            var boxAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
 
-            var attackingRooks = fileRankAttacks & enemyPieces[(int) Piece.Rook];
-            var attackingBishops = diagonalAttacks & enemyPieces[(int) Piece.Bishop];
-            var attackingQueens = (fileRankAttacks | diagonalAttacks) & enemyPieces[(int) Piece.Queen];
-            var attackingKnights = KnightMovesGenerator.GetMoves(fieldIndex) & enemyPieces[(int) Piece.Knight];
-            var attackingKings = KingMovesGenerator.GetMoves(fieldIndex) & enemyPieces[(int) Piece.King];
+            var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int) Piece.Rook];
+            var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int) Piece.Bishop];
+            var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[(int)enemyColor][(int) Piece.Queen];
+            var attackingKnights = jumpAttacks & Pieces[(int)enemyColor][(int) Piece.Knight];
+            var attackingKings = boxAttacks & Pieces[(int)enemyColor][(int) Piece.King];
 
             var field = 1ul << fieldIndex;
-            var potentialPawns = KingMovesGenerator.GetMoves(fieldIndex) & enemyPieces[(int)Piece.Pawn];
+            var potentialPawns = boxAttacks & Pieces[(int)enemyColor][(int)Piece.Pawn];
             var attackingPawns = color == Color.White ?
                 field & ((potentialPawns >> 7) | (potentialPawns >> 9)) :
                 field & ((potentialPawns << 7) | (potentialPawns << 9));
@@ -342,18 +340,22 @@ namespace Cosette.Engine.Board
             {
                 attackingPieces[attackingPiecesCount++] = Piece.Rook;
             }
+
             if (attackingBishops != 0)
             {
                 attackingPieces[attackingPiecesCount++] = Piece.Bishop;
             }
+
             if (attackingQueens != 0)
             {
                 attackingPieces[attackingPiecesCount++] = Piece.Queen;
             }
+
             if (attackingKnights != 0)
             {
                 attackingPieces[attackingPiecesCount++] = Piece.Knight;
             }
+
             if (attackingKings != 0)
             {
                 attackingPieces[attackingPiecesCount++] = Piece.King;
@@ -370,7 +372,7 @@ namespace Cosette.Engine.Board
         public bool IsKingChecked(Color color)
         {
             Span<Piece> attackingPieces = stackalloc Piece[6];
-            var king = color == Color.White ? WhitePieces[(int)Piece.King] : BlackPieces[(int)Piece.King];
+            var king = Pieces[(int) color][(int) Piece.King];
 
             if (king != 0)
             {
@@ -388,27 +390,25 @@ namespace Cosette.Engine.Board
 
         private void MovePiece(Color color, Piece piece, byte from, byte to)
         {
-            var pieces = color == Color.White ? WhitePieces : BlackPieces;
-            var occupancy = ColorOccupancy[(int)color];
+            var occupancy = Occupancy[(int)color];
 
-            pieces[(int) piece] &= ~(1ul << from);
-            pieces[(int) piece] |= 1ul << to;
+            Pieces[(int)color][(int) piece] &= ~(1ul << from);
+            Pieces[(int)color][(int) piece] |= 1ul << to;
 
             occupancy &= ~(1ul << from);
             occupancy |= 1ul << to;
 
-            ColorOccupancy[(int) color] = occupancy;
-            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
+            Occupancy[(int) color] = occupancy;
+            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
         }
 
         private Piece GetPiece(Color color, byte from)
         {
-            var pieces = color == Color.White ? WhitePieces : BlackPieces;
             var field = 1ul << from;
 
-            for (var i = 0; i < pieces.Length; i++)
+            for (var i = 0; i < 6; i++)
             {
-                if ((pieces[i] & field) != 0)
+                if ((Pieces[(int)color][i] & field) != 0)
                 {
                     return (Piece) i;
                 }
@@ -419,26 +419,24 @@ namespace Cosette.Engine.Board
 
         private void AddPiece(Color color, Piece piece, byte field)
         {
-            var pieces = color == Color.White ? WhitePieces : BlackPieces;
-            var occupancy = ColorOccupancy[(int)color];
+            var occupancy = Occupancy[(int)color];
 
-            pieces[(byte) piece] |= 1ul << field;
+            Pieces[(int)color][(int)piece] |= 1ul << field;
             occupancy |= 1ul << field;
 
-            ColorOccupancy[(int)color] = occupancy;
-            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
+            Occupancy[(int)color] = occupancy;
+            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
         }
 
         private void RemovePiece(Color color, Piece piece, byte from)
         {
-            var pieces = color == Color.White ? WhitePieces : BlackPieces;
-            var occupancy = ColorOccupancy[(int)color];
+            var occupancy = Occupancy[(int)color];
 
-            pieces[(byte) piece] &= ~(1ul << from);
+            Pieces[(int)color][(int)piece] &= ~(1ul << from);
             occupancy &= ~(1ul << from);
 
-            ColorOccupancy[(int)color] = occupancy;
-            Occupancy = ColorOccupancy[(int)Color.White] | ColorOccupancy[(int)Color.Black];
+            Occupancy[(int)color] = occupancy;
+            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
         }
 
         private Piece GetPromotionPiece(MoveFlags flags)
@@ -447,15 +445,18 @@ namespace Cosette.Engine.Board
             {
                 return Piece.Knight;
             }
-            else if ((flags & MoveFlags.BishopPromotion) != 0)
+            
+            if ((flags & MoveFlags.BishopPromotion) != 0)
             {
                 return Piece.Bishop;
             }
-            else if ((flags & MoveFlags.RookPromotion) != 0)
+            
+            if ((flags & MoveFlags.RookPromotion) != 0)
             {
                 return Piece.Rook;
             }
-            else if ((flags & MoveFlags.QueenPromotion) != 0)
+            
+            if ((flags & MoveFlags.QueenPromotion) != 0)
             {
                 return Piece.Queen;
             }

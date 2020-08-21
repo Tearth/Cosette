@@ -8,9 +8,9 @@ namespace Cosette.Engine.Board.Operators
     {
         public static int GetAvailableMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
-            var friendlyOccupancy = boardState.ColorOccupancy[(int)color];
-            var enemyOccupancy = boardState.ColorOccupancy[(int)ColorOperations.Invert(color)];
-            var queens = color == Color.White ? boardState.WhitePieces[(int)Piece.Queen] : boardState.BlackPieces[(int)Piece.Queen];
+            var friendlyOccupancy = boardState.Occupancy[(int)color];
+            var enemyOccupancy = boardState.Occupancy[(int)ColorOperations.Invert(color)];
+            var queens = boardState.Pieces[(int)color][(int)Piece.Queen];
 
             while (queens != 0)
             {
@@ -18,7 +18,7 @@ namespace Cosette.Engine.Board.Operators
                 queens = BitOperations.PopLsb(queens);
 
                 var from = BitOperations.BitScan(piece);
-                var availableMoves = QueenMovesGenerator.GetMoves(boardState.Occupancy, from) & ~friendlyOccupancy;
+                var availableMoves = QueenMovesGenerator.GetMoves(boardState.OccupancySummary, from) & ~friendlyOccupancy;
 
                 while (availableMoves != 0)
                 {

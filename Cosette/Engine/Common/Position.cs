@@ -2,8 +2,8 @@
 {
     public readonly struct Position
     {
-        public int X { get; }
-        public int Y { get; }
+        public readonly int X;
+        public readonly int Y;
 
         public Position(int x, int y)
         {

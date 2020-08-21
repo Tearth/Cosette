@@ -5,7 +5,7 @@ using System.Text;
 namespace Cosette.Engine.Common
 {
     [Flags]
-    public enum Castling
+    public enum Castling : byte
     {
         None = 0,
         WhiteShort = 1,

@@ -2,12 +2,12 @@
 
 namespace Cosette.Engine.Moves
 {
-    public struct Move
+    public readonly struct Move
     {
-        public byte From { get; set; }
-        public byte To { get; set; }
-        public Piece Piece { get; set; }
-        public MoveFlags Flags { get; set; }
+        public readonly byte From;
+        public readonly byte To;
+        public readonly Piece Piece;
+        public readonly MoveFlags Flags;
 
         public Move(byte from, byte to, Piece piece, MoveFlags flags)
         {

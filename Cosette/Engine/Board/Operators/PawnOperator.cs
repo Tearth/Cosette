@@ -25,15 +25,15 @@ namespace Cosette.Engine.Board.Operators
             {
                 shift = 8;
                 promotionRank = BoardConstants.HRank;
-                pawns = boardState.WhitePieces[(int) Piece.Pawn];
-                pawns = (pawns << 8) & ~boardState.Occupancy;
+                pawns = boardState.Pieces[(int)Color.White][(int)Piece.Pawn];
+                pawns = (pawns << 8) & ~boardState.OccupancySummary;
             }
             else
             {
                 shift = -8;
                 promotionRank = BoardConstants.ARank;
-                pawns = boardState.BlackPieces[(int)Piece.Pawn];
-                pawns = (pawns >> 8) & ~boardState.Occupancy;
+                pawns = boardState.Pieces[(int)Color.Black][(int)Piece.Pawn];
+                pawns = (pawns >> 8) & ~boardState.OccupancySummary;
             }
 
             while (pawns != 0)
@@ -69,17 +69,17 @@ namespace Cosette.Engine.Board.Operators
             {
                 shift = 16;
                 startRank = BoardConstants.BRank;
-                pawns = boardState.WhitePieces[(int)Piece.Pawn];
-                pawns = ((pawns & startRank) << 8) & ~boardState.Occupancy;
-                pawns = (pawns << 8) & ~boardState.Occupancy;
+                pawns = boardState.Pieces[(int)Color.White][(int)Piece.Pawn];
+                pawns = ((pawns & startRank) << 8) & ~boardState.OccupancySummary;
+                pawns = (pawns << 8) & ~boardState.OccupancySummary;
             }
             else
             {
                 shift = -16;
                 startRank = BoardConstants.GRank;
-                pawns = boardState.BlackPieces[(int)Piece.Pawn];
-                pawns = ((pawns & startRank) >> 8) & ~boardState.Occupancy;
-                pawns = (pawns >> 8) & ~boardState.Occupancy;
+                pawns = boardState.Pieces[(int)Color.Black][(int)Piece.Pawn];
+                pawns = ((pawns & startRank) >> 8) & ~boardState.OccupancySummary;
+                pawns = (pawns >> 8) & ~boardState.OccupancySummary;
             }
 
             while (pawns != 0)
@@ -105,18 +105,18 @@ namespace Cosette.Engine.Board.Operators
             {
                 shift = dir;
                 promotionRank = BoardConstants.HRank;
-                enemyOccupancy = boardState.ColorOccupancy[(int)Color.Black] | boardState.ColorEnPassant[(int)Color.Black];
-                enemyEnPassant = boardState.ColorEnPassant[(int)Color.Black];
-                pawns = boardState.WhitePieces[(int)Piece.Pawn];
+                enemyOccupancy = boardState.Occupancy[(int)Color.Black] | boardState.EnPassant[(int)Color.Black];
+                enemyEnPassant = boardState.EnPassant[(int)Color.Black];
+                pawns = boardState.Pieces[(int)Color.White][(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) << dir) & enemyOccupancy;
             }
             else
             {
                 shift = -dir;
                 promotionRank = BoardConstants.ARank;
-                enemyOccupancy = boardState.ColorOccupancy[(int)Color.White] | boardState.ColorEnPassant[(int)Color.White];
-                enemyEnPassant = boardState.ColorEnPassant[(int)Color.White];
-                pawns = boardState.BlackPieces[(int)Piece.Pawn];
+                enemyOccupancy = boardState.Occupancy[(int)Color.White] | boardState.EnPassant[(int)Color.White];
+                enemyEnPassant = boardState.EnPassant[(int)Color.White];
+                pawns = boardState.Pieces[(int)Color.Black][(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;
             }
 

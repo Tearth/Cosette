@@ -8,9 +8,9 @@ namespace Cosette.Engine.Board.Operators
     {
         public static int GetAvailableMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
-            var friendlyOccupancy = boardState.ColorOccupancy[(int)color];
-            var enemyOccupancy = boardState.ColorOccupancy[(int)ColorOperations.Invert(color)];
-            var kings = color == Color.White ? boardState.WhitePieces[(int)Piece.King] : boardState.BlackPieces[(int)Piece.King];
+            var friendlyOccupancy = boardState.Occupancy[(int)color];
+            var enemyOccupancy = boardState.Occupancy[(int)ColorOperations.Invert(color)];
+            var kings = boardState.Pieces[(int)color][(int)Piece.King];
             Span<Piece> attackingPieces = stackalloc Piece[6];
 
             while (kings != 0)
@@ -32,7 +32,7 @@ namespace Cosette.Engine.Board.Operators
 
                 if (color == Color.White)
                 {
-                    if ((boardState.Castling & Castling.WhiteShort) != 0 && (boardState.Occupancy & 6) == 0)
+                    if ((boardState.Castling & Castling.WhiteShort) != 0 && (boardState.OccupancySummary & 6) == 0)
                     {
                         if (boardState.GetAttackingPiecesAtField(color, 1, attackingPieces) == 0 &&
                             boardState.GetAttackingPiecesAtField(color, 2, attackingPieces) == 0 &&
@@ -41,7 +41,7 @@ namespace Cosette.Engine.Board.Operators
                             moves[offset++] = new Move(3, 1, Piece.King, MoveFlags.Castling);
                         }
                     }
-                    else if ((boardState.Castling & Castling.WhiteLong) != 0 && (boardState.Occupancy & 112) == 0)
+                    else if ((boardState.Castling & Castling.WhiteLong) != 0 && (boardState.OccupancySummary & 112) == 0)
                     {
                         if (boardState.GetAttackingPiecesAtField(color, 3, attackingPieces) == 0 &&
                             boardState.GetAttackingPiecesAtField(color, 4, attackingPieces) == 0 &&
@@ -53,7 +53,7 @@ namespace Cosette.Engine.Board.Operators
                 }
                 else
                 {
-                    if ((boardState.Castling & Castling.BlackShort) != 0 && (boardState.Occupancy & 432345564227567616) == 0)
+                    if ((boardState.Castling & Castling.BlackShort) != 0 && (boardState.OccupancySummary & 432345564227567616) == 0)
                     {
                         if (boardState.GetAttackingPiecesAtField(color, 57, attackingPieces) == 0 &&
                             boardState.GetAttackingPiecesAtField(color, 58, attackingPieces) == 0 &&
@@ -62,7 +62,7 @@ namespace Cosette.Engine.Board.Operators
                             moves[offset++] = new Move(59, 57, Piece.King, MoveFlags.Castling);
                         }
                     }
-                    else if ((boardState.Castling & Castling.BlackLong) != 0 && (boardState.Occupancy & 8070450532247928832) == 0)
+                    else if ((boardState.Castling & Castling.BlackLong) != 0 && (boardState.OccupancySummary & 8070450532247928832) == 0)
                     {
                         if (boardState.GetAttackingPiecesAtField(color, 59, attackingPieces) == 0 &&
                             boardState.GetAttackingPiecesAtField(color, 60, attackingPieces) == 0 &&

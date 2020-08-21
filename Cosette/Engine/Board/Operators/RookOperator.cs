@@ -8,9 +8,9 @@ namespace Cosette.Engine.Board.Operators
     {
         public static int GetAvailableMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
-            var friendlyOccupancy = boardState.ColorOccupancy[(int)color];
-            var enemyOccupancy = boardState.ColorOccupancy[(int)ColorOperations.Invert(color)];
-            var rooks = color == Color.White ? boardState.WhitePieces[(int)Piece.Rook] : boardState.BlackPieces[(int)Piece.Rook];
+            var friendlyOccupancy = boardState.Occupancy[(int)color];
+            var enemyOccupancy = boardState.Occupancy[(int)ColorOperations.Invert(color)];
+            var rooks = boardState.Pieces[(int)color][(int)Piece.Rook];
 
             while (rooks != 0)
             {
@@ -18,7 +18,7 @@ namespace Cosette.Engine.Board.Operators
                 rooks = BitOperations.PopLsb(rooks);
 
                 var from = BitOperations.BitScan(piece);
-                var availableMoves = RookMovesGenerator.GetMoves(boardState.Occupancy, from) & ~friendlyOccupancy;
+                var availableMoves = RookMovesGenerator.GetMoves(boardState.OccupancySummary, from) & ~friendlyOccupancy;
 
                 while (availableMoves != 0)
                 {
