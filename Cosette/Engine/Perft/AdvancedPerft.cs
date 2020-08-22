@@ -11,12 +11,12 @@ namespace Cosette.Engine.Perft
     {
         public static AdvancedPerftResult Run(BoardState boardState, Color color, int depth)
         {
-            GC.TryStartNoGCRegion(1024 * 1024 * 16);
+            //GC.TryStartNoGCRegion(1024 * 1024 * 16);
             var result = new AdvancedPerftResult();
             var stopwatch = Stopwatch.StartNew();
             Perft(boardState, color, depth, result);
             result.Time = stopwatch.Elapsed.TotalSeconds;
-            GC.EndNoGCRegion();
+            //GC.EndNoGCRegion();
 
             return result;
         }

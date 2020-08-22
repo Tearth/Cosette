@@ -13,7 +13,7 @@ namespace Cosette.Engine.Perft
             Span<Move> moves = stackalloc Move[128];
             var movesCount = boardState.GetAvailableMoves(moves, color);
 
-            GC.TryStartNoGCRegion(1024 * 1024 * 16);
+            //GC.TryStartNoGCRegion(1024 * 1024 * 16);
 
             var result = new DividedPerftResult();
             for (var i = 0; i < movesCount; i++)
@@ -29,7 +29,7 @@ namespace Cosette.Engine.Perft
                 result.TotalLeafsCount += leafsCount;
             }
 
-            GC.EndNoGCRegion();
+            //GC.EndNoGCRegion();
             return result;
         }
 

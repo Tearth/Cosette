@@ -313,6 +313,36 @@ namespace Cosette.Engine.Board
             EnPassant[(int)color] = _enPassants.Pop();
         }
 
+        public bool IsFieldAttacked(Color color, byte fieldIndex)
+        {
+            var enemyColor = ColorOperations.Invert(color);
+
+            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
+            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+            var boxAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+
+            var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int)Piece.Rook];
+            var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int)Piece.Bishop];
+            var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[(int)enemyColor][(int)Piece.Queen];
+            var attackingKnights = jumpAttacks & Pieces[(int)enemyColor][(int)Piece.Knight];
+            var attackingKings = boxAttacks & Pieces[(int)enemyColor][(int)Piece.King];
+
+            var field = 1ul << fieldIndex;
+            var potentialPawns = boxAttacks & Pieces[(int)enemyColor][(int)Piece.Pawn];
+            var attackingPawns = color == Color.White ?
+                field & ((potentialPawns >> 7) | (potentialPawns >> 9)) :
+                field & ((potentialPawns << 7) | (potentialPawns << 9));
+
+            if (attackingRooks != 0 || attackingBishops != 0 || attackingQueens != 0 || attackingKnights != 0 ||
+                attackingKings != 0 || attackingPawns != 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public int GetAttackingPiecesAtField(Color color, byte fieldIndex, Span<Piece> attackingPieces)
         {
             var attackingPiecesCount = 0;
@@ -370,15 +400,12 @@ namespace Cosette.Engine.Board
 
         public bool IsKingChecked(Color color)
         {
-            Span<Piece> attackingPieces = stackalloc Piece[6];
             var king = Pieces[(int) color][(int) Piece.King];
 
             if (king != 0)
             {
                 var kingField = BitOperations.BitScan(king);
-                var attackingPiecesCount = GetAttackingPiecesAtField(color, (byte)kingField, attackingPieces);
-
-                if (attackingPiecesCount != 0)
+                if (IsFieldAttacked(color, (byte)kingField))
                 {
                     return true;
                 }
