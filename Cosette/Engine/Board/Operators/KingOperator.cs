@@ -28,18 +28,14 @@ namespace Cosette.Engine.Board.Operators
             {
                 if ((boardState.Castling & Castling.WhiteShort) != 0 && (boardState.OccupancySummary & 6) == 0)
                 {
-                    if (!boardState.IsFieldAttacked(color, 1) &&
-                        !boardState.IsFieldAttacked(color, 2) &&
-                        !boardState.IsFieldAttacked(color, 3))
+                    if (!boardState.IsFieldAttacked(color, 1) && !boardState.IsFieldAttacked(color, 2) && !boardState.IsFieldAttacked(color, 3))
                     {
                         moves[offset++] = new Move(3, 1, Piece.King, MoveFlags.Castling);
                     }
                 }
                 else if ((boardState.Castling & Castling.WhiteLong) != 0 && (boardState.OccupancySummary & 112) == 0)
                 {
-                    if (!boardState.IsFieldAttacked(color, 3) &&
-                        !boardState.IsFieldAttacked(color, 4) &&
-                        !boardState.IsFieldAttacked(color, 5))
+                    if (!boardState.IsFieldAttacked(color, 3) && !boardState.IsFieldAttacked(color, 4) && !boardState.IsFieldAttacked(color, 5))
                     {
                         moves[offset++] = new Move(3, 5, Piece.King, MoveFlags.Castling);
                     }
@@ -49,18 +45,14 @@ namespace Cosette.Engine.Board.Operators
             {
                 if ((boardState.Castling & Castling.BlackShort) != 0 && (boardState.OccupancySummary & 432345564227567616) == 0)
                 {
-                    if (!boardState.IsFieldAttacked(color, 57) &&
-                        !boardState.IsFieldAttacked(color, 58) &&
-                        !boardState.IsFieldAttacked(color, 59))
+                    if (!boardState.IsFieldAttacked(color, 57) && !boardState.IsFieldAttacked(color, 58) && !boardState.IsFieldAttacked(color, 59))
                     {
                         moves[offset++] = new Move(59, 57, Piece.King, MoveFlags.Castling);
                     }
                 }
                 else if ((boardState.Castling & Castling.BlackLong) != 0 && (boardState.OccupancySummary & 8070450532247928832) == 0)
                 {
-                    if (!boardState.IsFieldAttacked(color, 59) &&
-                        !boardState.IsFieldAttacked(color, 60) &&
-                        !boardState.IsFieldAttacked(color, 61))
+                    if (!boardState.IsFieldAttacked(color, 59) && !boardState.IsFieldAttacked(color, 60) && !boardState.IsFieldAttacked(color, 61))
                     {
                         moves[offset++] = new Move(59, 61, Piece.King, MoveFlags.Castling);
                     }

@@ -14,10 +14,10 @@ namespace Cosette.Engine.Board
         public ulong[] EnPassant { get; set; }
         public Castling Castling { get; set; }
 
-        private FastStack<Piece> _killedPieces;
-        private FastStack<ulong> _enPassants;
-        private FastStack<Castling> _castlings;
-        private FastStack<Piece> _promotedPieces;
+        private readonly FastStack<Piece> _killedPieces;
+        private readonly FastStack<ulong> _enPassants;
+        private readonly FastStack<Castling> _castlings;
+        private readonly FastStack<Piece> _promotedPieces;
 
         public BoardState()
         {
@@ -57,6 +57,7 @@ namespace Cosette.Engine.Board
             Castling = Castling.Everything;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetAvailableMoves(Span<Move> moves, Color color)
         {
             var movesCount = PawnOperator.GetAvailableMoves(this, color, moves, 0);
@@ -229,11 +230,7 @@ namespace Cosette.Engine.Board
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UndoMove(Move move, Color color)
         {
-            if (move.Flags == MoveFlags.None)
-            {
-                MovePiece(color, move.Piece, move.To, move.From);
-            }
-            else if ((move.Flags & MoveFlags.DoublePush) != 0)
+            if (move.Flags == MoveFlags.None || (move.Flags & MoveFlags.DoublePush) != 0)
             {
                 MovePiece(color, move.Piece, move.To, move.From);
             }
