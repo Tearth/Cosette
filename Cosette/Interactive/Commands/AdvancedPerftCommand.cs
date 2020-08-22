@@ -18,6 +18,7 @@ namespace Cosette.Interactive.Commands
 
         public void Run(params string[] parameters)
         {
+            GC.TryStartNoGCRegion(1024 * 1024 * 16);
             if (parameters.Length < 1 || !int.TryParse(parameters[0], out var depth))
             {
                 Console.WriteLine("No depth specified");
@@ -35,6 +36,7 @@ namespace Cosette.Interactive.Commands
                                   $"Checkmates: {result.Checkmates}, Castlings: {result.Castles}, " +
                                   $"En passants: {result.EnPassants}, Checks: {result.Checks}");
             }
+            GC.EndNoGCRegion();
         }
     }
 }

@@ -320,7 +320,7 @@ namespace Cosette.Engine.Board
             var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
             var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
             var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var boxAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+            var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
 
             var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int)Piece.Rook];
             var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int)Piece.Bishop];
@@ -351,7 +351,7 @@ namespace Cosette.Engine.Board
             var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
             var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
             var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var boxAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+            var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
 
             var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int) Piece.Rook];
             var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int) Piece.Bishop];
