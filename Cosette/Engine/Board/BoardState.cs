@@ -84,7 +84,7 @@ namespace Cosette.Engine.Board
                 var enemyColor = ColorOperations.Invert(color);
                 var killedPiece = GetPiece(enemyColor, move.To);
 
-                RemovePiece(enemyColor, killedPiece, move.To);
+                AddOrRemovePiece(enemyColor, killedPiece, move.To);
 
                 if (killedPiece == Piece.Rook)
                 {
@@ -117,8 +117,8 @@ namespace Cosette.Engine.Board
                 if ((byte)move.Flags >= 16)
                 {
                     var promotionPiece = GetPromotionPiece(move.Flags);
-                    RemovePiece(color, move.Piece, move.From);
-                    AddPiece(color, promotionPiece, move.To);
+                    AddOrRemovePiece(color, move.Piece, move.From);
+                    AddOrRemovePiece(color, promotionPiece, move.To);
                     _promotedPieces.Push(promotionPiece);
                 }
                 else
@@ -174,7 +174,7 @@ namespace Cosette.Engine.Board
                 var enemyPieceField = color == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
                 var killedPiece = GetPiece(enemyColor, enemyPieceField);
 
-                RemovePiece(enemyColor, killedPiece, enemyPieceField);
+                AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
                 MovePiece(color, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
@@ -182,8 +182,8 @@ namespace Cosette.Engine.Board
             else if ((byte)move.Flags >= 16)
             {
                 var promotionPiece = GetPromotionPiece(move.Flags);
-                RemovePiece(color, move.Piece, move.From);
-                AddPiece(color, promotionPiece, move.To);
+                AddOrRemovePiece(color, move.Piece, move.From);
+                AddOrRemovePiece(color, promotionPiece, move.To);
                 _promotedPieces.Push(promotionPiece);
             }
 
@@ -240,15 +240,15 @@ namespace Cosette.Engine.Board
                 if ((byte)move.Flags >= 16)
                 {
                     var promotionPiece = _promotedPieces.Pop();
-                    RemovePiece(color, promotionPiece, move.To);
-                    AddPiece(color, move.Piece, move.From);
+                    AddOrRemovePiece(color, promotionPiece, move.To);
+                    AddOrRemovePiece(color, move.Piece, move.From);
                 }
                 else
                 {
                     MovePiece(color, move.Piece, move.To, move.From);
                 }
 
-                AddPiece(enemyColor, killedPiece, move.To);
+                AddOrRemovePiece(enemyColor, killedPiece, move.To);
             }
             else if ((move.Flags & MoveFlags.Castling) != 0)
             {
@@ -288,13 +288,13 @@ namespace Cosette.Engine.Board
                 var killedPiece = _killedPieces.Pop();
 
                 MovePiece(color, move.Piece, move.To, move.From);
-                AddPiece(enemyColor, killedPiece, enemyPieceField);
+                AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
             }
             else if ((byte)move.Flags >= 16)
             {
                 var promotionPiece = _promotedPieces.Pop();
-                RemovePiece(color, promotionPiece, move.To);
-                AddPiece(color, move.Piece, move.From);
+                AddOrRemovePiece(color, promotionPiece, move.To);
+                AddOrRemovePiece(color, move.Piece, move.From);
             }
 
             Castling = _castlings.Pop();
@@ -416,13 +416,11 @@ namespace Cosette.Engine.Board
 
         private void MovePiece(Color color, Piece piece, byte from, byte to)
         {
-            Pieces[(int)color][(int) piece] &= ~(1ul << from);
-            Pieces[(int)color][(int) piece] |= 1ul << to;
+            var move = (1ul << from) | (1ul << to);
 
-            Occupancy[(int)color] &= ~(1ul << from);
-            Occupancy[(int)color] |= 1ul << to;
-
-            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
+            Pieces[(int) color][(int) piece] ^= move;
+            Occupancy[(int)color] ^= move;
+            OccupancySummary ^= move;
         }
 
         private Piece GetPiece(Color color, byte from)
@@ -440,18 +438,13 @@ namespace Cosette.Engine.Board
             throw new InvalidOperationException();
         }
 
-        private void AddPiece(Color color, Piece piece, byte field)
+        private void AddOrRemovePiece(Color color, Piece piece, byte at)
         {
-            Pieces[(int)color][(int)piece] |= 1ul << field;
-            Occupancy[(int)color] |= 1ul << field;
-            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
-        }
+            var field = 1ul << at;
 
-        private void RemovePiece(Color color, Piece piece, byte from)
-        {
-            Pieces[(int)color][(int)piece] &= ~(1ul << from);
-            Occupancy[(int)color] &= ~(1ul << from);
-            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
+            Pieces[(int)color][(int)piece] ^= field;
+            Occupancy[(int)color] ^= field;
+            OccupancySummary ^= field;
         }
 
         private Piece GetPromotionPiece(MoveFlags flags)
