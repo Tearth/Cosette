@@ -317,10 +317,9 @@ namespace Cosette.Engine.Board
         {
             var attackingPiecesCount = 0;
             var enemyColor = ColorOperations.Invert(color);
-            var enemyOccupancy = Occupancy[(int)ColorOperations.Invert(color)];
 
-            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & enemyOccupancy;
-            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & enemyOccupancy;
+            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
             var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
             var boxAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
 
@@ -390,15 +389,12 @@ namespace Cosette.Engine.Board
 
         private void MovePiece(Color color, Piece piece, byte from, byte to)
         {
-            var occupancy = Occupancy[(int)color];
-
             Pieces[(int)color][(int) piece] &= ~(1ul << from);
             Pieces[(int)color][(int) piece] |= 1ul << to;
 
-            occupancy &= ~(1ul << from);
-            occupancy |= 1ul << to;
+            Occupancy[(int)color] &= ~(1ul << from);
+            Occupancy[(int)color] |= 1ul << to;
 
-            Occupancy[(int) color] = occupancy;
             OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
         }
 
@@ -419,23 +415,15 @@ namespace Cosette.Engine.Board
 
         private void AddPiece(Color color, Piece piece, byte field)
         {
-            var occupancy = Occupancy[(int)color];
-
             Pieces[(int)color][(int)piece] |= 1ul << field;
-            occupancy |= 1ul << field;
-
-            Occupancy[(int)color] = occupancy;
+            Occupancy[(int)color] |= 1ul << field;
             OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
         }
 
         private void RemovePiece(Color color, Piece piece, byte from)
         {
-            var occupancy = Occupancy[(int)color];
-
             Pieces[(int)color][(int)piece] &= ~(1ul << from);
-            occupancy &= ~(1ul << from);
-
-            Occupancy[(int)color] = occupancy;
+            Occupancy[(int)color] &= ~(1ul << from);
             OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
         }
 

@@ -8,8 +8,7 @@ namespace Cosette.Engine.Board.Operators
     {
         public static int GetAvailableMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
-            var friendlyOccupancy = boardState.Occupancy[(int)color];
-            var enemyOccupancy = boardState.Occupancy[(int)ColorOperations.Invert(color)];
+            var enemyColor = ColorOperations.Invert(color);
             var kings = boardState.Pieces[(int)color][(int)Piece.King];
             Span<Piece> attackingPieces = stackalloc Piece[6];
 
@@ -19,7 +18,7 @@ namespace Cosette.Engine.Board.Operators
                 kings = BitOperations.PopLsb(kings);
 
                 var from = BitOperations.BitScan(piece);
-                var availableMoves = KingMovesGenerator.GetMoves(from) & ~friendlyOccupancy;
+                var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.Occupancy[(int)color];
 
                 while (availableMoves != 0)
                 {
@@ -27,7 +26,8 @@ namespace Cosette.Engine.Board.Operators
                     availableMoves = BitOperations.PopLsb(availableMoves);
                     var fieldIndex = BitOperations.BitScan(field);
 
-                    moves[offset++] = new Move(from, fieldIndex, Piece.King, (field & enemyOccupancy) != 0 ? MoveFlags.Kill : MoveFlags.None);
+                    var flags = (field & boardState.Occupancy[(int)enemyColor]) != 0 ? MoveFlags.Kill : MoveFlags.None;
+                    moves[offset++] = new Move(from, fieldIndex, Piece.King, flags);
                 }
 
                 if (color == Color.White)
