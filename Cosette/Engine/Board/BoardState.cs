@@ -11,7 +11,6 @@ namespace Cosette.Engine.Board
         public ulong[] Occupancy { get; set; }
         public ulong OccupancySummary { get; set; }
         public ulong[] EnPassant { get; set; }
-
         public Castling Castling { get; set; }
 
         private FastStack<Piece> _killedPieces;
@@ -48,10 +47,10 @@ namespace Cosette.Engine.Board
 
             Castling = Castling.Everything;
 
-            _killedPieces = new FastStack<Piece>(16);
-            _enPassants = new FastStack<ulong>(16);
-            _castlings = new FastStack<Castling>(128);
-            _promotedPieces = new FastStack<Piece>(16);
+            _killedPieces = new FastStack<Piece>(32);
+            _enPassants = new FastStack<ulong>(32);
+            _castlings = new FastStack<Castling>(32);
+            _promotedPieces = new FastStack<Piece>(32);
         }
 
         public int GetAvailableMoves(Span<Move> moves, Color color)
