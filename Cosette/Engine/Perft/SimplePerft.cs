@@ -27,7 +27,7 @@ namespace Cosette.Engine.Perft
 
         private static ulong Perft(BoardState boardState, Color color, int depth)
         {
-            if (depth <= 1)
+            if (depth <= 0)
             {
                 return 1;
             }

@@ -24,13 +24,13 @@ namespace Cosette.Engine.Perft
             Span<Move> moves = stackalloc Move[128];
             var movesCount = boardState.GetAvailableMoves(moves, color);
 
-            if (depth <= 1)
+            if (depth <= 0)
             {
                 result.Leafs++;
                 return;
             }
 
-            if (depth == 2)
+            if (depth == 1)
             {
                 UpdateResult(boardState, color, moves, movesCount, result);
                 return;

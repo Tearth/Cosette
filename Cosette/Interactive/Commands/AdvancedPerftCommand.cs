@@ -28,7 +28,7 @@ namespace Cosette.Interactive.Commands
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
-            for (var i = 1; i <= depth; i++)
+            for (var i = 0; i <= depth; i++)
             {
                 var result = AdvancedPerft.Run(boardState, Color.White, i);
 

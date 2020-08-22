@@ -15,14 +15,14 @@ namespace Cosette.Tests
         }
 
         [Theory]
-        [InlineData(1, 1)]
-        [InlineData(2, 20)]
-        [InlineData(3, 400)]
-        [InlineData(4, 8902)]
-        [InlineData(5, 197281)]
-        [InlineData(6, 4865609)]
-        [InlineData(7, 119060324)]
-        [InlineData(8, 3195901860)]
+        [InlineData(0, 1)]
+        [InlineData(1, 20)]
+        [InlineData(2, 400)]
+        [InlineData(3, 8902)]
+        [InlineData(4, 197281)]
+        [InlineData(5, 4865609)]
+        [InlineData(6, 119060324)]
+        [InlineData(7, 3195901860)]
         public void SimplePerft_DefaultBoard(int depth, ulong expectedLeafsCount)
         {
             var boardState = new BoardState();

@@ -14,13 +14,18 @@ namespace Cosette.Engine.Perft
             var movesCount = boardState.GetAvailableMoves(moves, color);
 
             var result = new DividedPerftResult();
+            if (depth <= 0)
+            {
+                return result;
+            }
+
             for (var i = 0; i < movesCount; i++)
             {
                 var from = Position.FromFieldIndex(moves[i].From).ToString();
                 var to = Position.FromFieldIndex(moves[i].To).ToString();
 
                 boardState.MakeMove(moves[i], color);
-                var leafsCount = Perft(boardState, ColorOperations.Invert(color), depth);
+                var leafsCount = Perft(boardState, ColorOperations.Invert(color), depth - 1);
                 boardState.UndoMove(moves[i], color);
 
                 result.LeafsCount[$"{from}{to}"] = leafsCount;
@@ -32,7 +37,7 @@ namespace Cosette.Engine.Perft
 
         private static ulong Perft(BoardState boardState, Color color, int depth)
         {
-            if (depth <= 1)
+            if (depth <= 0)
             {
                 return 1;
             }

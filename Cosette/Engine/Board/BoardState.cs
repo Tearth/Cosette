@@ -318,15 +318,38 @@ namespace Cosette.Engine.Board
             var enemyColor = ColorOperations.Invert(color);
 
             var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
-
             var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int)Piece.Rook];
+            if (attackingRooks != 0)
+            {
+                return true;
+            }
+
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
             var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int)Piece.Bishop];
+            if (attackingBishops != 0)
+            {
+                return true;
+            }
+
             var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[(int)enemyColor][(int)Piece.Queen];
+            if (attackingQueens != 0)
+            {
+                return true;
+            }
+
+            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
             var attackingKnights = jumpAttacks & Pieces[(int)enemyColor][(int)Piece.Knight];
+            if (attackingKnights != 0)
+            {
+                return true;
+            }
+
+            var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
             var attackingKings = boxAttacks & Pieces[(int)enemyColor][(int)Piece.King];
+            if (attackingKings != 0)
+            {
+                return true;
+            }
 
             var field = 1ul << fieldIndex;
             var potentialPawns = boxAttacks & Pieces[(int)enemyColor][(int)Piece.Pawn];
@@ -334,8 +357,7 @@ namespace Cosette.Engine.Board
                 field & ((potentialPawns >> 7) | (potentialPawns >> 9)) :
                 field & ((potentialPawns << 7) | (potentialPawns << 9));
 
-            if (attackingRooks != 0 || attackingBishops != 0 || attackingQueens != 0 || attackingKnights != 0 ||
-                attackingKings != 0 || attackingPawns != 0)
+            if (attackingPawns != 0)
             {
                 return true;
             }
@@ -349,46 +371,44 @@ namespace Cosette.Engine.Board
             var enemyColor = ColorOperations.Invert(color);
 
             var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
+            var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int)Piece.Rook];
+            if (attackingRooks != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Rook;
+            }
 
-            var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int) Piece.Rook];
-            var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int) Piece.Bishop];
-            var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[(int)enemyColor][(int) Piece.Queen];
-            var attackingKnights = jumpAttacks & Pieces[(int)enemyColor][(int) Piece.Knight];
-            var attackingKings = boxAttacks & Pieces[(int)enemyColor][(int) Piece.King];
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
+            var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int)Piece.Bishop];
+            if (attackingBishops != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Bishop;
+            }
+
+            var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[(int)enemyColor][(int)Piece.Queen];
+            if (attackingQueens != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Queen;
+            }
+
+            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+            var attackingKnights = jumpAttacks & Pieces[(int)enemyColor][(int)Piece.Knight];
+            if (attackingKnights != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.Knight;
+            }
+
+            var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
+            var attackingKings = boxAttacks & Pieces[(int)enemyColor][(int)Piece.King];
+            if (attackingKings != 0)
+            {
+                attackingPieces[attackingPiecesCount++] = Piece.King;
+            }
 
             var field = 1ul << fieldIndex;
             var potentialPawns = boxAttacks & Pieces[(int)enemyColor][(int)Piece.Pawn];
             var attackingPawns = color == Color.White ?
                 field & ((potentialPawns >> 7) | (potentialPawns >> 9)) :
                 field & ((potentialPawns << 7) | (potentialPawns << 9));
-
-            if (attackingRooks != 0)
-            {
-                attackingPieces[attackingPiecesCount++] = Piece.Rook;
-            }
-
-            if (attackingBishops != 0)
-            {
-                attackingPieces[attackingPiecesCount++] = Piece.Bishop;
-            }
-
-            if (attackingQueens != 0)
-            {
-                attackingPieces[attackingPiecesCount++] = Piece.Queen;
-            }
-
-            if (attackingKnights != 0)
-            {
-                attackingPieces[attackingPiecesCount++] = Piece.Knight;
-            }
-
-            if (attackingKings != 0)
-            {
-                attackingPieces[attackingPiecesCount++] = Piece.King;
-            }
 
             if (attackingPawns != 0)
             {

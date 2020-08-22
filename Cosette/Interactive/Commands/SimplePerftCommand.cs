@@ -30,7 +30,7 @@ namespace Cosette.Interactive.Commands
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
-            for (var i = 1; i <= depth; i++)
+            for (var i = 0; i <= depth; i++)
             {
                 var result = SimplePerft.Run(boardState, Color.White, i);
                 var megaLeafsPerSecond = result.LeafsPerSecond / 1_000_000;

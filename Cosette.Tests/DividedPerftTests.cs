@@ -41,6 +41,7 @@ namespace Cosette.Tests
             Assert.Equal(5708064ul, result.LeafsCount["b1c3"]);
             Assert.Equal(5723523ul, result.LeafsCount["g1f3"]);
             Assert.Equal(4877234ul, result.LeafsCount["g1h3"]);
+            Assert.Equal(119060324ul, result.TotalLeafsCount);
         }
     }
 }
