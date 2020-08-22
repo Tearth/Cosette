@@ -18,7 +18,7 @@ namespace Cosette.Engine.Board
         private FastStack<Castling> _castlings;
         private FastStack<Piece> _promotedPieces;
 
-        public void SetDefaultState()
+        public BoardState()
         {
             Pieces = new ulong[2][];
             Pieces[(int)Color.White] = new ulong[6];
@@ -27,6 +27,14 @@ namespace Cosette.Engine.Board
             Occupancy = new ulong[2];
             EnPassant = new ulong[2];
 
+            _killedPieces = new FastStack<Piece>(32);
+            _enPassants = new FastStack<ulong>(32);
+            _castlings = new FastStack<Castling>(32);
+            _promotedPieces = new FastStack<Piece>(32);
+        }
+
+        public void SetDefaultState()
+        {
             Pieces[(int)Color.White][(int) Piece.Pawn] = 65280;
             Pieces[(int)Color.White][(int) Piece.Rook] = 129;
             Pieces[(int)Color.White][(int) Piece.Knight] = 66;
@@ -46,11 +54,6 @@ namespace Cosette.Engine.Board
             OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
 
             Castling = Castling.Everything;
-
-            _killedPieces = new FastStack<Piece>(32);
-            _enPassants = new FastStack<ulong>(32);
-            _castlings = new FastStack<Castling>(32);
-            _promotedPieces = new FastStack<Piece>(32);
         }
 
         public int GetAvailableMoves(Span<Move> moves, Color color)
@@ -414,7 +417,7 @@ namespace Cosette.Engine.Board
             return IsFieldAttacked(color, (byte)kingField);
         }
 
-        private void MovePiece(Color color, Piece piece, byte from, byte to)
+        public void MovePiece(Color color, Piece piece, byte from, byte to)
         {
             var move = (1ul << from) | (1ul << to);
 
@@ -423,7 +426,7 @@ namespace Cosette.Engine.Board
             OccupancySummary ^= move;
         }
 
-        private Piece GetPiece(Color color, byte from)
+        public Piece GetPiece(Color color, byte from)
         {
             var field = 1ul << from;
 
@@ -438,7 +441,7 @@ namespace Cosette.Engine.Board
             throw new InvalidOperationException();
         }
 
-        private void AddOrRemovePiece(Color color, Piece piece, byte at)
+        public void AddOrRemovePiece(Color color, Piece piece, byte at)
         {
             var field = 1ul << at;
 
