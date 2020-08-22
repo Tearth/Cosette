@@ -26,7 +26,7 @@ namespace Cosette.Engine.Common
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int BitScan(ulong value)
         {
-            return (int) (Lzcnt.X64.LeadingZeroCount(value) ^ 63);
+            return (int) Bmi1.X64.TrailingZeroCount(value);
         }
     }
 }

@@ -162,13 +162,11 @@ namespace Cosette.Engine.Board
 
                 if (color == Color.White)
                 {
-                    Castling &= ~Castling.WhiteShort;
-                    Castling &= ~Castling.WhiteLong;
+                    Castling &= ~Castling.WhiteCastling;
                 }
                 else
                 {
-                    Castling &= ~Castling.BlackShort;
-                    Castling &= ~Castling.BlackLong;
+                    Castling &= ~Castling.BlackCastling;
                 }
             }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
@@ -182,7 +180,7 @@ namespace Cosette.Engine.Board
 
                 _killedPieces.Push(killedPiece);
             }
-            else if ((byte)move.Flags  >= 16)
+            else if ((byte)move.Flags >= 16)
             {
                 var promotionPiece = GetPromotionPiece(move.Flags);
                 RemovePiece(color, move.Piece, move.From);
@@ -194,39 +192,30 @@ namespace Cosette.Engine.Board
             {
                 if (color == Color.White)
                 {
-                    Castling &= ~Castling.WhiteShort;
-                    Castling &= ~Castling.WhiteLong;
+                    Castling &= ~Castling.WhiteCastling;
                 }
                 else
                 {
-                    Castling &= ~Castling.BlackShort;
-                    Castling &= ~Castling.BlackLong;
+                    Castling &= ~Castling.BlackCastling;
                 }
             }
-
-            if (move.Piece == Piece.Rook)
+            else if (move.Piece == Piece.Rook && Castling != 0)
             {
-                if (color == Color.White)
+                if (move.From == 0)
                 {
-                    if (move.From == 0)
-                    {
-                        Castling &= ~Castling.WhiteShort;
-                    }
-                    else if (move.From == 7)
-                    {
-                        Castling &= ~Castling.WhiteLong;
-                    }
+                    Castling &= ~Castling.WhiteShort;
                 }
-                else if (color == Color.Black)
+                else if (move.From == 7)
                 {
-                    if (move.From == 56)
-                    {
-                        Castling &= ~Castling.BlackShort;
-                    }
-                    else if (move.From == 63)
-                    {
-                        Castling &= ~Castling.BlackLong;
-                    }
+                    Castling &= ~Castling.WhiteLong;
+                }
+                else if (move.From == 56)
+                {
+                    Castling &= ~Castling.BlackShort;
+                }
+                else if (move.From == 63)
+                {
+                    Castling &= ~Castling.BlackLong;
                 }
             }
 
@@ -421,17 +410,9 @@ namespace Cosette.Engine.Board
         public bool IsKingChecked(Color color)
         {
             var king = Pieces[(int) color][(int) Piece.King];
+            var kingField = BitOperations.BitScan(king);
 
-            if (king != 0)
-            {
-                var kingField = BitOperations.BitScan(king);
-                if (IsFieldAttacked(color, (byte)kingField))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return IsFieldAttacked(color, (byte)kingField);
         }
 
         private void MovePiece(Color color, Piece piece, byte from, byte to)
