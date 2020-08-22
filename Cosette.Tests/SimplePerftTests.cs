@@ -1,6 +1,7 @@
 using System;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
+using Cosette.Engine.Fen;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Engine.Perft;
 using Xunit;
@@ -27,6 +28,37 @@ namespace Cosette.Tests
         {
             var boardState = new BoardState();
             boardState.SetDefaultState();
+
+            var result = SimplePerft.Run(boardState, Color.White, depth);
+            Assert.Equal(expectedLeafsCount, result.LeafsCount);
+        }
+
+        [Theory]
+        [InlineData(0, 1)]
+        [InlineData(1, 43)]
+        [InlineData(2, 1706)]
+        [InlineData(3, 72571)]
+        [InlineData(4, 2843426)]
+        [InlineData(5, 120955130)]
+        public void SimplePerft_MidGameBoard(int depth, ulong expectedLeafsCount)
+        {
+            var boardState = FenParser.Parse("r2qr1k1/p2n1p2/1pb3pp/2ppN1P1/1R1PpP2/BQP1n1PB/P4N1P/1R4K1 w - - 0 21");
+
+            var result = SimplePerft.Run(boardState, Color.White, depth);
+            Assert.Equal(expectedLeafsCount, result.LeafsCount);
+        }
+
+        [Theory]
+        [InlineData(0, 1)]
+        [InlineData(1, 20)]
+        [InlineData(2, 469)]
+        [InlineData(3, 9580)]
+        [InlineData(4, 222801)]
+        [InlineData(5, 4675662)]
+        [InlineData(6, 108146453)]
+        public void SimplePerft_EndGameBoard(int depth, ulong expectedLeafsCount)
+        {
+            var boardState = FenParser.Parse("7r/8/2k3P1/1p1p2Kp/1P6/2P5/7r/Q7 w - - 0 1");
 
             var result = SimplePerft.Run(boardState, Color.White, depth);
             Assert.Equal(expectedLeafsCount, result.LeafsCount);
