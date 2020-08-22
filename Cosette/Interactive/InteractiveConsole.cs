@@ -17,6 +17,7 @@ namespace Cosette.Interactive
             _commands["aperft"] = new AdvancedPerftCommand();
             _commands["dperft"] = new DividedPerftCommand();
             _commands["perft"] = new SimplePerftCommand();
+            _commands["benchmark"] = new BenchmarkCommand();
             _commands["quit"] = new QuitCommand();
         }
 
