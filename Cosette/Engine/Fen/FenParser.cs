@@ -22,6 +22,7 @@ namespace Cosette.Engine.Fen
             ParseCastlingState(castlingState, result);
             ParseEnPassantState(enPassantState, currentColor, result);
 
+            result.Material = result.CalculateMaterial(Color.White) + result.CalculateMaterial(Color.Black);
             return result;
         }
 

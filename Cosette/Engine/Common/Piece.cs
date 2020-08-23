@@ -3,9 +3,9 @@
     public enum Piece : byte
     {
         Pawn,
-        Rook,
         Knight,
         Bishop,
+        Rook,
         Queen,
         King
     }
