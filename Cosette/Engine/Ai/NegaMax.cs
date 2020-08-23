@@ -9,7 +9,13 @@ namespace Cosette.Engine.Ai
     {
         public static int FindBestMove(BoardState board, Color color, int depth, out Move bestMove, SearchStatistics statistics)
         {
+            var max = int.MinValue;
             bestMove = new Move();
+
+            if (board.Pieces[(int) color][(int) Piece.King] == 0)
+            {
+                return -BoardConstants.PieceValues[(int) Color.White][(int) Piece.King];
+            }
 
             if (depth <= 0)
             {
@@ -17,22 +23,20 @@ namespace Cosette.Engine.Ai
                 return Evaluation.Evaluate(board, color);
             }
 
-            var max = int.MinValue;
             Span<Move> moves = stackalloc Move[128];
             var movesCount = board.GetAvailableMoves(moves, color);
 
             for (var i = 0; i < movesCount; i++)
             {
                 board.MakeMove(moves[i], color);
-                if (!board.IsKingChecked(color))
+
+                var score = -FindBestMove(board, ColorOperations.Invert(color), depth - 1, out _, statistics);
+                if (score > max)
                 {
-                    var score = -FindBestMove(board, ColorOperations.Invert(color), depth - 1, out Move potentialBestMove, statistics);
-                    if (score > max)
-                    {
-                        max = score;
-                        bestMove = moves[i];
-                    }
+                    max = score;
+                    bestMove = moves[i];
                 }
+
                 board.UndoMove(moves[i], color);
             }
 

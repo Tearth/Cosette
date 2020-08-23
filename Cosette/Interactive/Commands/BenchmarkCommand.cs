@@ -20,7 +20,7 @@ namespace Cosette.Interactive.Commands
 
         public BenchmarkCommand()
         {
-            Description = "Test performance using a few sample positions";
+            Description = "Test NegaMax performance using a few sample positions";
         }
 
         public void Run(params string[] parameters)
