@@ -24,5 +24,10 @@ namespace Cosette.Engine.Moves
             Piece = piece;
             Flags = flags;
         }
+
+        public override string ToString()
+        {
+            return $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
+        }
     }
 }
