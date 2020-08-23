@@ -256,6 +256,9 @@ namespace Cosette.Engine.Board
                     var promotionPiece = _promotedPieces.Pop();
                     AddOrRemovePiece(color, promotionPiece, move.To);
                     AddOrRemovePiece(color, move.Piece, move.From);
+
+                    Material += BoardConstants.PieceValues[(int)color][(int)move.Piece];
+                    Material -= BoardConstants.PieceValues[(int)color][(int)promotionPiece];
                 }
                 else
                 {
