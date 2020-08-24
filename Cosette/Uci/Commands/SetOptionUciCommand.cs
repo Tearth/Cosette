@@ -2,18 +2,18 @@
 
 namespace Cosette.Uci.Commands
 {
-    public class QuitUciCommand : IUciCommand
+    public class SetOptionUciCommand : IUciCommand
     {
         private UciClient _uciClient;
 
-        public QuitUciCommand(UciClient uciClient)
+        public SetOptionUciCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
         }
 
         public void Run(params string[] parameters)
         {
-            Environment.Exit(0);
+            // Ignore options for now, engine doesn't support any
         }
     }
 }
