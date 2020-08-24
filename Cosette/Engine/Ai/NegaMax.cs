@@ -14,6 +14,7 @@ namespace Cosette.Engine.Ai
 
             if (board.Pieces[(int) color][(int) Piece.King] == 0)
             {
+                // Add depth here
                 return -BoardConstants.PieceValues[(int) Color.White][(int) Piece.King];
             }
 

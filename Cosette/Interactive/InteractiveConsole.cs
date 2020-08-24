@@ -19,6 +19,7 @@ namespace Cosette.Interactive
             _commands["perft"] = new SimplePerftCommand();
             _commands["benchmark"] = new BenchmarkCommand();
             _commands["verify"] = new VerifyCommand();
+            _commands["uci"] = new UciCommand();
             _commands["quit"] = new QuitCommand();
         }
 
