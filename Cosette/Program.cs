@@ -10,10 +10,7 @@ namespace Cosette
     {
         static void Main(string[] args)
         {
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
             MagicBitboards.InitWithInternalKeys();
-
             new InteractiveConsole().Run();
         }
     }
