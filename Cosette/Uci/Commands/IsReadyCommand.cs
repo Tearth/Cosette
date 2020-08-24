@@ -2,11 +2,11 @@
 
 namespace Cosette.Uci.Commands
 {
-    public class IsReadyUciCommand : IUciCommand
+    public class IsReadyCommand : IUciCommand
     {
         private UciClient _uciClient;
 
-        public IsReadyUciCommand(UciClient uciClient)
+        public IsReadyCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
         }

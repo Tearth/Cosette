@@ -2,11 +2,11 @@
 
 namespace Cosette.Uci.Commands
 {
-    public class QuitUciCommand : IUciCommand
+    public class QuitCommand : IUciCommand
     {
         private UciClient _uciClient;
 
-        public QuitUciCommand(UciClient uciClient)
+        public QuitCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
         }

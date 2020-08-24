@@ -2,11 +2,11 @@
 
 namespace Cosette.Uci.Commands
 {
-    public class SetOptionUciCommand : IUciCommand
+    public class SetOptionCommand : IUciCommand
     {
         private UciClient _uciClient;
 
-        public SetOptionUciCommand(UciClient uciClient)
+        public SetOptionCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
         }

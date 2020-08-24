@@ -12,9 +12,9 @@ namespace Cosette.Uci
         public UciClient()
         {
             _commands = new Dictionary<string, IUciCommand>();
-            _commands["quit"] = new QuitUciCommand(this);
-            _commands["setoption"] = new SetOptionUciCommand(this);
-            _commands["isready"] = new IsReadyUciCommand(this);
+            _commands["quit"] = new QuitCommand(this);
+            _commands["setoption"] = new SetOptionCommand(this);
+            _commands["isready"] = new IsReadyCommand(this);
         }
 
         public void Run()
