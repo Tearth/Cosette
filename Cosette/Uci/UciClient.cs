@@ -14,6 +14,7 @@ namespace Cosette.Uci
             _commands = new Dictionary<string, IUciCommand>();
             _commands["quit"] = new QuitUciCommand(this);
             _commands["setoption"] = new SetOptionUciCommand(this);
+            _commands["isready"] = new IsReadyUciCommand(this);
         }
 
         public void Run()
