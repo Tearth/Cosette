@@ -8,6 +8,8 @@ namespace Cosette.Uci
     public class UciClient
     {
         private UciGame _uciGame;
+        private bool _debugMode;
+
         private Dictionary<string, IUciCommand> _commands;
 
         public UciClient()
@@ -44,19 +46,24 @@ namespace Cosette.Uci
             return (command, parameters);
         }
 
+        public void SetDebugMode(bool state)
+        {
+            _debugMode = state;
+        }
+
         private void SendName()
         {
-            Console.WriteLine("id name Cosette");
+            Send("id name Cosette");
         }
 
         private void SendAuthor()
         {
-            Console.WriteLine("id author Tearth");
+            Send("id author Tearth");
         }
 
         private void SendOptions()
         {
-            Console.WriteLine("uciok");
+            Send("uciok");
         }
 
         private void RunCommandsLoop()
