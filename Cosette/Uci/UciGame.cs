@@ -1,10 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Cosette.Engine.Board;
 
 namespace Cosette.Uci
 {
-    class UciGame
+    public class UciGame
     {
+        private BoardState _boardState;
+
+        public UciGame()
+        {
+            _boardState = new BoardState();
+        }
+
+        public void SetDefaultState()
+        {
+            _boardState.SetDefaultState();
+        }
     }
 }

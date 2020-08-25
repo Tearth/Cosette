@@ -2,12 +2,12 @@
 
 namespace Cosette.Uci.Commands
 {
-    public class SetOptionCommand : IUciCommand
+    public class UciNewGameCommand : IUciCommand
     {
         private UciClient _uciClient;
         private UciGame _uciGame;
 
-        public SetOptionCommand(UciClient uciClient, UciGame uciGame)
+        public UciNewGameCommand(UciClient uciClient, UciGame uciGame)
         {
             _uciClient = uciClient;
             _uciGame = uciGame;
@@ -15,7 +15,7 @@ namespace Cosette.Uci.Commands
 
         public void Run(params string[] parameters)
         {
-            // Ignore options for now, engine doesn't support any
+            _uciGame.SetDefaultState();
         }
     }
 }
