@@ -21,6 +21,8 @@ namespace Cosette.Uci
             _commands["setoption"] = new SetOptionCommand(this, _uciGame);
             _commands["isready"] = new IsReadyCommand(this, _uciGame);
             _commands["ucinewgame"] = new UciNewGameCommand(this, _uciGame);
+            _commands["position"] = new PositionCommand(this, _uciGame);
+            _commands["debug"] = new DebugCommand(this, _uciGame);
         }
 
         public void Run()
