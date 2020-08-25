@@ -29,6 +29,21 @@ namespace Cosette.Uci
             RunCommandsLoop();
         }
 
+        public void Send(string command)
+        {
+            Console.WriteLine(command);
+        }
+
+        public (string Command, string[] parameters) Receive()
+        {
+            var input = Console.ReadLine();
+            var splitInput = input.Split(' ');
+            var command = splitInput[0].ToLower();
+            var parameters = splitInput.Skip(1).ToArray();
+
+            return (command, parameters);
+        }
+
         private void SendName()
         {
             Console.WriteLine("id name Cosette");
@@ -48,11 +63,7 @@ namespace Cosette.Uci
         {
             while (true)
             {
-                var input = Console.ReadLine();
-                var splitInput = input.Split(' ');
-                var command = splitInput[0].ToLower();
-                var parameters = splitInput.Skip(1).ToArray();
-
+                var (command, parameters) = Receive();
                 if (_commands.ContainsKey(command))
                 {
                     _commands[command].Run(parameters);

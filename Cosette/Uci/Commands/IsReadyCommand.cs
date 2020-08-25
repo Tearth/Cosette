@@ -15,7 +15,7 @@ namespace Cosette.Uci.Commands
 
         public void Run(params string[] parameters)
         {
-            Console.WriteLine("readyok");
+            _uciClient.Send("readyok");
         }
     }
 }

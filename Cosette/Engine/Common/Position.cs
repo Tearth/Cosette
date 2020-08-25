@@ -26,6 +26,13 @@
             return new Position(7 - fieldIndex % 8, fieldIndex / 8);
         }
 
+        public static Position FromText(string move)
+        {
+            var file = move[0] - 'a';
+            var rank = move[1] - '1';
+            return new Position(file, rank);
+        }
+
         public static Position operator +(Position a, Position b)
         {
             return new Position(a.X + b.X, a.Y + b.Y);
@@ -34,6 +41,16 @@
         public static Position operator -(Position a, Position b)
         {
             return new Position(a.X - b.X, a.Y - b.Y);
+        }
+
+        public static bool operator ==(Position a, Position b)
+        {
+            return a.X == b.X && a.Y == b.Y;
+        }
+
+        public static bool operator !=(Position a, Position b)
+        {
+            return a.X != b.X || a.Y != b.Y;
         }
 
         public override int GetHashCode()

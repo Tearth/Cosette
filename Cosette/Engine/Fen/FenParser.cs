@@ -86,10 +86,7 @@ namespace Cosette.Engine.Fen
         {
             if (enPassantState != "-")
             {
-                var file = enPassantState[0] - 'a';
-                var rank = enPassantState[1] - '1';
-                var position = new Position(file, rank);
-
+                var position = Position.FromText(enPassantState);
                 result.EnPassant[(int) ColorOperations.Invert(color)] = 1ul << position.ToFieldIndex();
             }
         }
