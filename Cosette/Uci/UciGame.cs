@@ -48,10 +48,7 @@ namespace Cosette.Uci
 
         public Move SearchBestMove()
         {
-            var statistics = new SearchStatistics();
-            var score = NegaMax.FindBestMove(_boardState, _currentColor, 4, out Move bestMove, statistics);
-
-            return bestMove;
+            return IterativeDeepening.FindBestMove(_boardState, _currentColor);
         }
 
         public void SetCurrentColor(Color color)

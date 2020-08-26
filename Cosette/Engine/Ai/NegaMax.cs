@@ -20,7 +20,7 @@ namespace Cosette.Engine.Ai
 
             if (depth <= 0)
             {
-                statistics.LeafsCount++;
+                statistics.Leafs++;
                 return Evaluation.Evaluate(board, color);
             }
 
@@ -41,6 +41,7 @@ namespace Cosette.Engine.Ai
                 board.UndoMove(moves[i], color);
             }
 
+            statistics.Nodes++;
             return max;
         }
     }

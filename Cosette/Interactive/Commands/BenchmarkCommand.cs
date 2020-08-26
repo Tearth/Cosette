@@ -66,10 +66,10 @@ namespace Cosette.Interactive.Commands
             stopwatch.Stop();
 
             var totalSeconds = stopwatch.Elapsed.TotalSeconds;
-            var megaLeafsPerSecond = (statistics.LeafsCount / totalSeconds) / 1_000_000;
-            var nanosecondsPerLeaf = (totalSeconds / statistics.LeafsCount) * 1_000_000_000;
+            var megaLeafsPerSecond = (statistics.Leafs / totalSeconds) / 1_000_000;
+            var nanosecondsPerLeaf = (totalSeconds / statistics.Leafs) * 1_000_000_000;
 
-            Console.WriteLine($"{name} - Best: {bestMove}, Score: {score}, Leafs: {statistics.LeafsCount}, Time: {totalSeconds:F} s, " +
+            Console.WriteLine($"{name} - Best: {bestMove}, Score: {score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
                               $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
 
             return totalSeconds;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cosette.Engine.Ai;
 using Cosette.Uci.Commands;
 
 namespace Cosette.Uci
@@ -24,6 +25,8 @@ namespace Cosette.Uci
             _commands["position"] = new PositionCommand(this, _uciGame);
             _commands["debug"] = new DebugCommand(this, _uciGame);
             _commands["go"] = new GoCommand(this, _uciGame);
+
+            IterativeDeepening.OnSearchUpdate += OnSearchUpdate;
         }
 
         public void Run()
@@ -79,6 +82,11 @@ namespace Cosette.Uci
                     _commands[command].Run(parameters);
                 }
             }
+        }
+
+        private void OnSearchUpdate(object? sender, SearchStatistics stats)
+        {
+            Send($"info time {stats.SearchTime} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
         }
     }
 }
