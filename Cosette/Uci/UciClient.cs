@@ -23,6 +23,7 @@ namespace Cosette.Uci
             _commands["ucinewgame"] = new UciNewGameCommand(this, _uciGame);
             _commands["position"] = new PositionCommand(this, _uciGame);
             _commands["debug"] = new DebugCommand(this, _uciGame);
+            _commands["go"] = new GoCommand(this, _uciGame);
         }
 
         public void Run()

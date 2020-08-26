@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Cosette.Engine.Ai;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
@@ -9,6 +11,7 @@ namespace Cosette.Uci
     public class UciGame
     {
         private BoardState _boardState;
+        private Color _currentColor;
 
         public UciGame()
         {
@@ -18,11 +21,12 @@ namespace Cosette.Uci
         public void SetDefaultState()
         {
             _boardState.SetDefaultState();
+            _currentColor = Color.White;
         }
 
         public void SetFen(string fen)
         {
-            _boardState = FenParser.Parse(fen);
+            _boardState = FenParser.Parse(fen, out _currentColor);
         }
 
         public bool MakeMove(Color color, Position from, Position to)
@@ -40,6 +44,19 @@ namespace Cosette.Uci
             }
 
             return false;
+        }
+
+        public Move SearchBestMove()
+        {
+            var statistics = new SearchStatistics();
+            var score = NegaMax.FindBestMove(_boardState, _currentColor, 4, out Move bestMove, statistics);
+
+            return bestMove;
+        }
+
+        public void SetCurrentColor(Color color)
+        {
+            _currentColor = color;
         }
     }
 }

@@ -25,14 +25,15 @@ namespace Cosette.Uci.Commands
             {
                 case "startpos":
                 {
-                    ParseStartPos(settings.ToList());
+                    var moves = settings.Skip(1).ToList();
+                    ParseStartPos(moves);
                     break;
                 }
 
                 case "fen":
                 {
                     var fen = string.Join(" ", settings.Take(6));
-                    var moves = settings.Skip(6).ToList();
+                    var moves = settings.Skip(7).ToList();
                     ParseFen(fen, moves);
                     break;
                 }
@@ -66,6 +67,8 @@ namespace Cosette.Uci.Commands
 
                 color = ColorOperations.Invert(color);
             }
+
+            _uciGame.SetCurrentColor(color);
         }
     }
 }
