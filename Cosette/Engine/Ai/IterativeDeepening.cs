@@ -21,10 +21,11 @@ namespace Cosette.Engine.Ai
             {
                 statistics.Clear();
 
-                NegaMax.FindBestMove(board, color, i, out bestMove, statistics);
+                statistics.Depth = i;
+                statistics.Score = NegaMax.FindBestMove(board, color, i, out bestMove, statistics);
 
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
-                statistics.NodesPerSecond = (ulong)((float)statistics.Nodes / ((float)statistics.SearchTime / 1000));
+                statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));
 
                 OnSearchUpdate?.Invoke(null, statistics);
             }

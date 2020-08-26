@@ -86,7 +86,7 @@ namespace Cosette.Uci
 
         private void OnSearchUpdate(object? sender, SearchStatistics stats)
         {
-            Send($"info time {stats.SearchTime} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
+            Send($"info depth {stats.Depth} time {stats.SearchTime} score cp {stats.Score} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
         }
     }
 }
