@@ -30,10 +30,10 @@ namespace Cosette.Engine.Board
             Occupancy = new ulong[2];
             EnPassant = new ulong[2];
 
-            _killedPieces = new FastStack<Piece>(32);
-            _enPassants = new FastStack<ulong>(32);
-            _castlings = new FastStack<Castling>(32);
-            _promotedPieces = new FastStack<Piece>(32);
+            _killedPieces = new FastStack<Piece>(256);
+            _enPassants = new FastStack<ulong>(256);
+            _castlings = new FastStack<Castling>(256);
+            _promotedPieces = new FastStack<Piece>(256);
         }
 
         public void SetDefaultState()
@@ -57,6 +57,11 @@ namespace Cosette.Engine.Board
             OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
 
             Castling = Castling.Everything;
+
+            _killedPieces.Clear();
+            _enPassants.Clear();
+            _castlings.Clear();
+            _promotedPieces.Clear();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

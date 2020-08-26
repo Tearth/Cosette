@@ -23,5 +23,11 @@ namespace Cosette.Engine.Common
         {
             return _stack[--_pointer];
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear()
+        {
+            _pointer = 0;
+        }
     }
 }
