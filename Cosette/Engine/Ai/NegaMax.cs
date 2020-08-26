@@ -7,13 +7,14 @@ namespace Cosette.Engine.Ai
 {
     public static class NegaMax
     {
-        public static int FindBestMove(BoardState board, Color color, int depth, out Move bestMove, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, Color color, int depth, int alpha, int beta, out Move bestMove, SearchStatistics statistics)
         {
-            var max = int.MinValue;
             bestMove = new Move();
+            statistics.Nodes++;
 
             if (board.Pieces[(int) color][(int) Piece.King] == 0)
             {
+                statistics.Leafs++;
                 // Add depth here
                 return -BoardConstants.PieceValues[(int) Color.White][(int) Piece.King];
             }
@@ -31,18 +32,23 @@ namespace Cosette.Engine.Ai
             {
                 board.MakeMove(moves[i], color);
 
-                var score = -FindBestMove(board, ColorOperations.Invert(color), depth - 1, out _, statistics);
-                if (score > max)
+                var score = -FindBestMove(board, ColorOperations.Invert(color), depth - 1, -beta, -alpha, out _, statistics);
+                if (score >= beta)
                 {
-                    max = score;
+                    board.UndoMove(moves[i], color);
+                    return beta;
+                }
+
+                if (score > alpha)
+                {
+                    alpha = score;
                     bestMove = moves[i];
                 }
 
                 board.UndoMove(moves[i], color);
             }
 
-            statistics.Nodes++;
-            return max;
+            return alpha;
         }
     }
 }

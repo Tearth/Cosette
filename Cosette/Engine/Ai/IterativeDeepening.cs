@@ -17,13 +17,16 @@ namespace Cosette.Engine.Ai
             var statistics = new SearchStatistics();
             var lastNodesCount = 1ul;
 
+            var alpha = SearchConstants.MinValue;
+            var beta = SearchConstants.MaxValue;
+
             var stopwatch = Stopwatch.StartNew();
-            for (var i = 2; i < 5; i++)
+            for (var i = 1; i < 5; i++)
             {
                 statistics.Clear();
 
                 statistics.Depth = i;
-                statistics.Score = NegaMax.FindBestMove(board, color, i, out bestMove, statistics);
+                statistics.Score = NegaMax.FindBestMove(board, color, i, alpha, beta, out bestMove, statistics);
 
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));

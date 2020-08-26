@@ -62,7 +62,7 @@ namespace Cosette.Interactive.Commands
             var statistics = new SearchStatistics();
 
             var stopwatch = Stopwatch.StartNew();
-            var score = NegaMax.FindBestMove(boardState, Color.White, depth, out Move bestMove, statistics);
+            var score = NegaMax.FindBestMove(boardState, Color.White, depth, SearchConstants.MinValue, SearchConstants.MaxValue, out Move bestMove, statistics);
             stopwatch.Stop();
 
             var totalSeconds = stopwatch.Elapsed.TotalSeconds;
