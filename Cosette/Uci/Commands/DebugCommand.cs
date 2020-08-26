@@ -15,7 +15,7 @@ namespace Cosette.Uci.Commands
 
         public void Run(params string[] parameters)
         {
-            _uciClient.SetDebugMode(bool.Parse(parameters[0]));
+            _uciClient.SetDebugMode(parameters[0] == "on");
         }
     }
 }

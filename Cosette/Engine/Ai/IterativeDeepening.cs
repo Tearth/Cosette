@@ -15,9 +15,10 @@ namespace Cosette.Engine.Ai
         {
             var bestMove = new Move();
             var statistics = new SearchStatistics();
+            var lastNodesCount = 1ul;
 
             var stopwatch = Stopwatch.StartNew();
-            for (var i = 0; i < 6; i++)
+            for (var i = 2; i < 5; i++)
             {
                 statistics.Clear();
 
@@ -26,8 +27,10 @@ namespace Cosette.Engine.Ai
 
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));
+                statistics.BranchingFactor = (int)(statistics.Nodes / lastNodesCount);
 
                 OnSearchUpdate?.Invoke(null, statistics);
+                lastNodesCount = statistics.Nodes;
             }
 
             return bestMove;

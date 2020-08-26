@@ -16,6 +16,7 @@ namespace Cosette.Uci
         public UciClient()
         {
             _uciGame = new UciGame();
+            _debugMode = true; // Arena workaround
 
             _commands = new Dictionary<string, IUciCommand>();
             _commands["quit"] = new QuitCommand(this, _uciGame);
@@ -84,9 +85,14 @@ namespace Cosette.Uci
             }
         }
 
-        private void OnSearchUpdate(object? sender, SearchStatistics stats)
+        private void OnSearchUpdate(object sender, SearchStatistics stats)
         {
             Send($"info depth {stats.Depth} time {stats.SearchTime} score cp {stats.Score} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
+
+            if (_debugMode)
+            {
+                Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor}");
+            }
         }
     }
 }

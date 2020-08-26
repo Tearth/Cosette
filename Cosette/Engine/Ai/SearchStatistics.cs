@@ -8,6 +8,7 @@
         public ulong Nodes { get; set; }
         public ulong SearchTime { get; set; }
         public ulong NodesPerSecond { get; set; }
+        public int BranchingFactor { get; set; }
 
         public void Clear()
         {
@@ -17,6 +18,7 @@
             Nodes = 0;
             SearchTime = 0;
             NodesPerSecond = 0;
+            BranchingFactor = 0;
         }
     }
 }
