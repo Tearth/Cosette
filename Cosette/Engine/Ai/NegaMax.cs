@@ -12,11 +12,10 @@ namespace Cosette.Engine.Ai
             bestMove = new Move();
             statistics.Nodes++;
 
-            if (board.Pieces[(int) color][(int) Piece.King] == 0)
+            if (board.Pieces[(int) color][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
-                // Add depth here
-                return -BoardConstants.PieceValues[(int) Color.White][(int) Piece.King];
+                return -BoardConstants.PieceValues[(int)Color.White][(int)Piece.King] - depth;
             }
 
             if (depth <= 0)
@@ -28,11 +27,12 @@ namespace Cosette.Engine.Ai
             Span<Move> moves = stackalloc Move[128];
             var movesCount = board.GetAvailableMoves(moves, color);
 
+            var enemyColor = ColorOperations.Invert(color);
             for (var i = 0; i < movesCount; i++)
             {
                 board.MakeMove(moves[i], color);
 
-                var score = -FindBestMove(board, ColorOperations.Invert(color), depth - 1, -beta, -alpha, out _, statistics);
+                var score = -FindBestMove(board, enemyColor, depth - 1, -beta, -alpha, out _, statistics);
                 if (score >= beta)
                 {
                     board.UndoMove(moves[i], color);
