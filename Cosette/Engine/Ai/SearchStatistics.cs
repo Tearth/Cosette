@@ -9,6 +9,7 @@
         public ulong SearchTime { get; set; }
         public ulong NodesPerSecond { get; set; }
         public int BranchingFactor { get; set; }
+        public ulong BetaCutoffs { get; set; }
 
         public void Clear()
         {
@@ -19,6 +20,7 @@
             SearchTime = 0;
             NodesPerSecond = 0;
             BranchingFactor = 0;
+            BetaCutoffs = 0;
         }
     }
 }

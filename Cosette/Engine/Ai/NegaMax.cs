@@ -36,6 +36,7 @@ namespace Cosette.Engine.Ai
                 if (score >= beta)
                 {
                     board.UndoMove(moves[i], color);
+                    statistics.BetaCutoffs++;
                     return beta;
                 }
 

@@ -91,7 +91,7 @@ namespace Cosette.Uci
 
             if (_debugMode)
             {
-                Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor}");
+                Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor} bcutoffs {stats.BetaCutoffs}");
             }
         }
     }
