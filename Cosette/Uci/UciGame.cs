@@ -12,6 +12,7 @@ namespace Cosette.Uci
     {
         private BoardState _boardState;
         private Color _currentColor;
+        private int _currentMoveNumber;
 
         public UciGame()
         {
@@ -22,11 +23,12 @@ namespace Cosette.Uci
         {
             _boardState.SetDefaultState();
             _currentColor = Color.White;
+            _currentMoveNumber = 1;
         }
 
         public void SetFen(string fen)
         {
-            _boardState = FenParser.Parse(fen, out _currentColor);
+            _boardState = FenParser.Parse(fen, out _currentColor, out _currentMoveNumber);
         }
 
         public bool MakeMove(Color color, Position from, Position to)
@@ -39,6 +41,11 @@ namespace Cosette.Uci
                 if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
                 {
                     _boardState.MakeMove(moves[i], color);
+                    if (color == Color.Black)
+                    {
+                        _currentMoveNumber++;
+                    }
+
                     return true;
                 }
             }
@@ -46,9 +53,10 @@ namespace Cosette.Uci
             return false;
         }
 
-        public Move SearchBestMove()
+        public Move SearchBestMove(int whiteTime, int blackTime)
         {
-            return IterativeDeepening.FindBestMove(_boardState, _currentColor);
+            var remainingTime = _currentColor == Color.White ? whiteTime : blackTime;
+            return IterativeDeepening.FindBestMove(_boardState, _currentColor, remainingTime, _currentMoveNumber);
         }
 
         public void SetCurrentColor(Color color)

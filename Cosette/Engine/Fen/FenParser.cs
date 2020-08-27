@@ -7,13 +7,15 @@ namespace Cosette.Engine.Fen
 {
     public static class FenParser
     {
-        public static BoardState Parse(string fen, out Color color)
+        public static BoardState Parse(string fen, out Color color, out int moveNumber)
         {
             var split = fen.Split(' ');
             var boardState = split[0];
             var colorState = split[1];
             var castlingState = split[2];
             var enPassantState = split[3];
+            var halfmoveClock = int.Parse(split[4]);
+            moveNumber = int.Parse(split[5]);
 
             var result = new BoardState();
             var currentColor = ParseCurrentColor(colorState);

@@ -11,17 +11,19 @@ namespace Cosette.Engine.Ai
     {
         public static event EventHandler<SearchStatistics> OnSearchUpdate;
 
-        public static Move FindBestMove(BoardState board, Color color)
+        public static Move FindBestMove(BoardState board, Color color, int remainingTime, int moveNumber)
         {
             var bestMove = new Move();
             var statistics = new SearchStatistics();
             var lastNodesCount = 1ul;
+            var expectedExecutionTime = 0;
 
             var alpha = SearchConstants.MinValue;
             var beta = SearchConstants.MaxValue;
 
+            var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();
-            for (var i = 1; i < 5; i++)
+            for (var i = 1; expectedExecutionTime <= timeLimit; i++)
             {
                 statistics.Clear();
 
@@ -34,6 +36,8 @@ namespace Cosette.Engine.Ai
 
                 OnSearchUpdate?.Invoke(null, statistics);
                 lastNodesCount = statistics.Nodes;
+
+                expectedExecutionTime = (int)statistics.SearchTime * statistics.BranchingFactor;
             }
 
             return bestMove;
