@@ -10,6 +10,7 @@
         public ulong NodesPerSecond { get; set; }
         public int BranchingFactor { get; set; }
         public ulong BetaCutoffs { get; set; }
+        public ulong TTHits { get; set; }
 
         public void Clear()
         {
@@ -21,6 +22,7 @@
             NodesPerSecond = 0;
             BranchingFactor = 0;
             BetaCutoffs = 0;
+            TTHits = 0;
         }
     }
 }

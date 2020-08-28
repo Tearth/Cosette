@@ -8,7 +8,7 @@ namespace Cosette.Engine.Ai
     {
         private static Dictionary<ulong, TranspositionTableEntry> _table;
 
-        static TranspositionTable()
+        public static void Init()
         {
             _table = new Dictionary<ulong, TranspositionTableEntry>(100_000_000);
         }
@@ -29,6 +29,12 @@ namespace Cosette.Engine.Ai
         public static bool Exists(ulong hash)
         {
             return _table.ContainsKey(hash);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Clear()
+        {
+            _table.Clear();
         }
     }
 }

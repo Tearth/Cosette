@@ -39,6 +39,8 @@ namespace Cosette.Engine.Ai
                             break;
                         }
                     }
+
+                    statistics.TTHits++;
                 }
 
                 if (alpha >= beta)
@@ -63,33 +65,36 @@ namespace Cosette.Engine.Ai
             Span<Move> moves = stackalloc Move[128];
             var movesCount = board.GetAvailableMoves(moves);
 
+            var bestScore = int.MinValue;
             for (var i = 0; i < movesCount; i++)
             {
                 board.MakeMove(moves[i]);
 
                 var score = -FindBestMove(board, depth - 1, -beta, -alpha, out _, statistics);
-                if (score >= beta)
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestMove = moves[i];
+                }
+
+                alpha = Math.Max(alpha, score);
+
+                if (alpha >= beta)
                 {
                     board.UndoMove(moves[i]);
                     statistics.BetaCutoffs++;
-                    return beta;
-                }
-
-                if (score > alpha)
-                {
-                    alpha = score;
-                    bestMove = moves[i];
+                    break;
                 }
 
                 board.UndoMove(moves[i]);
             }
 
-            var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.UpperBound :
-                            alpha >= beta ? TranspositionTableEntryType.LowerBound :
+            var entryType = bestScore <= originalAlpha ? TranspositionTableEntryType.UpperBound :
+                            bestScore >= beta ? TranspositionTableEntryType.LowerBound :
                             TranspositionTableEntryType.ExactScore;
-            TranspositionTable.Add(board.Hash, depth, alpha, bestMove, entryType);
+            TranspositionTable.Add(board.Hash, depth, bestScore, bestMove, entryType);
 
-            return alpha;
+            return bestScore;
         }
     }
 }

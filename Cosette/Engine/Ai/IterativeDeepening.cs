@@ -20,6 +20,7 @@ namespace Cosette.Engine.Ai
 
             var alpha = SearchConstants.MinValue;
             var beta = SearchConstants.MaxValue;
+            TranspositionTable.Clear();
 
             var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();

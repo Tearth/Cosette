@@ -60,6 +60,7 @@ namespace Cosette.Interactive.Commands
         private double Test(BoardState boardState, string name, int depth)
         {
             var statistics = new SearchStatistics();
+            TranspositionTable.Clear();
 
             var stopwatch = Stopwatch.StartNew();
             var score = NegaMax.FindBestMove(boardState, depth, SearchConstants.MinValue, SearchConstants.MaxValue, out Move bestMove, statistics);
