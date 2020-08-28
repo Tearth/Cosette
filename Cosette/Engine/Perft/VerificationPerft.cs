@@ -9,10 +9,10 @@ namespace Cosette.Engine.Perft
 {
     public static class VerificationPerft
     {
-        public static VerificationPerftResult Run(BoardState boardState, Color color, int depth)
+        public static VerificationPerftResult Run(BoardState boardState, int depth)
         {
             var verificationSuccess = true;
-            var leafsCount = Perft(boardState, color, depth, ref verificationSuccess);
+            var leafsCount = Perft(boardState, depth, ref verificationSuccess);
 
             return new VerificationPerftResult
             {
@@ -21,7 +21,7 @@ namespace Cosette.Engine.Perft
             };
         }
 
-        private static ulong Perft(BoardState boardState, Color color, int depth, ref bool verificationSuccess)
+        private static ulong Perft(BoardState boardState, int depth, ref bool verificationSuccess)
         {
             if (!VerifyBoard(boardState))
             {
@@ -34,17 +34,17 @@ namespace Cosette.Engine.Perft
             }
 
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = boardState.GetAvailableMoves(moves, color);
+            var movesCount = boardState.GetAvailableMoves(moves);
 
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)
             {
-                boardState.MakeMove(moves[i], color);
-                if (!boardState.IsKingChecked(color))
+                boardState.MakeMove(moves[i]);
+                if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    nodes += Perft(boardState, ColorOperations.Invert(color), depth - 1, ref verificationSuccess);
+                    nodes += Perft(boardState, depth - 1, ref verificationSuccess);
                 }
-                boardState.UndoMove(moves[i], color);
+                boardState.UndoMove(moves[i]);
             }
 
             return nodes;

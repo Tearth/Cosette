@@ -8,10 +8,10 @@ namespace Cosette.Engine.Perft
 {
     public static class DividedPerft
     {
-        public static DividedPerftResult Run(BoardState boardState, Color color, int depth)
+        public static DividedPerftResult Run(BoardState boardState, int depth)
         {
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = boardState.GetAvailableMoves(moves, color);
+            var movesCount = boardState.GetAvailableMoves(moves);
 
             var result = new DividedPerftResult();
             if (depth <= 0)
@@ -24,9 +24,9 @@ namespace Cosette.Engine.Perft
                 var from = Position.FromFieldIndex(moves[i].From).ToString();
                 var to = Position.FromFieldIndex(moves[i].To).ToString();
 
-                boardState.MakeMove(moves[i], color);
-                var leafsCount = Perft(boardState, ColorOperations.Invert(color), depth - 1);
-                boardState.UndoMove(moves[i], color);
+                boardState.MakeMove(moves[i]);
+                var leafsCount = Perft(boardState, depth - 1);
+                boardState.UndoMove(moves[i]);
 
                 result.LeafsCount[$"{from}{to}"] = leafsCount;
                 result.TotalLeafsCount += leafsCount;
@@ -35,7 +35,7 @@ namespace Cosette.Engine.Perft
             return result;
         }
 
-        private static ulong Perft(BoardState boardState, Color color, int depth)
+        private static ulong Perft(BoardState boardState, int depth)
         {
             if (depth <= 0)
             {
@@ -43,17 +43,17 @@ namespace Cosette.Engine.Perft
             }
 
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = boardState.GetAvailableMoves(moves, color);
+            var movesCount = boardState.GetAvailableMoves(moves);
 
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)
             {
-                boardState.MakeMove(moves[i], color);
-                if (!boardState.IsKingChecked(color))
+                boardState.MakeMove(moves[i]);
+                if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    nodes += Perft(boardState, ColorOperations.Invert(color), depth - 1);
+                    nodes += Perft(boardState, depth - 1);
                 }
-                boardState.UndoMove(moves[i], color);
+                boardState.UndoMove(moves[i]);
             }
 
             return nodes;

@@ -60,7 +60,7 @@ namespace Cosette.Uci.Commands
                 var from = Position.FromText(move.Substring(0, 2));
                 var to = Position.FromText(move.Substring(2, 2));
 
-                if (!_uciGame.MakeMove(color, from, to))
+                if (!_uciGame.MakeMove(from, to))
                 {
                     throw new InvalidOperationException();
                 }

@@ -9,20 +9,20 @@ namespace Cosette.Engine.Perft
 {
     public static class AdvancedPerft
     {
-        public static AdvancedPerftResult Run(BoardState boardState, Color color, int depth)
+        public static AdvancedPerftResult Run(BoardState boardState, int depth)
         {
             var result = new AdvancedPerftResult();
             var stopwatch = Stopwatch.StartNew();
-            Perft(boardState, color, depth, result);
+            Perft(boardState, depth, result);
             result.Time = stopwatch.Elapsed.TotalSeconds;
 
             return result;
         }
 
-        private static void Perft(BoardState boardState, Color color, int depth, AdvancedPerftResult result)
+        private static void Perft(BoardState boardState, int depth, AdvancedPerftResult result)
         {
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = boardState.GetAvailableMoves(moves, color);
+            var movesCount = boardState.GetAvailableMoves(moves);
 
             if (depth <= 0)
             {
@@ -32,29 +32,29 @@ namespace Cosette.Engine.Perft
 
             if (depth == 1)
             {
-                UpdateResult(boardState, color, moves, movesCount, result);
+                UpdateResult(boardState, moves, movesCount, result);
                 return;
             }
 
             for (var i = 0; i < movesCount; i++)
             {
-                boardState.MakeMove(moves[i], color);
-                if (!boardState.IsKingChecked(color))
+                boardState.MakeMove(moves[i]);
+                if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    Perft(boardState, ColorOperations.Invert(color), depth - 1, result);
+                    Perft(boardState, depth - 1, result);
                 }
-                boardState.UndoMove(moves[i], color);
+                boardState.UndoMove(moves[i]);
             }
         }
 
-        private static void UpdateResult(BoardState boardState, Color color, Span<Move> moves, int movesCount, AdvancedPerftResult result)
+        private static void UpdateResult(BoardState boardState, Span<Move> moves, int movesCount, AdvancedPerftResult result)
         {
             var legalMoveFound = false;
             for (var i = 0; i < movesCount; i++)
             {
-                boardState.MakeMove(moves[i], color);
+                boardState.MakeMove(moves[i]);
 
-                if (!boardState.IsKingChecked(color))
+                if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
                     if ((moves[i].Flags & MoveFlags.Kill) != 0)
                     {
@@ -72,7 +72,7 @@ namespace Cosette.Engine.Perft
                         result.Captures++;
                     }
 
-                    if (boardState.IsKingChecked(ColorOperations.Invert(color)))
+                    if (boardState.IsKingChecked(boardState.ColorToMove))
                     {
                         result.Checks++;
                     }
@@ -81,7 +81,7 @@ namespace Cosette.Engine.Perft
                     legalMoveFound = true;
                 }
 
-                boardState.UndoMove(moves[i], color);
+                boardState.UndoMove(moves[i]);
             }
 
             if (!legalMoveFound)

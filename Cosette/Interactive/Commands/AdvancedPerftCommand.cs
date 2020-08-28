@@ -31,7 +31,7 @@ namespace Cosette.Interactive.Commands
 
             for (var i = 0; i <= depth; i++)
             {
-                var result = AdvancedPerft.Run(boardState, Color.White, i);
+                var result = AdvancedPerft.Run(boardState, i);
 
                 Console.WriteLine($"Depth {i}: {result.Leafs} leafs ({result.Time:F} s), Captures: {result.Captures}, " +
                                   $"Checkmates: {result.Checkmates}, Castlings: {result.Castles}, " +

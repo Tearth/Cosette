@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Cosette.Engine.Ai;
 using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -13,8 +14,10 @@ namespace Cosette.Engine.Board
         public ulong OccupancySummary { get; set; }
         public ulong[] EnPassant { get; set; }
         public Castling Castling { get; set; }
+        public Color ColorToMove { get; set; }
 
         public int Material { get; set; }
+        public ulong Hash { get; set; }
 
         private readonly FastStack<Piece> _killedPieces;
         private readonly FastStack<ulong> _enPassants;
@@ -57,6 +60,9 @@ namespace Cosette.Engine.Board
             OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
 
             Castling = Castling.Everything;
+            ColorToMove = Color.White;
+
+            Hash = ZobristHashing.CalculateHash(this);
 
             _killedPieces.Clear();
             _enPassants.Clear();
@@ -65,36 +71,37 @@ namespace Cosette.Engine.Board
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetAvailableMoves(Span<Move> moves, Color color)
+        public int GetAvailableMoves(Span<Move> moves)
         {
-            var movesCount = PawnOperator.GetAvailableMoves(this, color, moves, 0);
-            movesCount = KnightOperator.GetAvailableMoves(this, color, moves, movesCount);
-            movesCount = BishopOperator.GetAvailableMoves(this, color, moves, movesCount);
-            movesCount = RookOperator.GetAvailableMoves(this, color, moves, movesCount);
-            movesCount = QueenOperator.GetAvailableMoves(this, color, moves, movesCount);
-            movesCount = KingOperator.GetAvailableMoves(this, color, moves, movesCount);
+            var movesCount = PawnOperator.GetAvailableMoves(this, ColorToMove, moves, 0);
+            movesCount = KnightOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
+            movesCount = BishopOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
+            movesCount = RookOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
+            movesCount = QueenOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
+            movesCount = KingOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
 
             return movesCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void MakeMove(Move move, Color color)
+        public void MakeMove(Move move)
         {
-            _enPassants.Push(EnPassant[(int)color]);
+            var enemyColor = ColorOperations.Invert(ColorToMove);
+
+            _enPassants.Push(EnPassant[(int)ColorToMove]);
             _castlings.Push(Castling);
 
             if (move.Flags == MoveFlags.None)
             {
-                MovePiece(color, move.Piece, move.From, move.To);
+                MovePiece(ColorToMove, move.Piece, move.From, move.To);
             }
             else if ((move.Flags & MoveFlags.DoublePush) != 0)
             {
-                MovePiece(color, move.Piece, move.From, move.To);
-                EnPassant[(int)color] |= color == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
+                MovePiece(ColorToMove, move.Piece, move.From, move.To);
+                EnPassant[(int)ColorToMove] |= ColorToMove == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
-                var enemyColor = ColorOperations.Invert(color);
                 var killedPiece = GetPiece(enemyColor, move.To);
 
                 AddOrRemovePiece(enemyColor, killedPiece, move.To);
@@ -131,16 +138,16 @@ namespace Cosette.Engine.Board
                 if ((byte)move.Flags >= 16)
                 {
                     var promotionPiece = GetPromotionPiece(move.Flags);
-                    AddOrRemovePiece(color, move.Piece, move.From);
-                    AddOrRemovePiece(color, promotionPiece, move.To);
+                    AddOrRemovePiece(ColorToMove, move.Piece, move.From);
+                    AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
                     _promotedPieces.Push(promotionPiece);
 
-                    Material -= BoardConstants.PieceValues[(int)color][(int)move.Piece];
-                    Material += BoardConstants.PieceValues[(int)color][(int)promotionPiece];
+                    Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
+                    Material += BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
                 }
                 else
                 {
-                    MovePiece(color, move.Piece, move.From, move.To);
+                    MovePiece(ColorToMove, move.Piece, move.From, move.To);
                 }
 
                 _killedPieces.Push(killedPiece);
@@ -150,7 +157,7 @@ namespace Cosette.Engine.Board
                 // Short castling
                 if (move.From > move.To)
                 {
-                    if (color == Color.White)
+                    if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 3, 1);
                         MovePiece(Color.White, Piece.Rook, 0, 2);
@@ -164,7 +171,7 @@ namespace Cosette.Engine.Board
                 // Long castling
                 else
                 {
-                    if (color == Color.White)
+                    if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 3, 5);
                         MovePiece(Color.White, Piece.Rook, 7, 4);
@@ -176,7 +183,7 @@ namespace Cosette.Engine.Board
                     }
                 }
 
-                if (color == Color.White)
+                if (ColorToMove == Color.White)
                 {
                     Castling &= ~Castling.WhiteCastling;
                 }
@@ -187,31 +194,30 @@ namespace Cosette.Engine.Board
             }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
             {
-                var enemyColor = ColorOperations.Invert(color);
-                var enemyPieceField = color == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
+                var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
                 var killedPiece = GetPiece(enemyColor, enemyPieceField);
 
                 AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
                 Material -= BoardConstants.PieceValues[(int)enemyColor][(int)killedPiece];
 
-                MovePiece(color, move.Piece, move.From, move.To);
+                MovePiece(ColorToMove, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
             }
             else if ((byte)move.Flags >= 16)
             {
                 var promotionPiece = GetPromotionPiece(move.Flags);
-                AddOrRemovePiece(color, move.Piece, move.From);
-                AddOrRemovePiece(color, promotionPiece, move.To);
+                AddOrRemovePiece(ColorToMove, move.Piece, move.From);
+                AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
                 _promotedPieces.Push(promotionPiece);
 
-                Material -= BoardConstants.PieceValues[(int)color][(int)move.Piece];
-                Material += BoardConstants.PieceValues[(int)color][(int)promotionPiece];
+                Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
+                Material += BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
             }
 
             if (move.Piece == Piece.King && move.Flags != MoveFlags.Castling)
             {
-                if (color == Color.White)
+                if (ColorToMove == Color.White)
                 {
                     Castling &= ~Castling.WhiteCastling;
                 }
@@ -240,34 +246,37 @@ namespace Cosette.Engine.Board
                 }
             }
 
-            EnPassant[(int)ColorOperations.Invert(color)] = 0;
+            EnPassant[(int)enemyColor] = 0;
+            ColorToMove = enemyColor;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UndoMove(Move move, Color color)
+        public void UndoMove(Move move)
         {
+            ColorToMove = ColorOperations.Invert(ColorToMove);
+
             if (move.Flags == MoveFlags.None || (move.Flags & MoveFlags.DoublePush) != 0)
             {
-                MovePiece(color, move.Piece, move.To, move.From);
+                MovePiece(ColorToMove, move.Piece, move.To, move.From);
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
-                var enemyColor = ColorOperations.Invert(color);
+                var enemyColor = ColorOperations.Invert(ColorToMove);
                 var killedPiece = _killedPieces.Pop();
 
                 // Promotion
                 if ((byte)move.Flags >= 16)
                 {
                     var promotionPiece = _promotedPieces.Pop();
-                    AddOrRemovePiece(color, promotionPiece, move.To);
-                    AddOrRemovePiece(color, move.Piece, move.From);
+                    AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
+                    AddOrRemovePiece(ColorToMove, move.Piece, move.From);
 
-                    Material += BoardConstants.PieceValues[(int)color][(int)move.Piece];
-                    Material -= BoardConstants.PieceValues[(int)color][(int)promotionPiece];
+                    Material += BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
+                    Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
                 }
                 else
                 {
-                    MovePiece(color, move.Piece, move.To, move.From);
+                    MovePiece(ColorToMove, move.Piece, move.To, move.From);
                 }
 
                 AddOrRemovePiece(enemyColor, killedPiece, move.To);
@@ -278,7 +287,7 @@ namespace Cosette.Engine.Board
                 // Short castling
                 if (move.From > move.To)
                 {
-                    if (color == Color.White)
+                    if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 1, 3);
                         MovePiece(Color.White, Piece.Rook, 2, 0);
@@ -292,7 +301,7 @@ namespace Cosette.Engine.Board
                 // Long castling
                 else
                 {
-                    if (color == Color.White)
+                    if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 5, 3);
                         MovePiece(Color.White, Piece.Rook, 4, 7);
@@ -306,26 +315,26 @@ namespace Cosette.Engine.Board
             }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
             {
-                var enemyColor = ColorOperations.Invert(color);
-                var enemyPieceField = color == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
+                var enemyColor = ColorOperations.Invert(ColorToMove);
+                var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
                 var killedPiece = _killedPieces.Pop();
 
-                MovePiece(color, move.Piece, move.To, move.From);
+                MovePiece(ColorToMove, move.Piece, move.To, move.From);
                 AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
                 Material += BoardConstants.PieceValues[(int)enemyColor][(int)killedPiece];
             }
             else if ((byte)move.Flags >= 16)
             {
                 var promotionPiece = _promotedPieces.Pop();
-                AddOrRemovePiece(color, promotionPiece, move.To);
-                AddOrRemovePiece(color, move.Piece, move.From);
+                AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
+                AddOrRemovePiece(ColorToMove, move.Piece, move.From);
 
-                Material += BoardConstants.PieceValues[(int)color][(int)move.Piece];
-                Material -= BoardConstants.PieceValues[(int)color][(int)promotionPiece];
+                Material += BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
+                Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
             }
 
             Castling = _castlings.Pop();
-            EnPassant[(int)color] = _enPassants.Pop();
+            EnPassant[(int)ColorToMove] = _enPassants.Pop();
         }
 
         // Don't inline, huge performance penalty

@@ -20,7 +20,7 @@ namespace Cosette.Tests
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
-            var result = DividedPerft.Run(boardState, Color.White, 6);
+            var result = DividedPerft.Run(boardState, 6);
             Assert.Equal(4463267ul, result.LeafsCount["a2a3"]);
             Assert.Equal(5310358ul, result.LeafsCount["b2b3"]);
             Assert.Equal(5417640ul, result.LeafsCount["c2c3"]);

@@ -11,7 +11,7 @@ namespace Cosette.Engine.Ai
     {
         public static event EventHandler<SearchStatistics> OnSearchUpdate;
 
-        public static Move FindBestMove(BoardState board, Color color, int remainingTime, int moveNumber)
+        public static Move FindBestMove(BoardState board, int remainingTime, int moveNumber)
         {
             var bestMove = new Move();
             var statistics = new SearchStatistics();
@@ -28,7 +28,7 @@ namespace Cosette.Engine.Ai
                 statistics.Clear();
 
                 statistics.Depth = i;
-                statistics.Score = NegaMax.FindBestMove(board, color, i, alpha, beta, out bestMove, statistics);
+                statistics.Score = NegaMax.FindBestMove(board, i, alpha, beta, out bestMove, statistics);
 
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));

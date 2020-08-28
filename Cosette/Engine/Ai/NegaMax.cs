@@ -7,12 +7,12 @@ namespace Cosette.Engine.Ai
 {
     public static class NegaMax
     {
-        public static int FindBestMove(BoardState board, Color color, int depth, int alpha, int beta, out Move bestMove, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, int depth, int alpha, int beta, out Move bestMove, SearchStatistics statistics)
         {
             bestMove = new Move();
             statistics.Nodes++;
 
-            if (board.Pieces[(int) color][(int)Piece.King] == 0)
+            if (board.Pieces[(int) board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
                 return -BoardConstants.PieceValues[(int)Color.White][(int)Piece.King] - depth;
@@ -21,21 +21,20 @@ namespace Cosette.Engine.Ai
             if (depth <= 0)
             {
                 statistics.Leafs++;
-                return Evaluation.Evaluate(board, color);
+                return Evaluation.Evaluate(board, board.ColorToMove);
             }
 
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = board.GetAvailableMoves(moves, color);
+            var movesCount = board.GetAvailableMoves(moves);
 
-            var enemyColor = ColorOperations.Invert(color);
             for (var i = 0; i < movesCount; i++)
             {
-                board.MakeMove(moves[i], color);
+                board.MakeMove(moves[i]);
 
-                var score = -FindBestMove(board, enemyColor, depth - 1, -beta, -alpha, out _, statistics);
+                var score = -FindBestMove(board, depth - 1, -beta, -alpha, out _, statistics);
                 if (score >= beta)
                 {
-                    board.UndoMove(moves[i], color);
+                    board.UndoMove(moves[i]);
                     statistics.BetaCutoffs++;
                     return beta;
                 }
@@ -46,7 +45,7 @@ namespace Cosette.Engine.Ai
                     bestMove = moves[i];
                 }
 
-                board.UndoMove(moves[i], color);
+                board.UndoMove(moves[i]);
             }
 
             return alpha;

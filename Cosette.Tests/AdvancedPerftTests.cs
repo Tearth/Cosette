@@ -29,7 +29,7 @@ namespace Cosette.Tests
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
-            var result = AdvancedPerft.Run(boardState, Color.White, depth);
+            var result = AdvancedPerft.Run(boardState, depth);
             Assert.Equal(expectedLeafsCount, result.Leafs);
             Assert.Equal(expectedCapturesCount, result.Captures);
             Assert.Equal(expectedEnPassantsCount, result.EnPassants);

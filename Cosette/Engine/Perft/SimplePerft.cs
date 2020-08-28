@@ -9,10 +9,10 @@ namespace Cosette.Engine.Perft
 {
     public static class SimplePerft
     {
-        public static SimplePerftResult Run(BoardState boardState, Color color, int depth)
+        public static SimplePerftResult Run(BoardState boardState, int depth)
         {
             var stopwatch = Stopwatch.StartNew();
-            var leafsCount = Perft(boardState, color, depth);
+            var leafsCount = Perft(boardState, depth);
             stopwatch.Stop();
 
             var totalSeconds = stopwatch.Elapsed.TotalSeconds;
@@ -25,7 +25,7 @@ namespace Cosette.Engine.Perft
             };
         }
 
-        private static ulong Perft(BoardState boardState, Color color, int depth)
+        private static ulong Perft(BoardState boardState, int depth)
         {
             if (depth <= 0)
             {
@@ -33,17 +33,17 @@ namespace Cosette.Engine.Perft
             }
 
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = boardState.GetAvailableMoves(moves, color);
+            var movesCount = boardState.GetAvailableMoves(moves);
 
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)
             {
-                boardState.MakeMove(moves[i], color);
-                if (!boardState.IsKingChecked(color))
+                boardState.MakeMove(moves[i]);
+                if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    nodes += Perft(boardState, ColorOperations.Invert(color), depth - 1);
+                    nodes += Perft(boardState, depth - 1);
                 }
-                boardState.UndoMove(moves[i], color);
+                boardState.UndoMove(moves[i]);
             }
 
             return nodes;

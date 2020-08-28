@@ -47,13 +47,13 @@ namespace Cosette.Interactive.Commands
 
         private double TestMidGame()
         {
-            var boardState = FenParser.Parse("r2qr1k1/p2n1p2/1pb3pp/2ppN1P1/1R1PpP2/BQP1n1PB/P4N1P/1R4K1 w - - 0 21", out _, out _);
+            var boardState = FenParser.Parse("r2qr1k1/p2n1p2/1pb3pp/2ppN1P1/1R1PpP2/BQP1n1PB/P4N1P/1R4K1 w - - 0 21", out _);
             return Test(boardState, "Midgame", 7);
         }
 
         private double TestEndGame()
         {
-            var boardState = FenParser.Parse("7r/8/2k3P1/1p1p2Kp/1P6/2P5/7r/Q7 w - - 0 1", out _, out _);
+            var boardState = FenParser.Parse("7r/8/2k3P1/1p1p2Kp/1P6/2P5/7r/Q7 w - - 0 1", out _);
             return Test(boardState, "Endgame", 8);
         }
 
@@ -62,7 +62,7 @@ namespace Cosette.Interactive.Commands
             var statistics = new SearchStatistics();
 
             var stopwatch = Stopwatch.StartNew();
-            var score = NegaMax.FindBestMove(boardState, Color.White, depth, SearchConstants.MinValue, SearchConstants.MaxValue, out Move bestMove, statistics);
+            var score = NegaMax.FindBestMove(boardState, depth, SearchConstants.MinValue, SearchConstants.MaxValue, out Move bestMove, statistics);
             stopwatch.Stop();
 
             var totalSeconds = stopwatch.Elapsed.TotalSeconds;

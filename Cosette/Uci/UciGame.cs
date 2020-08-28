@@ -28,20 +28,20 @@ namespace Cosette.Uci
 
         public void SetFen(string fen)
         {
-            _boardState = FenParser.Parse(fen, out _currentColor, out _currentMoveNumber);
+            _boardState = FenParser.Parse(fen, out _currentMoveNumber);
         }
 
-        public bool MakeMove(Color color, Position from, Position to)
+        public bool MakeMove(Position from, Position to)
         {
             Span<Move> moves = stackalloc Move[128];
-            var movesCount = _boardState.GetAvailableMoves(moves, color);
+            var movesCount = _boardState.GetAvailableMoves(moves);
 
             for (var i = 0; i < movesCount; i++)
             {
                 if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
                 {
-                    _boardState.MakeMove(moves[i], color);
-                    if (color == Color.Black)
+                    _boardState.MakeMove(moves[i]);
+                    if (_boardState.ColorToMove == Color.White)
                     {
                         _currentMoveNumber++;
                     }
@@ -56,7 +56,7 @@ namespace Cosette.Uci
         public Move SearchBestMove(int whiteTime, int blackTime)
         {
             var remainingTime = _currentColor == Color.White ? whiteTime : blackTime;
-            return IterativeDeepening.FindBestMove(_boardState, _currentColor, remainingTime, _currentMoveNumber);
+            return IterativeDeepening.FindBestMove(_boardState, remainingTime, _currentMoveNumber);
         }
 
         public void SetCurrentColor(Color color)

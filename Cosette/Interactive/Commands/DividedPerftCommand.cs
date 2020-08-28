@@ -31,7 +31,7 @@ namespace Cosette.Interactive.Commands
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
-            var result = DividedPerft.Run(boardState, Color.White, depth);
+            var result = DividedPerft.Run(boardState, depth);
             foreach (var move in result.LeafsCount)
             {
                 Console.WriteLine($"{move.Key}: {move.Value}");

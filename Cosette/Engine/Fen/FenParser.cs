@@ -7,7 +7,7 @@ namespace Cosette.Engine.Fen
 {
     public static class FenParser
     {
-        public static BoardState Parse(string fen, out Color color, out int moveNumber)
+        public static BoardState Parse(string fen, out int moveNumber)
         {
             var split = fen.Split(' ');
             var boardState = split[0];
@@ -25,7 +25,7 @@ namespace Cosette.Engine.Fen
             ParseEnPassantState(enPassantState, currentColor, result);
 
             result.Material = result.CalculateMaterial(Color.White) + result.CalculateMaterial(Color.Black);
-            color = colorState == "white" ? Color.White : Color.Black;
+            result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
 
             return result;
         }
