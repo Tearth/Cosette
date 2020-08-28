@@ -90,6 +90,12 @@ namespace Cosette.Engine.Board
         {
             var enemyColor = ColorOperations.Invert(ColorToMove);
 
+            if (EnPassant[(int)enemyColor] != 0)
+            {
+                var enPassantRank = BitOperations.BitScan(EnPassant[(int)enemyColor]) % 8;
+                Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
+            }
+
             _enPassants.Push(EnPassant[(int)ColorToMove]);
             _castlings.Push(Castling);
             _hashes.Push(Hash);
@@ -298,12 +304,6 @@ namespace Cosette.Engine.Board
                     Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
                     Castling &= ~Castling.BlackLong;
                 }
-            }
-
-            if (EnPassant[(int) enemyColor] != 0)
-            {
-                var enPassantRank = BitOperations.BitScan(EnPassant[(int) enemyColor]) % 8;
-                Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
             }
 
             EnPassant[(int)enemyColor] = 0;

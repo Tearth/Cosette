@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Runtime.CompilerServices;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Common.Extensions;
@@ -56,7 +57,7 @@ namespace Cosette.Engine.Board
                     }
                 }
             }
-
+            
             if ((board.Castling & Castling.WhiteShort) != 0)
             {
                 result ^= _castlingHashes[0];
@@ -73,7 +74,7 @@ namespace Cosette.Engine.Board
             {
                 result ^= _castlingHashes[3];
             }
-
+            
             for (var color = 0; color < 2; color++)
             {
                 if (board.EnPassant[color] != 0)
@@ -84,25 +85,28 @@ namespace Cosette.Engine.Board
                     result ^= _enPassantHashes[fieldIndex % 8];
                 }
             }
-
+            
             if (board.ColorToMove == Color.Black)
             {
                 result ^= _blackSideHash;
             }
-
+            
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong MovePiece(ulong hash, Color color, Piece piece, byte from, byte to)
         {
             return hash ^ _fieldHashes[(int) color][(int) piece][from] ^ _fieldHashes[(int)color][(int)piece][to];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong AddOrRemovePiece(ulong hash, Color color, Piece piece, byte at)
         {
             return hash ^ _fieldHashes[(int)color][(int)piece][at];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong RemoveCastlingFlag(ulong hash, Castling currentCastling, Castling castlingChange)
         {
             if ((currentCastling & castlingChange) != 0)
@@ -113,11 +117,13 @@ namespace Cosette.Engine.Board
             return hash;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong ToggleEnPassant(ulong hash, int enPassantRank)
         {
             return hash ^ _enPassantHashes[enPassantRank];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong ChangeSide(ulong hash)
         {
             return hash ^ _blackSideHash;
