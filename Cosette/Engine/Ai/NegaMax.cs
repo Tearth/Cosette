@@ -47,10 +47,17 @@ namespace Cosette.Engine.Ai
                 }
             }
 
+#if TTCOLLISIONS
+            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Key != (byte) (board.Hash >> 56))
+            {
+                statistics.TTCollisions++;
+            }
+#endif
+
             if (board.Pieces[(int) board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
-                return -BoardConstants.PieceValues[(int)Color.White][(int)Piece.King] - depth;
+                return -BoardConstants.PieceValues[(int)Color.White][(int)Piece.King] + depth;
             }
 
             if (depth <= 0)

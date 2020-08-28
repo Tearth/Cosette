@@ -70,6 +70,7 @@ namespace Cosette.Engine.Board
             _enPassants.Clear();
             _castlings.Clear();
             _promotedPieces.Clear();
+            _hashes.Clear();
         }
 
         public int GetAvailableMoves(Span<Move> moves)

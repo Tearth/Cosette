@@ -11,6 +11,7 @@
         public int BranchingFactor { get; set; }
         public ulong BetaCutoffs { get; set; }
         public ulong TTHits { get; set; }
+        public ulong TTCollisions { get; set; }
 
         public void Clear()
         {
@@ -23,6 +24,7 @@
             BranchingFactor = 0;
             BetaCutoffs = 0;
             TTHits = 0;
+            TTCollisions = 0;
         }
     }
 }

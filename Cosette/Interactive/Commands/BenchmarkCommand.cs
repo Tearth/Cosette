@@ -72,6 +72,8 @@ namespace Cosette.Interactive.Commands
 
             Console.WriteLine($"{name} - Best: {bestMove}, Score: {score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
                               $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
+            Console.WriteLine($"          Branching factor: {statistics.BranchingFactor}, Beta cutoffs: {statistics.BetaCutoffs}, " +
+                              $"TTHits: {statistics.TTHits}, TTCollisions: {statistics.TTCollisions}");
 
             return totalSeconds;
         }
