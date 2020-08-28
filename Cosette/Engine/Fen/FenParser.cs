@@ -26,6 +26,7 @@ namespace Cosette.Engine.Fen
 
             result.Material = result.CalculateMaterial(Color.White) + result.CalculateMaterial(Color.Black);
             result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
+            result.Hash = ZobristHashing.CalculateHash(result);
 
             return result;
         }
