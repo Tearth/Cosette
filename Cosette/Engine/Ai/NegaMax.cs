@@ -9,8 +9,44 @@ namespace Cosette.Engine.Ai
     {
         public static int FindBestMove(BoardState board, int depth, int alpha, int beta, out Move bestMove, SearchStatistics statistics)
         {
+            var originalAlpha = alpha;
+
             bestMove = new Move();
             statistics.Nodes++;
+
+            if (TranspositionTable.Exists(board.Hash))
+            {
+                var entry = TranspositionTable.Get(board.Hash);
+                if (entry.Depth >= depth)
+                {
+                    switch (entry.Type)
+                    {
+                        case TranspositionTableEntryType.ExactScore:
+                        {
+                            bestMove = entry.BestMove;
+                            return entry.Score;
+                        }
+
+                        case TranspositionTableEntryType.LowerBound:
+                        {
+                            alpha = Math.Max(alpha, entry.Score);
+                            break;
+                        }
+
+                        case TranspositionTableEntryType.UpperBound:
+                        {
+                            beta = Math.Min(beta, entry.Score);
+                            break;
+                        }
+                    }
+                }
+
+                if (alpha >= beta)
+                {
+                    bestMove = entry.BestMove;
+                    return entry.Score;
+                }
+            }
 
             if (board.Pieces[(int) board.ColorToMove][(int)Piece.King] == 0)
             {
@@ -47,6 +83,11 @@ namespace Cosette.Engine.Ai
 
                 board.UndoMove(moves[i]);
             }
+
+            var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.UpperBound :
+                            alpha >= beta ? TranspositionTableEntryType.LowerBound :
+                            TranspositionTableEntryType.ExactScore;
+            TranspositionTable.Add(board.Hash, depth, alpha, bestMove, entryType);
 
             return alpha;
         }
