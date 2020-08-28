@@ -4,7 +4,9 @@ namespace Cosette.Engine.Common
 {
     public static class ColorOperations
     {
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static Color Invert(Color color)
         {
             return color == Color.White ? Color.Black : Color.White;

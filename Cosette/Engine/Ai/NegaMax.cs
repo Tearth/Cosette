@@ -19,6 +19,8 @@ namespace Cosette.Engine.Ai
                 var entry = TranspositionTable.Get(board.Hash);
                 if (entry.Depth >= depth)
                 {
+                    statistics.TTHits++;
+
                     switch (entry.Type)
                     {
                         case TranspositionTableEntryType.ExactScore:
@@ -40,13 +42,11 @@ namespace Cosette.Engine.Ai
                         }
                     }
 
-                    statistics.TTHits++;
-                }
-
-                if (alpha >= beta)
-                {
-                    bestMove = entry.BestMove;
-                    return entry.Score;
+                    if (alpha >= beta)
+                    {
+                        bestMove = entry.BestMove;
+                        return entry.Score;
+                    }
                 }
             }
 
@@ -79,14 +79,12 @@ namespace Cosette.Engine.Ai
 
                 alpha = Math.Max(alpha, score);
 
+                board.UndoMove(moves[i]);
                 if (alpha >= beta)
                 {
-                    board.UndoMove(moves[i]);
                     statistics.BetaCutoffs++;
                     break;
                 }
-
-                board.UndoMove(moves[i]);
             }
 
             var entryType = bestScore <= originalAlpha ? TranspositionTableEntryType.UpperBound :

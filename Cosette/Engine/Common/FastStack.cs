@@ -12,19 +12,25 @@ namespace Cosette.Engine.Common
             _stack = new T[capacity];
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void Push(T value)
         {
             _stack[_pointer++] = value;
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public T Pop()
         {
             return _stack[--_pointer];
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void Clear()
         {
             _pointer = 0;

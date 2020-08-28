@@ -72,7 +72,6 @@ namespace Cosette.Engine.Board
             _promotedPieces.Clear();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetAvailableMoves(Span<Move> moves)
         {
             var movesCount = PawnOperator.GetAvailableMoves(this, ColorToMove, moves, 0);
@@ -85,7 +84,6 @@ namespace Cosette.Engine.Board
             return movesCount;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void MakeMove(Move move)
         {
             var enemyColor = ColorOperations.Invert(ColorToMove);
@@ -311,7 +309,6 @@ namespace Cosette.Engine.Board
             Hash = ZobristHashing.ChangeSide(Hash);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UndoMove(Move move)
         {
             ColorToMove = ColorOperations.Invert(ColorToMove);
@@ -399,7 +396,6 @@ namespace Cosette.Engine.Board
             EnPassant[(int)ColorToMove] = _enPassants.Pop();
         }
 
-        // Don't inline, huge performance penalty
         public bool IsFieldAttacked(Color color, byte fieldIndex)
         {
             var enemyColor = ColorOperations.Invert(color);
@@ -452,7 +448,6 @@ namespace Cosette.Engine.Board
             return false;
         }
 
-        // Don't inline, huge performance penalty
         public int GetAttackingPiecesAtField(Color color, byte fieldIndex, Span<Piece> attackingPieces)
         {
             var attackingPiecesCount = 0;
@@ -506,7 +501,9 @@ namespace Cosette.Engine.Board
             return attackingPiecesCount;
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public bool IsKingChecked(Color color)
         {
             var king = Pieces[(int) color][(int) Piece.King];
@@ -515,7 +512,9 @@ namespace Cosette.Engine.Board
             return IsFieldAttacked(color, (byte)kingField);
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void MovePiece(Color color, Piece piece, byte from, byte to)
         {
             var move = (1ul << from) | (1ul << to);
@@ -525,7 +524,9 @@ namespace Cosette.Engine.Board
             OccupancySummary ^= move;
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public Piece GetPiece(Color color, byte from)
         {
             var field = 1ul << from;
@@ -541,7 +542,9 @@ namespace Cosette.Engine.Board
             throw new InvalidOperationException();
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void AddOrRemovePiece(Color color, Piece piece, byte at)
         {
             var field = 1ul << at;
@@ -563,7 +566,9 @@ namespace Cosette.Engine.Board
             return material;
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private Piece GetPromotionPiece(MoveFlags flags)
         {
             if ((flags & MoveFlags.KnightPromotion) != 0)

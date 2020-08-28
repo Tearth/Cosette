@@ -20,7 +20,9 @@ namespace Cosette.Engine.Moves.Patterns
             }
         }
 
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static ulong GetPattern(int fieldIndex)
         {
             return Patterns[fieldIndex];

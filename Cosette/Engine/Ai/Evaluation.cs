@@ -6,7 +6,9 @@ namespace Cosette.Engine.Ai
 {
     public class Evaluation
     {
+#if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static int Evaluate(BoardState board, Color color)
         {
             var sign = color == Color.White ? 1 : -1;
