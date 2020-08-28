@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Common.Extensions;
@@ -16,7 +17,7 @@ namespace Cosette.Engine.Board
         static ZobristHashing()
         {
             _fieldHashes = new ulong[2][][];
-            _castlingHashes = new ulong[16];
+            _castlingHashes = new ulong[4];
             _enPassantHashes = new ulong[8];
             _random = new Random();
 
@@ -56,7 +57,22 @@ namespace Cosette.Engine.Board
                 }
             }
 
-            result ^= _castlingHashes[(int)board.Castling];
+            if ((board.Castling & Castling.WhiteShort) != 0)
+            {
+                result ^= _castlingHashes[0];
+            }
+            if ((board.Castling & Castling.WhiteLong) != 0)
+            {
+                result ^= _castlingHashes[1];
+            }
+            if ((board.Castling & Castling.BlackShort) != 0)
+            {
+                result ^= _castlingHashes[2];
+            }
+            if ((board.Castling & Castling.BlackLong) != 0)
+            {
+                result ^= _castlingHashes[3];
+            }
 
             for (var color = 0; color < 2; color++)
             {
@@ -64,9 +80,8 @@ namespace Cosette.Engine.Board
                 {
                     var enPassant = board.EnPassant[color];
                     var fieldIndex = BitOperations.BitScan(enPassant);
-                    var rank = Position.FromFieldIndex(fieldIndex);
 
-                    result ^= _enPassantHashes[rank.X];
+                    result ^= _enPassantHashes[fieldIndex % 8];
                 }
             }
 
@@ -76,6 +91,36 @@ namespace Cosette.Engine.Board
             }
 
             return result;
+        }
+
+        public static ulong MovePiece(ulong hash, Color color, Piece piece, byte from, byte to)
+        {
+            return hash ^ _fieldHashes[(int) color][(int) piece][from] ^ _fieldHashes[(int)color][(int)piece][to];
+        }
+
+        public static ulong AddOrRemovePiece(ulong hash, Color color, Piece piece, byte at)
+        {
+            return hash ^ _fieldHashes[(int)color][(int)piece][at];
+        }
+
+        public static ulong RemoveCastlingFlag(ulong hash, Castling currentCastling, Castling castlingChange)
+        {
+            if ((currentCastling & castlingChange) != 0)
+            {
+                return hash ^ _castlingHashes[BitOperations.BitScan((ulong)castlingChange)];
+            }
+
+            return hash;
+        }
+
+        public static ulong ToggleEnPassant(ulong hash, int enPassantRank)
+        {
+            return hash ^ _enPassantHashes[enPassantRank];
+        }
+
+        public static ulong ChangeSide(ulong hash)
+        {
+            return hash ^ _blackSideHash;
         }
 
         private static void PopulateHashArrays(ulong[] array)

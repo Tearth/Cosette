@@ -57,6 +57,11 @@ namespace Cosette.Engine.Perft
                 return false;
             }
 
+            if (board.Hash != ZobristHashing.CalculateHash(board))
+            {
+                return false;
+            }
+
             return true;
         }
     }

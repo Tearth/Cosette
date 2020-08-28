@@ -23,6 +23,7 @@ namespace Cosette.Engine.Board
         private readonly FastStack<ulong> _enPassants;
         private readonly FastStack<Castling> _castlings;
         private readonly FastStack<Piece> _promotedPieces;
+        private readonly FastStack<ulong> _hashes;
 
         public BoardState()
         {
@@ -37,6 +38,7 @@ namespace Cosette.Engine.Board
             _enPassants = new FastStack<ulong>(256);
             _castlings = new FastStack<Castling>(256);
             _promotedPieces = new FastStack<Piece>(256);
+            _hashes = new FastStack<ulong>(256);
         }
 
         public void SetDefaultState()
@@ -90,21 +92,31 @@ namespace Cosette.Engine.Board
 
             _enPassants.Push(EnPassant[(int)ColorToMove]);
             _castlings.Push(Castling);
+            _hashes.Push(Hash);
 
             if (move.Flags == MoveFlags.None)
             {
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
+                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
             }
             else if ((move.Flags & MoveFlags.DoublePush) != 0)
             {
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
-                EnPassant[(int)ColorToMove] |= ColorToMove == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
+                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
+
+                var enPassantField = ColorToMove == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
+                var enPassantFieldIndex = BitOperations.BitScan(enPassantField);
+
+                EnPassant[(int)ColorToMove] |= enPassantField;
+                Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantFieldIndex % 8);
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
                 var killedPiece = GetPiece(enemyColor, move.To);
 
                 AddOrRemovePiece(enemyColor, killedPiece, move.To);
+                Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, move.To);
+
                 Material -= BoardConstants.PieceValues[(int)enemyColor][(int) killedPiece];
 
                 if (killedPiece == Piece.Rook)
@@ -113,21 +125,25 @@ namespace Cosette.Engine.Board
                     {
                         case 0:
                         {
+                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
                             Castling &= ~Castling.WhiteShort;
                             break;
                         }
                         case 7:
                         {
+                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
                             Castling &= ~Castling.WhiteLong;
                             break;
                         }
                         case 56:
                         {
+                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
                             Castling &= ~Castling.BlackShort;
                             break;
                         }
                         case 63:
                         {
+                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
                             Castling &= ~Castling.BlackLong;
                             break;
                         }
@@ -138,8 +154,13 @@ namespace Cosette.Engine.Board
                 if ((byte)move.Flags >= 16)
                 {
                     var promotionPiece = GetPromotionPiece(move.Flags);
+
                     AddOrRemovePiece(ColorToMove, move.Piece, move.From);
+                    Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
+
                     AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
+                    Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
+
                     _promotedPieces.Push(promotionPiece);
 
                     Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
@@ -148,6 +169,7 @@ namespace Cosette.Engine.Board
                 else
                 {
                     MovePiece(ColorToMove, move.Piece, move.From, move.To);
+                    Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
                 }
 
                 _killedPieces.Push(killedPiece);
@@ -160,12 +182,18 @@ namespace Cosette.Engine.Board
                     if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 3, 1);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.King, 3, 1);
+
                         MovePiece(Color.White, Piece.Rook, 0, 2);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.Rook, 0, 2);
                     }
                     else
                     {
                         MovePiece(Color.Black, Piece.King, 59, 57);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.King, 59, 57);
+
                         MovePiece(Color.Black, Piece.Rook, 56, 58);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.Rook, 56, 58);
                     }
                 }
                 // Long castling
@@ -174,21 +202,31 @@ namespace Cosette.Engine.Board
                     if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 3, 5);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.King, 3, 5);
+
                         MovePiece(Color.White, Piece.Rook, 7, 4);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.Rook, 7, 4);
                     }
                     else
                     {
                         MovePiece(Color.Black, Piece.King, 59, 61);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.King, 59, 61);
+
                         MovePiece(Color.Black, Piece.Rook, 63, 60);
+                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.Rook, 63, 60);
                     }
                 }
 
                 if (ColorToMove == Color.White)
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
                     Castling &= ~Castling.WhiteCastling;
                 }
                 else
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
                     Castling &= ~Castling.BlackCastling;
                 }
             }
@@ -198,17 +236,25 @@ namespace Cosette.Engine.Board
                 var killedPiece = GetPiece(enemyColor, enemyPieceField);
 
                 AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
+                Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, enemyPieceField);
+
                 Material -= BoardConstants.PieceValues[(int)enemyColor][(int)killedPiece];
 
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
+                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
             }
             else if ((byte)move.Flags >= 16)
             {
                 var promotionPiece = GetPromotionPiece(move.Flags);
+
                 AddOrRemovePiece(ColorToMove, move.Piece, move.From);
+                Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
+
                 AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
+                Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
+
                 _promotedPieces.Push(promotionPiece);
 
                 Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
@@ -219,10 +265,14 @@ namespace Cosette.Engine.Board
             {
                 if (ColorToMove == Color.White)
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
                     Castling &= ~Castling.WhiteCastling;
                 }
                 else
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
                     Castling &= ~Castling.BlackCastling;
                 }
             }
@@ -230,24 +280,35 @@ namespace Cosette.Engine.Board
             {
                 if (move.From == 0)
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
                     Castling &= ~Castling.WhiteShort;
                 }
                 else if (move.From == 7)
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
                     Castling &= ~Castling.WhiteLong;
                 }
                 else if (move.From == 56)
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
                     Castling &= ~Castling.BlackShort;
                 }
                 else if (move.From == 63)
                 {
+                    Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
                     Castling &= ~Castling.BlackLong;
                 }
             }
 
+            if (EnPassant[(int) enemyColor] != 0)
+            {
+                var enPassantRank = BitOperations.BitScan(EnPassant[(int) enemyColor]) % 8;
+                Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
+            }
+
             EnPassant[(int)enemyColor] = 0;
             ColorToMove = enemyColor;
+            Hash = ZobristHashing.ChangeSide(Hash);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -333,6 +394,7 @@ namespace Cosette.Engine.Board
                 Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
             }
 
+            Hash = _hashes.Pop();
             Castling = _castlings.Pop();
             EnPassant[(int)ColorToMove] = _enPassants.Pop();
         }
