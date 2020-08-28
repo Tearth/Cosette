@@ -34,6 +34,7 @@ namespace Cosette.Engine.Ai
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));
                 statistics.BranchingFactor = (int)(statistics.Nodes / lastNodesCount);
+                statistics.BestMove = bestMove;
 
                 OnSearchUpdate?.Invoke(null, statistics);
                 lastNodesCount = statistics.Nodes;

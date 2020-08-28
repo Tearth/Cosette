@@ -27,55 +27,57 @@ namespace Cosette.Interactive.Commands
         {
             GC.TryStartNoGCRegion(1024 * 1024 * 16);
 
-            var openingResult = TestOpening();
-            var midGameResult = TestMidGame();
-            var endGameResult = TestEndGame();
-            var total = openingResult + midGameResult + endGameResult;
+            var stopwatch = Stopwatch.StartNew();
+            TestOpening();
+            TestMidGame();
+            TestEndGame();
+            var total = stopwatch.Elapsed.TotalSeconds;
 
             Console.WriteLine($"Total time: {total:F} s");
 
             GC.EndNoGCRegion();
         }
 
-        private double TestOpening()
+        private void TestOpening()
         {
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
-            return Test(boardState, "Opening", 9);
+            Test(boardState, "Opening", 9);
         }
 
-        private double TestMidGame()
+        private void TestMidGame()
         {
             var boardState = FenParser.Parse("r2qr1k1/p2n1p2/1pb3pp/2ppN1P1/1R1PpP2/BQP1n1PB/P4N1P/1R4K1 w - - 0 21", out _);
-            return Test(boardState, "Midgame", 7);
+            Test(boardState, "Midgame", 7);
         }
 
-        private double TestEndGame()
+        private void TestEndGame()
         {
             var boardState = FenParser.Parse("7r/8/2k3P1/1p1p2Kp/1P6/2P5/7r/Q7 w - - 0 1", out _);
-            return Test(boardState, "Endgame", 8);
+            Test(boardState, "Endgame", 8);
         }
 
-        private double Test(BoardState boardState, string name, int depth)
+        private void Test(BoardState boardState, string name, int depth)
         {
-            var statistics = new SearchStatistics();
+            Console.WriteLine($" == {name}:");
+
             TranspositionTable.Clear();
+            IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
+            IterativeDeepening.FindBestMove(boardState, 100_000, 1);
+            IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnOnSearchUpdate;
+        }
 
-            var stopwatch = Stopwatch.StartNew();
-            var score = NegaMax.FindBestMove(boardState, depth, SearchConstants.MinValue, SearchConstants.MaxValue, out Move bestMove, statistics);
-            stopwatch.Stop();
-
-            var totalSeconds = stopwatch.Elapsed.TotalSeconds;
+        private void IterativeDeepening_OnOnSearchUpdate(object? sender, SearchStatistics statistics)
+        {
+            var totalSeconds = Math.Max(1, statistics.SearchTime) / 1000f;
             var megaLeafsPerSecond = (statistics.Leafs / totalSeconds) / 1_000_000;
             var nanosecondsPerLeaf = (totalSeconds / statistics.Leafs) * 1_000_000_000;
 
-            Console.WriteLine($"{name} - Best: {bestMove}, Score: {score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
+            Console.WriteLine($"  Depth: {statistics.Depth}, Best: {statistics.BestMove}, Score: {statistics.Score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
                               $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
-            Console.WriteLine($"          Branching factor: {statistics.BranchingFactor}, Beta cutoffs: {statistics.BetaCutoffs}, " +
+            Console.WriteLine($"  Branching factor: {statistics.BranchingFactor}, Beta cutoffs: {statistics.BetaCutoffs}, " +
                               $"TTHits: {statistics.TTHits}, TTCollisions: {statistics.TTCollisions}");
-
-            return totalSeconds;
         }
     }
 }

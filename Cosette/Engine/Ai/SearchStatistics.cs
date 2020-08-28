@@ -1,4 +1,6 @@
-﻿namespace Cosette.Engine.Ai
+﻿using Cosette.Engine.Moves;
+
+namespace Cosette.Engine.Ai
 {
     public class SearchStatistics
     {
@@ -12,6 +14,7 @@
         public ulong BetaCutoffs { get; set; }
         public ulong TTHits { get; set; }
         public ulong TTCollisions { get; set; }
+        public Move BestMove { get; set; }
 
         public void Clear()
         {
@@ -25,6 +28,7 @@
             BetaCutoffs = 0;
             TTHits = 0;
             TTCollisions = 0;
+            BestMove = new Move();
         }
     }
 }
