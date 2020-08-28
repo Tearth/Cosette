@@ -11,7 +11,7 @@ namespace Cosette
     {
         static void Main(string[] args)
         {
-            TranspositionTable.Init();
+            TranspositionTable.Init(4);
             MagicBitboards.InitWithInternalKeys();
 
             new InteractiveConsole().Run();

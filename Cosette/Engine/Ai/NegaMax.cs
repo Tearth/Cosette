@@ -14,39 +14,36 @@ namespace Cosette.Engine.Ai
             bestMove = new Move();
             statistics.Nodes++;
 
-            if (TranspositionTable.Exists(board.Hash))
+            var entry = TranspositionTable.Get(board.Hash);
+            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Key == (byte)(board.Hash >> 56) && entry.Depth >= depth)
             {
-                var entry = TranspositionTable.Get(board.Hash);
-                if (entry.Depth >= depth)
+                statistics.TTHits++;
+
+                switch (entry.Type)
                 {
-                    statistics.TTHits++;
-
-                    switch (entry.Type)
-                    {
-                        case TranspositionTableEntryType.ExactScore:
-                        {
-                            bestMove = entry.BestMove;
-                            return entry.Score;
-                        }
-
-                        case TranspositionTableEntryType.LowerBound:
-                        {
-                            alpha = Math.Max(alpha, entry.Score);
-                            break;
-                        }
-
-                        case TranspositionTableEntryType.UpperBound:
-                        {
-                            beta = Math.Min(beta, entry.Score);
-                            break;
-                        }
-                    }
-
-                    if (alpha >= beta)
+                    case TranspositionTableEntryType.ExactScore:
                     {
                         bestMove = entry.BestMove;
                         return entry.Score;
                     }
+
+                    case TranspositionTableEntryType.LowerBound:
+                    {
+                        alpha = Math.Max(alpha, entry.Score);
+                        break;
+                    }
+
+                    case TranspositionTableEntryType.UpperBound:
+                    {
+                        beta = Math.Min(beta, entry.Score);
+                        break;
+                    }
+                }
+
+                if (alpha >= beta)
+                {
+                    bestMove = entry.BestMove;
+                    return entry.Score;
                 }
             }
 
@@ -90,7 +87,7 @@ namespace Cosette.Engine.Ai
             var entryType = bestScore <= originalAlpha ? TranspositionTableEntryType.UpperBound :
                             bestScore >= beta ? TranspositionTableEntryType.LowerBound :
                             TranspositionTableEntryType.ExactScore;
-            TranspositionTable.Add(board.Hash, depth, bestScore, bestMove, entryType);
+            TranspositionTable.Add(board.Hash, (byte)depth, (short)bestScore, bestMove, entryType);
 
             return bestScore;
         }

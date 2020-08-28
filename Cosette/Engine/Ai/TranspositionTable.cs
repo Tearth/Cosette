@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Cosette.Engine.Moves;
 
@@ -6,19 +7,23 @@ namespace Cosette.Engine.Ai
 {
     public static class TranspositionTable
     {
-        private static Dictionary<ulong, TranspositionTableEntry> _table;
+        private static TranspositionTableEntry[] _table;
+        private static ulong _size;
 
-        public static void Init()
+        public static unsafe void Init(ulong sizeMegabytes)
         {
-            _table = new Dictionary<ulong, TranspositionTableEntry>(100_000_000);
+            var entrySize = sizeof(TranspositionTableEntry);
+
+            _size = sizeMegabytes * 1024ul * 1024ul / (ulong)entrySize;
+            _table = new TranspositionTableEntry[_size];
         }
 
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void Add(ulong hash, int depth, int score, Move bestMove, TranspositionTableEntryType type)
+        public static void Add(ulong hash, byte depth, short score, Move bestMove, TranspositionTableEntryType type)
         {
-            _table[hash] = new TranspositionTableEntry(depth, score, bestMove, type);
+            _table[hash % _size] = new TranspositionTableEntry((byte)(hash >> 56), depth, score, bestMove, type);
         }
 
 #if INLINE
@@ -26,15 +31,7 @@ namespace Cosette.Engine.Ai
 #endif
         public static TranspositionTableEntry Get(ulong hash)
         {
-            return _table[hash];
-        }
-
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public static bool Exists(ulong hash)
-        {
-            return _table.ContainsKey(hash);
+            return _table[hash % _size];
         }
 
 #if INLINE
@@ -42,7 +39,7 @@ namespace Cosette.Engine.Ai
 #endif
         public static void Clear()
         {
-            _table.Clear();
+            Array.Clear(_table, 0, (int) _size);
         }
     }
 }
