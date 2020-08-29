@@ -31,7 +31,7 @@ namespace Cosette.Uci
             _boardState = FenParser.Parse(fen, out _currentMoveNumber);
         }
 
-        public bool MakeMove(Position from, Position to)
+        public bool MakeMove(Position from, Position to, MoveFlags flags)
         {
             Span<Move> moves = stackalloc Move[128];
             var movesCount = _boardState.GetAvailableMoves(moves);
@@ -40,13 +40,16 @@ namespace Cosette.Uci
             {
                 if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
                 {
-                    _boardState.MakeMove(moves[i]);
-                    if (_boardState.ColorToMove == Color.White)
+                    if (flags == MoveFlags.None || (moves[i].Flags & flags) != 0)
                     {
-                        _currentMoveNumber++;
-                    }
+                        _boardState.MakeMove(moves[i]);
+                        if (_boardState.ColorToMove == Color.White)
+                        {
+                            _currentMoveNumber++;
+                        }
 
-                    return true;
+                        return true;
+                    }
                 }
             }
 
