@@ -17,10 +17,9 @@ namespace Cosette.Engine.Ai.Search
             statistics.Nodes++;
 
             var entry = TranspositionTable.Get(board.Hash);
-            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Key == (byte)(board.Hash >> 56) && entry.Depth >= depth)
+            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Hash == board.Hash && entry.Depth >= depth)
             {
                 statistics.TTHits++;
-
                 switch (entry.Type)
                 {
                     case TranspositionTableEntryType.ExactScore:

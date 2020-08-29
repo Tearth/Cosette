@@ -21,7 +21,7 @@ namespace Cosette.Engine.Ai.Transposition
 #endif
         public static void Add(ulong hash, byte depth, short score, Move bestMove, TranspositionTableEntryType type)
         {
-            _table[hash % _size] = new TranspositionTableEntry((byte)(hash >> 56), depth, score, bestMove, type);
+            _table[hash % _size] = new TranspositionTableEntry(hash, depth, score, bestMove, type);
         }
 
 #if INLINE
