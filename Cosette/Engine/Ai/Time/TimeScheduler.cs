@@ -1,4 +1,4 @@
-﻿namespace Cosette.Engine.Ai
+﻿namespace Cosette.Engine.Ai.Time
 {
     public static class TimeScheduler
     {

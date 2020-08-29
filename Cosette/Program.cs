@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Moves;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Interactive;

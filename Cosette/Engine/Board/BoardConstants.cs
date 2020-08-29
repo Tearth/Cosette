@@ -27,12 +27,5 @@
         public const ulong BoardWithoutEdges = Full & ~Edges;
         public const ulong RightLeftEdge = AFile | HFile;
         public const ulong TopBottomEdge = ARank | HRank;
-
-        // Refactor this
-        public static int[][] PieceValues =
-        {
-            new [] { 100, 300, 300, 500, 1000, 10000 },
-            new [] { -100, -300, -300, -500, -1000, -10000 }
-        };
     }
 }

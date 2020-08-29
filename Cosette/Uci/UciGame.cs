@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Fen;

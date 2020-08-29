@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using Cosette.Engine.Ai.Time;
+using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
-using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
-namespace Cosette.Engine.Ai
+namespace Cosette.Engine.Ai.Search
 {
     public static class IterativeDeepening
     {

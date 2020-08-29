@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -15,6 +17,8 @@ namespace Cosette.Engine.Board
         public ulong[] EnPassant { get; set; }
         public Castling Castling { get; set; }
         public Color ColorToMove { get; set; }
+
+        public bool[] CastlingDone { get; set; }
 
         public int Material { get; set; }
         public ulong Hash { get; set; }
@@ -33,6 +37,7 @@ namespace Cosette.Engine.Board
 
             Occupancy = new ulong[2];
             EnPassant = new ulong[2];
+            CastlingDone = new bool[2];
 
             _killedPieces = new FastStack<Piece>(256);
             _enPassants = new FastStack<ulong>(256);
@@ -63,6 +68,9 @@ namespace Cosette.Engine.Board
 
             Castling = Castling.Everything;
             ColorToMove = Color.White;
+
+            CastlingDone[(int)Color.White] = false;
+            CastlingDone[(int)Color.Black] = false;
 
             Material = 0;
             Hash = ZobristHashing.CalculateHash(this);
@@ -123,7 +131,7 @@ namespace Cosette.Engine.Board
                 AddOrRemovePiece(enemyColor, killedPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, move.To);
 
-                Material -= BoardConstants.PieceValues[(int)enemyColor][(int) killedPiece];
+                Material -= EvaluationConstants.Pieces[(int)enemyColor][(int) killedPiece];
 
                 if (killedPiece == Piece.Rook)
                 {
@@ -169,8 +177,8 @@ namespace Cosette.Engine.Board
 
                     _promotedPieces.Push(promotionPiece);
 
-                    Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
-                    Material += BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
+                    Material -= EvaluationConstants.Pieces[(int)ColorToMove][(int)move.Piece];
+                    Material += EvaluationConstants.Pieces[(int)ColorToMove][(int)promotionPiece];
                 }
                 else
                 {
@@ -235,6 +243,8 @@ namespace Cosette.Engine.Board
                     Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
                     Castling &= ~Castling.BlackCastling;
                 }
+
+                CastlingDone[(int)ColorToMove] = true;
             }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
             {
@@ -244,7 +254,7 @@ namespace Cosette.Engine.Board
                 AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, enemyPieceField);
 
-                Material -= BoardConstants.PieceValues[(int)enemyColor][(int)killedPiece];
+                Material -= EvaluationConstants.Pieces[(int)enemyColor][(int)killedPiece];
 
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
                 Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
@@ -263,8 +273,8 @@ namespace Cosette.Engine.Board
 
                 _promotedPieces.Push(promotionPiece);
 
-                Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
-                Material += BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
+                Material -= EvaluationConstants.Pieces[(int)ColorToMove][(int)move.Piece];
+                Material += EvaluationConstants.Pieces[(int)ColorToMove][(int)promotionPiece];
             }
 
             if (move.Piece == Piece.King && move.Flags != MoveFlags.Castling)
@@ -331,8 +341,8 @@ namespace Cosette.Engine.Board
                     AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
                     AddOrRemovePiece(ColorToMove, move.Piece, move.From);
 
-                    Material += BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
-                    Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
+                    Material += EvaluationConstants.Pieces[(int)ColorToMove][(int)move.Piece];
+                    Material -= EvaluationConstants.Pieces[(int)ColorToMove][(int)promotionPiece];
                 }
                 else
                 {
@@ -340,7 +350,7 @@ namespace Cosette.Engine.Board
                 }
 
                 AddOrRemovePiece(enemyColor, killedPiece, move.To);
-                Material += BoardConstants.PieceValues[(int)enemyColor][(int)killedPiece];
+                Material += EvaluationConstants.Pieces[(int)enemyColor][(int)killedPiece];
             }
             else if ((move.Flags & MoveFlags.Castling) != 0)
             {
@@ -372,6 +382,8 @@ namespace Cosette.Engine.Board
                         MovePiece(Color.Black, Piece.Rook, 60, 63);
                     }
                 }
+
+                CastlingDone[(int)ColorToMove] = false;
             }
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
             {
@@ -381,7 +393,7 @@ namespace Cosette.Engine.Board
 
                 MovePiece(ColorToMove, move.Piece, move.To, move.From);
                 AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
-                Material += BoardConstants.PieceValues[(int)enemyColor][(int)killedPiece];
+                Material += EvaluationConstants.Pieces[(int)enemyColor][(int)killedPiece];
             }
             else if ((byte)move.Flags >= 16)
             {
@@ -389,8 +401,8 @@ namespace Cosette.Engine.Board
                 AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
                 AddOrRemovePiece(ColorToMove, move.Piece, move.From);
 
-                Material += BoardConstants.PieceValues[(int)ColorToMove][(int)move.Piece];
-                Material -= BoardConstants.PieceValues[(int)ColorToMove][(int)promotionPiece];
+                Material += EvaluationConstants.Pieces[(int)ColorToMove][(int)move.Piece];
+                Material -= EvaluationConstants.Pieces[(int)ColorToMove][(int)promotionPiece];
             }
 
             Hash = _hashes.Pop();
@@ -562,7 +574,7 @@ namespace Cosette.Engine.Board
 
             for (var i = 0; i < 6; i++)
             {
-                material += (int) BitOperations.Count(Pieces[(int) color][i]) * BoardConstants.PieceValues[(int)color][i];
+                material += (int) BitOperations.Count(Pieces[(int) color][i]) * EvaluationConstants.Pieces[(int)color][i];
             }
 
             return material;

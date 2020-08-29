@@ -1,4 +1,4 @@
-﻿namespace Cosette.Engine.Ai
+﻿namespace Cosette.Engine.Ai.Search
 {
     public static class SearchConstants
     {

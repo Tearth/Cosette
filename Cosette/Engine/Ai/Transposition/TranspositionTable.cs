@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Cosette.Engine.Moves;
 
-namespace Cosette.Engine.Ai
+namespace Cosette.Engine.Ai.Transposition
 {
     public static class TranspositionTable
     {

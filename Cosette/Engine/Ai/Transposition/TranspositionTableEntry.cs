@@ -1,6 +1,6 @@
 ﻿using Cosette.Engine.Moves;
 
-namespace Cosette.Engine.Ai
+namespace Cosette.Engine.Ai.Transposition
 {
     public struct TranspositionTableEntry
     {

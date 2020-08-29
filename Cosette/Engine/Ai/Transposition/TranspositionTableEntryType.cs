@@ -1,4 +1,4 @@
-﻿namespace Cosette.Engine.Ai
+﻿namespace Cosette.Engine.Ai.Transposition
 {
     public enum TranspositionTableEntryType : byte
     {

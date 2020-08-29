@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Search;
 using Cosette.Uci.Commands;
 
 namespace Cosette.Uci

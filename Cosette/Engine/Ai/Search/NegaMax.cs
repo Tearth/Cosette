@@ -1,9 +1,11 @@
 ﻿using System;
+using Cosette.Engine.Ai.Score;
+using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
-namespace Cosette.Engine.Ai
+namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
@@ -57,7 +59,7 @@ namespace Cosette.Engine.Ai
             if (board.Pieces[(int) board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
-                return -BoardConstants.PieceValues[(int)Color.White][(int)Piece.King] - depth;
+                return -EvaluationConstants.Pieces[(int)Color.White][(int)Piece.King] - depth;
             }
 
             if (depth <= 0)

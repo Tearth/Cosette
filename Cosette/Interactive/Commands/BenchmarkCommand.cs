@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Xml.XPath;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
