@@ -24,7 +24,7 @@ namespace Cosette.Engine.Ai.Search
 
         public SearchStatistics()
         {
-            PrincipalVariation = new Move[128];
+            PrincipalVariation = new Move[32];
         }
 
         public void Clear()
