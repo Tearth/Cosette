@@ -98,11 +98,12 @@ namespace Cosette.Uci
             {
                 Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor} bcutoffs {stats.BetaCutoffs} tthits {stats.TTHits}");
 
+                var phase = stats.Board.GetPhaseRatio();
                 var materialEvaluation = Evaluation.EvaluateMaterial(stats.Board);
                 var castlingEvaluation = Evaluation.EvaluateCastling(stats.Board, stats.Board.ColorToMove);
                 var total = materialEvaluation + castlingEvaluation;
 
-                Send($"info string evaluation {total} material {materialEvaluation} castling {castlingEvaluation}");
+                Send($"info string evaluation {total} phase {phase:F} material {materialEvaluation} castling {castlingEvaluation}");
             }
         }
 

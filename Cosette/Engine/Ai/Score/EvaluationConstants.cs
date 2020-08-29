@@ -6,5 +6,7 @@
 
         public const int CastlingDone = 50;
         public const int CastlingFailed = -50;
+
+        public const int OpeningEndgameEdge = 2 * 21000;
     }
 }

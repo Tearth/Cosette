@@ -29,6 +29,8 @@ namespace Cosette.Engine.Board
         private readonly FastStack<Piece> _promotedPieces;
         private readonly FastStack<ulong> _hashes;
 
+        private int _materialAtOpening;
+
         public BoardState()
         {
             Pieces = new ulong[2][];
@@ -45,6 +47,15 @@ namespace Cosette.Engine.Board
             _castlings = new FastStack<Castling>(256);
             _promotedPieces = new FastStack<Piece>(256);
             _hashes = new FastStack<ulong>(256);
+
+            _materialAtOpening =
+                EvaluationConstants.Pieces[(int) Piece.King] +
+                EvaluationConstants.Pieces[(int) Piece.Queen] +
+                EvaluationConstants.Pieces[(int) Piece.Rook] * 2 +
+                EvaluationConstants.Pieces[(int) Piece.Bishop] * 2+
+                EvaluationConstants.Pieces[(int) Piece.Knight] * 2+
+                EvaluationConstants.Pieces[(int) Piece.Pawn] * 8;
+            _materialAtOpening *= 2;
         }
 
         public void SetDefaultState()
@@ -73,8 +84,8 @@ namespace Cosette.Engine.Board
             CastlingDone[(int)Color.White] = false;
             CastlingDone[(int)Color.Black] = false;
 
-            Material[(int)Color.White] = 0;
-            Material[(int)Color.Black] = 0;
+            Material[(int)Color.White] = CalculateMaterial(Color.White);
+            Material[(int)Color.Black] = CalculateMaterial(Color.Black);
 
             Hash = ZobristHashing.CalculateHash(this);
 
@@ -581,6 +592,18 @@ namespace Cosette.Engine.Board
             }
 
             return material;
+        }
+
+#if INLINE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public float GetPhaseRatio()
+        {
+            var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
+            var boardDelta = Material[(int) Color.White] + Material[(int) Color.Black] - EvaluationConstants.OpeningEndgameEdge;
+            var ratio = (float) boardDelta / openingDelta;
+
+            return Math.Max(0, ratio);
         }
 
 #if INLINE
