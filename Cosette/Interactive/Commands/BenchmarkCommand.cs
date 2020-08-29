@@ -76,7 +76,7 @@ namespace Cosette.Interactive.Commands
             var megaLeafsPerSecond = (statistics.Leafs / totalSeconds) / 1_000_000;
             var nanosecondsPerLeaf = (totalSeconds / statistics.Leafs) * 1_000_000_000;
 
-            Console.WriteLine($"  Depth: {statistics.Depth}, Best: {statistics.BestMove}, Score: {statistics.Score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
+            Console.WriteLine($"  Depth: {statistics.Depth}, Best: {statistics.PrincipalVariation[0]}, Score: {statistics.Score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
                               $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
             Console.WriteLine($"  Branching factor: {statistics.BranchingFactor}, Beta cutoffs: {statistics.BetaCutoffs}, " +
                               $"TTHits: {statistics.TTHits}, TTCollisions: {statistics.TTCollisions}");

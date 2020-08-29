@@ -13,7 +13,6 @@ namespace Cosette.Engine.Ai.Search
 
         public static Move FindBestMove(BoardState board, int remainingTime, int moveNumber)
         {
-            var bestMove = new Move();
             var statistics = new SearchStatistics();
             var lastNodesCount = 1ul;
             var expectedExecutionTime = 0;
@@ -29,12 +28,12 @@ namespace Cosette.Engine.Ai.Search
                 statistics.Clear();
 
                 statistics.Depth = i;
-                statistics.Score = NegaMax.FindBestMove(board, i, alpha, beta, out bestMove, statistics);
+                statistics.Score = NegaMax.FindBestMove(board, i, alpha, beta, statistics);
 
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));
                 statistics.BranchingFactor = (int)(statistics.Nodes / lastNodesCount);
-                statistics.BestMove = bestMove;
+                statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
                 OnSearchUpdate?.Invoke(null, statistics);
                 lastNodesCount = statistics.Nodes;
@@ -42,7 +41,24 @@ namespace Cosette.Engine.Ai.Search
                 expectedExecutionTime = (int)statistics.SearchTime * statistics.BranchingFactor;
             }
 
-            return bestMove;
+            return statistics.PrincipalVariation[0];
+        }
+
+        public static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)
+        {
+            var entry = TranspositionTable.Get(board.Hash);
+            if (entry.Type != TranspositionTableEntryType.ExactScore)
+            {
+                return movesCount;
+            }
+
+            moves[movesCount] = entry.BestMove;
+
+            board.MakeMove(entry.BestMove);
+            movesCount = GetPrincipalVariation(board, moves, movesCount + 1);
+            board.UndoMove(entry.BestMove);
+
+            return movesCount;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Moves;
+﻿using System;
+using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Ai.Search
 {
@@ -14,7 +15,14 @@ namespace Cosette.Engine.Ai.Search
         public ulong BetaCutoffs { get; set; }
         public ulong TTHits { get; set; }
         public ulong TTCollisions { get; set; }
-        public Move BestMove { get; set; }
+
+        public Move[] PrincipalVariation { get; set; }
+        public int PrincipalVariationMovesCount { get; set; }
+
+        public SearchStatistics()
+        {
+            PrincipalVariation = new Move[128];
+        }
 
         public void Clear()
         {
@@ -28,7 +36,9 @@ namespace Cosette.Engine.Ai.Search
             BetaCutoffs = 0;
             TTHits = 0;
             TTCollisions = 0;
-            BestMove = new Move();
+            
+            Array.Clear(PrincipalVariation, 0, PrincipalVariation.Length);
+            PrincipalVariationMovesCount = 0;
         }
     }
 }

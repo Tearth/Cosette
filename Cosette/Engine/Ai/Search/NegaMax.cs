@@ -9,11 +9,11 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(BoardState board, int depth, int alpha, int beta, out Move bestMove, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, int depth, int alpha, int beta, SearchStatistics statistics)
         {
             var originalAlpha = alpha;
+            var bestMove = new Move();
 
-            bestMove = new Move();
             statistics.Nodes++;
 
             var entry = TranspositionTable.Get(board.Hash);
@@ -25,7 +25,6 @@ namespace Cosette.Engine.Ai.Search
                 {
                     case TranspositionTableEntryType.ExactScore:
                     {
-                        bestMove = entry.BestMove;
                         return entry.Score;
                     }
 
@@ -44,7 +43,6 @@ namespace Cosette.Engine.Ai.Search
 
                 if (alpha >= beta)
                 {
-                    bestMove = entry.BestMove;
                     return entry.Score;
                 }
             }
@@ -76,7 +74,7 @@ namespace Cosette.Engine.Ai.Search
             {
                 board.MakeMove(moves[i]);
 
-                var score = -FindBestMove(board, depth - 1, -beta, -alpha, out _, statistics);
+                var score = -FindBestMove(board, depth - 1, -beta, -alpha, statistics);
                 if (score > bestScore)
                 {
                     bestScore = score;

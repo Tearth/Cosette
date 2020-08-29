@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Moves;
 using Cosette.Uci.Commands;
 
 namespace Cosette.Uci
@@ -88,12 +90,25 @@ namespace Cosette.Uci
 
         private void OnSearchUpdate(object sender, SearchStatistics stats)
         {
-            Send($"info depth {stats.Depth} time {stats.SearchTime} score cp {stats.Score} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
+            var principalVariation = FormatPrincipalVariation(stats.PrincipalVariation, stats.PrincipalVariationMovesCount);
+            Send($"info depth {stats.Depth} time {stats.SearchTime} pv {principalVariation} score cp {stats.Score} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
 
             if (_debugMode)
             {
                 Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor} bcutoffs {stats.BetaCutoffs} tthits {stats.TTHits}");
             }
+        }
+
+        private string FormatPrincipalVariation(Move[] moves, int movesCount)
+        {
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < movesCount; i++)
+            {
+                stringBuilder.Append(moves[i]);
+                stringBuilder.Append(' ');
+            }
+
+            return stringBuilder.ToString().Trim();
         }
     }
 }
