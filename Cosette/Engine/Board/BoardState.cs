@@ -64,6 +64,7 @@ namespace Cosette.Engine.Board
             Castling = Castling.Everything;
             ColorToMove = Color.White;
 
+            Material = 0;
             Hash = ZobristHashing.CalculateHash(this);
 
             _killedPieces.Clear();

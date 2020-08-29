@@ -46,10 +46,10 @@ namespace Cosette.Engine.Board.Operators
 
                 if ((piece & promotionRank) != 0)
                 {
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.QueenPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.RookPromotion);
                     moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.KnightPromotion);
                     moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.BishopPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.QueenPromotion);
                 }
                 else
                 {
@@ -130,10 +130,10 @@ namespace Cosette.Engine.Board.Operators
 
                 if ((piece & promotionRank) != 0)
                 {
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.QueenPromotion);
+                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.RookPromotion);
                     moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.KnightPromotion);
                     moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.BishopPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.QueenPromotion);
                 }
                 else
                 {
