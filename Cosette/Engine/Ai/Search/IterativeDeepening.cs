@@ -27,6 +27,7 @@ namespace Cosette.Engine.Ai.Search
             {
                 statistics.Clear();
 
+                statistics.Board = board;
                 statistics.Depth = i;
                 statistics.Score = NegaMax.FindBestMove(board, i, alpha, beta, statistics);
 

@@ -1,10 +1,13 @@
 ﻿using System;
+using Cosette.Engine.Board;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Ai.Search
 {
     public class SearchStatistics
     {
+        public BoardState Board { get; set; }
+
         public int Depth { get; set; }
         public int Score { get; set; }
         public ulong Leafs { get; set; }
@@ -26,6 +29,8 @@ namespace Cosette.Engine.Ai.Search
 
         public void Clear()
         {
+            Board = null;
+
             Depth = 0;
             Score = 0;
             Leafs = 0;

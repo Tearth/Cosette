@@ -12,7 +12,7 @@ namespace Cosette.Engine.Ai.Score
         {
             var result = 0;
 
-            result += EvaluateMaterial(board, color);
+            result += EvaluateMaterial(board);
             result += EvaluateCastling(board, color);
 
             var sign = color == Color.White ? 1 : -1;
@@ -22,7 +22,7 @@ namespace Cosette.Engine.Ai.Score
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        private static int EvaluateMaterial(BoardState board, Color color)
+        public static int EvaluateMaterial(BoardState board)
         {
             return board.Material;
         }
@@ -30,7 +30,7 @@ namespace Cosette.Engine.Ai.Score
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        private static int EvaluateCastling(BoardState board, Color color)
+        public static int EvaluateCastling(BoardState board, Color color)
         {
             var result = 0;
             if (board.CastlingDone[(int) color])
