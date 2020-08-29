@@ -5,6 +5,7 @@ using System.Text;
 using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Uci.Commands;
 
@@ -98,12 +99,18 @@ namespace Cosette.Uci
             {
                 Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor} bcutoffs {stats.BetaCutoffs} tthits {stats.TTHits}");
 
-                var phase = stats.Board.GetPhaseRatio();
-                var materialEvaluation = Evaluation.EvaluateMaterial(stats.Board);
-                var castlingEvaluation = Evaluation.EvaluateCastling(stats.Board, stats.Board.ColorToMove);
-                var total = materialEvaluation + castlingEvaluation;
+                var openingPhase = stats.Board.GetPhaseRatio();
+                var endingPhase = 1 - openingPhase;
 
-                Send($"info string evaluation {total} phase {phase:F} material {materialEvaluation} castling {castlingEvaluation}");
+                var materialEvaluation = Evaluation.EvaluateMaterial(stats.Board);
+                var castlingEvaluation = Evaluation.EvaluateCastling(stats.Board, Color.White) -
+                                         Evaluation.EvaluateCastling(stats.Board, Color.Black);
+                var positionEvaluation = Evaluation.EvaluatePosition(stats.Board, openingPhase, endingPhase, Color.White) -
+                                         Evaluation.EvaluatePosition(stats.Board, openingPhase, endingPhase, Color.Black);
+                var total = materialEvaluation + castlingEvaluation + positionEvaluation;
+
+                Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
+                     $"position {positionEvaluation}");
             }
         }
 
