@@ -63,6 +63,14 @@ namespace Cosette.Engine.Perft
                 return false;
             }
 
+            if (board.Position[(int) Color.White][(int) GamePhase.Opening] != board.CalculatePosition(Color.White, GamePhase.Opening) ||
+                board.Position[(int) Color.White][(int) GamePhase.Ending] != board.CalculatePosition(Color.White, GamePhase.Ending) ||
+                board.Position[(int) Color.Black][(int) GamePhase.Opening] != board.CalculatePosition(Color.Black, GamePhase.Opening) ||
+                board.Position[(int) Color.Black][(int) GamePhase.Ending] != board.CalculatePosition(Color.Black, GamePhase.Ending))
+            {
+                return false;
+            }
+
             return true;
         }
     }

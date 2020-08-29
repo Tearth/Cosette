@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Board;
+﻿using Cosette.Engine.Ai.Score.PieceSquareTables;
+using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Ai.Score
@@ -11,9 +12,12 @@ namespace Cosette.Engine.Ai.Score
         public static int Evaluate(BoardState board, Color color)
         {
             var result = 0;
+            var openingPhase = board.GetPhaseRatio();
+            var endingPhase = 1 - openingPhase;
 
             result += EvaluateMaterial(board);
-            result += EvaluateCastling(board, color);
+            result += EvaluateCastling(board, Color.White) - EvaluateCastling(board, Color.Black);
+            result += EvaluatePosition(board, openingPhase, endingPhase, Color.White) - EvaluatePosition(board, openingPhase, endingPhase, Color.Black);
 
             var sign = color == Color.White ? 1 : -1;
             return sign * result;
@@ -47,6 +51,17 @@ namespace Cosette.Engine.Ai.Score
             }
 
             return result;
+        }
+
+#if INLINE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int EvaluatePosition(BoardState board, float openingPhase, float endingPhase, Color color)
+        {
+            var openingScore = board.Position[(int) color][(int) GamePhase.Opening];
+            var endingScore = board.Position[(int)color][(int)GamePhase.Opening];
+
+            return (int)(openingScore * openingPhase + endingScore * endingPhase);
         }
     }
 }

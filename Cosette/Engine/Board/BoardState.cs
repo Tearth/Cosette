@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Score;
+using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -20,6 +21,7 @@ namespace Cosette.Engine.Board
 
         public bool[] CastlingDone { get; set; }
         public int[] Material { get; set; }
+        public int[][] Position { get; set; }
 
         public ulong Hash { get; set; }
 
@@ -41,6 +43,10 @@ namespace Cosette.Engine.Board
             EnPassant = new ulong[2];
             CastlingDone = new bool[2];
             Material = new int[2];
+
+            Position = new int[2][];
+            Position[(int)Color.White] = new int[2];
+            Position[(int)Color.Black] = new int[2];
 
             _killedPieces = new FastStack<Piece>(256);
             _enPassants = new FastStack<ulong>(256);
@@ -86,6 +92,11 @@ namespace Cosette.Engine.Board
 
             Material[(int)Color.White] = CalculateMaterial(Color.White);
             Material[(int)Color.Black] = CalculateMaterial(Color.Black);
+
+            Position[(int)Color.White][(int)GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
+            Position[(int)Color.White][(int)GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
+            Position[(int)Color.Black][(int)GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
+            Position[(int)Color.Black][(int)GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
 
             Hash = ZobristHashing.CalculateHash(this);
 
@@ -142,10 +153,8 @@ namespace Cosette.Engine.Board
             {
                 var killedPiece = GetPiece(enemyColor, move.To);
 
-                AddOrRemovePiece(enemyColor, killedPiece, move.To);
+                RemovePiece(enemyColor, killedPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, move.To);
-
-                Material[(int)enemyColor] -= EvaluationConstants.Pieces[(int) killedPiece];
 
                 if (killedPiece == Piece.Rook)
                 {
@@ -183,16 +192,13 @@ namespace Cosette.Engine.Board
                 {
                     var promotionPiece = GetPromotionPiece(move.Flags);
 
-                    AddOrRemovePiece(ColorToMove, move.Piece, move.From);
+                    RemovePiece(ColorToMove, move.Piece, move.From);
                     Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
 
-                    AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
+                    AddPiece(ColorToMove, promotionPiece, move.To);
                     Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
 
                     _promotedPieces.Push(promotionPiece);
-
-                    Material[(int)ColorToMove] -= EvaluationConstants.Pieces[(int)move.Piece];
-                    Material[(int)ColorToMove] += EvaluationConstants.Pieces[(int)promotionPiece];
                 }
                 else
                 {
@@ -210,17 +216,17 @@ namespace Cosette.Engine.Board
                     if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 3, 1);
-                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.King, 3, 1);
-
                         MovePiece(Color.White, Piece.Rook, 0, 2);
+
+                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.King, 3, 1);
                         Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.Rook, 0, 2);
                     }
                     else
                     {
                         MovePiece(Color.Black, Piece.King, 59, 57);
-                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.King, 59, 57);
-
                         MovePiece(Color.Black, Piece.Rook, 56, 58);
+
+                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.King, 59, 57);
                         Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.Rook, 56, 58);
                     }
                 }
@@ -230,17 +236,17 @@ namespace Cosette.Engine.Board
                     if (ColorToMove == Color.White)
                     {
                         MovePiece(Color.White, Piece.King, 3, 5);
-                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.King, 3, 5);
-
                         MovePiece(Color.White, Piece.Rook, 7, 4);
+
+                        Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.King, 3, 5);
                         Hash = ZobristHashing.MovePiece(Hash, Color.White, Piece.Rook, 7, 4);
                     }
                     else
                     {
                         MovePiece(Color.Black, Piece.King, 59, 61);
-                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.King, 59, 61);
-
                         MovePiece(Color.Black, Piece.Rook, 63, 60);
+
+                        Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.King, 59, 61);
                         Hash = ZobristHashing.MovePiece(Hash, Color.Black, Piece.Rook, 63, 60);
                     }
                 }
@@ -265,10 +271,8 @@ namespace Cosette.Engine.Board
                 var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
                 var killedPiece = GetPiece(enemyColor, enemyPieceField);
 
-                AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
+                RemovePiece(enemyColor, killedPiece, enemyPieceField);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, enemyPieceField);
-
-                Material[(int)enemyColor] -= EvaluationConstants.Pieces[(int)killedPiece];
 
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
                 Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
@@ -279,16 +283,13 @@ namespace Cosette.Engine.Board
             {
                 var promotionPiece = GetPromotionPiece(move.Flags);
 
-                AddOrRemovePiece(ColorToMove, move.Piece, move.From);
+                RemovePiece(ColorToMove, move.Piece, move.From);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
 
-                AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
+                AddPiece(ColorToMove, promotionPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
 
                 _promotedPieces.Push(promotionPiece);
-
-                Material[(int)ColorToMove] -= EvaluationConstants.Pieces[(int)move.Piece];
-                Material[(int)ColorToMove] += EvaluationConstants.Pieces[(int)promotionPiece];
             }
 
             if (move.Piece == Piece.King && move.Flags != MoveFlags.Castling)
@@ -352,19 +353,15 @@ namespace Cosette.Engine.Board
                 if ((byte)move.Flags >= 16)
                 {
                     var promotionPiece = _promotedPieces.Pop();
-                    AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
-                    AddOrRemovePiece(ColorToMove, move.Piece, move.From);
-
-                    Material[(int)ColorToMove] += EvaluationConstants.Pieces[(int)move.Piece];
-                    Material[(int)ColorToMove] -= EvaluationConstants.Pieces[(int)promotionPiece];
+                    RemovePiece(ColorToMove, promotionPiece, move.To);
+                    AddPiece(ColorToMove, move.Piece, move.From);
                 }
                 else
                 {
                     MovePiece(ColorToMove, move.Piece, move.To, move.From);
                 }
 
-                AddOrRemovePiece(enemyColor, killedPiece, move.To);
-                Material[(int)enemyColor] += EvaluationConstants.Pieces[(int)killedPiece];
+                AddPiece(enemyColor, killedPiece, move.To);
             }
             else if ((move.Flags & MoveFlags.Castling) != 0)
             {
@@ -406,17 +403,13 @@ namespace Cosette.Engine.Board
                 var killedPiece = _killedPieces.Pop();
 
                 MovePiece(ColorToMove, move.Piece, move.To, move.From);
-                AddOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
-                Material[(int)enemyColor] += EvaluationConstants.Pieces[(int)killedPiece];
+                AddPiece(enemyColor, killedPiece, enemyPieceField);
             }
             else if ((byte)move.Flags >= 16)
             {
                 var promotionPiece = _promotedPieces.Pop();
-                AddOrRemovePiece(ColorToMove, promotionPiece, move.To);
-                AddOrRemovePiece(ColorToMove, move.Piece, move.From);
-
-                Material[(int)ColorToMove] += EvaluationConstants.Pieces[(int)move.Piece];
-                Material[(int)ColorToMove] -= EvaluationConstants.Pieces[(int)promotionPiece];
+                RemovePiece(ColorToMove, promotionPiece, move.To);
+                AddPiece(ColorToMove, move.Piece, move.From);
             }
 
             Hash = _hashes.Pop();
@@ -550,6 +543,12 @@ namespace Cosette.Engine.Board
             Pieces[(int) color][(int) piece] ^= move;
             Occupancy[(int)color] ^= move;
             OccupancySummary ^= move;
+            
+            Position[(int)color][(int)GamePhase.Opening] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][from];
+            Position[(int)color][(int)GamePhase.Opening] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][to];
+
+            Position[(int)color][(int)GamePhase.Ending] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][from];
+            Position[(int)color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][to];
         }
 
 #if INLINE
@@ -573,13 +572,35 @@ namespace Cosette.Engine.Board
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public void AddOrRemovePiece(Color color, Piece piece, byte at)
+        public void AddPiece(Color color, Piece piece, byte at)
         {
             var field = 1ul << at;
 
             Pieces[(int)color][(int)piece] ^= field;
             Occupancy[(int)color] ^= field;
             OccupancySummary ^= field;
+
+            Material[(int)color] += EvaluationConstants.Pieces[(int)piece];
+
+            Position[(int)color][(int)GamePhase.Opening] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][at];
+            Position[(int)color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][at];
+        }
+
+#if INLINE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public void RemovePiece(Color color, Piece piece, byte at)
+        {
+            var field = 1ul << at;
+
+            Pieces[(int)color][(int)piece] ^= field;
+            Occupancy[(int)color] ^= field;
+            OccupancySummary ^= field;
+
+            Material[(int)color] -= EvaluationConstants.Pieces[(int)piece];
+
+            Position[(int)color][(int)GamePhase.Opening] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][at];
+            Position[(int)color][(int)GamePhase.Ending] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][at];
         }
 
         public int CalculateMaterial(Color color)
@@ -592,6 +613,26 @@ namespace Cosette.Engine.Board
             }
 
             return material;
+        }
+
+        public int CalculatePosition(Color color, GamePhase phase)
+        {
+            var result = 0;
+
+            for (var pieceIndex = 0; pieceIndex < 6; pieceIndex++)
+            {
+                var pieces = Pieces[(int)color][pieceIndex];
+                while (pieces != 0)
+                {
+                    var lsb = BitOperations.GetLsb(pieces);
+                    pieces = BitOperations.PopLsb(pieces);
+                    var fieldIndex = BitOperations.BitScan(lsb);
+
+                    result += PieceSquareTablesData.Values[pieceIndex][(int)color][(int)phase][fieldIndex];
+                }
+            }
+
+            return result;
         }
 
 #if INLINE

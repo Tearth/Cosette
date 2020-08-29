@@ -47,7 +47,7 @@ namespace Cosette.Engine.Fen
                     {
                         var piece = ConvertToPiece(c);
                         var color = ConvertToColor(c);
-                        result.AddOrRemovePiece(color, piece, (byte) position.ToFieldIndex());
+                        result.AddPiece(color, piece, (byte) position.ToFieldIndex());
                         position += new Position(1, 0);
                     }
                     else if (char.IsDigit(c))
