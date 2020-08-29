@@ -57,7 +57,7 @@ namespace Cosette.Engine.Ai.Search
             if (board.Pieces[(int) board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
-                return -EvaluationConstants.Pieces[(int)Color.White][(int)Piece.King] - depth;
+                return -EvaluationConstants.Pieces[(int)Piece.King] - depth;
             }
 
             if (depth <= 0)

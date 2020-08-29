@@ -52,7 +52,10 @@ namespace Cosette.Engine.Perft
 
         private static bool VerifyBoard(BoardState board)
         {
-            if (board.Material != board.CalculateMaterial(Color.White) + board.CalculateMaterial(Color.Black))
+            var boardMaterialBalance = board.Material[(int) Color.White] - board.Material[(int) Color.Black];
+            var calculatedMaterialBalance = board.CalculateMaterial(Color.White) - board.CalculateMaterial(Color.Black);
+
+            if (boardMaterialBalance != calculatedMaterialBalance)
             {
                 return false;
             }

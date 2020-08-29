@@ -24,7 +24,9 @@ namespace Cosette.Engine.Fen
             ParseCastlingState(castlingState, result);
             ParseEnPassantState(enPassantState, currentColor, result);
 
-            result.Material = result.CalculateMaterial(Color.White) + result.CalculateMaterial(Color.Black);
+            result.Material[(int)Color.White] = result.CalculateMaterial(Color.White);
+            result.Material[(int)Color.Black] = result.CalculateMaterial(Color.Black);
+
             result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
             result.Hash = ZobristHashing.CalculateHash(result);
 

@@ -24,7 +24,7 @@ namespace Cosette.Engine.Ai.Score
 #endif
         public static int EvaluateMaterial(BoardState board)
         {
-            return board.Material;
+            return board.Material[(int)Color.White] - board.Material[(int)Color.Black];
         }
 
 #if INLINE
