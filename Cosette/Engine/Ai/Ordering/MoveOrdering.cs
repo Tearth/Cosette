@@ -24,16 +24,17 @@ namespace Cosette.Engine.Ai.Search
                     var attackingPiece = moves[i].Piece;
                     var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
 
-                    var attackers = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
-                    var defenders = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
-                    moveValues[i] = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
-
-                    //moveValues[i] = EvaluationConstants.Pieces[(int) capturedPiece] - EvaluationConstants.Pieces[(int) attackingPiece];
-                    //moveValues[i] = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
+                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
+                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
+                    moveValues[i] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
                 }
                 else if ((int)moves[i].Flags >= 16)
                 {
                     moveValues[i] = MoveOrderingConstants.Promotion;
+                }
+                else
+                {
+                    // moveValues[i] = -10000;
                 }
             }
         }

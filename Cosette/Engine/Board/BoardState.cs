@@ -510,8 +510,8 @@ namespace Cosette.Engine.Board
             var field = 1ul << fieldIndex;
             var potentialPawns = boxAttacks & Pieces[(int)color][(int)Piece.Pawn];
             var attackingPawns = color == Color.White ?
-                field & ((potentialPawns >> 7) | (potentialPawns >> 9)) :
-                field & ((potentialPawns << 7) | (potentialPawns << 9));
+                field & ((potentialPawns << 7) | (potentialPawns << 9)) :
+                field & ((potentialPawns >> 7) | (potentialPawns >> 9));
 
             if (attackingPawns != 0)
             {
