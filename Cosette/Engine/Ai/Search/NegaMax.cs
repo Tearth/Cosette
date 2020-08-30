@@ -62,7 +62,7 @@ namespace Cosette.Engine.Ai.Search
             if (depth <= 0)
             {
                 statistics.Leafs++;
-                return Evaluation.Evaluate(board, board.ColorToMove);
+                return QuiescenceSearch.FindBestMove(board, depth, alpha, beta, statistics);
             }
 
             Span<Move> moves = stackalloc Move[128];
