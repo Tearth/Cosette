@@ -71,6 +71,7 @@ namespace Cosette.Engine.Ai.Score
         public static int EvaluatePawnStructure(BoardState board, Color color)
         {
             // Chains, doubled and isolated
+            return 0;
         }
     }
 }

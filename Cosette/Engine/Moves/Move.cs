@@ -25,6 +25,16 @@ namespace Cosette.Engine.Moves
             Flags = flags;
         }
 
+        public static bool operator ==(Move a, Move b)
+        {
+            return a.From == b.From && a.To == b.To && a.Piece == b.Piece && a.Flags == b.Flags;
+        }
+
+        public static bool operator !=(Move a, Move b)
+        {
+            return a.From != b.From || a.To != b.To || a.Piece != b.Piece || a.Flags != b.Flags;
+        }
+
         public override string ToString()
         {
             return $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
