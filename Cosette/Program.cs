@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Common;
@@ -15,6 +16,7 @@ namespace Cosette
         static void Main(string[] args)
         {
             TranspositionTable.Init(16);
+            StaticExchangeEvaluation.Init();
             MagicBitboards.InitWithInternalKeys();
 
             new InteractiveConsole().Run();
