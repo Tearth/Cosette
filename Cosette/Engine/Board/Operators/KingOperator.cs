@@ -33,7 +33,8 @@ namespace Cosette.Engine.Board.Operators
                         moves[offset++] = new Move(3, 1, Piece.King, MoveFlags.Castling);
                     }
                 }
-                else if ((boardState.Castling & Castling.WhiteLong) != 0 && (boardState.OccupancySummary & 112) == 0)
+                
+                if ((boardState.Castling & Castling.WhiteLong) != 0 && (boardState.OccupancySummary & 112) == 0)
                 {
                     if (!boardState.IsFieldAttacked(color, 3) && !boardState.IsFieldAttacked(color, 4) && !boardState.IsFieldAttacked(color, 5))
                     {
@@ -50,7 +51,8 @@ namespace Cosette.Engine.Board.Operators
                         moves[offset++] = new Move(59, 57, Piece.King, MoveFlags.Castling);
                     }
                 }
-                else if ((boardState.Castling & Castling.BlackLong) != 0 && (boardState.OccupancySummary & 8070450532247928832) == 0)
+                
+                if ((boardState.Castling & Castling.BlackLong) != 0 && (boardState.OccupancySummary & 8070450532247928832) == 0)
                 {
                     if (!boardState.IsFieldAttacked(color, 59) && !boardState.IsFieldAttacked(color, 60) && !boardState.IsFieldAttacked(color, 61))
                     {
