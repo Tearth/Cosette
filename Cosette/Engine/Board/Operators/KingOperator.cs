@@ -63,5 +63,25 @@ namespace Cosette.Engine.Board.Operators
 
             return offset;
         }
+
+        public static int GetAvailableQuiescenceMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
+        {
+            var enemyColor = ColorOperations.Invert(color);
+            var piece = boardState.Pieces[(int)color][(int)Piece.King];
+
+            var from = BitOperations.BitScan(piece);
+            var availableMoves = KingMovesGenerator.GetMoves(from) & boardState.Occupancy[(int)enemyColor];
+
+            while (availableMoves != 0)
+            {
+                var field = BitOperations.GetLsb(availableMoves);
+                availableMoves = BitOperations.PopLsb(availableMoves);
+                var fieldIndex = BitOperations.BitScan(field);
+
+                moves[offset++] = new Move(from, fieldIndex, Piece.King, MoveFlags.Kill);
+            }
+
+            return offset;
+        }
     }
 }

@@ -97,7 +97,7 @@ namespace Cosette.Uci
 
             if (_debugMode)
             {
-                Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor} bcutoffs {stats.BetaCutoffs} tthits {stats.TTHits}");
+                Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor:F} bcutoffs {stats.BetaCutoffs} tthits {stats.TTHits}");
 
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = 1 - openingPhase;

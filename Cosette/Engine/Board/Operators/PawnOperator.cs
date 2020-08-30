@@ -16,6 +16,14 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
+        public static int GetAvailableQuiescenceMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
+        {
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
+
+            return offset;
+        }
+
         private static int GetSinglePush(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
             int shift;

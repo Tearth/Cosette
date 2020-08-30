@@ -14,7 +14,7 @@ namespace Cosette.Engine.Ai.Search
         public ulong Nodes { get; set; }
         public ulong SearchTime { get; set; }
         public ulong NodesPerSecond { get; set; }
-        public int BranchingFactor { get; set; }
+        public float BranchingFactor { get; set; }
         public ulong BetaCutoffs { get; set; }
         public ulong TTHits { get; set; }
         public ulong TTCollisions { get; set; }

@@ -119,6 +119,18 @@ namespace Cosette.Engine.Board
             return movesCount;
         }
 
+        public int GetAvailableQuiescenceMoves(Span<Move> moves)
+        {
+            var movesCount = PawnOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, 0);
+            movesCount = KnightOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
+            movesCount = BishopOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
+            movesCount = RookOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
+            movesCount = QueenOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
+            movesCount = KingOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
+
+            return movesCount;
+        }
+
         public void MakeMove(Move move)
         {
             var enemyColor = ColorOperations.Invert(ColorToMove);

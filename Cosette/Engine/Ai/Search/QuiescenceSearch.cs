@@ -32,17 +32,12 @@ namespace Cosette.Engine.Ai.Search
             Span<Move> moves = stackalloc Move[128];
             Span<int> moveValues = stackalloc int[128];
 
-            var movesCount = board.GetAvailableMoves(moves);
+            var movesCount = board.GetAvailableQuiescenceMoves(moves);
             MoveOrdering.AssignValues(board, moves, moveValues, movesCount, new TranspositionTableEntry());
 
             for (var i = 0; i < movesCount; i++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, i);
-                if (moves[i].Flags != MoveFlags.Kill)
-                {
-                    // Workaround
-                    continue;
-                }
 
                 board.MakeMove(moves[i]);
                 var score = -FindBestMove(board, depth - 1, -beta, -alpha, statistics);

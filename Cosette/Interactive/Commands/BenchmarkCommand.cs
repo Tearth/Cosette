@@ -78,7 +78,7 @@ namespace Cosette.Interactive.Commands
 
             Console.WriteLine($"  Depth: {statistics.Depth}, Best: {statistics.PrincipalVariation[0]}, Score: {statistics.Score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
                               $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
-            Console.WriteLine($"  Branching factor: {statistics.BranchingFactor}, Beta cutoffs: {statistics.BetaCutoffs}, " +
+            Console.WriteLine($"  Branching factor: {statistics.BranchingFactor:F}, Beta cutoffs: {statistics.BetaCutoffs}, " +
                               $"TTHits: {statistics.TTHits}, TTCollisions: {statistics.TTCollisions}");
         }
     }

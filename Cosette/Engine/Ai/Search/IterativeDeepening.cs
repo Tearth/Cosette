@@ -33,13 +33,13 @@ namespace Cosette.Engine.Ai.Search
 
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));
-                statistics.BranchingFactor = (int)(statistics.Nodes / lastNodesCount);
+                statistics.BranchingFactor = (float)statistics.Nodes / lastNodesCount;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
                 OnSearchUpdate?.Invoke(null, statistics);
                 lastNodesCount = statistics.Nodes;
 
-                expectedExecutionTime = (int)statistics.SearchTime * statistics.BranchingFactor;
+                expectedExecutionTime = (int)(statistics.SearchTime * statistics.BranchingFactor);
             }
 
             return statistics.PrincipalVariation[0];
