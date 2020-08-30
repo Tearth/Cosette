@@ -18,6 +18,7 @@ namespace Cosette.Engine.Ai.Score
             result += EvaluateMaterial(board);
             result += EvaluateCastling(board, Color.White) - EvaluateCastling(board, Color.Black);
             result += EvaluatePosition(board, openingPhase, endingPhase, Color.White) - EvaluatePosition(board, openingPhase, endingPhase, Color.Black);
+            result += EvaluatePawnStructure(board, Color.White) - EvaluatePawnStructure(board, Color.Black);
 
             var sign = color == Color.White ? 1 : -1;
             return sign * result;
@@ -62,6 +63,14 @@ namespace Cosette.Engine.Ai.Score
             var endingScore = board.Position[(int)color][(int)GamePhase.Opening];
 
             return (int)(openingScore * openingPhase + endingScore * endingPhase);
+        }
+
+#if INLINE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int EvaluatePawnStructure(BoardState board, Color color)
+        {
+            // Chains, doubled and isolated
         }
     }
 }
