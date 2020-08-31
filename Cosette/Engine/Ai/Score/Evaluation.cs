@@ -59,8 +59,8 @@ namespace Cosette.Engine.Ai.Score
 #endif
         public static int EvaluatePosition(BoardState board, float openingPhase, float endingPhase, Color color)
         {
-            var openingScore = board.Position[(int) color][(int) GamePhase.Opening];
-            var endingScore = board.Position[(int)color][(int)GamePhase.Opening];
+            var openingScore = board.Position[(int) color][(int)GamePhase.Opening];
+            var endingScore = board.Position[(int)color][(int)GamePhase.Ending];
 
             return (int)(openingScore * openingPhase + endingScore * endingPhase);
         }

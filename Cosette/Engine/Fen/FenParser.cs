@@ -27,6 +27,11 @@ namespace Cosette.Engine.Fen
             result.Material[(int)Color.White] = result.CalculateMaterial(Color.White);
             result.Material[(int)Color.Black] = result.CalculateMaterial(Color.Black);
 
+            result.Position[(int)Color.White][(int)GamePhase.Opening] = result.CalculatePosition(Color.White, GamePhase.Opening);
+            result.Position[(int)Color.White][(int)GamePhase.Ending] = result.CalculatePosition(Color.White, GamePhase.Ending);
+            result.Position[(int)Color.Black][(int)GamePhase.Opening] = result.CalculatePosition(Color.Black, GamePhase.Opening);
+            result.Position[(int)Color.Black][(int)GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
+
             result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
             result.Hash = ZobristHashing.CalculateHash(result);
 
