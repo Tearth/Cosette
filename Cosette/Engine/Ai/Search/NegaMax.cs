@@ -94,6 +94,12 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
+            if (bestScore == -EvaluationConstants.Pieces[(int)Piece.King] - depth + 2 && !board.IsKingChecked(board.ColorToMove))
+            {
+                statistics.Leafs++;
+                return 0;
+            }
+
             var entryType = bestScore <= originalAlpha ? TranspositionTableEntryType.UpperBound :
                             bestScore >= beta ? TranspositionTableEntryType.LowerBound :
                             TranspositionTableEntryType.ExactScore;
