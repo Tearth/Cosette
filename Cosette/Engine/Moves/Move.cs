@@ -37,7 +37,37 @@ namespace Cosette.Engine.Moves
 
         public override string ToString()
         {
-            return $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
+            var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
+            if ((int) Flags >= 16)
+            {
+                return baseMove + GetPromotionSymbol(Flags);
+            }
+            else
+            {
+                return baseMove;
+            }
+        }
+
+        private string GetPromotionSymbol(MoveFlags flags)
+        {
+            if ((flags & MoveFlags.KnightPromotion) != 0)
+            {
+                return "n";
+            }
+            else if ((flags & MoveFlags.BishopPromotion) != 0)
+            {
+                return "b";
+            }
+            else if((flags & MoveFlags.RookPromotion) != 0)
+            {
+                return "r";
+            }
+            else if((flags & MoveFlags.QueenPromotion) != 0)
+            {
+                return "q";
+            }
+
+            return null;
         }
     }
 }
