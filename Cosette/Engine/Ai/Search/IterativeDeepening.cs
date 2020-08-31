@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Time;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
+using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Ai.Search
@@ -23,7 +25,7 @@ namespace Cosette.Engine.Ai.Search
 
             var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();
-            for (var i = 1; expectedExecutionTime <= timeLimit; i++)
+            for (var i = 1; expectedExecutionTime <= timeLimit && Math.Abs(statistics.Score) != EvaluationConstants.Checkmate; i++)
             {
                 statistics.Clear();
 
@@ -56,6 +58,12 @@ namespace Cosette.Engine.Ai.Search
             moves[movesCount] = entry.BestMove;
 
             board.MakeMove(entry.BestMove);
+            if (board.Pieces[(int) ColorOperations.Invert(board.ColorToMove)][(int)Piece.King] == 0)
+            {
+                board.UndoMove(entry.BestMove);
+                return movesCount - 1;
+            }
+
             movesCount = GetPrincipalVariation(board, moves, movesCount + 1);
             board.UndoMove(entry.BestMove);
 

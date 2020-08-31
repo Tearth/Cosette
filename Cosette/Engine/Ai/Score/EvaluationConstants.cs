@@ -4,6 +4,7 @@
     {
         public static int[] Pieces = { 100, 300, 330, 500, 900, 20000 };
 
+        public const int Checkmate = 1000000;
         public const int CastlingDone = 50;
         public const int CastlingFailed = -50;
 
