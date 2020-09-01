@@ -58,11 +58,11 @@ namespace Cosette.Engine.Ai.Search
             moves[movesCount] = entry.BestMove;
 
             board.MakeMove(entry.BestMove);
-            // if (board.IsKingChecked(board.ColorToMove))
-            // {
-             //   board.UndoMove(entry.BestMove);
-             //   return movesCount - 1;
-            // }
+            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
+            {
+                board.UndoMove(entry.BestMove);
+                return movesCount - 1;
+            }
 
             movesCount = GetPrincipalVariation(board, moves, movesCount + 1);
             board.UndoMove(entry.BestMove);
