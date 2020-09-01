@@ -59,8 +59,14 @@ namespace Cosette.Uci
 
         public Move SearchBestMove(int whiteTime, int blackTime)
         {
+            GC.TryStartNoGCRegion(1024 * 1024 * 16);
+
             var remainingTime = _currentColor == Color.White ? whiteTime : blackTime;
-            return IterativeDeepening.FindBestMove(_boardState, remainingTime, _currentMoveNumber);
+            var bestMove = IterativeDeepening.FindBestMove(_boardState, remainingTime, _currentMoveNumber);
+
+            GC.EndNoGCRegion();
+
+            return bestMove;
         }
 
         public void SetCurrentColor(Color color)
