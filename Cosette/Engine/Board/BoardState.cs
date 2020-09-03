@@ -660,7 +660,7 @@ namespace Cosette.Engine.Board
 
         public bool IsThreefoldRepetition()
         {
-            if (_hashes.Count() >= 7)
+            if (_hashes.Count() >= 8)
             {
                 var first = _hashes.Peek(3);
                 var second = _hashes.Peek(7);
