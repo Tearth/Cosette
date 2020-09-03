@@ -42,6 +42,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (alpha >= beta)
                 {
+                    statistics.Leafs++;
                     return entry.Score;
                 }
             }
@@ -57,6 +58,12 @@ namespace Cosette.Engine.Ai.Search
             {
                 statistics.Leafs++;
                 return -EvaluationConstants.Checkmate - depth;
+            }
+
+            if (board.IsThreefoldRepetition())
+            {
+                statistics.Leafs++;
+                return EvaluationConstants.ThreefoldRepetition;
             }
 
             if (depth <= 0)

@@ -658,6 +658,22 @@ namespace Cosette.Engine.Board
             return Math.Max(0, ratio);
         }
 
+        public bool IsThreefoldRepetition()
+        {
+            if (_hashes.Count() >= 7)
+            {
+                var first = _hashes.Peek(3);
+                var second = _hashes.Peek(7);
+
+                if (Hash == first && first == second)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif

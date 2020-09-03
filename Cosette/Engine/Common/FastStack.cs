@@ -28,6 +28,16 @@ namespace Cosette.Engine.Common
             return _stack[--_pointer];
         }
 
+        public T Peek(int index)
+        {
+            return _stack[_pointer - index - 1];
+        }
+
+        public int Count()
+        {
+            return _pointer;
+        }
+
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
