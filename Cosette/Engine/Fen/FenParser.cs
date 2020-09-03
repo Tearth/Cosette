@@ -34,6 +34,7 @@ namespace Cosette.Engine.Fen
 
             result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
             result.Hash = ZobristHashing.CalculateHash(result);
+            result.PawnHash = ZobristHashing.CalculatePawnHash(result);
 
             return result;
         }

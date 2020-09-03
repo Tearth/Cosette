@@ -94,10 +94,29 @@ namespace Cosette.Engine.Board
             return result;
         }
 
+        public static ulong CalculatePawnHash(BoardState board)
+        {
+            var result = 0ul;
+            for (var color = 0; color < 2; color++)
+            {
+                var piecesToParse = board.Pieces[color][(int) Piece.Pawn];
+                while (piecesToParse != 0)
+                {
+                    var lsb = BitOperations.GetLsb(piecesToParse);
+                    piecesToParse = BitOperations.PopLsb(piecesToParse);
+
+                    var fieldIndex = BitOperations.BitScan(lsb);
+                    result ^= _fieldHashes[color][(int)Piece.Pawn][fieldIndex];
+                }
+            }
+
+            return result;
+        }
+
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static ulong MovePiece(ulong hash, Color color, Piece piece, byte from, byte to)
+            public static ulong MovePiece(ulong hash, Color color, Piece piece, byte from, byte to)
         {
             return hash ^ _fieldHashes[(int) color][(int) piece][from] ^ _fieldHashes[(int)color][(int)piece][to];
         }

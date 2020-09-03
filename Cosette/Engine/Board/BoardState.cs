@@ -24,12 +24,14 @@ namespace Cosette.Engine.Board
         public int[][] Position { get; set; }
 
         public ulong Hash { get; set; }
+        public ulong PawnHash { get; set; }
 
         private readonly FastStack<Piece> _killedPieces;
         private readonly FastStack<ulong> _enPassants;
         private readonly FastStack<Castling> _castlings;
         private readonly FastStack<Piece> _promotedPieces;
         private readonly FastStack<ulong> _hashes;
+        private readonly FastStack<ulong> _pawnHashes;
 
         private int _materialAtOpening;
 
@@ -53,6 +55,7 @@ namespace Cosette.Engine.Board
             _castlings = new FastStack<Castling>(256);
             _promotedPieces = new FastStack<Piece>(256);
             _hashes = new FastStack<ulong>(256);
+            _pawnHashes = new FastStack<ulong>(256);
 
             _materialAtOpening =
                 EvaluationConstants.Pieces[(int) Piece.King] +
@@ -99,6 +102,7 @@ namespace Cosette.Engine.Board
             Position[(int)Color.Black][(int)GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
 
             Hash = ZobristHashing.CalculateHash(this);
+            PawnHash = ZobristHashing.CalculatePawnHash(this);
 
             _killedPieces.Clear();
             _enPassants.Clear();
@@ -144,16 +148,23 @@ namespace Cosette.Engine.Board
             _enPassants.Push(EnPassant[(int)ColorToMove]);
             _castlings.Push(Castling);
             _hashes.Push(Hash);
+            _pawnHashes.Push(PawnHash);
 
             if (move.Flags == MoveFlags.None)
             {
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
                 Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
+
+                if (move.Piece == Piece.Pawn)
+                {
+                    PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
+                }
             }
             else if ((move.Flags & MoveFlags.DoublePush) != 0)
             {
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
                 Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
+                PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
 
                 var enPassantField = ColorToMove == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
                 var enPassantFieldIndex = BitOperations.BitScan(enPassantField);
@@ -168,7 +179,11 @@ namespace Cosette.Engine.Board
                 RemovePiece(enemyColor, killedPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, move.To);
 
-                if (killedPiece == Piece.Rook)
+                if (killedPiece == Piece.Pawn)
+                {
+                    PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, enemyColor, killedPiece, move.To);
+                }
+                else if (killedPiece == Piece.Rook)
                 {
                     switch (move.To)
                     {
@@ -206,6 +221,7 @@ namespace Cosette.Engine.Board
 
                     RemovePiece(ColorToMove, move.Piece, move.From);
                     Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
+                    PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, ColorToMove, move.Piece, move.From);
 
                     AddPiece(ColorToMove, promotionPiece, move.To);
                     Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
@@ -216,6 +232,11 @@ namespace Cosette.Engine.Board
                 {
                     MovePiece(ColorToMove, move.Piece, move.From, move.To);
                     Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
+
+                    if (move.Piece == Piece.Pawn)
+                    {
+                        PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
+                    }
                 }
 
                 _killedPieces.Push(killedPiece);
@@ -285,9 +306,11 @@ namespace Cosette.Engine.Board
 
                 RemovePiece(enemyColor, killedPiece, enemyPieceField);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, enemyPieceField);
+                PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, enemyColor, killedPiece, enemyPieceField);
 
                 MovePiece(ColorToMove, move.Piece, move.From, move.To);
                 Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
+                PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
 
                 _killedPieces.Push(killedPiece);
             }
@@ -297,6 +320,7 @@ namespace Cosette.Engine.Board
 
                 RemovePiece(ColorToMove, move.Piece, move.From);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
+                PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, ColorToMove, move.Piece, move.From);
 
                 AddPiece(ColorToMove, promotionPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
@@ -424,6 +448,7 @@ namespace Cosette.Engine.Board
                 AddPiece(ColorToMove, move.Piece, move.From);
             }
 
+            PawnHash = _pawnHashes.Pop();
             Hash = _hashes.Pop();
             Castling = _castlings.Pop();
             EnPassant[(int)ColorToMove] = _enPassants.Pop();
