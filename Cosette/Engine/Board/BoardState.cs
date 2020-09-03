@@ -109,6 +109,7 @@ namespace Cosette.Engine.Board
             _castlings.Clear();
             _promotedPieces.Clear();
             _hashes.Clear();
+            _pawnHashes.Clear();
         }
 
         public int GetAvailableMoves(Span<Move> moves)
