@@ -8,8 +8,8 @@
         public const int ThreefoldRepetition = 0;
         public const int CastlingDone = 50;
         public const int CastlingFailed = -50;
-        public const int DoubledPawns = -30;
-        public const int IsolatedPawns = -30;
+        public const int DoubledPawns = -15;
+        public const int IsolatedPawns = -15;
 
         public const int OpeningEndgameEdge = 2 * 21000;
     }

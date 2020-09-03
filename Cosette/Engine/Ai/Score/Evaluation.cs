@@ -7,6 +7,30 @@ namespace Cosette.Engine.Ai.Score
 {
     public class Evaluation
     {
+        private static ulong[] _innerFileMasks;
+        private static ulong[] _outerFileMasks;
+
+        static Evaluation()
+        {
+            _innerFileMasks = new ulong[8];
+            _outerFileMasks = new ulong[8];
+
+            for (var i = 0; i < 8; i++)
+            {
+                _innerFileMasks[i] = BoardConstants.AFile >> i;
+
+                if (i - 1 >= 0)
+                {
+                    _outerFileMasks[i] |= BoardConstants.AFile >> (i - 1);
+                }
+
+                if (i + 1 < 8)
+                {
+                    _outerFileMasks[i] |= BoardConstants.AFile >> (i + 1);
+                }
+            }
+        }
+
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -77,56 +101,35 @@ namespace Cosette.Engine.Ai.Score
                 return entry.Score;
             }
 
-            var doubledPawnsScore = (EvaluateDoubledPawns(board, Color.White) - EvaluateDoubledPawns(board, Color.Black)) * EvaluationConstants.DoubledPawns;
-            var isolatedPawnsScore = (EvaluateIsolatedPawns(board, Color.White) - EvaluateIsolatedPawns(board, Color.Black)) * EvaluationConstants.IsolatedPawns;
-            var result = doubledPawnsScore + isolatedPawnsScore;
-
+            var result = EvaluatePawnStructure(board, Color.White) - EvaluatePawnStructure(board, Color.Black);
             PawnHashTable.Add(board.PawnHash, (short) result);
+
             return result;
         }
 
-        private static int EvaluateDoubledPawns(BoardState board, Color color)
+        public static int EvaluatePawnStructure(BoardState board, Color color)
         {
             var doubledPawns = 0;
-            var mask = BoardConstants.AFile;
+            var isolatedPawns = 0;
 
             for (var i = 0; i < 8; i++)
             {
-                var pawnsOnFile = board.Pieces[(int) color][(int) Piece.Pawn] & mask;
-                var pawnsCount = (int) BitOperations.Count(pawnsOnFile);
+                var pawnsOnInnerMask = board.Pieces[(int)color][(int)Piece.Pawn] & _innerFileMasks[i];
+                var pawnsOnOuterMask = board.Pieces[(int)color][(int)Piece.Pawn] & _outerFileMasks[i];
 
+                var pawnsCount = (int)BitOperations.Count(pawnsOnInnerMask);
                 if (pawnsCount > 1)
                 {
                     doubledPawns += pawnsCount - 1;
                 }
 
-                mask >>= 1;
-            }
-
-            return doubledPawns;
-        }
-
-        private static int EvaluateIsolatedPawns(BoardState board, Color color)
-        {
-            var isolatedPawns = 0;
-            var innerMask = BoardConstants.BFile;
-            var outerMask = BoardConstants.AFile | BoardConstants.CFile;
-
-            for (var i = 1; i < 6; i++)
-            {
-                var pawnsOnInnerMask = board.Pieces[(int)color][(int)Piece.Pawn] & innerMask;
-                var pawnsOnOuterMask = board.Pieces[(int)color][(int)Piece.Pawn] & outerMask;
-
                 if (pawnsOnInnerMask != 0 && pawnsOnOuterMask == 0)
                 {
-                    isolatedPawns += (int) BitOperations.Count(pawnsOnInnerMask);
+                    isolatedPawns += (int)BitOperations.Count(pawnsOnInnerMask);
                 }
-
-                innerMask >>= 1;
-                outerMask >>= 1;
             }
 
-            return isolatedPawns;
+            return doubledPawns * EvaluationConstants.DoubledPawns + isolatedPawns * EvaluationConstants.IsolatedPawns;
         }
     }
 }
