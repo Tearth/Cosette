@@ -16,6 +16,8 @@ namespace Cosette
         static void Main(string[] args)
         {
             TranspositionTable.Init(512);
+            PawnHashTable.Init(8);
+
             StaticExchangeEvaluation.Init();
             MagicBitboards.InitWithInternalKeys();
 
