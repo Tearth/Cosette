@@ -117,10 +117,12 @@ namespace Cosette.Uci
                 var pawnStructureEvaluation = Evaluation.EvaluatePawnStructure(stats.Board);
                 var mobility = Evaluation.EvaluateMobility(stats.Board, Color.White) -
                                Evaluation.EvaluateMobility(stats.Board, Color.Black);
-                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + mobility;
+                var kingSafety = Evaluation.EvaluateKingSafety(stats.Board, Color.White) -
+                                 Evaluation.EvaluateKingSafety(stats.Board, Color.Black);
+                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + mobility + kingSafety;
 
                 Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
-                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility}");
+                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety}");
             }
         }
 
@@ -128,7 +130,13 @@ namespace Cosette.Uci
         {
             if (Math.Abs(score) >= EvaluationConstants.Checkmate)
             {
-                return "mate " + (depth - 2);
+                var movesToCheckmate = (depth - 3) / 2;
+                if (score < 0)
+                {
+                    movesToCheckmate = -movesToCheckmate;
+                }
+
+                return "mate " + movesToCheckmate;
             }
 
             return "cp " + score;

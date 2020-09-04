@@ -183,7 +183,6 @@ namespace Cosette.Engine.Ai.Score
 
         public static int EvaluateKingSafety(BoardState board, Color color)
         {
-            var enemyColor = ColorOperations.Invert(color);
             var king = board.Pieces[(int) color][(int) Piece.King];
             var kingField = BitOperations.BitScan(king);
             var fieldsAroundKing = BoxPatternGenerator.GetPattern(kingField);
@@ -195,8 +194,11 @@ namespace Cosette.Engine.Ai.Score
                 fieldsAroundKing = BitOperations.PopLsb(fieldsAroundKing);
                 var field = BitOperations.BitScan(lsb);
 
-                var attackingPieces = board.GetAttackingPiecesWithColor(enemyColor, (byte) field);
-                attackersCount += (int) BitOperations.Count(attackingPieces);
+                var attackingPieces = board.IsFieldAttacked(color, (byte) field);
+                if (attackingPieces)
+                {
+                    attackersCount++;
+                }
             }
 
             return attackersCount * EvaluationConstants.KingSafety;
