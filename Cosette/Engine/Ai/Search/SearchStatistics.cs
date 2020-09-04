@@ -10,12 +10,27 @@ namespace Cosette.Engine.Ai.Search
 
         public int Depth { get; set; }
         public int Score { get; set; }
-        public ulong Leafs { get; set; }
-        public ulong Nodes { get; set; }
         public ulong SearchTime { get; set; }
-        public ulong NodesPerSecond { get; set; }
-        public float BranchingFactor { get; set; }
+
+        public ulong Nodes { get; set; }
+        public ulong QNodes { get; set; }
+        public ulong TotalNodes => Nodes + QNodes;
+
+        public ulong Leafs { get; set; }
+        public ulong QLeafs { get; set; }
+        public ulong TotalLeafs => Leafs + QLeafs;
+
+        public float TotalNodesPerSecond => (float) TotalNodes / SearchTime / 1000;
+        public float SecondsPerNode => (float) SearchTime / 1000 / Nodes;
+
+        public float BranchingFactor => (float) Nodes / (Nodes - Leafs);
+        public float QBranchingFactor => (float) QNodes / (QNodes - QLeafs);
+        public float TotalBranchingFactor => (float) TotalNodes / (TotalNodes - TotalLeafs);
+
         public ulong BetaCutoffs { get; set; }
+        public ulong QBetaCutoffs { get; set; }
+        public ulong TotalBetaCutoffs => BetaCutoffs + QBetaCutoffs;
+
         public ulong TTHits { get; set; }
         public ulong TTCollisions { get; set; }
 
@@ -33,12 +48,17 @@ namespace Cosette.Engine.Ai.Search
 
             Depth = 0;
             Score = 0;
-            Leafs = 0;
-            Nodes = 0;
             SearchTime = 0;
-            NodesPerSecond = 0;
-            BranchingFactor = 0;
+
+            Nodes = 0;
+            QNodes = 0;
+
+            Leafs = 0;
+            QLeafs = 0;
+
             BetaCutoffs = 0;
+            QBetaCutoffs = 0;
+
             TTHits = 0;
             TTCollisions = 0;
             

@@ -100,12 +100,10 @@ namespace Cosette.Uci
             var score = FormatScore(stats.Score, stats.Depth);
             var principalVariation = FormatPrincipalVariation(stats.PrincipalVariation, stats.PrincipalVariationMovesCount);
 
-            Send($"info depth {stats.Depth} time {stats.SearchTime} pv {principalVariation} score {score} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
+            Send($"info depth {stats.Depth} time {stats.SearchTime} pv {principalVariation} score {score} nodes {stats.TotalNodes} nps {stats.TotalNodesPerSecond}");
 
             if (_debugMode)
             {
-                Send($"info string depth {stats.Depth} bfactor {stats.BranchingFactor:F} bcutoffs {stats.BetaCutoffs} tthits {stats.TTHits}");
-
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = 1 - openingPhase;
 

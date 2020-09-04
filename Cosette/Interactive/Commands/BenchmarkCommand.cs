@@ -68,18 +68,30 @@ namespace Cosette.Interactive.Commands
             IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
             IterativeDeepening.FindBestMove(boardState, 100_000, 1);
             IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnOnSearchUpdate;
+
+            Console.WriteLine();
         }
 
         private void IterativeDeepening_OnOnSearchUpdate(object? sender, SearchStatistics statistics)
         {
-            var totalSeconds = Math.Max(1, statistics.SearchTime) / 1000f;
-            var megaLeafsPerSecond = (statistics.Leafs / totalSeconds) / 1_000_000;
-            var nanosecondsPerLeaf = (totalSeconds / statistics.Leafs) * 1_000_000_000;
+            // Main search result
+            Console.WriteLine($"  === Depth: {statistics.Depth}, Score: {statistics.Score}, Best: {statistics.PrincipalVariation[0]}, " +
+                              $"Time: {((float) statistics.SearchTime / 1000):F} s");
 
-            Console.WriteLine($"  Depth: {statistics.Depth}, Best: {statistics.PrincipalVariation[0]}, Score: {statistics.Score}, Leafs: {statistics.Leafs}, Time: {totalSeconds:F} s, " +
-                              $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
-            Console.WriteLine($"  Branching factor: {statistics.BranchingFactor:F}, Beta cutoffs: {statistics.BetaCutoffs}, " +
-                              $"TTHits: {statistics.TTHits}, TTCollisions: {statistics.TTCollisions}");
+            // Normal search
+            Console.WriteLine($"   Normal search: Nodes: {statistics.Nodes}, Leafs: {statistics.Leafs}, " +
+                              $"Branching factor: {statistics.BranchingFactor:F}, Beta cutoffs: {statistics.BetaCutoffs}");
+
+            // Quiescence search
+            Console.WriteLine($"   Q search: Nodes: {statistics.QNodes}, Leafs: {statistics.QLeafs}, " +
+                              $"Branching factor: {statistics.QBranchingFactor:F}, Beta cutoffs: {statistics.QBetaCutoffs}");
+
+            // Total
+            Console.WriteLine($"   Total: Nodes: {statistics.TotalNodes} ({statistics.TotalNodesPerSecond:F} MN/s), Leafs: {statistics.TotalLeafs}, " +
+                              $"Branching factor: {statistics.TotalBranchingFactor:F}, Beta cutoffs: {statistics.TotalBetaCutoffs}");
+
+            // Transposition statistics
+            Console.WriteLine($"   Transposition: Hits: {statistics.TTHits}, Collisions: {statistics.TTCollisions}");
         }
     }
 }

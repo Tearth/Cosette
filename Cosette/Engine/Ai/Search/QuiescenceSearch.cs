@@ -11,16 +11,18 @@ namespace Cosette.Engine.Ai.Search
     {
         public static int FindBestMove(BoardState board, int depth, int alpha, int beta, SearchStatistics statistics)
         {
+            statistics.QNodes++;
+
             if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
             {
-                statistics.Leafs++;
+                statistics.QLeafs++;
                 return -EvaluationConstants.Checkmate - depth;
             }
 
             var standPat = Evaluation.Evaluate(board, board.ColorToMove);
-            
             if (standPat >= beta)
             {
+                statistics.QLeafs++;
                 return beta;
             }
 
@@ -45,7 +47,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (score >= beta)
                 {
-                    statistics.BetaCutoffs++;
+                    statistics.QBetaCutoffs++;
                     return beta;
                 }
 

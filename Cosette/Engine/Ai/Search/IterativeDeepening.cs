@@ -16,7 +16,6 @@ namespace Cosette.Engine.Ai.Search
         public static Move FindBestMove(BoardState board, int remainingTime, int moveNumber)
         {
             var statistics = new SearchStatistics();
-            var lastNodesCount = 1ul;
             var expectedExecutionTime = 0;
 
             var alpha = SearchConstants.MinValue;
@@ -32,14 +31,10 @@ namespace Cosette.Engine.Ai.Search
                 statistics.Board = board;
                 statistics.Depth = i;
                 statistics.Score = NegaMax.FindBestMove(board, i, alpha, beta, statistics);
-
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
-                statistics.NodesPerSecond = (ulong)(statistics.Nodes / ((float)statistics.SearchTime / 1000));
-                statistics.BranchingFactor = (float)statistics.Nodes / lastNodesCount;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
                 OnSearchUpdate?.Invoke(null, statistics);
-                lastNodesCount = statistics.Nodes;
 
                 expectedExecutionTime = (int)(statistics.SearchTime * statistics.BranchingFactor);
             }
