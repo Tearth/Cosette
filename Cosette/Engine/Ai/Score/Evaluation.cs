@@ -2,18 +2,21 @@
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
+using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Ai.Score
 {
     public class Evaluation
     {
-        private static ulong[] _innerFileMasks;
-        private static ulong[] _outerFileMasks;
+        private static readonly ulong[] _innerFileMasks;
+        private static readonly ulong[] _outerFileMasks;
+        private static readonly ulong[] _chainMasks;
 
         static Evaluation()
         {
             _innerFileMasks = new ulong[8];
             _outerFileMasks = new ulong[8];
+            _chainMasks = new ulong[64];
 
             for (var i = 0; i < 8; i++)
             {
@@ -28,6 +31,11 @@ namespace Cosette.Engine.Ai.Score
                 {
                     _outerFileMasks[i] |= BoardConstants.AFile >> (i + 1);
                 }
+            }
+
+            for (var i = 0; i < 64; i++)
+            {
+                _chainMasks[i] = DiagonalPatternGenerator.GetPattern(i) & BoxPatternGenerator.GetPattern(i);
             }
         }
 
@@ -111,6 +119,7 @@ namespace Cosette.Engine.Ai.Score
         {
             var doubledPawns = 0;
             var isolatedPawns = 0;
+            var chainedPawns = 0;
 
             for (var i = 0; i < 8; i++)
             {
@@ -129,7 +138,23 @@ namespace Cosette.Engine.Ai.Score
                 }
             }
 
-            return doubledPawns * EvaluationConstants.DoubledPawns + isolatedPawns * EvaluationConstants.IsolatedPawns;
+            var pieces = board.Pieces[(int) color][(int) Piece.Pawn];
+            while (pieces != 0)
+            {
+                var lsb = BitOperations.GetLsb(pieces);
+                pieces = BitOperations.PopLsb(pieces);
+                var field = BitOperations.BitScan(lsb);
+
+                var chain = _chainMasks[field] & board.Pieces[(int) color][(int) Piece.Pawn];
+                if (chain != 0)
+                {
+                    chainedPawns += (int) BitOperations.Count(chain);
+                }
+            }
+
+            return doubledPawns * EvaluationConstants.DoubledPawns + 
+                   isolatedPawns * EvaluationConstants.IsolatedPawns +
+                   chainedPawns * EvaluationConstants.ChainedPawns;
         }
     }
 }
