@@ -54,6 +54,7 @@ namespace Cosette.Engine.Ai.Score
             result += EvaluatePosition(board, openingPhase, endingPhase, Color.White) - EvaluatePosition(board, openingPhase, endingPhase, Color.Black);
             result += EvaluatePawnStructure(board);
             result += EvaluateMobility(board, Color.White) - EvaluateMobility(board, Color.Black);
+            result += EvaluateKingSafety(board, Color.White) - EvaluateKingSafety(board, Color.Black);
 
             var sign = color == Color.White ? 1 : -1;
             return sign * result;
@@ -178,6 +179,27 @@ namespace Cosette.Engine.Ai.Score
                            RookOperator.GetMobility(board, color) +
                            QueenOperator.GetMobility(board, color);
             return mobility * EvaluationConstants.Mobility;
+        }
+
+        public static int EvaluateKingSafety(BoardState board, Color color)
+        {
+            var enemyColor = ColorOperations.Invert(color);
+            var king = board.Pieces[(int) color][(int) Piece.King];
+            var kingField = BitOperations.BitScan(king);
+            var fieldsAroundKing = BoxPatternGenerator.GetPattern(kingField);
+
+            var attackersCount = 0;
+            while (fieldsAroundKing != 0)
+            {
+                var lsb = BitOperations.GetLsb(fieldsAroundKing);
+                fieldsAroundKing = BitOperations.PopLsb(fieldsAroundKing);
+                var field = BitOperations.BitScan(lsb);
+
+                var attackingPieces = board.GetAttackingPiecesWithColor(enemyColor, (byte) field);
+                attackersCount += (int) BitOperations.Count(attackingPieces);
+            }
+
+            return attackersCount * EvaluationConstants.KingSafety;
         }
     }
 }

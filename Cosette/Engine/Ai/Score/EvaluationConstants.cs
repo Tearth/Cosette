@@ -8,11 +8,12 @@
         public const int ThreefoldRepetition = 0;
         public const int CastlingDone = 50;
         public const int CastlingFailed = -50;
-        public const int DoubledPawns = -5;
-        public const int IsolatedPawns = -5;
+        public const int DoubledPawns = -10;
+        public const int IsolatedPawns = -10;
         public const int ChainedPawns = 5;
         public const int PassingPawns = 20;
-        public const int Mobility = 3;
+        public const int Mobility = 4;
+        public const int KingSafety = -20;
 
         public const int OpeningEndgameEdge = 2 * 21000;
     }
