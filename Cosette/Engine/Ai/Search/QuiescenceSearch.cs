@@ -14,7 +14,7 @@ namespace Cosette.Engine.Ai.Search
             if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
-                return -EvaluationConstants.Pieces[(int)Piece.King] - depth;
+                return -EvaluationConstants.Checkmate - depth;
             }
 
             var standPat = Evaluation.Evaluate(board, board.ColorToMove);
@@ -52,7 +52,6 @@ namespace Cosette.Engine.Ai.Search
                 if (score > alpha)
                 {
                     alpha = score;
-                    break;
                 }
             }
 
