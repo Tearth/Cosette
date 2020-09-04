@@ -92,8 +92,15 @@ namespace Cosette.Uci
 
         private void OnSearchUpdate(object sender, SearchStatistics stats)
         {
+            if (stats.Depth < 3)
+            {
+                return;
+            }
+
+            var score = FormatScore(stats.Score, stats.Depth);
             var principalVariation = FormatPrincipalVariation(stats.PrincipalVariation, stats.PrincipalVariationMovesCount);
-            Send($"info depth {stats.Depth} time {stats.SearchTime} pv {principalVariation} score cp {stats.Score} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
+
+            Send($"info depth {stats.Depth} time {stats.SearchTime} pv {principalVariation} score {score} nodes {stats.Nodes} nps {stats.NodesPerSecond}");
 
             if (_debugMode)
             {
@@ -115,6 +122,16 @@ namespace Cosette.Uci
                 Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility}");
             }
+        }
+
+        private string FormatScore(int score, int depth)
+        {
+            if (Math.Abs(score) >= EvaluationConstants.Checkmate)
+            {
+                return "mate " + (depth - 2);
+            }
+
+            return "cp " + score;
         }
 
         private string FormatPrincipalVariation(Move[] moves, int movesCount)
