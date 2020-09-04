@@ -1,6 +1,7 @@
 ﻿using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
+using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves.Patterns;
 
@@ -52,6 +53,7 @@ namespace Cosette.Engine.Ai.Score
             result += EvaluateCastling(board, Color.White) - EvaluateCastling(board, Color.Black);
             result += EvaluatePosition(board, openingPhase, endingPhase, Color.White) - EvaluatePosition(board, openingPhase, endingPhase, Color.Black);
             result += EvaluatePawnStructure(board);
+            result += EvaluateMobility(board, Color.White) - EvaluateMobility(board, Color.Black);
 
             var sign = color == Color.White ? 1 : -1;
             return sign * result;
@@ -155,6 +157,15 @@ namespace Cosette.Engine.Ai.Score
             return doubledPawns * EvaluationConstants.DoubledPawns + 
                    isolatedPawns * EvaluationConstants.IsolatedPawns +
                    chainedPawns * EvaluationConstants.ChainedPawns;
+        }
+
+        public static int EvaluateMobility(BoardState board, Color color)
+        {
+            var mobility = KnightOperator.GetMobility(board, color) +
+                           BishopOperator.GetMobility(board, color) +
+                           RookOperator.GetMobility(board, color) +
+                           QueenOperator.GetMobility(board, color);
+            return mobility * EvaluationConstants.Mobility;
         }
     }
 }

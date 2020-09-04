@@ -58,5 +58,23 @@ namespace Cosette.Engine.Board.Operators
 
             return offset;
         }
+
+        public static int GetMobility(BoardState boardState, Color color)
+        {
+            var mobility = 0;
+            var knights = boardState.Pieces[(int)color][(int)Piece.Knight];
+
+            while (knights != 0)
+            {
+                var piece = BitOperations.GetLsb(knights);
+                knights = BitOperations.PopLsb(knights);
+
+                var from = BitOperations.BitScan(piece);
+                var availableMoves = KnightMovesGenerator.GetMoves(from) & ~boardState.Occupancy[(int)color];
+                mobility += (int)BitOperations.Count(availableMoves);
+            }
+
+            return mobility;
+        }
     }
 }

@@ -108,10 +108,12 @@ namespace Cosette.Uci
                 var positionEvaluation = Evaluation.EvaluatePosition(stats.Board, openingPhase, endingPhase, Color.White) -
                                          Evaluation.EvaluatePosition(stats.Board, openingPhase, endingPhase, Color.Black);
                 var pawnStructureEvaluation = Evaluation.EvaluatePawnStructure(stats.Board);
-                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation;
+                var mobility = Evaluation.EvaluateMobility(stats.Board, Color.White) -
+                               Evaluation.EvaluateMobility(stats.Board, Color.Black);
+                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + mobility;
 
                 Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
-                     $"position {positionEvaluation} pawns {pawnStructureEvaluation}");
+                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility}");
             }
         }
 
