@@ -122,11 +122,14 @@ namespace Cosette.Engine.Ai.Score
             var doubledPawns = 0;
             var isolatedPawns = 0;
             var chainedPawns = 0;
+            var passingPawns = 0;
+            var enemyColor = ColorOperations.Invert(color);
 
             for (var i = 0; i < 8; i++)
             {
                 var pawnsOnInnerMask = board.Pieces[(int)color][(int)Piece.Pawn] & _innerFileMasks[i];
                 var pawnsOnOuterMask = board.Pieces[(int)color][(int)Piece.Pawn] & _outerFileMasks[i];
+                var enemyPawnsOnInnerMask = board.Pieces[(int)enemyColor][(int)Piece.Pawn] & _innerFileMasks[i];
 
                 var pawnsCount = (int)BitOperations.Count(pawnsOnInnerMask);
                 if (pawnsCount > 1)
@@ -134,9 +137,17 @@ namespace Cosette.Engine.Ai.Score
                     doubledPawns += pawnsCount - 1;
                 }
 
-                if (pawnsOnInnerMask != 0 && pawnsOnOuterMask == 0)
+                if (pawnsOnInnerMask != 0)
                 {
-                    isolatedPawns += (int)BitOperations.Count(pawnsOnInnerMask);
+                    if (pawnsOnOuterMask == 0)
+                    {
+                        isolatedPawns += (int)BitOperations.Count(pawnsOnInnerMask);
+                    }
+
+                    if (enemyPawnsOnInnerMask == 0)
+                    {
+                        passingPawns++;
+                    }
                 }
             }
 
@@ -156,7 +167,8 @@ namespace Cosette.Engine.Ai.Score
 
             return doubledPawns * EvaluationConstants.DoubledPawns + 
                    isolatedPawns * EvaluationConstants.IsolatedPawns +
-                   chainedPawns * EvaluationConstants.ChainedPawns;
+                   chainedPawns * EvaluationConstants.ChainedPawns +
+                   passingPawns * EvaluationConstants.PassingPawns;
         }
 
         public static int EvaluateMobility(BoardState board, Color color)
