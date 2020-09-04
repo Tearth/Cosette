@@ -58,10 +58,15 @@ namespace Cosette.Engine.Ai.Search
             moves[movesCount] = entry.BestMove;
 
             board.MakeMove(entry.BestMove);
-            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
+
+            var enemyColor = ColorOperations.Invert(board.ColorToMove);
+            var king = board.Pieces[(int)enemyColor][(int) Piece.King];
+            var kingField = BitOperations.BitScan(king);
+
+            if (board.IsFieldAttacked(enemyColor, (byte) kingField))
             {
                 board.UndoMove(entry.BestMove);
-                return movesCount - 1;
+                return movesCount;
             }
 
             movesCount = GetPrincipalVariation(board, moves, movesCount + 1);

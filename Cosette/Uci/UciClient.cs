@@ -130,7 +130,7 @@ namespace Cosette.Uci
         {
             if (Math.Abs(score) >= EvaluationConstants.Checkmate)
             {
-                var movesToCheckmate = (depth - 3) / 2;
+                var movesToCheckmate = (depth - 3) / 2 + 1;
                 if (score < 0)
                 {
                     movesToCheckmate = -movesToCheckmate;
