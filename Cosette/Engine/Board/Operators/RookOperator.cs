@@ -70,7 +70,7 @@ namespace Cosette.Engine.Board.Operators
                 rooks = BitOperations.PopLsb(rooks);
 
                 var from = BitOperations.BitScan(piece);
-                var availableMoves = RookMovesGenerator.GetMoves(boardState.OccupancySummary, from) & ~boardState.Occupancy[(int)color];
+                var availableMoves = RookMovesGenerator.GetMoves(boardState.OccupancySummary, from);
                 mobility += (int)BitOperations.Count(availableMoves);
             }
 

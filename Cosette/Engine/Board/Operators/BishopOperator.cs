@@ -70,7 +70,7 @@ namespace Cosette.Engine.Board.Operators
                 bishops = BitOperations.PopLsb(bishops);
 
                 var from = BitOperations.BitScan(piece);
-                var availableMoves = BishopMovesGenerator.GetMoves(boardState.OccupancySummary, from) & ~boardState.Occupancy[(int)color];
+                var availableMoves = BishopMovesGenerator.GetMoves(boardState.OccupancySummary, from);
                 mobility += (int) BitOperations.Count(availableMoves);
             }
 
