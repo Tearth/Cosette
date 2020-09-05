@@ -88,21 +88,27 @@ namespace Cosette.Engine.Ai.Search
                 var score = 0;
                 if (pvs)
                 {
-                    score = -FindBestMove(board, depth - 1, shallowness + 1, - beta, -alpha, statistics);
+                    score = -FindBestMove(board, depth - 1, shallowness + 1, -beta, -alpha, statistics);
                     pvs = false;
                 }
                 else
                 {
-                    var nextDepth = depth - 1;
-                    if (shallowness > 3 && i > 3 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
+                    if (shallowness >= 2 && i >= 3 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
                     {
-                        nextDepth -= 1;
+                        score = -FindBestMove(board, depth - 2, shallowness + 1, -alpha - 1, -alpha, statistics);
+                    }
+                    else
+                    {
+                        score = alpha + 1;
                     }
 
-                    score = -FindBestMove(board, nextDepth, shallowness  + 1, - alpha - 1, -alpha, statistics);
-                    if (score > alpha && score < beta)
+                    if (score > alpha)
                     {
-                        score = -FindBestMove(board, nextDepth, shallowness  + 1, - beta, -score, statistics);
+                        score = -FindBestMove(board, depth - 1, shallowness + 1, -alpha - 1, -alpha, statistics);
+                        if (score > alpha && score < beta)
+                        {
+                            score = -FindBestMove(board, depth - 1, shallowness + 1, -beta, -score, statistics);
+                        }
                     }
                 }
 
@@ -121,7 +127,7 @@ namespace Cosette.Engine.Ai.Search
                         HistoryHeuristic.AddHistoryMove(board.ColorToMove, moves[i].From, moves[i].To, depth * depth);
                     }
 
-                    if (i == 0)
+                    if (i < 1)
                     {
                         statistics.BetaCutoffsAtFirstMove++;
                     }
