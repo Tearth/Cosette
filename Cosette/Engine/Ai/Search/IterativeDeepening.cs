@@ -25,6 +25,7 @@ namespace Cosette.Engine.Ai.Search
             TranspositionTable.Clear();
             HistoryHeuristic.Clear();
 
+            var lastTotalNodesCount = 1ul;
             var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();
             for (var i = 1; expectedExecutionTime <= timeLimit && Math.Abs(statistics.Score) != EvaluationConstants.Checkmate; i++)
@@ -33,13 +34,15 @@ namespace Cosette.Engine.Ai.Search
 
                 statistics.Board = board;
                 statistics.Depth = i;
-                statistics.Score = NegaMax.FindBestMove(board, i, 0, alpha, beta, statistics);
+                statistics.Score = NegaMax.FindBestMove(board, i, 0, alpha, beta, false, statistics);
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
                 OnSearchUpdate?.Invoke(null, statistics);
 
-                expectedExecutionTime = (int)(statistics.SearchTime * statistics.BranchingFactor);
+                var ratio = (float) statistics.TotalNodes / lastTotalNodesCount;
+                expectedExecutionTime = (int)(statistics.SearchTime * ratio);
+                lastTotalNodesCount = statistics.TotalNodes;
             }
 
             return statistics.PrincipalVariation[0];

@@ -455,6 +455,31 @@ namespace Cosette.Engine.Board
             EnPassant[(int)ColorToMove] = _enPassants.Pop();
         }
 
+        public void MakeNullMove()
+        {
+            var enemyColor = ColorOperations.Invert(ColorToMove);
+            if (EnPassant[(int)enemyColor] != 0)
+            {
+                var enPassantRank = BitOperations.BitScan(EnPassant[(int)enemyColor]) % 8;
+                Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
+            }
+
+            _enPassants.Push(EnPassant[(int)ColorToMove]);
+            _hashes.Push(Hash);
+
+            EnPassant[(int)enemyColor] = 0;
+            ColorToMove = enemyColor;
+            Hash = ZobristHashing.ChangeSide(Hash);
+        }
+
+        public void UndoNullMove()
+        {
+            ColorToMove = ColorOperations.Invert(ColorToMove);
+
+            Hash = _hashes.Pop();
+            EnPassant[(int)ColorToMove] = _enPassants.Pop();
+        }
+
         public bool IsFieldAttacked(Color color, byte fieldIndex)
         {
             var enemyColor = ColorOperations.Invert(color);
