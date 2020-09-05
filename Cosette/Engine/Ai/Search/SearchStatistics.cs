@@ -34,6 +34,10 @@ namespace Cosette.Engine.Ai.Search
         public ulong TTHits { get; set; }
         public ulong TTCollisions { get; set; }
 
+        public int BetaCutoffsAtFirstMove { get; set; }
+        public int QBetaCutoffsAtFirstMove { get; set; }
+        public int TotalBetaCutoffsAtFirstMove => BetaCutoffsAtFirstMove + QBetaCutoffsAtFirstMove;
+
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }
 
@@ -61,7 +65,10 @@ namespace Cosette.Engine.Ai.Search
 
             TTHits = 0;
             TTCollisions = 0;
-            
+
+            BetaCutoffsAtFirstMove = 0;
+            QBetaCutoffsAtFirstMove = 0;
+
             Array.Clear(PrincipalVariation, 0, PrincipalVariation.Length);
             PrincipalVariationMovesCount = 0;
         }

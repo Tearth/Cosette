@@ -47,6 +47,11 @@ namespace Cosette.Engine.Ai.Search
 
                 if (score >= beta)
                 {
+                    if (i == 0)
+                    {
+                        statistics.QBetaCutoffsAtFirstMove++;
+                    }
+
                     statistics.QBetaCutoffs++;
                     return beta;
                 }

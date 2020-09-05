@@ -94,7 +94,7 @@ namespace Cosette.Engine.Ai.Search
                 else
                 {
                     var nextDepth = depth - 1;
-                    if (shallowness > 3 && i > 3 && moves[i].Flags == MoveFlags.None && !board.IsKingChecked(board.ColorToMove))
+                    if (shallowness > 3 && i > 3 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
                     {
                         nextDepth -= 1;
                     }
@@ -115,9 +115,14 @@ namespace Cosette.Engine.Ai.Search
                 board.UndoMove(moves[i]);
                 if (alpha >= beta)
                 {
-                    if (moves[i].Flags == MoveFlags.None)
+                    if (moves[i].IsQuiet())
                     {
                         KillerHeuristic.AddKillerMove(moves[i], depth);
+                    }
+
+                    if (i == 0)
+                    {
+                        statistics.BetaCutoffsAtFirstMove++;
                     }
 
                     statistics.BetaCutoffs++;

@@ -90,8 +90,15 @@ namespace Cosette.Interactive.Commands
             Console.WriteLine($"   Total: Nodes: {statistics.TotalNodes} ({statistics.TotalNodesPerSecond:F} MN/s), Leafs: {statistics.TotalLeafs}, " +
                               $"Branching factor: {statistics.TotalBranchingFactor:F}, Beta cutoffs: {statistics.TotalBetaCutoffs}");
 
+            // Beta cutoffs at first move
+            var betaCutoffsPercent = (float)statistics.BetaCutoffsAtFirstMove * 100 / statistics.BetaCutoffs;
+            var qbetaCutoffsPercent = (float)statistics.QBetaCutoffsAtFirstMove * 100 / statistics.QBetaCutoffs;
+            Console.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({betaCutoffsPercent:F} %), " +
+                              $"QBeta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({qbetaCutoffsPercent:F} %)");
+
             // Transposition statistics
             Console.WriteLine($"   Transposition: Hits: {statistics.TTHits}, Collisions: {statistics.TTCollisions}");
+
         }
     }
 }
