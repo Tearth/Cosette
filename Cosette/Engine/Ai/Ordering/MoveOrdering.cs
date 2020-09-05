@@ -25,6 +25,10 @@ namespace Cosette.Engine.Ai.Search
                     {
                         moveValues[i] = MoveOrderingConstants.KillerMove;
                     }
+                    else
+                    {
+                        moveValues[i] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[i].From, moves[i].To);
+                    }
                 }
                 else if ((moves[i].Flags & MoveFlags.Kill) != 0)
                 {

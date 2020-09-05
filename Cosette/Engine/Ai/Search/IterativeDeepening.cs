@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Time;
 using Cosette.Engine.Ai.Transposition;
@@ -20,7 +21,9 @@ namespace Cosette.Engine.Ai.Search
 
             var alpha = SearchConstants.MinValue;
             var beta = SearchConstants.MaxValue;
+
             TranspositionTable.Clear();
+            HistoryHeuristic.Clear();
 
             var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();

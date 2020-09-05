@@ -118,6 +118,7 @@ namespace Cosette.Engine.Ai.Search
                     if (moves[i].IsQuiet())
                     {
                         KillerHeuristic.AddKillerMove(moves[i], board.ColorToMove, depth);
+                        HistoryHeuristic.AddHistoryMove(board.ColorToMove, moves[i].From, moves[i].To, depth * depth);
                     }
 
                     if (i == 0)
