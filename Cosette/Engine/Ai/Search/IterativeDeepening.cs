@@ -51,7 +51,7 @@ namespace Cosette.Engine.Ai.Search
         public static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)
         {
             var entry = TranspositionTable.Get(board.Hash);
-            if (entry.Type == TranspositionTableEntryType.Invalid || entry.Hash != board.Hash || movesCount >= 32)
+            if (entry.Type != TranspositionTableEntryType.ExactScore || entry.Hash != board.Hash || movesCount >= 32)
             {
                 return movesCount;
             }

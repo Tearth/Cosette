@@ -30,7 +30,12 @@ namespace Cosette.Engine.Ai.Search
 
                     case TranspositionTableEntryType.LowerBound:
                     {
-                        alpha = Math.Max(alpha, entry.Score);
+                        if (entry.Score > alpha)
+                        {
+                            alpha = entry.Score;
+                            bestMove = entry.BestMove;
+                        }
+
                         break;
                     }
 
