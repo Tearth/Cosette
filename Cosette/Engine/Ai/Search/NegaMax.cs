@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
@@ -76,7 +77,7 @@ namespace Cosette.Engine.Ai.Search
             Span<int> moveValues = stackalloc int[128];
 
             var movesCount = board.GetAvailableMoves(moves);
-            MoveOrdering.AssignValues(board, moves, moveValues, movesCount, entry);
+            MoveOrdering.AssignValues(board, moves, moveValues, movesCount, depth, entry);
 
             var pvs = true;
             for (var i = 0; i < movesCount; i++)
@@ -108,6 +109,11 @@ namespace Cosette.Engine.Ai.Search
                 board.UndoMove(moves[i]);
                 if (alpha >= beta)
                 {
+                    if (moves[i].Flags == MoveFlags.None)
+                    {
+                        KillerHeuristic.AddKillerMove(moves[i], depth);
+                    }
+
                     statistics.BetaCutoffs++;
                     break;
                 }

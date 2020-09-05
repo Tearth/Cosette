@@ -10,7 +10,7 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class MoveOrdering
     {
-        public static void AssignValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount, TranspositionTableEntry entry)
+        public static void AssignValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount, int depth, TranspositionTableEntry entry)
         {
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
             for (var i = 0; i < movesCount; i++)
@@ -18,6 +18,13 @@ namespace Cosette.Engine.Ai.Search
                 if (entry.Type != TranspositionTableEntryType.Invalid && entry.BestMove == moves[i])
                 {
                     moveValues[i] = MoveOrderingConstants.HashMove;
+                }
+                else if (moves[i].Flags == MoveFlags.None)
+                {
+                    if (KillerHeuristic.KillerMoveExists(moves[i], depth))
+                    {
+                        moveValues[i] = MoveOrderingConstants.KillerMove;
+                    }
                 }
                 else if ((moves[i].Flags & MoveFlags.Kill) != 0)
                 {
@@ -31,10 +38,6 @@ namespace Cosette.Engine.Ai.Search
                 else if ((int)moves[i].Flags >= 16)
                 {
                     moveValues[i] = MoveOrderingConstants.Promotion;
-                }
-                else
-                {
-                    // moveValues[i] = -10000;
                 }
             }
         }
