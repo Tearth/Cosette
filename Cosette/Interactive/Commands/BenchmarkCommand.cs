@@ -94,7 +94,7 @@ namespace Cosette.Interactive.Commands
             var betaCutoffsPercent = (float)statistics.BetaCutoffsAtFirstMove * 100 / statistics.BetaCutoffs;
             var qbetaCutoffsPercent = (float)statistics.QBetaCutoffsAtFirstMove * 100 / statistics.QBetaCutoffs;
             Console.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({betaCutoffsPercent:F} %), " +
-                              $"QBeta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({qbetaCutoffsPercent:F} %)");
+                              $"Q Beta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({qbetaCutoffsPercent:F} %)");
 
             // Transposition statistics
             Console.WriteLine($"   Transposition: Hits: {statistics.TTHits}, Collisions: {statistics.TTCollisions}");

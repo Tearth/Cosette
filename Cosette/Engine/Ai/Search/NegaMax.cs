@@ -117,7 +117,7 @@ namespace Cosette.Engine.Ai.Search
                 {
                     if (moves[i].IsQuiet())
                     {
-                        KillerHeuristic.AddKillerMove(moves[i], depth);
+                        KillerHeuristic.AddKillerMove(moves[i], board.ColorToMove, depth);
                     }
 
                     if (i == 0)

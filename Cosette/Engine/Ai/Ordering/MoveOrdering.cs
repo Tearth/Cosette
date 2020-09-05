@@ -21,7 +21,7 @@ namespace Cosette.Engine.Ai.Search
                 }
                 else if (moves[i].IsQuiet())
                 {
-                    if (KillerHeuristic.KillerMoveExists(moves[i], depth))
+                    if (KillerHeuristic.KillerMoveExists(moves[i], board.ColorToMove, depth))
                     {
                         moveValues[i] = MoveOrderingConstants.KillerMove;
                     }
