@@ -78,9 +78,7 @@ namespace Cosette.Engine.Ai.Search
             var movesCount = board.GetAvailableMoves(moves);
             MoveOrdering.AssignValues(board, moves, moveValues, movesCount, entry);
 
-            var bestScore = int.MinValue;
             var pvs = true;
-
             for (var i = 0; i < movesCount; i++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, i);
@@ -101,13 +99,11 @@ namespace Cosette.Engine.Ai.Search
                     }
                 }
 
-                if (score > bestScore)
+                if (score > alpha)
                 {
-                    bestScore = score;
+                    alpha = score;
                     bestMove = moves[i];
                 }
-
-                alpha = Math.Max(alpha, score);
 
                 board.UndoMove(moves[i]);
                 if (alpha >= beta)
@@ -117,18 +113,18 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            if (bestScore == -EvaluationConstants.Checkmate - depth + 2 && !board.IsKingChecked(board.ColorToMove))
+            if (alpha == -EvaluationConstants.Checkmate - depth + 2 && !board.IsKingChecked(board.ColorToMove))
             {
                 statistics.Leafs++;
                 return 0;
             }
 
-            var entryType = bestScore <= originalAlpha ? TranspositionTableEntryType.UpperBound :
-                            bestScore >= beta ? TranspositionTableEntryType.LowerBound :
+            var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.UpperBound :
+                            alpha >= beta ? TranspositionTableEntryType.LowerBound :
                             TranspositionTableEntryType.ExactScore;
-            TranspositionTable.Add(board.Hash, (byte)depth, (short)bestScore, bestMove, entryType);
+            TranspositionTable.Add(board.Hash, (byte)depth, (short)alpha, bestMove, entryType);
 
-            return bestScore;
+            return alpha;
         }
     }
 }
