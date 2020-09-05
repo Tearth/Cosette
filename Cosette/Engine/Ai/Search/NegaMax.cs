@@ -79,12 +79,28 @@ namespace Cosette.Engine.Ai.Search
             MoveOrdering.AssignValues(board, moves, moveValues, movesCount, entry);
 
             var bestScore = int.MinValue;
+            var pvs = true;
+
             for (var i = 0; i < movesCount; i++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, i);
                 board.MakeMove(moves[i]);
 
-                var score = -FindBestMove(board, depth - 1, -beta, -alpha, statistics);
+                var score = 0;
+                if (pvs)
+                {
+                    score = -FindBestMove(board, depth - 1, -beta, -alpha, statistics);
+                    pvs = false;
+                }
+                else
+                {
+                    score = -FindBestMove(board, depth - 1, -alpha - 1, -alpha, statistics);
+                    if (score > alpha && score < beta)
+                    {
+                        score = -FindBestMove(board, depth - 1, -beta, -score, statistics);
+                    }
+                }
+
                 if (score > bestScore)
                 {
                     bestScore = score;
