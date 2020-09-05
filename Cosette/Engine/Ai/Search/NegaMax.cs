@@ -10,7 +10,7 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(BoardState board, int depth, int alpha, int beta, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, int depth, int shallowness, int alpha, int beta, SearchStatistics statistics)
         {
             var originalAlpha = alpha;
             var bestMove = new Move();
@@ -88,15 +88,21 @@ namespace Cosette.Engine.Ai.Search
                 var score = 0;
                 if (pvs)
                 {
-                    score = -FindBestMove(board, depth - 1, -beta, -alpha, statistics);
+                    score = -FindBestMove(board, depth - 1, shallowness + 1, - beta, -alpha, statistics);
                     pvs = false;
                 }
                 else
                 {
-                    score = -FindBestMove(board, depth - 1, -alpha - 1, -alpha, statistics);
+                    var nextDepth = depth - 1;
+                    if (shallowness > 3 && i > 3 && moves[i].Flags == MoveFlags.None && !board.IsKingChecked(board.ColorToMove))
+                    {
+                        nextDepth -= 1;
+                    }
+
+                    score = -FindBestMove(board, nextDepth, shallowness  + 1, - alpha - 1, -alpha, statistics);
                     if (score > alpha && score < beta)
                     {
-                        score = -FindBestMove(board, depth - 1, -beta, -score, statistics);
+                        score = -FindBestMove(board, nextDepth, shallowness  + 1, - beta, -score, statistics);
                     }
                 }
 
