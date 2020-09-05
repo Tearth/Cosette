@@ -39,6 +39,20 @@ namespace Cosette.Engine.Ai.Search
             }
         }
 
+        public static void AssignQValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount)
+        {
+            var enemyColor = ColorOperations.Invert(board.ColorToMove);
+            for (var i = 0; i < movesCount; i++)
+            {
+                var attackingPiece = moves[i].Piece;
+                var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
+
+                var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
+                var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
+                moveValues[i] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+            }
+        }
+
         public static void SortNextBestMove(Span<Move> moves, Span<int> moveValues, int movesCount, int currentIndex)
         {
             var max = int.MinValue;

@@ -55,9 +55,8 @@ namespace Cosette.Engine.Ai.Ordering
 
                             var currentPieceOnField = attackingPiece;
                             var result = EvaluationConstants.Pieces[(int)capturedPiece];
-                            var lastResult = result;
 
-                            while (defenders != 0)
+                            if (defenders != 0)
                             {
                                 var leastValuableDefenderField = BitOperations.GetLsb(defenders);
                                 defenders = (byte)BitOperations.PopLsb(defenders);
@@ -66,30 +65,39 @@ namespace Cosette.Engine.Ai.Ordering
                                 result -= EvaluationConstants.Pieces[(int)currentPieceOnField];
                                 currentPieceOnField = leastValuableDefenderPiece;
 
-                                if (attackers != 0)
+                                while (attackers != 0)
                                 {
+                                    var updatedResult = result;
                                     var leastValuableAttackerField = BitOperations.GetLsb(attackers);
                                     attackers = (byte)BitOperations.PopLsb(attackers);
                                     var leastValuableAttackerPiece = (Piece)BitOperations.BitScan(leastValuableAttackerField);
 
-                                    result += EvaluationConstants.Pieces[(int)currentPieceOnField];
+                                    updatedResult += EvaluationConstants.Pieces[(int)currentPieceOnField];
                                     currentPieceOnField = leastValuableAttackerPiece;
-                                }
-                                else
-                                {
-                                    lastResult = result;
-                                    break;
-                                }
 
-                                if (result < lastResult)
-                                {
-                                    break;
-                                }
+                                    if (defenders != 0)
+                                    {
+                                        leastValuableDefenderField = BitOperations.GetLsb(defenders);
+                                        defenders = (byte)BitOperations.PopLsb(defenders);
+                                        leastValuableDefenderPiece = (Piece)BitOperations.BitScan(leastValuableDefenderField);
 
-                                lastResult = result;
+                                        updatedResult -= EvaluationConstants.Pieces[(int)currentPieceOnField];
+                                        currentPieceOnField = leastValuableDefenderPiece;
+                                    }
+                                    else
+                                    {
+                                        result = updatedResult;
+                                        break;
+                                    }
+
+                                    if (updatedResult < result)
+                                    {
+                                        break;
+                                    }
+                                }
                             }
 
-                            _table[attackingPieceIndex][capturedPieceIndex][attackerIndex][defenderIndex] = lastResult;
+                            _table[attackingPieceIndex][capturedPieceIndex][attackerIndex][defenderIndex] = result;
                         }
                     }
                 }

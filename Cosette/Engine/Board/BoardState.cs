@@ -124,14 +124,14 @@ namespace Cosette.Engine.Board
             return movesCount;
         }
 
-        public int GetAvailableQuiescenceMoves(Span<Move> moves)
+        public int GetAvailableQMoves(Span<Move> moves)
         {
-            var movesCount = PawnOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, 0);
-            movesCount = KnightOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
-            movesCount = BishopOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
-            movesCount = RookOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
-            movesCount = QueenOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
-            movesCount = KingOperator.GetAvailableQuiescenceMoves(this, ColorToMove, moves, movesCount);
+            var movesCount = PawnOperator.GetAvailableQMoves(this, ColorToMove, moves, 0);
+            movesCount = KnightOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
+            movesCount = BishopOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
+            movesCount = RookOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
+            movesCount = QueenOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
+            movesCount = KingOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
 
             return movesCount;
         }

@@ -34,8 +34,8 @@ namespace Cosette.Engine.Ai.Search
             Span<Move> moves = stackalloc Move[128];
             Span<int> moveValues = stackalloc int[128];
 
-            var movesCount = board.GetAvailableQuiescenceMoves(moves);
-            MoveOrdering.AssignValues(board, moves, moveValues, movesCount, new TranspositionTableEntry());
+            var movesCount = board.GetAvailableQMoves(moves);
+            MoveOrdering.AssignQValues(board, moves, moveValues, movesCount);
 
             for (var i = 0; i < movesCount; i++)
             {

@@ -33,7 +33,7 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetAvailableQuiescenceMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
+        public static int GetAvailableQMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
             var enemyColor = ColorOperations.Invert(color);
             var queens = boardState.Pieces[(int)color][(int)Piece.Queen];
