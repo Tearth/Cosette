@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai;
@@ -28,8 +29,16 @@ namespace Cosette.Uci.Commands
 
         private void SearchEntryPoint(int whiteTime, int blackTime)
         {
-            var bestMove = _uciGame.SearchBestMove(whiteTime, blackTime);
-            _uciClient.Send($"bestmove {bestMove}");
+            try
+            {
+                var bestMove = _uciGame.SearchBestMove(whiteTime, blackTime);
+                _uciClient.Send($"bestmove {bestMove}");
+            }
+            catch (Exception e)
+            {
+                File.WriteAllText($"error-{DateTime.Now.Ticks}.txt", e.ToString());
+                throw;
+            }
         }
 
         private T GetParameter<T>(string[] parameters, string name, T defaultValue)

@@ -20,7 +20,7 @@ namespace Cosette.Engine.Ai.Search
         public ulong QLeafs { get; set; }
         public ulong TotalLeafs => Leafs + QLeafs;
 
-        public float TotalNodesPerSecond => (float) TotalNodes / SearchTime / 1000;
+        public ulong TotalNodesPerSecond => (ulong)(TotalNodes / ((float) SearchTime / 1000));
         public float SecondsPerNode => (float) SearchTime / 1000 / Nodes;
 
         public float BranchingFactor => (float) Nodes / (Nodes - Leafs);
