@@ -35,6 +35,11 @@ namespace Cosette.Engine.Moves
             return a.From != b.From || a.To != b.To || a.Piece != b.Piece || a.Flags != b.Flags;
         }
 
+        public bool IsQuiet()
+        {
+            return Flags == MoveFlags.None || Flags == MoveFlags.DoublePush;
+        }
+
         public override string ToString()
         {
             var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";

@@ -28,7 +28,7 @@ namespace Cosette.Engine.Ai.Ordering
 
         public static bool KillerMoveExists(Move move, int depth)
         {
-            for (var i = 0; i < MoveOrderingConstants.KillerSlots - 1; i++)
+            for (var i = 0; i < MoveOrderingConstants.KillerSlots; i++)
             {
                 if (_killerMoves[depth][i] == move)
                 {

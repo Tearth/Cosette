@@ -19,7 +19,7 @@ namespace Cosette.Engine.Ai.Search
                 {
                     moveValues[i] = MoveOrderingConstants.HashMove;
                 }
-                else if (moves[i].Flags == MoveFlags.None)
+                else if (moves[i].IsQuiet())
                 {
                     if (KillerHeuristic.KillerMoveExists(moves[i], depth))
                     {
