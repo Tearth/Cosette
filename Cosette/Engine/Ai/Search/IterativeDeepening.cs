@@ -34,14 +34,22 @@ namespace Cosette.Engine.Ai.Search
 
                 statistics.Board = board;
                 statistics.Depth = i;
-                statistics.Score = NegaMax.FindBestMove(board, i, 0, alpha, beta, 0, statistics);
+                statistics.Score = NegaMax.FindBestMove(board, i, alpha, beta, 0, statistics);
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
                 OnSearchUpdate?.Invoke(null, statistics);
 
-                var ratio = (float) statistics.TotalNodes / lastTotalNodesCount;
-                expectedExecutionTime = (int)(statistics.SearchTime * ratio);
+                if (i >= 3)
+                {
+                    var ratio = (float)statistics.TotalNodes / lastTotalNodesCount;
+                    expectedExecutionTime = (int)(statistics.SearchTime * ratio);
+                }
+                else
+                {
+                    expectedExecutionTime = 0;
+                }
+
                 lastTotalNodesCount = statistics.TotalNodes;
             }
 

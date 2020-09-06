@@ -10,7 +10,7 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(BoardState board, int depth, int shallowness, int alpha, int beta, int nullMoves, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, int depth, int alpha, int beta, int nullMoves, SearchStatistics statistics)
         {
             var originalAlpha = alpha;
             var bestMove = new Move();
@@ -78,10 +78,10 @@ namespace Cosette.Engine.Ai.Search
                 return QuiescenceSearch.FindBestMove(board, depth, alpha, beta, statistics);
             }
 
-            if (nullMoves < 2 && !board.IsKingChecked(board.ColorToMove))
+            if (depth >= 2 && nullMoves < 2 && !board.IsKingChecked(board.ColorToMove))
             {
                 board.MakeNullMove();
-                var score = -FindBestMove(board, depth - 3, shallowness + 1, -beta, -beta + 1, nullMoves + 1, statistics);
+                var score = -FindBestMove(board, depth - 3, -beta, -beta + 1, nullMoves + 1, statistics);
                 board.UndoNullMove();
 
                 if (score >= beta)
@@ -106,14 +106,14 @@ namespace Cosette.Engine.Ai.Search
                 var score = 0;
                 if (pvs)
                 {
-                    score = -FindBestMove(board, depth - 1, shallowness + 1, -beta, -alpha, 0, statistics);
+                    score = -FindBestMove(board, depth - 1, -beta, -alpha, 0, statistics);
                     pvs = false;
                 }
                 else
                 {
                     if (depth >= 3 && i >= 3 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
                     {
-                        score = -FindBestMove(board, depth - 2, shallowness + 1, -alpha - 1, -alpha, 0, statistics);
+                        score = -FindBestMove(board, depth - 2, -alpha - 1, -alpha, 0, statistics);
                     }
                     else
                     {
@@ -122,10 +122,10 @@ namespace Cosette.Engine.Ai.Search
 
                     if (score > alpha)
                     {
-                        score = -FindBestMove(board, depth - 1, shallowness + 1, -alpha - 1, -alpha, 0, statistics);
+                        score = -FindBestMove(board, depth - 1, -alpha - 1, -alpha, 0, statistics);
                         if (score > alpha && score < beta)
                         {
-                            score = -FindBestMove(board, depth - 1, shallowness + 1, -beta, -score, 0, statistics);
+                            score = -FindBestMove(board, depth - 1, -beta, -score, 0, statistics);
                         }
                     }
                 }
