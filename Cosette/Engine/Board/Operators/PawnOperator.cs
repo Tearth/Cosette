@@ -10,16 +10,16 @@ namespace Cosette.Engine.Board.Operators
         {
             offset = GetSinglePush(boardState, color, moves, offset);
             offset = GetDoublePush(boardState, color, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : 7, BoardConstants.AFile, true, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : 9, BoardConstants.HFile, true, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
 
             return offset;
         }
 
         public static int GetAvailableQMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : 7, BoardConstants.AFile, false, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : 9, BoardConstants.HFile, false, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
 
             return offset;
         }
@@ -104,7 +104,7 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        private static int GetDiagonalAttacks(BoardState boardState, Color color, int dir, ulong prohibitedFile, bool includeEnPassant, Span<Move> moves, int offset)
+        private static int GetDiagonalAttacks(BoardState boardState, Color color, int dir, ulong prohibitedFile, Span<Move> moves, int offset)
         {
             int shift;
             ulong promotionRank, enemyOccupancy, enemyEnPassant, pawns;
@@ -147,10 +147,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if ((piece & enemyEnPassant) != 0)
                     {
-                        if (includeEnPassant)
-                        {
-                            moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.EnPassant);
-                        }
+                        moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.EnPassant);
                     }
                     else
                     {

@@ -51,12 +51,19 @@ namespace Cosette.Engine.Ai.Search
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
             for (var i = 0; i < movesCount; i++)
             {
-                var attackingPiece = moves[i].Piece;
-                var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
+                if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
+                {
+                    moveValues[i] = MoveOrderingConstants.Capture;
+                }
+                else
+                {
+                    var attackingPiece = moves[i].Piece;
+                    var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
 
-                var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
-                var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
-                moveValues[i] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
+                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
+                    moveValues[i] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+                }
             }
         }
 
