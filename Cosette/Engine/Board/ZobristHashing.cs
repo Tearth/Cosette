@@ -75,15 +75,10 @@ namespace Cosette.Engine.Board
                 result ^= _castlingHashes[3];
             }
             
-            for (var color = 0; color < 2; color++)
+            if (board.EnPassant != 0)
             {
-                if (board.EnPassant[color] != 0)
-                {
-                    var enPassant = board.EnPassant[color];
-                    var fieldIndex = BitOperations.BitScan(enPassant);
-
-                    result ^= _enPassantHashes[fieldIndex % 8];
-                }
+                var fieldIndex = BitOperations.BitScan(board.EnPassant);
+                result ^= _enPassantHashes[fieldIndex % 8];
             }
             
             if (board.ColorToMove == Color.Black)

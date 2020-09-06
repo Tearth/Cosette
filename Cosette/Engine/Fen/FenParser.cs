@@ -100,7 +100,7 @@ namespace Cosette.Engine.Fen
             if (enPassantState != "-")
             {
                 var position = Position.FromText(enPassantState);
-                result.EnPassant[(int) ColorOperations.Invert(color)] = 1ul << position.ToFieldIndex();
+                result.EnPassant = 1ul << position.ToFieldIndex();
             }
         }
 

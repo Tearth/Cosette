@@ -107,14 +107,13 @@ namespace Cosette.Engine.Board.Operators
         private static int GetDiagonalAttacks(BoardState boardState, Color color, int dir, ulong prohibitedFile, Span<Move> moves, int offset)
         {
             int shift;
-            ulong promotionRank, enemyOccupancy, enemyEnPassant, pawns;
+            ulong promotionRank, enemyOccupancy, pawns;
 
             if (color == Color.White)
             {
                 shift = dir;
                 promotionRank = BoardConstants.HRank;
-                enemyOccupancy = boardState.Occupancy[(int)Color.Black] | boardState.EnPassant[(int)Color.Black];
-                enemyEnPassant = boardState.EnPassant[(int)Color.Black];
+                enemyOccupancy = boardState.Occupancy[(int)Color.Black] | boardState.EnPassant;
                 pawns = boardState.Pieces[(int)Color.White][(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) << dir) & enemyOccupancy;
             }
@@ -122,8 +121,7 @@ namespace Cosette.Engine.Board.Operators
             {
                 shift = -dir;
                 promotionRank = BoardConstants.ARank;
-                enemyOccupancy = boardState.Occupancy[(int)Color.White] | boardState.EnPassant[(int)Color.White];
-                enemyEnPassant = boardState.EnPassant[(int)Color.White];
+                enemyOccupancy = boardState.Occupancy[(int)Color.White] | boardState.EnPassant;
                 pawns = boardState.Pieces[(int)Color.Black][(int)Piece.Pawn];
                 pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;
             }
@@ -145,7 +143,7 @@ namespace Cosette.Engine.Board.Operators
                 }
                 else
                 {
-                    if ((piece & enemyEnPassant) != 0)
+                    if ((piece & boardState.EnPassant) != 0)
                     {
                         moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.EnPassant);
                     }

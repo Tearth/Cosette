@@ -15,7 +15,7 @@ namespace Cosette.Engine.Board
         public ulong[][] Pieces { get; set; }
         public ulong[] Occupancy { get; set; }
         public ulong OccupancySummary { get; set; }
-        public ulong[] EnPassant { get; set; }
+        public ulong EnPassant { get; set; }
         public Castling Castling { get; set; }
         public Color ColorToMove { get; set; }
 
@@ -42,7 +42,6 @@ namespace Cosette.Engine.Board
             Pieces[(int)Color.Black] = new ulong[6];
 
             Occupancy = new ulong[2];
-            EnPassant = new ulong[2];
             CastlingDone = new bool[2];
             Material = new int[2];
 
@@ -140,13 +139,14 @@ namespace Cosette.Engine.Board
         {
             var enemyColor = ColorOperations.Invert(ColorToMove);
 
-            if (EnPassant[(int)enemyColor] != 0)
+            if (EnPassant != 0)
             {
-                var enPassantRank = BitOperations.BitScan(EnPassant[(int)enemyColor]) % 8;
+                var enPassantRank = BitOperations.BitScan(EnPassant) % 8;
                 Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
             }
+            _enPassants.Push(EnPassant);
+            EnPassant = 0;
 
-            _enPassants.Push(EnPassant[(int)ColorToMove]);
             _castlings.Push(Castling);
             _hashes.Push(Hash);
             _pawnHashes.Push(PawnHash);
@@ -170,7 +170,7 @@ namespace Cosette.Engine.Board
                 var enPassantField = ColorToMove == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
                 var enPassantFieldIndex = BitOperations.BitScan(enPassantField);
 
-                EnPassant[(int)ColorToMove] |= enPassantField;
+                EnPassant |= enPassantField;
                 Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantFieldIndex % 8);
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
@@ -368,7 +368,6 @@ namespace Cosette.Engine.Board
                 }
             }
 
-            EnPassant[(int)enemyColor] = 0;
             ColorToMove = enemyColor;
             Hash = ZobristHashing.ChangeSide(Hash);
         }
@@ -452,23 +451,22 @@ namespace Cosette.Engine.Board
             PawnHash = _pawnHashes.Pop();
             Hash = _hashes.Pop();
             Castling = _castlings.Pop();
-            EnPassant[(int)ColorToMove] = _enPassants.Pop();
+            EnPassant = _enPassants.Pop();
         }
 
         public void MakeNullMove()
         {
-            var enemyColor = ColorOperations.Invert(ColorToMove);
-            if (EnPassant[(int)enemyColor] != 0)
+            if (EnPassant != 0)
             {
-                var enPassantRank = BitOperations.BitScan(EnPassant[(int)enemyColor]) % 8;
+                var enPassantRank = BitOperations.BitScan(EnPassant) % 8;
                 Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
             }
-
-            _enPassants.Push(EnPassant[(int)ColorToMove]);
+            _enPassants.Push(EnPassant);
+            EnPassant = 0;
+            
             _hashes.Push(Hash);
 
-            EnPassant[(int)enemyColor] = 0;
-            ColorToMove = enemyColor;
+            ColorToMove = ColorOperations.Invert(ColorToMove);
             Hash = ZobristHashing.ChangeSide(Hash);
         }
 
@@ -477,7 +475,7 @@ namespace Cosette.Engine.Board
             ColorToMove = ColorOperations.Invert(ColorToMove);
 
             Hash = _hashes.Pop();
-            EnPassant[(int)ColorToMove] = _enPassants.Pop();
+            EnPassant = _enPassants.Pop();
         }
 
         public bool IsFieldAttacked(Color color, byte fieldIndex)
