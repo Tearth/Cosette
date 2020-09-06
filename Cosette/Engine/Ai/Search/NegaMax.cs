@@ -78,10 +78,10 @@ namespace Cosette.Engine.Ai.Search
                 return QuiescenceSearch.FindBestMove(board, depth, alpha, beta, statistics);
             }
 
-            if (depth >= 2 && nullMoves < 2 && !board.IsKingChecked(board.ColorToMove))
+            if (depth > 4 && nullMoves < 2 && !board.IsKingChecked(board.ColorToMove))
             {
                 board.MakeNullMove();
-                var score = -FindBestMove(board, depth - 3, -beta, -beta + 1, nullMoves + 1, statistics);
+                var score = -FindBestMove(board, depth - 1 - 3, -beta, -beta + 1, nullMoves + 1, statistics);
                 board.UndoNullMove();
 
                 if (score >= beta)
@@ -111,7 +111,7 @@ namespace Cosette.Engine.Ai.Search
                 }
                 else
                 {
-                    if (depth >= 3 && i >= 3 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
+                    if (depth > 2 && i > 2 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
                     {
                         score = -FindBestMove(board, depth - 2, -alpha - 1, -alpha, 0, statistics);
                     }

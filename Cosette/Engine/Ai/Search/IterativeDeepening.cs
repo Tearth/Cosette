@@ -28,7 +28,9 @@ namespace Cosette.Engine.Ai.Search
             var lastTotalNodesCount = 1ul;
             var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();
-            for (var i = 1; expectedExecutionTime <= timeLimit && Math.Abs(statistics.Score) != EvaluationConstants.Checkmate; i++)
+
+            // Merge 32 and max killers move as contsnt
+            for (var i = 1; i < 32 && expectedExecutionTime <= timeLimit && Math.Abs(statistics.Score) != EvaluationConstants.Checkmate; i++)
             {
                 statistics.Clear();
 
