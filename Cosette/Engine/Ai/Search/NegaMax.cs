@@ -60,7 +60,7 @@ namespace Cosette.Engine.Ai.Search
             }
 #endif
 
-            if (board.Pieces[(int) board.ColorToMove][(int)Piece.King] == 0)
+            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
                 return -EvaluationConstants.Checkmate - depth;
@@ -111,22 +111,16 @@ namespace Cosette.Engine.Ai.Search
                 }
                 else
                 {
+                    var reducedDepth = depth;
                     if (depth > 2 && i > 2 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
                     {
-                        score = -FindBestMove(board, depth - 2, -alpha - 1, -alpha, 0, statistics);
-                    }
-                    else
-                    {
-                        score = alpha + 1;
+                        reducedDepth -= 1;
                     }
 
+                    score = -FindBestMove(board, reducedDepth - 1, -alpha - 1, -alpha, 0, statistics);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(board, depth - 1, -alpha - 1, -alpha, 0, statistics);
-                        if (score > alpha && score < beta)
-                        {
-                            score = -FindBestMove(board, depth - 1, -beta, -score, 0, statistics);
-                        }
+                        score = -FindBestMove(board, reducedDepth - 1, -beta, -alpha, 0, statistics);
                     }
                 }
 
