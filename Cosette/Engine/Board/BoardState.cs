@@ -50,12 +50,12 @@ namespace Cosette.Engine.Board
             Position[(int)Color.White] = new int[2];
             Position[(int)Color.Black] = new int[2];
 
-            _killedPieces = new FastStack<Piece>(256);
-            _enPassants = new FastStack<ulong>(256);
-            _castlings = new FastStack<Castling>(256);
-            _promotedPieces = new FastStack<Piece>(256);
-            _hashes = new FastStack<ulong>(256);
-            _pawnHashes = new FastStack<ulong>(256);
+            _killedPieces = new FastStack<Piece>(512);
+            _enPassants = new FastStack<ulong>(512);
+            _castlings = new FastStack<Castling>(512);
+            _promotedPieces = new FastStack<Piece>(512);
+            _hashes = new FastStack<ulong>(512);
+            _pawnHashes = new FastStack<ulong>(512);
 
             _materialAtOpening =
                 EvaluationConstants.Pieces[(int) Piece.King] +
