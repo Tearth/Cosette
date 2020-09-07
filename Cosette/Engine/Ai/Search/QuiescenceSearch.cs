@@ -9,14 +9,14 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class QuiescenceSearch
     {
-        public static int FindBestMove(BoardState board, int depth, int alpha, int beta, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, SearchStatistics statistics)
         {
             statistics.QNodes++;
 
             if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.QLeafs++;
-                return -EvaluationConstants.Checkmate - depth;
+                return -EvaluationConstants.Checkmate + ply;
             }
 
             var standPat = Evaluation.Evaluate(board, board.ColorToMove);
@@ -42,7 +42,7 @@ namespace Cosette.Engine.Ai.Search
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, i);
 
                 board.MakeMove(moves[i]);
-                var score = -FindBestMove(board, depth - 1, -beta, -alpha, statistics);
+                var score = -FindBestMove(board, depth - 1, ply + 1, -beta, -alpha, statistics);
                 board.UndoMove(moves[i]);
 
                 if (score >= beta)

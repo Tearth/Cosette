@@ -10,7 +10,7 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(BoardState board, int depth, int alpha, int beta, int nullMoves, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, int nullMoves, SearchStatistics statistics)
         {
             var originalAlpha = alpha;
             var bestMove = new Move();
@@ -63,7 +63,7 @@ namespace Cosette.Engine.Ai.Search
             if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.Leafs++;
-                return -EvaluationConstants.Checkmate - depth;
+                return -EvaluationConstants.Checkmate + ply;
             }
 
             if (board.IsThreefoldRepetition())
@@ -75,13 +75,13 @@ namespace Cosette.Engine.Ai.Search
             if (depth <= 0)
             {
                 statistics.Leafs++;
-                return QuiescenceSearch.FindBestMove(board, depth, alpha, beta, statistics);
+                return QuiescenceSearch.FindBestMove(board, depth, ply, alpha, beta, statistics);
             }
 
             if (depth > 4 && nullMoves < 2 && !board.IsKingChecked(board.ColorToMove))
             {
                 board.MakeNullMove();
-                var score = -FindBestMove(board, depth - 1 - 3, -beta, -beta + 1, nullMoves + 1, statistics);
+                var score = -FindBestMove(board, depth - 1 - 3, ply + 1, -beta, -beta + 1, nullMoves + 1, statistics);
                 board.UndoNullMove();
 
                 if (score >= beta)
@@ -106,7 +106,7 @@ namespace Cosette.Engine.Ai.Search
                 var score = 0;
                 if (pvs)
                 {
-                    score = -FindBestMove(board, depth - 1, -beta, -alpha, 0, statistics);
+                    score = -FindBestMove(board, depth - 1, ply + 1, -beta, -alpha, 0, statistics);
                     pvs = false;
                 }
                 else
@@ -117,10 +117,10 @@ namespace Cosette.Engine.Ai.Search
                         reducedDepth -= 1;
                     }
 
-                    score = -FindBestMove(board, reducedDepth - 1, -alpha - 1, -alpha, 0, statistics);
+                    score = -FindBestMove(board, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, 0, statistics);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(board, reducedDepth - 1, -beta, -alpha, 0, statistics);
+                        score = -FindBestMove(board, reducedDepth - 1, ply + 1, -beta, -alpha, 0, statistics);
                     }
                 }
 
@@ -149,7 +149,7 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            if (alpha == -EvaluationConstants.Checkmate - depth + 2 && !board.IsKingChecked(board.ColorToMove))
+            if (alpha == -EvaluationConstants.Checkmate + ply + 2 && !board.IsKingChecked(board.ColorToMove))
             {
                 statistics.Leafs++;
                 return 0;

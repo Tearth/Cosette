@@ -97,7 +97,7 @@ namespace Cosette.Uci
                 return;
             }
 
-            var score = FormatScore(stats.Score, stats.Depth);
+            var score = FormatScore(stats.Score);
             var principalVariation = FormatPrincipalVariation(stats.PrincipalVariation, stats.PrincipalVariationMovesCount);
 
             Send($"info depth {stats.Depth} time {stats.SearchTime} pv {principalVariation} score {score} nodes {stats.TotalNodes} nps {stats.TotalNodesPerSecond}");
@@ -124,11 +124,11 @@ namespace Cosette.Uci
             }
         }
 
-        private string FormatScore(int score, int depth)
+        private string FormatScore(int score)
         {
-            if (Math.Abs(score) >= EvaluationConstants.Checkmate)
+            if (IterativeDeepening.IsScoreCheckmate(score))
             {
-                var movesToCheckmate = (depth - 3) / 2 + 1;
+                var movesToCheckmate = IterativeDeepening.GetMovesToCheckmate(score);
                 if (score < 0)
                 {
                     movesToCheckmate = -movesToCheckmate;
