@@ -13,35 +13,35 @@ namespace Cosette.Engine.Ai.Search
         public static void AssignValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount, int depth, TranspositionTableEntry entry)
         {
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
-            for (var i = 0; i < movesCount; i++)
+            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                if (entry.Type != TranspositionTableEntryType.Invalid && entry.BestMove == moves[i])
+                if (entry.Type != TranspositionTableEntryType.Invalid && entry.BestMove == moves[moveIndex])
                 {
-                    moveValues[i] = MoveOrderingConstants.HashMove;
+                    moveValues[moveIndex] = MoveOrderingConstants.HashMove;
                 }
-                else if (moves[i].IsQuiet())
+                else if (moves[moveIndex].IsQuiet())
                 {
-                    if (KillerHeuristic.KillerMoveExists(moves[i], board.ColorToMove, depth))
+                    if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
                     {
-                        moveValues[i] = MoveOrderingConstants.KillerMove;
+                        moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
                     }
                     else
                     {
-                        moveValues[i] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[i].From, moves[i].To);
+                        moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
                     }
                 }
-                else if ((moves[i].Flags & MoveFlags.Kill) != 0)
+                else if ((moves[moveIndex].Flags & MoveFlags.Kill) != 0)
                 {
-                    var attackingPiece = moves[i].Piece;
-                    var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
+                    var attackingPiece = moves[moveIndex].Piece;
+                    var capturedPiece = board.GetPiece(enemyColor, moves[moveIndex].To);
 
-                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
-                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
-                    moveValues[i] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
+                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[moveIndex].To);
+                    moveValues[moveIndex] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
                 }
-                else if ((int)moves[i].Flags >= 16)
+                else if ((int)moves[moveIndex].Flags >= 16)
                 {
-                    moveValues[i] = MoveOrderingConstants.Promotion;
+                    moveValues[moveIndex] = MoveOrderingConstants.Promotion;
                 }
             }
         }
