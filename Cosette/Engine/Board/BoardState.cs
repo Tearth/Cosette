@@ -707,6 +707,15 @@ namespace Cosette.Engine.Board
             return Math.Max(0, ratio);
         }
 
+#if INLINE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public GamePhase GetGamePhase()
+        {
+            var totalMaterial = Material[(int) Color.White] + Material[(int) Color.Black];
+            return totalMaterial > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
+        }
+
         public bool IsThreefoldRepetition()
         {
             if (_hashes.Count() >= 8)
