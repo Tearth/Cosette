@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Score;
+using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -107,16 +108,12 @@ namespace Cosette.Uci
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = 1 - openingPhase;
 
-                var materialEvaluation = Evaluation.EvaluateMaterial(stats.Board);
-                var castlingEvaluation = Evaluation.EvaluateCastling(stats.Board, Color.White) -
-                                         Evaluation.EvaluateCastling(stats.Board, Color.Black);
-                var positionEvaluation = Evaluation.EvaluatePosition(stats.Board, openingPhase, endingPhase, Color.White) -
-                                         Evaluation.EvaluatePosition(stats.Board, openingPhase, endingPhase, Color.Black);
-                var pawnStructureEvaluation = Evaluation.EvaluatePawnStructure(stats.Board);
-                var mobility = Evaluation.EvaluateMobility(stats.Board, Color.White) -
-                               Evaluation.EvaluateMobility(stats.Board, Color.Black);
-                var kingSafety = Evaluation.EvaluateKingSafety(stats.Board, Color.White) -
-                                 Evaluation.EvaluateKingSafety(stats.Board, Color.Black);
+                var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + mobility + kingSafety;
 
                 Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +

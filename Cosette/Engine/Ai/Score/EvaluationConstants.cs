@@ -6,14 +6,15 @@
 
         public const int Checkmate = 32000;
         public const int ThreefoldRepetition = 0;
-        public const int CastlingDone = 50;
-        public const int CastlingFailed = -50;
-        public const int DoubledPawns = -10;
-        public const int IsolatedPawns = -10;
-        public const int ChainedPawns = 5;
-        public const int PassingPawns = 20;
-        public const int Mobility = 4;
-        public const int KingSafety = -20;
+
+        public static int[] CastlingDone = { 50, 0 };
+        public static int[] CastlingFailed = { -50, 0 };
+        public static int[] DoubledPawns = { -20, -10 };
+        public static int[] IsolatedPawns = { -20, -10 };
+        public static int[] ChainedPawns = { 5, 5 };
+        public static int[] PassingPawns = { 20, 100 };
+        public static int[] Mobility = { 4, 1 };
+        public static int[] KingSafety = { -20, -5 };
 
         public const int OpeningEndgameEdge = 2 * 21000;
     }
