@@ -18,7 +18,7 @@ namespace Cosette.Engine.Ai.Search
             statistics.Nodes++;
 
             var entry = TranspositionTable.Get(board.Hash);
-            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Hash == board.Hash && entry.Depth >= depth)
+            if (entry.Hash == board.Hash && entry.Depth >= depth)
             {
                 statistics.TTHits++;
                 switch (entry.Type)
@@ -78,10 +78,10 @@ namespace Cosette.Engine.Ai.Search
                 return QuiescenceSearch.FindBestMove(board, depth, ply, alpha, beta, statistics);
             }
 
-            if (depth > 4 && nullMoves < 2 && !board.IsKingChecked(board.ColorToMove))
+            if (NullWindowCanBeApplied(board, depth, nullMoves))
             {
                 board.MakeNullMove();
-                var score = -FindBestMove(board, depth - 1 - 3, ply + 1, -beta, -beta + 1, nullMoves + 1, statistics);
+                var score = -FindBestMove(board, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, nullMoves + 1, statistics);
                 board.UndoNullMove();
 
                 if (score >= beta)
@@ -98,10 +98,10 @@ namespace Cosette.Engine.Ai.Search
             MoveOrdering.AssignValues(board, moves, moveValues, movesCount, depth, entry);
 
             var pvs = true;
-            for (var i = 0; i < movesCount; i++)
+            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, i);
-                board.MakeMove(moves[i]);
+                MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
+                board.MakeMove(moves[moveIndex]);
 
                 var score = 0;
                 if (pvs)
@@ -112,9 +112,9 @@ namespace Cosette.Engine.Ai.Search
                 else
                 {
                     var reducedDepth = depth;
-                    if (depth > 2 && i > 2 && moves[i].IsQuiet() && !board.IsKingChecked(board.ColorToMove))
+                    if (LMRCanBeApplied(board, depth, moveIndex, moves))
                     {
-                        reducedDepth -= 1;
+                        reducedDepth -= SearchConstants.LMRDepthReduction;
                     }
 
                     score = -FindBestMove(board, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, 0, statistics);
@@ -127,19 +127,19 @@ namespace Cosette.Engine.Ai.Search
                 if (score > alpha)
                 {
                     alpha = score;
-                    bestMove = moves[i];
+                    bestMove = moves[moveIndex];
                 }
 
-                board.UndoMove(moves[i]);
+                board.UndoMove(moves[moveIndex]);
                 if (alpha >= beta)
                 {
-                    if (moves[i].IsQuiet())
+                    if (moves[moveIndex].IsQuiet())
                     {
-                        KillerHeuristic.AddKillerMove(moves[i], board.ColorToMove, depth);
-                        HistoryHeuristic.AddHistoryMove(board.ColorToMove, moves[i].From, moves[i].To, depth * depth);
+                        KillerHeuristic.AddKillerMove(moves[moveIndex], board.ColorToMove, depth);
+                        HistoryHeuristic.AddHistoryMove(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To, depth * depth);
                     }
 
-                    if (i < 1)
+                    if (moveIndex < 1)
                     {
                         statistics.BetaCutoffsAtFirstMove++;
                     }
@@ -161,6 +161,24 @@ namespace Cosette.Engine.Ai.Search
             TranspositionTable.Add(board.Hash, (byte)depth, (short)alpha, bestMove, entryType);
 
             return alpha;
+        }
+
+#if INLINE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        private static bool NullWindowCanBeApplied(BoardState board, int depth, int nullMoves)
+        {
+            return depth > SearchConstants.NullWindowMinimalDepth && nullMoves < 2 && 
+                   !board.IsKingChecked(board.ColorToMove);
+        }
+
+#if INLINE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        private static bool LMRCanBeApplied(BoardState board, int depth, int moveIndex, Span<Move> moves)
+        {
+            return depth > SearchConstants.LMRMinimalDepth && moveIndex > SearchConstants.LMRMovesWithoutReduction &&
+                   moves[moveIndex].IsQuiet() && !board.IsKingChecked(board.ColorToMove);
         }
     }
 }
