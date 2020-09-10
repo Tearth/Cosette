@@ -7,6 +7,6 @@
         public const int Capture = 100;
         public const int KillerMove = 80;
 
-        public const int KillerSlots = 2;
+        public const int KillerSlots = 3;
     }
 }

@@ -10,7 +10,7 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, int nullMoves, SearchStatistics statistics)
+        public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, int nullMoves, bool pvNode, SearchStatistics statistics)
         {
             var originalAlpha = alpha;
             var bestMove = new Move();
@@ -78,10 +78,10 @@ namespace Cosette.Engine.Ai.Search
                 return QuiescenceSearch.FindBestMove(board, depth, ply, alpha, beta, statistics);
             }
 
-            if (NullWindowCanBeApplied(board, depth, nullMoves))
+            if (NullWindowCanBeApplied(board, depth, nullMoves, pvNode))
             {
                 board.MakeNullMove();
-                var score = -FindBestMove(board, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, nullMoves + 1, statistics);
+                var score = -FindBestMove(board, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, nullMoves + 1, pvNode, statistics);
                 board.UndoNullMove();
 
                 if (score >= beta)
@@ -106,7 +106,7 @@ namespace Cosette.Engine.Ai.Search
                 var score = 0;
                 if (pvs)
                 {
-                    score = -FindBestMove(board, depth - 1, ply + 1, -beta, -alpha, 0, statistics);
+                    score = -FindBestMove(board, depth - 1, ply + 1, -beta, -alpha, 0, true, statistics);
                     pvs = false;
                 }
                 else
@@ -117,10 +117,10 @@ namespace Cosette.Engine.Ai.Search
                         reducedDepth -= SearchConstants.LMRDepthReduction;
                     }
 
-                    score = -FindBestMove(board, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, 0, statistics);
+                    score = -FindBestMove(board, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, 0, false, statistics);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(board, reducedDepth - 1, ply + 1, -beta, -alpha, 0, statistics);
+                        score = -FindBestMove(board, reducedDepth - 1, ply + 1, -beta, -alpha, 0, false, statistics);
                     }
                 }
 
@@ -168,9 +168,9 @@ namespace Cosette.Engine.Ai.Search
 #if INLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        private static bool NullWindowCanBeApplied(BoardState board, int depth, int nullMoves)
+        private static bool NullWindowCanBeApplied(BoardState board, int depth, int nullMoves, bool pvNode)
         {
-            return depth > SearchConstants.NullWindowMinimalDepth && nullMoves < 2 && 
+            return !pvNode && depth > SearchConstants.NullWindowMinimalDepth && nullMoves < 2 && 
                    !board.IsKingChecked(board.ColorToMove);
         }
 
