@@ -53,8 +53,8 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-#if TTCOLLISIONS
-            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Key != (byte) (board.Hash >> 56))
+#if DEBUG
+            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Hash !=board.Hash)
             {
                 statistics.TTCollisions++;
             }
@@ -139,10 +139,12 @@ namespace Cosette.Engine.Ai.Search
                         HistoryHeuristic.AddHistoryMove(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To, depth * depth);
                     }
 
-                    if (moveIndex < 1)
+#if DEBUG
+                    if (moveIndex == 0)
                     {
                         statistics.BetaCutoffsAtFirstMove++;
                     }
+#endif
 
                     statistics.BetaCutoffs++;
                     break;

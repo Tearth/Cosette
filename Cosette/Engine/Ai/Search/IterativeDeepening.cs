@@ -29,8 +29,7 @@ namespace Cosette.Engine.Ai.Search
             var stopwatch = Stopwatch.StartNew();
             var lastTotalNodesCount = 100ul;
 
-            // Merge 32 and max killers move as content
-            for (var i = 1; i < 32 && expectedExecutionTime <= timeLimit && !IsScoreCheckmate(statistics.Score); i++)
+            for (var i = 1; i < SearchConstants.MaxDepth && expectedExecutionTime <= timeLimit && !IsScoreCheckmate(statistics.Score); i++)
             {
                 statistics.Clear();
 
@@ -53,7 +52,8 @@ namespace Cosette.Engine.Ai.Search
         public static bool IsScoreCheckmate(int score)
         {
             var scoreAbs = Math.Abs(score);
-            return scoreAbs > EvaluationConstants.Checkmate - 32 && scoreAbs < EvaluationConstants.Checkmate + 32;
+            return scoreAbs > EvaluationConstants.Checkmate - SearchConstants.MaxDepth && 
+                   scoreAbs < EvaluationConstants.Checkmate + SearchConstants.MaxDepth;
         }
 
         public static int GetMovesToCheckmate(int score)
@@ -64,7 +64,7 @@ namespace Cosette.Engine.Ai.Search
         private static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)
         {
             var entry = TranspositionTable.Get(board.Hash);
-            if (entry.Type != TranspositionTableEntryType.ExactScore || entry.Hash != board.Hash || movesCount >= 32)
+            if (entry.Type != TranspositionTableEntryType.ExactScore || entry.Hash != board.Hash || movesCount >= SearchConstants.MaxDepth)
             {
                 return movesCount;
             }

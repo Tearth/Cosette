@@ -43,7 +43,7 @@ namespace Cosette.Engine.Ai.Search
 
         public SearchStatistics()
         {
-            PrincipalVariation = new Move[32];
+            PrincipalVariation = new Move[SearchConstants.MaxDepth];
         }
 
         public void Clear()
