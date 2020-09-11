@@ -191,7 +191,7 @@ namespace Cosette.Engine.Ai.Search
 #endif
         private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode)
         {
-            return !pvNode && allowNullMove && depth > SearchConstants.NullWindowMinimalDepth && 
+            return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
                    board.GetGamePhase() == GamePhase.Opening && !board.IsKingChecked(board.ColorToMove);
         }
 
@@ -200,7 +200,7 @@ namespace Cosette.Engine.Ai.Search
 #endif
         private static bool LMRCanBeApplied(BoardState board, int depth, int moveIndex, Span<Move> moves)
         {
-            return depth > SearchConstants.LMRMinimalDepth && moveIndex > SearchConstants.LMRMovesWithoutReduction &&
+            return depth >= SearchConstants.LMRMinimalDepth && moveIndex > SearchConstants.LMRMovesWithoutReduction &&
                    moves[moveIndex].IsQuiet() && !board.IsKingChecked(board.ColorToMove);
         }
     }
