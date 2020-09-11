@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
@@ -23,15 +24,16 @@ namespace Cosette.Uci.Commands
         {
             var whiteTime = GetParameter(parameters, "wtime", 1);
             var blackTime = GetParameter(parameters, "btime", 1);
+            var depth = GetParameter(parameters, "depth", 0);
 
-            Task.Run(() => SearchEntryPoint(whiteTime, blackTime));
+            Task.Run(() => SearchEntryPoint(whiteTime, blackTime, depth));
         }
 
-        private void SearchEntryPoint(int whiteTime, int blackTime)
+        private void SearchEntryPoint(int whiteTime, int blackTime, int depth)
         {
             try
             {
-                var bestMove = _uciGame.SearchBestMove(whiteTime, blackTime);
+                var bestMove = _uciGame.SearchBestMove(whiteTime, blackTime, depth);
                 _uciClient.Send($"bestmove {bestMove}");
             }
             catch (Exception e)

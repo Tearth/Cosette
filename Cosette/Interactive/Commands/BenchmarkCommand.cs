@@ -66,7 +66,7 @@ namespace Cosette.Interactive.Commands
 
             TranspositionTable.Clear();
             IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
-            IterativeDeepening.FindBestMove(boardState, 100_000, 1);
+            IterativeDeepening.FindBestMove(boardState, 100_000, SearchConstants.MaxDepth, 1);
             IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnOnSearchUpdate;
 
             Console.WriteLine();

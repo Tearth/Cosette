@@ -14,7 +14,7 @@ namespace Cosette.Engine.Ai.Search
     {
         public static event EventHandler<SearchStatistics> OnSearchUpdate;
 
-        public static Move FindBestMove(BoardState board, int remainingTime, int moveNumber)
+        public static Move FindBestMove(BoardState board, int remainingTime, int depth, int moveNumber)
         {
             var statistics = new SearchStatistics();
             var expectedExecutionTime = 0;
@@ -29,17 +29,27 @@ namespace Cosette.Engine.Ai.Search
             var stopwatch = Stopwatch.StartNew();
             var lastTotalNodesCount = 100ul;
 
-            for (var i = 1; i < SearchConstants.MaxDepth && expectedExecutionTime <= timeLimit && !IsScoreCheckmate(statistics.Score); i++)
+            for (var currentDepth = 1; currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
             {
+                if (depth == 0 && expectedExecutionTime <= timeLimit)
+                {
+                    break;
+                }
+
                 statistics.Clear();
 
                 statistics.Board = board;
-                statistics.Depth = i;
-                statistics.Score = NegaMax.FindBestMove(board, i, 0, alpha, beta, true, true, statistics);
+                statistics.Depth = currentDepth;
+                statistics.Score = NegaMax.FindBestMove(board, currentDepth, 0, alpha, beta, true, true, statistics);
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
                 OnSearchUpdate?.Invoke(null, statistics);
+
+                if (depth != 0 && currentDepth == depth)
+                {
+                    break;
+                }
 
                 var ratio = (float)statistics.TotalNodes / lastTotalNodesCount;
                 expectedExecutionTime = (int)(statistics.SearchTime * ratio);

@@ -93,11 +93,6 @@ namespace Cosette.Uci
 
         private void OnSearchUpdate(object sender, SearchStatistics stats)
         {
-            if (stats.Depth < 3)
-            {
-                return;
-            }
-
             var score = FormatScore(stats.Score);
             var principalVariation = FormatPrincipalVariation(stats.PrincipalVariation, stats.PrincipalVariationMovesCount);
 
