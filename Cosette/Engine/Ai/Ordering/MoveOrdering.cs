@@ -21,7 +21,13 @@ namespace Cosette.Engine.Ai.Search
                 }
                 else if (moves[moveIndex].IsQuiet())
                 {
-                    if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
+                    if (moves[moveIndex].Piece == Piece.Pawn &&
+                        (board.ColorToMove == Color.White && moves[moveIndex].To >= 40 || 
+                         board.ColorToMove == Color.Black && moves[moveIndex].To <= 23))
+                    {
+                        moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
+                    }
+                    else if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
                     {
                         moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
                     }
