@@ -31,7 +31,7 @@ namespace Cosette.Engine.Ai.Search
 
             for (var currentDepth = 1; currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
             {
-                if (depth == 0 && expectedExecutionTime <= timeLimit)
+                if (depth == 0 && expectedExecutionTime > timeLimit)
                 {
                     break;
                 }
