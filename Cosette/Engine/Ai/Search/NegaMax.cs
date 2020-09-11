@@ -18,40 +18,52 @@ namespace Cosette.Engine.Ai.Search
             statistics.Nodes++;
 
             var entry = TranspositionTable.Get(board.Hash);
-            if (entry.Hash == board.Hash && entry.Depth >= depth)
+            if (entry.Hash == board.Hash)
             {
+#if DEBUG
                 statistics.TTHits++;
-                switch (entry.Type)
-                {
-                    case TranspositionTableEntryType.ExactScore:
-                    {
-                        return entry.Score;
-                    }
+#endif
 
-                    case TranspositionTableEntryType.LowerBound:
+                if (entry.Depth >= depth)
+                {
+                    switch (entry.Type)
                     {
-                        if (entry.Score > alpha)
+                        case TranspositionTableEntryType.ExactScore:
                         {
-                            alpha = entry.Score;
-                            bestMove = entry.BestMove;
+                            return entry.Score;
                         }
 
-                        break;
+                        case TranspositionTableEntryType.LowerBound:
+                        {
+                            if (entry.Score > alpha)
+                            {
+                                alpha = entry.Score;
+                                bestMove = entry.BestMove;
+                            }
+
+                            break;
+                        }
+
+                        case TranspositionTableEntryType.UpperBound:
+                        {
+                            beta = Math.Min(beta, entry.Score);
+                            break;
+                        }
                     }
 
-                    case TranspositionTableEntryType.UpperBound:
+                    if (alpha >= beta)
                     {
-                        beta = Math.Min(beta, entry.Score);
-                        break;
+                        statistics.Leafs++;
+                        return entry.Score;
                     }
-                }
-
-                if (alpha >= beta)
-                {
-                    statistics.Leafs++;
-                    return entry.Score;
                 }
             }
+#if DEBUG
+            else
+            {
+                statistics.TTNonHits++;
+            }
+#endif
 
 #if DEBUG
             if (entry.Type != TranspositionTableEntryType.Invalid && entry.Hash !=board.Hash)
@@ -144,6 +156,10 @@ namespace Cosette.Engine.Ai.Search
                     {
                         statistics.BetaCutoffsAtFirstMove++;
                     }
+                    else
+                    {
+                        statistics.BetaCutoffsNotAtFirstMove++;
+                    }
 #endif
 
                     statistics.BetaCutoffs++;
@@ -161,6 +177,10 @@ namespace Cosette.Engine.Ai.Search
                             alpha >= beta ? TranspositionTableEntryType.LowerBound :
                             TranspositionTableEntryType.ExactScore;
             TranspositionTable.Add(board.Hash, (byte)depth, (short)alpha, bestMove, entryType);
+
+#if DEBUG
+            statistics.TTEntries++;
+#endif
 
             return alpha;
         }

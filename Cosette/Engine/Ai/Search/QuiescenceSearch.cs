@@ -37,20 +37,24 @@ namespace Cosette.Engine.Ai.Search
             var movesCount = board.GetAvailableQMoves(moves);
             MoveOrdering.AssignQValues(board, moves, moveValues, movesCount);
 
-            for (var i = 0; i < movesCount; i++)
+            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, i);
+                MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
 
-                board.MakeMove(moves[i]);
+                board.MakeMove(moves[moveIndex]);
                 var score = -FindBestMove(board, depth - 1, ply + 1, -beta, -alpha, statistics);
-                board.UndoMove(moves[i]);
+                board.UndoMove(moves[moveIndex]);
 
                 if (score >= beta)
                 {
 #if DEBUG
-                    if (i == 0)
+                    if (moveIndex == 0)
                     {
                         statistics.QBetaCutoffsAtFirstMove++;
+                    }
+                    else
+                    {
+                        statistics.QBetaCutoffsNotAtFirstMove++;
                     }
 #endif
 

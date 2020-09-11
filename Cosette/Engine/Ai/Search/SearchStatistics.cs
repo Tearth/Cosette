@@ -31,12 +31,22 @@ namespace Cosette.Engine.Ai.Search
         public ulong QBetaCutoffs { get; set; }
         public ulong TotalBetaCutoffs => BetaCutoffs + QBetaCutoffs;
 
-        public ulong TTHits { get; set; }
+        public ulong TTEntries { get; set; }
         public ulong TTCollisions { get; set; }
+        public ulong TTHits { get; set; }
+        public ulong TTNonHits { get; set; }
+        public float TTHitsPercent => (float) TTHits * 100 / (TTHits + TTNonHits);
 
         public int BetaCutoffsAtFirstMove { get; set; }
         public int QBetaCutoffsAtFirstMove { get; set; }
         public int TotalBetaCutoffsAtFirstMove => BetaCutoffsAtFirstMove + QBetaCutoffsAtFirstMove;
+        
+        public int BetaCutoffsNotAtFirstMove { get; set; }
+        public int QBetaCutoffsNotAtFirstMove { get; set; }
+        public int TotalBetaCutoffsAtNotFirstMove => BetaCutoffsNotAtFirstMove + QBetaCutoffsNotAtFirstMove;
+
+        public float BetaCutoffsAtFirstMovePercent => (float) BetaCutoffsAtFirstMove * 100 / (BetaCutoffsAtFirstMove + BetaCutoffsNotAtFirstMove);
+        public float QBetaCutoffsAtFirstMovePercent => (float) QBetaCutoffsAtFirstMove * 100 / (QBetaCutoffsAtFirstMove + QBetaCutoffsNotAtFirstMove);
 
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }
@@ -63,8 +73,9 @@ namespace Cosette.Engine.Ai.Search
             BetaCutoffs = 0;
             QBetaCutoffs = 0;
 
-            TTHits = 0;
+            TTEntries = 0;
             TTCollisions = 0;
+            TTHits = 0;
 
             BetaCutoffsAtFirstMove = 0;
             QBetaCutoffsAtFirstMove = 0;

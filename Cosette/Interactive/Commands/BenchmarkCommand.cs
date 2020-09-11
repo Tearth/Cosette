@@ -91,13 +91,12 @@ namespace Cosette.Interactive.Commands
                               $"Branching factor: {statistics.TotalBranchingFactor:F}, Beta cutoffs: {statistics.TotalBetaCutoffs}");
 
             // Beta cutoffs at first move
-            var betaCutoffsPercent = (float)statistics.BetaCutoffsAtFirstMove * 100 / statistics.BetaCutoffs;
-            var qbetaCutoffsPercent = (float)statistics.QBetaCutoffsAtFirstMove * 100 / statistics.QBetaCutoffs;
-            Console.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({betaCutoffsPercent:F} %), " +
-                              $"Q Beta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({qbetaCutoffsPercent:F} %)");
+            Console.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({statistics.BetaCutoffsAtFirstMovePercent:F} %), " +
+                              $"Q Beta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({statistics.QBetaCutoffsAtFirstMovePercent:F} %)");
 
             // Transposition statistics
-            Console.WriteLine($"   Transposition: Hits: {statistics.TTHits}, Collisions: {statistics.TTCollisions}");
+            Console.WriteLine($"   Transposition: Entries: {statistics.TTEntries}, Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
+                              $"NonHits: {statistics.TTNonHits}, Collisions: {statistics.TTCollisions}");
 
         }
     }
