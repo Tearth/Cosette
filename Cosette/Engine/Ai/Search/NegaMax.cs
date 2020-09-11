@@ -12,10 +12,29 @@ namespace Cosette.Engine.Ai.Search
     {
         public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, bool allowNullMove, bool pvNode, SearchStatistics statistics)
         {
+            statistics.Nodes++;
+
+            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
+            {
+                statistics.Leafs++;
+                return -EvaluationConstants.Checkmate + ply;
+            }
+
+            if (board.IsThreefoldRepetition())
+            {
+                statistics.Leafs++;
+                return EvaluationConstants.ThreefoldRepetition;
+            }
+
+            if (depth <= 0)
+            {
+                statistics.Leafs++;
+                return QuiescenceSearch.FindBestMove(board, depth, ply, alpha, beta, statistics);
+            }
+
+
             var originalAlpha = alpha;
             var bestMove = new Move();
-
-            statistics.Nodes++;
 
             var entry = TranspositionTable.Get(board.Hash);
             if (entry.Hash == board.Hash)
@@ -66,29 +85,11 @@ namespace Cosette.Engine.Ai.Search
 #endif
 
 #if DEBUG
-            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Hash !=board.Hash)
+            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Hash != board.Hash)
             {
                 statistics.TTCollisions++;
             }
 #endif
-
-            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
-            {
-                statistics.Leafs++;
-                return -EvaluationConstants.Checkmate + ply;
-            }
-
-            if (board.IsThreefoldRepetition())
-            {
-                statistics.Leafs++;
-                return EvaluationConstants.ThreefoldRepetition;
-            }
-
-            if (depth <= 0)
-            {
-                statistics.Leafs++;
-                return QuiescenceSearch.FindBestMove(board, depth, ply, alpha, beta, statistics);
-            }
 
             if (NullWindowCanBeApplied(board, depth, allowNullMove, pvNode))
             {
