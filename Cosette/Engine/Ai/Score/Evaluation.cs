@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Ai.Score.Evaluators;
+﻿using System.Runtime.CompilerServices;
+using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;

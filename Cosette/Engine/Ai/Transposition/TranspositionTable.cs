@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Ai.Transposition
