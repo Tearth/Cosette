@@ -87,8 +87,9 @@ namespace Cosette.Interactive.Commands
                               $"Branching factor: {statistics.QBranchingFactor:F}, Beta cutoffs: {statistics.QBetaCutoffs}");
 
             // Total
-            Console.WriteLine($"   Total: Nodes: {statistics.TotalNodes} ({statistics.TotalNodesPerSecond:F} MN/s), Leafs: {statistics.TotalLeafs}, " +
-                              $"Branching factor: {statistics.TotalBranchingFactor:F}, Beta cutoffs: {statistics.TotalBetaCutoffs}");
+            Console.WriteLine($"   Total: Nodes: {statistics.TotalNodes} ({((float)statistics.TotalNodesPerSecond / 1000000):F} MN/s), " +
+                              $"Leafs: {statistics.TotalLeafs}, Branching factor: {statistics.TotalBranchingFactor:F}, " +
+                              $"Beta cutoffs: {statistics.TotalBetaCutoffs}");
 
             // Beta cutoffs at first move
             Console.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({statistics.BetaCutoffsAtFirstMovePercent:F} %), " +
