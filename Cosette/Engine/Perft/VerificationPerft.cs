@@ -39,6 +39,9 @@ namespace Cosette.Engine.Perft
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)
             {
+                boardState.MakeNullMove();
+                boardState.UndoNullMove();
+
                 boardState.MakeMove(moves[i]);
                 if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {

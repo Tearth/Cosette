@@ -139,17 +139,17 @@ namespace Cosette.Engine.Board
         {
             var enemyColor = ColorOperations.Invert(ColorToMove);
 
+            _castlings.Push(Castling);
+            _hashes.Push(Hash);
+            _pawnHashes.Push(PawnHash);
+            _enPassants.Push(EnPassant);
+
             if (EnPassant != 0)
             {
                 var enPassantRank = BitOperations.BitScan(EnPassant) % 8;
                 Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
+                EnPassant = 0;
             }
-            _enPassants.Push(EnPassant);
-            EnPassant = 0;
-
-            _castlings.Push(Castling);
-            _hashes.Push(Hash);
-            _pawnHashes.Push(PawnHash);
 
             if (move.Flags == MoveFlags.None)
             {
@@ -456,15 +456,15 @@ namespace Cosette.Engine.Board
 
         public void MakeNullMove()
         {
+            _enPassants.Push(EnPassant);
+            _hashes.Push(Hash);
+
             if (EnPassant != 0)
             {
                 var enPassantRank = BitOperations.BitScan(EnPassant) % 8;
                 Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantRank);
+                EnPassant = 0;
             }
-            _enPassants.Push(EnPassant);
-            EnPassant = 0;
-            
-            _hashes.Push(Hash);
 
             ColorToMove = ColorOperations.Invert(ColorToMove);
             Hash = ZobristHashing.ChangeSide(Hash);
