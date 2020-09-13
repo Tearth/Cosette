@@ -80,6 +80,7 @@ namespace Cosette.Uci
 
         private void SendOptions()
         {
+            Send("option name Hash type spin default 8 min 1 max 2048");
             Send("uciok");
         }
 

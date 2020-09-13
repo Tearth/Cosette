@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Transposition;
 
 namespace Cosette.Uci.Commands
 {
@@ -15,7 +16,14 @@ namespace Cosette.Uci.Commands
 
         public void Run(params string[] parameters)
         {
-            // Ignore options for now, engine doesn't support any
+            switch (parameters[1])
+            {
+                case "Hash":
+                {
+                    TranspositionTable.Init(ulong.Parse(parameters[3]));
+                    break;
+                }
+            }
         }
     }
 }

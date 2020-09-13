@@ -15,7 +15,7 @@ namespace Cosette
     {
         static void Main(string[] args)
         {
-            TranspositionTable.Init(512);
+            TranspositionTable.Init(8);
             PawnHashTable.Init(8);
 
             StaticExchangeEvaluation.Init();
