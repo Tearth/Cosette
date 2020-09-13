@@ -39,8 +39,8 @@ namespace Cosette.Interactive.Commands
                 var megaLeafsPerSecond = result.LeafsPerSecond / 1_000_000;
                 var nanosecondsPerLeaf = result.TimePerLeaf * 1_000_000_000;
 
-                _interactiveConsole.WriteLine($"Depth {i} - Leafs: {result.LeafsCount}, Time: {result.Time:F} s, " +
-                                         $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
+                _interactiveConsole.WriteLine($"Depth {i} - Leafs: {result.LeafsCount} ({megaLeafsPerSecond:F} ML/s), " +
+                                              $"Time: {result.Time:F} s, Time per leaf: {nanosecondsPerLeaf:F} ns");
             }
             GC.EndNoGCRegion();
         }

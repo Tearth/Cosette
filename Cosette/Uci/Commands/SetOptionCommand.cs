@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
 
 namespace Cosette.Uci.Commands
@@ -7,7 +8,6 @@ namespace Cosette.Uci.Commands
     {
         private UciClient _uciClient;
         private UciGame _uciGame;
-        private const int PawnHashTableSize = 8;
 
         public SetOptionCommand(UciClient uciClient, UciGame uciGame)
         {
@@ -21,8 +21,8 @@ namespace Cosette.Uci.Commands
             {
                 case "Hash":
                 {
-                    TranspositionTable.Init(ulong.Parse(parameters[3]) - PawnHashTableSize);
-                    PawnHashTable.Init(PawnHashTableSize);
+                    TranspositionTable.Init(ulong.Parse(parameters[3]) - SearchConstants.DefaultPawnHashTableSize);
+                    PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);
                     break;
                 }
             }

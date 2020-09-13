@@ -10,14 +10,15 @@ namespace Cosette.Interactive
     public class InteractiveConsole
     {
         private Dictionary<string, ICommand> _commands;
-        private List<string> _keywords;
         private List<string> _symbols;
 
         private ConsoleColor _keywordColor;
+        private ConsoleColor _moveColor;
         private ConsoleColor _numberColor;
         private ConsoleColor _symbolColor;
 
-        private string _regex = @"(\s|\,|\:|\(|\))";
+        private string _splitRegex = @"(\s|\,|\:|\(|\))";
+        private string _moveRegex = @"([a-h][1-8]){2}[nbrq]?";
 
         public InteractiveConsole()
         {
@@ -32,20 +33,10 @@ namespace Cosette.Interactive
             _commands["uci"] = new UciCommand(this);
             _commands["quit"] = new QuitCommand(this);
 
-            _keywords = new List<string> 
-            { 
-                // UCI keywords
-                "id", "name", "author", "uciok", "readyok", "bestmove", "copyprotection", 
-                "registration", "info", "depth", "seldepth", "time", "nodes", "pv", "multipv", "score", "cp", "mate", 
-                "lowerbound", "upperbound", "currmove", "currmovenumber", "hashfull", "nps", "tbhits", "cpuload", 
-                "string", "refutation", "currline",
-
-                // Custom keywords
-                "Depth", "Score", "Best", "Time"
-            };
-            _symbols = new List<string> { "%", "s", "MN/s" };
+            _symbols = new List<string> { "%", "s", "ns", "MN/s", "ML/s" };
 
             _keywordColor = ConsoleColor.Cyan;
+            _moveColor = ConsoleColor.Red;
             _numberColor = ConsoleColor.Yellow;
             _symbolColor = ConsoleColor.Yellow;
 
@@ -82,12 +73,12 @@ namespace Cosette.Interactive
 
         public void WriteLine(string message)
         {
-            var splitMessage = Regex.Split(message, _regex);
+            var splitMessage = Regex.Split(message, _splitRegex);
             foreach (var chunk in splitMessage.Where(p => !string.IsNullOrEmpty(p)))
             {
-                if (_keywords.Contains(chunk))
+                if(Regex.IsMatch(chunk, _moveRegex))
                 {
-                    Console.ForegroundColor = _keywordColor;
+                    Console.ForegroundColor = _moveColor;
                 }
                 else if (_symbols.Contains(chunk))
                 {
@@ -96,6 +87,10 @@ namespace Cosette.Interactive
                 else if (float.TryParse(chunk, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
                 {
                     Console.ForegroundColor = _numberColor;
+                }
+                else
+                {
+                    Console.ForegroundColor = _keywordColor;
                 }
 
                 Console.Write(chunk);

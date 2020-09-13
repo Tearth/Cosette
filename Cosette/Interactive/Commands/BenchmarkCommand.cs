@@ -98,6 +98,7 @@ namespace Cosette.Interactive.Commands
                                           $"Leafs: {statistics.TotalLeafs}, Branching factor: {statistics.TotalBranchingFactor:F}, " +
                                           $"Beta cutoffs: {statistics.TotalBetaCutoffs}");
 
+#if DEBUG
             // Beta cutoffs at first move
             _interactiveConsole.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({statistics.BetaCutoffsAtFirstMovePercent:F} %), " +
                                           $"Q Beta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({statistics.QBetaCutoffsAtFirstMovePercent:F} %)");
@@ -105,6 +106,8 @@ namespace Cosette.Interactive.Commands
             // Transposition statistics
             _interactiveConsole.WriteLine($"   Transposition: Entries: {statistics.TTEntries}, Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
                                           $"NonHits: {statistics.TTNonHits}, Collisions: {statistics.TTCollisions}");
+#endif
+
 
             _interactiveConsole.WriteLine();
         }

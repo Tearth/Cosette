@@ -26,7 +26,10 @@ namespace Cosette.Uci
             _interactiveConsole = interactiveConsole;
 
             _uciGame = new UciGame();
-            _debugMode = true; // Arena workaround
+
+#if UCI_DEBUG_OUTPUT
+            _debugMode = true;
+#endif
 
             _commands = new Dictionary<string, IUciCommand>();
             _commands["quit"] = new QuitCommand(this, _uciGame);
@@ -80,7 +83,9 @@ namespace Cosette.Uci
 
         private void SendOptions()
         {
-            Send("option name Hash type spin default 16 min 1 max 2048");
+            var defaultHashTablesSize = SearchConstants.DefaultHashTableSize + SearchConstants.DefaultPawnHashTableSize;
+
+            Send($"option name Hash type spin default {defaultHashTablesSize} min 1 max 2048");
             Send("uciok");
         }
 

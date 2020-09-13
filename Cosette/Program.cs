@@ -3,6 +3,7 @@ using System.Threading;
 using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -15,8 +16,8 @@ namespace Cosette
     {
         static void Main(string[] args)
         {
-            TranspositionTable.Init(8);
-            PawnHashTable.Init(8);
+            TranspositionTable.Init(SearchConstants.DefaultHashTableSize);
+            PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);
 
             StaticExchangeEvaluation.Init();
             MagicBitboards.InitWithInternalKeys();
