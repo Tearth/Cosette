@@ -8,6 +8,7 @@ using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
+using Cosette.Interactive;
 using Cosette.Uci.Commands;
 
 namespace Cosette.Uci
@@ -17,10 +18,13 @@ namespace Cosette.Uci
         private UciGame _uciGame;
         private bool _debugMode;
 
+        private InteractiveConsole _interactiveConsole;
         private Dictionary<string, IUciCommand> _commands;
 
-        public UciClient()
+        public UciClient(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
+
             _uciGame = new UciGame();
             _debugMode = true; // Arena workaround
 
@@ -46,7 +50,7 @@ namespace Cosette.Uci
 
         public void Send(string command)
         {
-            Console.WriteLine(command);
+            _interactiveConsole.WriteLine(command);
         }
 
         public (string Command, string[] parameters) Receive()

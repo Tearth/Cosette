@@ -5,9 +5,11 @@ namespace Cosette.Interactive.Commands
     public class QuitCommand : ICommand
     {
         public string Description { get; }
+        private InteractiveConsole _interactiveConsole;
 
-        public QuitCommand()
+        public QuitCommand(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
             Description = "Quit from Cosette";
         }
 

@@ -12,9 +12,11 @@ namespace Cosette.Interactive.Commands
     public class SimplePerftCommand : ICommand
     {
         public string Description { get; }
+        private InteractiveConsole _interactiveConsole;
 
-        public SimplePerftCommand()
+        public SimplePerftCommand(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
             Description = "Test performance of the moves generator";
         }
 
@@ -22,7 +24,7 @@ namespace Cosette.Interactive.Commands
         {
             if (parameters.Length < 1 || !int.TryParse(parameters[0], out var depth))
             {
-                Console.WriteLine("No depth specified");
+                _interactiveConsole.WriteLine("No depth specified");
                 return;
             }
 
@@ -37,8 +39,8 @@ namespace Cosette.Interactive.Commands
                 var megaLeafsPerSecond = result.LeafsPerSecond / 1_000_000;
                 var nanosecondsPerLeaf = result.TimePerLeaf * 1_000_000_000;
 
-                Console.WriteLine($"Depth {i} - Leafs: {result.LeafsCount}, Time: {result.Time:F} s, " +
-                                  $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
+                _interactiveConsole.WriteLine($"Depth {i} - Leafs: {result.LeafsCount}, Time: {result.Time:F} s, " +
+                                         $"LPS: {megaLeafsPerSecond:F} ML/s, TPL: {nanosecondsPerLeaf:F} ns");
             }
             GC.EndNoGCRegion();
         }

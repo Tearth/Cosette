@@ -7,21 +7,24 @@ namespace Cosette.Interactive.Commands
     {
         public string Description { get; }
 
+        private InteractiveConsole _interactiveConsole;
         private Dictionary<string, ICommand> _commands;
 
-        public HelpCommand(Dictionary<string, ICommand> commands)
+        public HelpCommand(InteractiveConsole interactiveConsole, Dictionary<string, ICommand> commands)
         {
+            _interactiveConsole = interactiveConsole;
             _commands = commands;
+
             Description = "Display all available commands";
         }
 
         public void Run(params string[] parameters)
         {
-            Console.WriteLine("List of Cosette commands in the interactive mode");
+            _interactiveConsole.WriteLine("List of Cosette commands in the interactive mode");
 
             foreach (var command in _commands)
             {
-                Console.WriteLine($" - {command.Key} ({command.Value.Description})");
+                _interactiveConsole.WriteLine($" - {command.Key} ({command.Value.Description})");
             }
         }
     }

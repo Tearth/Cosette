@@ -12,9 +12,11 @@ namespace Cosette.Interactive.Commands
     public class DividedPerftCommand : ICommand
     {
         public string Description { get; }
+        private InteractiveConsole _interactiveConsole;
 
-        public DividedPerftCommand()
+        public DividedPerftCommand(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
             Description = "Test performance of the divided moves generator";
         }
 
@@ -22,7 +24,7 @@ namespace Cosette.Interactive.Commands
         {
             if (parameters.Length < 1 || !int.TryParse(parameters[0], out var depth))
             {
-                Console.WriteLine("No depth specified");
+                _interactiveConsole.WriteLine("No depth specified");
                 return;
             }
 
@@ -34,11 +36,11 @@ namespace Cosette.Interactive.Commands
             var result = DividedPerft.Run(boardState, depth);
             foreach (var move in result.LeafsCount)
             {
-                Console.WriteLine($"{move.Key}: {move.Value}");
+                _interactiveConsole.WriteLine($"{move.Key}: {move.Value}");
             }
 
-            Console.WriteLine();
-            Console.WriteLine($"Total leafs: {result.TotalLeafsCount}");
+            _interactiveConsole.WriteLine();
+            _interactiveConsole.WriteLine($"Total leafs: {result.TotalLeafsCount}");
             GC.EndNoGCRegion();
         }
 

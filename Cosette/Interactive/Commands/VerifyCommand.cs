@@ -16,9 +16,11 @@ namespace Cosette.Interactive.Commands
     public class VerifyCommand : ICommand
     {
         public string Description { get; }
+        private InteractiveConsole _interactiveConsole;
 
-        public VerifyCommand()
+        public VerifyCommand(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
             Description = "Verification of board states";
         }
 
@@ -58,7 +60,7 @@ namespace Cosette.Interactive.Commands
             var result = VerificationPerft.Run(boardState, depth);
             var verificationStatus = result.VerificationSuccess ? "ok" : "fail";
 
-            Console.WriteLine($"{name} - Leafs: {result.LeafsCount}, Verificaton: {verificationStatus}");
+            _interactiveConsole.WriteLine($"{name} - Leafs: {result.LeafsCount}, Verificaton: {verificationStatus}");
         }
     }
 }

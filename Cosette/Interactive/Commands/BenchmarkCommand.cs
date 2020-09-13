@@ -19,9 +19,11 @@ namespace Cosette.Interactive.Commands
     public class BenchmarkCommand : ICommand
     {
         public string Description { get; }
+        private InteractiveConsole _interactiveConsole;
 
-        public BenchmarkCommand()
+        public BenchmarkCommand(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
             Description = "Test NegaMax performance using a few sample positions";
         }
 
@@ -35,7 +37,7 @@ namespace Cosette.Interactive.Commands
             TestEndGame();
             var total = stopwatch.Elapsed.TotalSeconds;
 
-            Console.WriteLine($"Total time: {total:F} s");
+            _interactiveConsole.WriteLine($"Total time: {total:F} s");
 
             GC.EndNoGCRegion();
         }
@@ -62,43 +64,44 @@ namespace Cosette.Interactive.Commands
 
         private void Test(BoardState boardState, string name, int depth)
         {
-            Console.WriteLine($" == {name}:");
+            _interactiveConsole.WriteLine($" == {name}:");
 
             TranspositionTable.Clear();
             IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
             IterativeDeepening.FindBestMove(boardState, 100_000, depth, 1);
             IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnOnSearchUpdate;
 
-            Console.WriteLine();
+            _interactiveConsole.WriteLine();
         }
 
         private void IterativeDeepening_OnOnSearchUpdate(object? sender, SearchStatistics statistics)
         {
             // Main search result
-            Console.WriteLine($"  === Depth: {statistics.Depth}, Score: {statistics.Score}, Best: {statistics.PrincipalVariation[0]}, " +
-                              $"Time: {((float) statistics.SearchTime / 1000):F} s");
+            _interactiveConsole.WriteLine($"  === Depth: {statistics.Depth}, Score: {statistics.Score}, Best: {statistics.PrincipalVariation[0]}, " +
+                                          $"Time: {((float) statistics.SearchTime / 1000):F} s");
 
             // Normal search
-            Console.WriteLine($"   Normal search: Nodes: {statistics.Nodes}, Leafs: {statistics.Leafs}, " +
-                              $"Branching factor: {statistics.BranchingFactor:F}, Beta cutoffs: {statistics.BetaCutoffs}");
+            _interactiveConsole.WriteLine($"   Normal search: Nodes: {statistics.Nodes}, Leafs: {statistics.Leafs}, " +
+                                          $"Branching factor: {statistics.BranchingFactor:F}, Beta cutoffs: {statistics.BetaCutoffs}");
 
             // Quiescence search
-            Console.WriteLine($"   Q search: Nodes: {statistics.QNodes}, Leafs: {statistics.QLeafs}, " +
-                              $"Branching factor: {statistics.QBranchingFactor:F}, Beta cutoffs: {statistics.QBetaCutoffs}");
+            _interactiveConsole.WriteLine($"   Q search: Nodes: {statistics.QNodes}, Leafs: {statistics.QLeafs}, " +
+                                          $"Branching factor: {statistics.QBranchingFactor:F}, Beta cutoffs: {statistics.QBetaCutoffs}");
 
             // Total
-            Console.WriteLine($"   Total: Nodes: {statistics.TotalNodes} ({((float)statistics.TotalNodesPerSecond / 1000000):F} MN/s), " +
-                              $"Leafs: {statistics.TotalLeafs}, Branching factor: {statistics.TotalBranchingFactor:F}, " +
-                              $"Beta cutoffs: {statistics.TotalBetaCutoffs}");
+            _interactiveConsole.WriteLine($"   Total: Nodes: {statistics.TotalNodes} ({((float)statistics.TotalNodesPerSecond / 1000000):F} MN/s), " +
+                                          $"Leafs: {statistics.TotalLeafs}, Branching factor: {statistics.TotalBranchingFactor:F}, " +
+                                          $"Beta cutoffs: {statistics.TotalBetaCutoffs}");
 
             // Beta cutoffs at first move
-            Console.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({statistics.BetaCutoffsAtFirstMovePercent:F} %), " +
-                              $"Q Beta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({statistics.QBetaCutoffsAtFirstMovePercent:F} %)");
+            _interactiveConsole.WriteLine($"   Beta cutoffs at first move: {statistics.BetaCutoffsAtFirstMove} ({statistics.BetaCutoffsAtFirstMovePercent:F} %), " +
+                                          $"Q Beta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({statistics.QBetaCutoffsAtFirstMovePercent:F} %)");
 
             // Transposition statistics
-            Console.WriteLine($"   Transposition: Entries: {statistics.TTEntries}, Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
-                              $"NonHits: {statistics.TTNonHits}, Collisions: {statistics.TTCollisions}");
+            _interactiveConsole.WriteLine($"   Transposition: Entries: {statistics.TTEntries}, Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
+                                          $"NonHits: {statistics.TTNonHits}, Collisions: {statistics.TTCollisions}");
 
+            _interactiveConsole.WriteLine();
         }
     }
 }

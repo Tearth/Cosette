@@ -10,9 +10,11 @@ namespace Cosette.Interactive.Commands
     public class AdvancedPerftCommand : ICommand
     {
         public string Description { get; }
+        private InteractiveConsole _interactiveConsole;
 
-        public AdvancedPerftCommand()
+        public AdvancedPerftCommand(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
             Description = "Test performance of the moves generator with advanced statistics";
         }
 
@@ -20,7 +22,7 @@ namespace Cosette.Interactive.Commands
         {
             if (parameters.Length < 1 || !int.TryParse(parameters[0], out var depth))
             {
-                Console.WriteLine("No depth specified");
+                _interactiveConsole.WriteLine("No depth specified");
                 return;
             }
 
@@ -33,9 +35,9 @@ namespace Cosette.Interactive.Commands
             {
                 var result = AdvancedPerft.Run(boardState, i);
 
-                Console.WriteLine($"Depth {i}: {result.Leafs} leafs ({result.Time:F} s), Captures: {result.Captures}, " +
-                                  $"Checkmates: {result.Checkmates}, Castlings: {result.Castles}, " +
-                                  $"En passants: {result.EnPassants}, Checks: {result.Checks}");
+                _interactiveConsole.WriteLine($"Depth {i}: {result.Leafs} leafs ({result.Time:F} s), Captures: {result.Captures}, " +
+                                         $"Checkmates: {result.Checkmates}, Castlings: {result.Castles}, " +
+                                         $"En passants: {result.EnPassants}, Checks: {result.Checks}");
             }
             GC.EndNoGCRegion();
         }

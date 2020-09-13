@@ -13,15 +13,17 @@ namespace Cosette.Interactive.Commands
     public class UciCommand : ICommand
     {
         public string Description { get; }
+        private InteractiveConsole _interactiveConsole;
 
-        public UciCommand()
+        public UciCommand(InteractiveConsole interactiveConsole)
         {
+            _interactiveConsole = interactiveConsole;
             Description = "Run UCI client";
         }
 
         public void Run(params string[] parameters)
         {
-            new UciClient().Run();
+            new UciClient(_interactiveConsole).Run();
         }
     }
 }
