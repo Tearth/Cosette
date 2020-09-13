@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Debug;Release;BMI</Configurations>
+    <Configurations>Debug;Release;BMI;CCRL</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,7 +21,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BMI|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;BMI</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CCRL|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
+    <DefineConstants>TRACE;INLINE</DefineConstants>
     <Optimize>true</Optimize>
   </PropertyGroup>
 

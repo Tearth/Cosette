@@ -44,7 +44,9 @@ namespace Cosette.Engine.Ai.Search
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
+                stopwatch.Stop();
                 OnSearchUpdate?.Invoke(null, statistics);
+                stopwatch.Start();
 
                 if (depth != 0 && currentDepth == depth)
                 {

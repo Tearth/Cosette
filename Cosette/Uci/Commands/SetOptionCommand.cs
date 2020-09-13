@@ -7,6 +7,7 @@ namespace Cosette.Uci.Commands
     {
         private UciClient _uciClient;
         private UciGame _uciGame;
+        private const int PawnHashTableSize = 8;
 
         public SetOptionCommand(UciClient uciClient, UciGame uciGame)
         {
@@ -20,7 +21,8 @@ namespace Cosette.Uci.Commands
             {
                 case "Hash":
                 {
-                    TranspositionTable.Init(ulong.Parse(parameters[3]));
+                    TranspositionTable.Init(ulong.Parse(parameters[3]) - PawnHashTableSize);
+                    PawnHashTable.Init(PawnHashTableSize);
                     break;
                 }
             }

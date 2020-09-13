@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <Configurations>Debug;Release;BMI</Configurations>
+    <Configurations>Debug;Release;BMI;CCRL</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

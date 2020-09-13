@@ -29,6 +29,9 @@ namespace Cosette.Interactive.Commands
 
         public void Run(params string[] parameters)
         {
+            TranspositionTable.Init(512);
+            PawnHashTable.Init(8);
+
             GC.TryStartNoGCRegion(1024 * 1024 * 16);
 
             var stopwatch = Stopwatch.StartNew();
@@ -67,6 +70,8 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine($" == {name}:");
 
             TranspositionTable.Clear();
+            PawnHashTable.Clear();
+
             IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
             IterativeDeepening.FindBestMove(boardState, 100_000, depth, 1);
             IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnOnSearchUpdate;
