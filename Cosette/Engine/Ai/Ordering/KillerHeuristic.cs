@@ -43,5 +43,19 @@ namespace Cosette.Engine.Ai.Ordering
 
             return false;
         }
+
+        public static void Clear()
+        {
+            for (var color = 0; color < 2; color++)
+            {
+                for (var depth = 0; depth < SearchConstants.MaxDepth; depth++)
+                {
+                    for (var slot = 0; slot < MoveOrderingConstants.KillerSlots; slot++)
+                    {
+                        _killerMoves[color][depth][slot] = new Move();
+                    }
+                }
+            }
+        }
     }
 }

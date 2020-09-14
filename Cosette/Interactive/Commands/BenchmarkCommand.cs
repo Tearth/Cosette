@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Xml.XPath;
 using Cosette.Engine.Ai;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
@@ -71,6 +72,8 @@ namespace Cosette.Interactive.Commands
 
             TranspositionTable.Clear();
             PawnHashTable.Clear();
+            KillerHeuristic.Clear();
+            HistoryHeuristic.Clear();
 
             IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
             IterativeDeepening.FindBestMove(boardState, 100_000, depth, 1);
