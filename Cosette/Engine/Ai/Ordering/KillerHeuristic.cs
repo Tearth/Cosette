@@ -23,7 +23,7 @@ namespace Cosette.Engine.Ai.Ordering
 
         public static void AddKillerMove(Move move, Color color, int depth)
         {
-            for (var i = 0; i < MoveOrderingConstants.KillerSlots - 1; i++)
+            for (var i = MoveOrderingConstants.KillerSlots - 2; i >= 0; i--)
             {
                 _killerMoves[(int) color][depth][i + 1] = _killerMoves[(int)color][depth][i];
             }
