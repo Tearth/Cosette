@@ -33,7 +33,6 @@ namespace Cosette.Engine.Ai.Search
                 return QuiescenceSearch.FindBestMove(board, depth, ply, alpha, beta, statistics);
             }
 
-
             var originalAlpha = alpha;
             var bestMove = new Move();
 
@@ -171,8 +170,7 @@ namespace Cosette.Engine.Ai.Search
 
             if (alpha == -EvaluationConstants.Checkmate + ply + 2 && !board.IsKingChecked(board.ColorToMove))
             {
-                statistics.Leafs++;
-                return 0;
+                alpha = 0;
             }
 
             var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.UpperBound :
