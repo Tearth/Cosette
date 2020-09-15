@@ -38,8 +38,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
-            return (int)(attackersCount * EvaluationConstants.KingSafety[(int)GamePhase.Opening] * openingPhase +
-                         attackersCount * EvaluationConstants.KingSafety[(int)GamePhase.Ending] * endingPhase);
+            return (int)(attackersCount * EvaluationConstants.KingInDanger[(int)GamePhase.Opening] * openingPhase +
+                         attackersCount * EvaluationConstants.KingInDanger[(int)GamePhase.Ending] * endingPhase);
         }
     }
 }

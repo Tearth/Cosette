@@ -12,9 +12,9 @@
         public static int[] DoubledPawns = { -20, -10 };
         public static int[] IsolatedPawns = { -20, -10 };
         public static int[] ChainedPawns = { 5, 5 };
-        public static int[] PassingPawns = { 20, 100 };
+        public static int[] PassingPawns = { 10, 50 };
         public static int[] Mobility = { 4, 1 };
-        public static int[] KingSafety = { -20, -5 };
+        public static int[] KingInDanger = { -20, -5 };
 
         public const int OpeningEndgameEdge = 2 * 21000;
     }
