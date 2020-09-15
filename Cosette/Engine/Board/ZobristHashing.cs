@@ -108,25 +108,16 @@ namespace Cosette.Engine.Board
             return result;
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
             public static ulong MovePiece(ulong hash, Color color, Piece piece, byte from, byte to)
         {
             return hash ^ _fieldHashes[(int) color][(int) piece][from] ^ _fieldHashes[(int)color][(int)piece][to];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong AddOrRemovePiece(ulong hash, Color color, Piece piece, byte at)
         {
             return hash ^ _fieldHashes[(int)color][(int)piece][at];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong RemoveCastlingFlag(ulong hash, Castling currentCastling, Castling castlingChange)
         {
             if ((currentCastling & castlingChange) != 0)
@@ -137,17 +128,11 @@ namespace Cosette.Engine.Board
             return hash;
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong ToggleEnPassant(ulong hash, int enPassantRank)
         {
             return hash ^ _enPassantHashes[enPassantRank];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong ChangeSide(ulong hash)
         {
             return hash ^ _blackSideHash;

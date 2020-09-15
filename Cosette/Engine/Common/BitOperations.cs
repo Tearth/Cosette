@@ -18,9 +18,6 @@ namespace Cosette.Engine.Common
         };
 #endif
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong GetLsb(ulong value)
         {
 #if BMI
@@ -30,9 +27,6 @@ namespace Cosette.Engine.Common
 #endif
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong PopLsb(ulong value)
         {
 #if BMI
@@ -42,9 +36,6 @@ namespace Cosette.Engine.Common
 #endif
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong Count(ulong value)
         {
 #if BMI
@@ -61,9 +52,6 @@ namespace Cosette.Engine.Common
 #endif
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static int BitScan(ulong value)
         {
 #if BMI

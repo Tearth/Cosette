@@ -39,9 +39,6 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
         {
             var entry = PawnHashTable.Get(board.PawnHash);

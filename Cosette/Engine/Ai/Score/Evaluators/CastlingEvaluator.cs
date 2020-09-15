@@ -6,17 +6,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class CastlingEvaluator
     {
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
         {
             return Evaluate(board, Color.White, openingPhase, endingPhase) - Evaluate(board, Color.Black, openingPhase, endingPhase);
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static int Evaluate(BoardState board, Color color, float openingPhase, float endingPhase)
         {
             var result = 0;

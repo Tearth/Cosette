@@ -11,9 +11,6 @@ namespace Cosette.Engine.Ai.Score
 {
     public class Evaluation
     {
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static int Evaluate(BoardState board, Color color)
         {
             var openingPhase = board.GetPhaseRatio();

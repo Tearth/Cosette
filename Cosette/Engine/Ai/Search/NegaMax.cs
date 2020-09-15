@@ -185,27 +185,18 @@ namespace Cosette.Engine.Ai.Search
             return alpha;
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode)
         {
             return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
                    board.GetGamePhase() == GamePhase.Opening && !board.IsKingChecked(board.ColorToMove);
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         private static bool LMRCanBeApplied(BoardState board, int depth, int moveIndex, Span<Move> moves)
         {
             return depth >= SearchConstants.LMRMinimalDepth && moveIndex > SearchConstants.LMRMovesWithoutReduction &&
                    moves[moveIndex].IsQuiet() && !board.IsKingChecked(board.ColorToMove);
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         private static int LMRGetReducedDepth(int depth, bool pvNode)
         {
             return pvNode ? 

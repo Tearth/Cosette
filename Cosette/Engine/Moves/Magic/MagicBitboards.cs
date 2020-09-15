@@ -23,9 +23,6 @@ namespace Cosette.Engine.Moves.Magic
             GenerateBishopAttacks(MagicKeys.BishopKeys);
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong GetRookMoves(ulong board, int fieldIndex)
         {
             board &= _rookMagicArray[fieldIndex].Mask;
@@ -34,9 +31,6 @@ namespace Cosette.Engine.Moves.Magic
             return _rookMagicArray[fieldIndex].Attacks[board];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static ulong GetBishopMoves(ulong board, int fieldIndex)
         {
             board &= _bishopMagicArray[fieldIndex].Mask;

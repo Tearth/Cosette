@@ -16,25 +16,16 @@ namespace Cosette.Engine.Ai.Transposition
             _table = new PawnHashTableEntry[_size];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static void Add(ulong hash, short score)
         {
             _table[hash % _size] = new PawnHashTableEntry(hash, score);
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static PawnHashTableEntry Get(ulong hash)
         {
             return _table[hash % _size];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public static void Clear()
         {
             Array.Clear(_table, 0, (int)_size);

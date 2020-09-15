@@ -582,9 +582,6 @@ namespace Cosette.Engine.Board
             return result;
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public bool IsKingChecked(Color color)
         {
             var king = Pieces[(int) color][(int) Piece.King];
@@ -593,9 +590,6 @@ namespace Cosette.Engine.Board
             return IsFieldAttacked(color, (byte)kingField);
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public void MovePiece(Color color, Piece piece, byte from, byte to)
         {
             var move = (1ul << from) | (1ul << to);
@@ -611,9 +605,6 @@ namespace Cosette.Engine.Board
             Position[(int)color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][to];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public Piece GetPiece(Color color, byte from)
         {
             var field = 1ul << from;
@@ -629,9 +620,6 @@ namespace Cosette.Engine.Board
             throw new InvalidOperationException();
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public void AddPiece(Color color, Piece piece, byte at)
         {
             var field = 1ul << at;
@@ -646,9 +634,6 @@ namespace Cosette.Engine.Board
             Position[(int)color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][at];
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public void RemovePiece(Color color, Piece piece, byte at)
         {
             var field = 1ul << at;
@@ -695,9 +680,6 @@ namespace Cosette.Engine.Board
             return result;
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public float GetPhaseRatio()
         {
             var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
@@ -707,9 +689,6 @@ namespace Cosette.Engine.Board
             return Math.Max(0, ratio);
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         public GamePhase GetGamePhase()
         {
             var totalMaterial = Material[(int) Color.White] + Material[(int) Color.Black];
@@ -732,9 +711,6 @@ namespace Cosette.Engine.Board
             return false;
         }
 
-#if INLINE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         private Piece GetPromotionPiece(MoveFlags flags)
         {
             if ((flags & MoveFlags.KnightPromotion) != 0)
