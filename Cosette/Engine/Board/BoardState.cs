@@ -483,21 +483,15 @@ namespace Cosette.Engine.Board
             var enemyColor = ColorOperations.Invert(color);
 
             var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var attackingRooks = fileRankAttacks & Pieces[(int)enemyColor][(int)Piece.Rook];
+            var attackingRooks = fileRankAttacks & (Pieces[(int)enemyColor][(int)Piece.Rook] | Pieces[(int)enemyColor][(int)Piece.Queen]);
             if (attackingRooks != 0)
             {
                 return true;
             }
 
             var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var attackingBishops = diagonalAttacks & Pieces[(int)enemyColor][(int)Piece.Bishop];
+            var attackingBishops = diagonalAttacks & (Pieces[(int)enemyColor][(int)Piece.Bishop] | Pieces[(int)enemyColor][(int)Piece.Queen]);
             if (attackingBishops != 0)
-            {
-                return true;
-            }
-
-            var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[(int)enemyColor][(int)Piece.Queen];
-            if (attackingQueens != 0)
             {
                 return true;
             }
