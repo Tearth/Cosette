@@ -102,7 +102,7 @@ namespace Cosette.Interactive
 
         private void DisplayIntro()
         {
-            Console.WriteLine($"Cosette Chess Engine @ {Environment.OSVersion}");
+            Console.WriteLine($"Cosette v1.0 @ {Environment.OSVersion}");
             Console.WriteLine("Homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
