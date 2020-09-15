@@ -38,16 +38,19 @@ namespace Cosette.Engine.Ai.Search
 
                 statistics.Clear();
 
+                GC.TryStartNoGCRegion(1024 * 1024 * 16);
                 statistics.Board = board;
                 statistics.Depth = currentDepth;
                 statistics.Score = NegaMax.FindBestMove(board, currentDepth, 0, alpha, beta, true, true, statistics);
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
+                GC.EndNoGCRegion();
 
                 stopwatch.Stop();
                 OnSearchUpdate?.Invoke(null, statistics);
                 stopwatch.Start();
 
+                GC.Collect();
                 if (depth != 0 && currentDepth == depth)
                 {
                     break;

@@ -28,8 +28,6 @@ namespace Cosette.Interactive.Commands
                 return;
             }
 
-            GC.TryStartNoGCRegion(1024 * 1024 * 16);
-
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
@@ -41,9 +39,6 @@ namespace Cosette.Interactive.Commands
 
             _interactiveConsole.WriteLine();
             _interactiveConsole.WriteLine($"Total leafs: {result.TotalLeafsCount}");
-            GC.EndNoGCRegion();
         }
-
-        
     }
 }

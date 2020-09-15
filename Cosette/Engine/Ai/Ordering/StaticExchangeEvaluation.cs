@@ -7,9 +7,9 @@ namespace Cosette.Engine.Ai.Ordering
     {
         private static int[][][][] _table;
 
-        public static void Init()
+        static StaticExchangeEvaluation()
         {
-            _table = InitTable();
+            InitTable();
             PopulateTable();
         }
 
@@ -18,23 +18,21 @@ namespace Cosette.Engine.Ai.Ordering
             return _table[(int)attackingPiece][(int)capturedPiece][attacker][defender];
         }
 
-        private static int[][][][] InitTable()
+        private static void InitTable()
         {
-            var result = new int[6][][][];
+            _table = new int[6][][][];
             for (var attackingPieceIndex = 0; attackingPieceIndex < 6; attackingPieceIndex++)
             {
-                result[attackingPieceIndex] = new int[6][][];
+                _table[attackingPieceIndex] = new int[6][][];
                 for (var defendingPieceIndex = 0; defendingPieceIndex < 6; defendingPieceIndex++)
                 {
-                    result[attackingPieceIndex][defendingPieceIndex] = new int[64][];
+                    _table[attackingPieceIndex][defendingPieceIndex] = new int[64][];
                     for (var defenderIndex = 0; defenderIndex < 64; defenderIndex++)
                     {
-                        result[attackingPieceIndex][defendingPieceIndex][defenderIndex] = new int[64];
+                        _table[attackingPieceIndex][defendingPieceIndex][defenderIndex] = new int[64];
                     }
                 }
             }
-
-            return result;
         }
 
         private static void PopulateTable()

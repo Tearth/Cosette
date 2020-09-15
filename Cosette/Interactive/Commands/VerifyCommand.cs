@@ -26,13 +26,9 @@ namespace Cosette.Interactive.Commands
 
         public void Run(params string[] parameters)
         {
-            GC.TryStartNoGCRegion(1024 * 1024 * 16);
-
             TestOpening();
             TestMidGame();
             TestEndGame();
-
-            GC.EndNoGCRegion();
         }
 
         private void TestOpening()

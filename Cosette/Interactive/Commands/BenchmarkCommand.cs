@@ -33,8 +33,6 @@ namespace Cosette.Interactive.Commands
             TranspositionTable.Init(512);
             PawnHashTable.Init(8);
 
-            GC.TryStartNoGCRegion(1024 * 1024 * 16);
-
             var stopwatch = Stopwatch.StartNew();
             TestOpening();
             TestMidGame();
@@ -42,8 +40,6 @@ namespace Cosette.Interactive.Commands
             var total = stopwatch.Elapsed.TotalSeconds;
 
             _interactiveConsole.WriteLine($"Total time: {total:F} s");
-
-            GC.EndNoGCRegion();
         }
 
         private void TestOpening()

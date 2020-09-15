@@ -28,8 +28,6 @@ namespace Cosette.Interactive.Commands
                 return;
             }
 
-            GC.TryStartNoGCRegion(1024 * 1024 * 16);
-
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
@@ -42,7 +40,6 @@ namespace Cosette.Interactive.Commands
                 _interactiveConsole.WriteLine($"Depth {i} - Leafs: {result.LeafsCount} ({megaLeafsPerSecond:F} ML/s), " +
                                               $"Time: {result.Time:F} s, Time per leaf: {nanosecondsPerLeaf:F} ns");
             }
-            GC.EndNoGCRegion();
         }
     }
 }

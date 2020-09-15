@@ -26,8 +26,6 @@ namespace Cosette.Interactive.Commands
                 return;
             }
 
-            GC.TryStartNoGCRegion(1024 * 1024 * 16);
-
             var boardState = new BoardState();
             boardState.SetDefaultState();
 
@@ -39,7 +37,6 @@ namespace Cosette.Interactive.Commands
                                          $"Checkmates: {result.Checkmates}, Castlings: {result.Castles}, " +
                                          $"En passants: {result.EnPassants}, Checks: {result.Checks}");
             }
-            GC.EndNoGCRegion();
         }
     }
 }
