@@ -6,6 +6,7 @@ using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
+using Cosette.Logs;
 
 namespace Cosette.Uci.Commands
 {
@@ -36,9 +37,11 @@ namespace Cosette.Uci.Commands
                 var bestMove = _uciGame.SearchBestMove(whiteTime, blackTime, depth);
                 _uciClient.Send($"bestmove {bestMove}");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                File.WriteAllText($"error-{DateTime.Now.Ticks}.txt", e.ToString());
+#if UCI_DEBUG_OUTPUT
+                LogManager.LogError(ex.ToString());
+#endif
                 throw;
             }
         }

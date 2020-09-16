@@ -9,6 +9,7 @@ using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Interactive;
+using Cosette.Logs;
 using Cosette.Uci.Commands;
 
 namespace Cosette.Uci
@@ -54,6 +55,10 @@ namespace Cosette.Uci
         public void Send(string command)
         {
             _interactiveConsole.WriteLine(command);
+
+#if UCI_DEBUG_OUTPUT
+            LogManager.LogInfo("[SEND] " + command);
+#endif
         }
 
         public (string Command, string[] parameters) Receive()
@@ -62,6 +67,10 @@ namespace Cosette.Uci
             var splitInput = input.Split(' ');
             var command = splitInput[0].ToLower();
             var parameters = splitInput.Skip(1).ToArray();
+
+#if UCI_DEBUG_OUTPUT
+            LogManager.LogInfo("[RECV] " + input);
+#endif
 
             return (command, parameters);
         }
