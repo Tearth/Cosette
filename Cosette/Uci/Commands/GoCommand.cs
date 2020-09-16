@@ -39,9 +39,7 @@ namespace Cosette.Uci.Commands
             }
             catch (Exception ex)
             {
-#if UCI_DEBUG_OUTPUT
                 LogManager.LogError(ex.ToString());
-#endif
                 throw;
             }
         }
