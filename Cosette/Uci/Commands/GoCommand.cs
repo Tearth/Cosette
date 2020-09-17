@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -27,7 +28,27 @@ namespace Cosette.Uci.Commands
             var whiteTime = GetParameter(parameters, "wtime", 1);
             var blackTime = GetParameter(parameters, "btime", 1);
             var depth = GetParameter(parameters, "depth", 0);
+            var moveTime = GetParameter(parameters, "movetime", 0);
             var infiniteFlag = GetFlag(parameters, "infinite");
+
+            if (moveTime != 0)
+            {
+                whiteTime = int.MaxValue;
+                blackTime = int.MaxValue;
+                IterativeDeepening.WaitForStopCommand = true;
+
+                Task.Run(() =>
+                {
+                    var stopwatch = Stopwatch.StartNew();
+                    while (stopwatch.ElapsedMilliseconds < moveTime)
+                    {
+                        Task.Delay(20).GetAwaiter().GetResult();
+                    }
+
+                    IterativeDeepening.AbortSearch = true;
+                    IterativeDeepening.WaitForStopCommand = false;
+                });
+            }
 
             if (infiniteFlag)
             {
