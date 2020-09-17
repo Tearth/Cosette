@@ -40,6 +40,7 @@ namespace Cosette.Uci
             _commands["position"] = new PositionCommand(this, _uciGame);
             _commands["debug"] = new DebugCommand(this, _uciGame);
             _commands["go"] = new GoCommand(this, _uciGame);
+            _commands["stop"] = new StopCommand(this, _uciGame);
 
             IterativeDeepening.OnSearchUpdate += OnSearchUpdate;
         }

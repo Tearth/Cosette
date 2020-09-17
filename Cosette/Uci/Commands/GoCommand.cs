@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Search;
@@ -26,6 +27,14 @@ namespace Cosette.Uci.Commands
             var whiteTime = GetParameter(parameters, "wtime", 1);
             var blackTime = GetParameter(parameters, "btime", 1);
             var depth = GetParameter(parameters, "depth", 0);
+            var infiniteFlag = GetFlag(parameters, "infinite");
+
+            if (infiniteFlag)
+            {
+                whiteTime = int.MaxValue;
+                blackTime = int.MaxValue;
+                IterativeDeepening.WaitForStopCommand = true;
+            }
 
             Task.Run(() => SearchEntryPoint(whiteTime, blackTime, depth));
         }

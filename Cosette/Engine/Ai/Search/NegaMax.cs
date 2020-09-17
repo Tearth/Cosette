@@ -13,6 +13,11 @@ namespace Cosette.Engine.Ai.Search
     {
         public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, bool allowNullMove, bool pvNode, SearchStatistics statistics)
         {
+            if (IterativeDeepening.AbortSearch)
+            {
+                return 0;
+            }
+
             statistics.Nodes++;
 
             if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)

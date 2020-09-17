@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Time;
@@ -12,6 +13,8 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class IterativeDeepening
     {
+        public static bool AbortSearch { get; set; }
+        public static bool WaitForStopCommand { get; set; }
         public static event EventHandler<SearchStatistics> OnSearchUpdate;
 
         public static Move FindBestMove(BoardState board, int remainingTime, int depth, int moveNumber)
@@ -28,8 +31,11 @@ namespace Cosette.Engine.Ai.Search
             var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();
             var lastTotalNodesCount = 100ul;
+            var bestMove = new Move();
 
-            for (var currentDepth = 1; currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
+            AbortSearch = false;
+
+            for (var currentDepth = 1; !AbortSearch && currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
             {
                 if (depth == 0 && expectedExecutionTime > timeLimit)
                 {
@@ -44,8 +50,13 @@ namespace Cosette.Engine.Ai.Search
                 statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
+                bestMove = statistics.PrincipalVariation[0];
                 stopwatch.Stop();
-                OnSearchUpdate?.Invoke(null, statistics);
+
+                if (!AbortSearch)
+                {
+                    OnSearchUpdate?.Invoke(null, statistics);
+                }
                 stopwatch.Start();
 
                 if (depth != 0 && currentDepth == depth)
@@ -58,7 +69,18 @@ namespace Cosette.Engine.Ai.Search
                 lastTotalNodesCount = statistics.TotalNodes;
             }
 
-            return statistics.PrincipalVariation[0];
+            while (WaitForStopCommand)
+            {
+                Task.Delay(50).GetAwaiter().GetResult();
+            }
+
+            if (AbortSearch)
+            {
+                TranspositionTable.Clear();
+                AbortSearch = false;
+            }
+
+            return bestMove;
         }
 
         public static bool IsScoreCheckmate(int score)
