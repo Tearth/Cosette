@@ -13,6 +13,12 @@ namespace Cosette.Engine.Ai.Search
     {
         public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, bool allowNullMove, bool pvNode, SearchStatistics statistics)
         {
+            if (statistics.Nodes >= IterativeDeepening.MaxNodesCount)
+            {
+                IterativeDeepening.AbortSearch = true;
+                return 0;
+            }
+
             if (IterativeDeepening.AbortSearch)
             {
                 return 0;

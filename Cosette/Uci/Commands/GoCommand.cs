@@ -26,10 +26,11 @@ namespace Cosette.Uci.Commands
 
         public void Run(params string[] parameters)
         {
-            var whiteTime = GetParameter(parameters, "wtime", 1);
-            var blackTime = GetParameter(parameters, "btime", 1);
-            var depth = GetParameter(parameters, "depth", 0);
+            var whiteTime = GetParameter(parameters, "wtime", int.MaxValue);
+            var blackTime = GetParameter(parameters, "btime", int.MaxValue);
+            var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth);
             var moveTime = GetParameter(parameters, "movetime", 0);
+            var nodesCount = GetParameter(parameters, "nodes", ulong.MaxValue);
             var searchMoves = GetParameterWithMoves(parameters, "searchmoves");
             var infiniteFlag = GetFlag(parameters, "infinite");
 
@@ -60,6 +61,7 @@ namespace Cosette.Uci.Commands
             }
 
             IterativeDeepening.MoveRestrictions = searchMoves;
+            IterativeDeepening.MaxNodesCount = nodesCount;
             Task.Run(() => SearchEntryPoint(whiteTime, blackTime, depth));
         }
 

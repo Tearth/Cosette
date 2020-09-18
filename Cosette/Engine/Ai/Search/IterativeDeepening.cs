@@ -17,6 +17,7 @@ namespace Cosette.Engine.Ai.Search
         public static bool AbortSearch { get; set; }
         public static bool WaitForStopCommand { get; set; }
         public static List<Move> MoveRestrictions { get; set; }
+        public static ulong MaxNodesCount { get; set; }
         public static event EventHandler<SearchStatistics> OnSearchUpdate;
 
         public static Move FindBestMove(BoardState board, int remainingTime, int depth, int moveNumber)
@@ -37,7 +38,7 @@ namespace Cosette.Engine.Ai.Search
 
             AbortSearch = false;
 
-            for (var currentDepth = 1; !AbortSearch && currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
+            for (var currentDepth = 1; currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
             {
                 if (depth == 0 && expectedExecutionTime > timeLimit)
                 {
@@ -55,13 +56,15 @@ namespace Cosette.Engine.Ai.Search
                 bestMove = statistics.PrincipalVariation[0];
                 stopwatch.Stop();
 
-                if (!AbortSearch)
+                if (AbortSearch)
                 {
-                    OnSearchUpdate?.Invoke(null, statistics);
+                    break;
                 }
+
+                OnSearchUpdate?.Invoke(null, statistics);
                 stopwatch.Start();
 
-                if (depth != 0 && currentDepth == depth)
+                if (currentDepth == depth)
                 {
                     break;
                 }
