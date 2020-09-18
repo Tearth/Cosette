@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace Cosette.Uci.Commands
             var blackTime = GetParameter(parameters, "btime", 1);
             var depth = GetParameter(parameters, "depth", 0);
             var moveTime = GetParameter(parameters, "movetime", 0);
+            var searchMoves = GetParameterWithMoves(parameters, "searchmoves");
             var infiniteFlag = GetFlag(parameters, "infinite");
 
             if (moveTime != 0)
@@ -57,6 +59,7 @@ namespace Cosette.Uci.Commands
                 IterativeDeepening.WaitForStopCommand = true;
             }
 
+            IterativeDeepening.MoveRestrictions = searchMoves;
             Task.Run(() => SearchEntryPoint(whiteTime, blackTime, depth));
         }
 
@@ -86,7 +89,31 @@ namespace Cosette.Uci.Commands
 
             return defaultValue;
         }
+        
+        private List<Move> GetParameterWithMoves(string[] parameters, string name)
+        {
+            var movesList = new List<Move>();
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                if (parameters[i] == name)
+                {
+                    for (var moveIndex = i + 1; moveIndex < parameters.Length; moveIndex++)
+                    {
+                        var moveTextNotation = parameters[moveIndex];
+                        var parsedMove = Move.FromTextNotation(_uciGame.BoardState, moveTextNotation);
+                        movesList.Add(parsedMove);
+                    }
+                }
+            }
 
+            if (movesList.Count == 0)
+            {
+                return null;
+            }
+
+            return movesList;
+        }
+        
         private bool GetFlag(string[] parameters, string name)
         {
             return parameters.Contains(name);

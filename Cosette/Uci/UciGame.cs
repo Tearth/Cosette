@@ -11,56 +11,40 @@ namespace Cosette.Uci
 {
     public class UciGame
     {
-        private BoardState _boardState;
+        public BoardState BoardState;
         private Color _currentColor;
         private int _currentMoveNumber;
 
         public UciGame()
         {
-            _boardState = new BoardState();
+            BoardState = new BoardState();
         }
 
         public void SetDefaultState()
         {
-            _boardState.SetDefaultState();
+            BoardState.SetDefaultState();
             _currentColor = Color.White;
             _currentMoveNumber = 1;
         }
 
         public void SetFen(string fen)
         {
-            _boardState = FenParser.Parse(fen, out _currentMoveNumber);
+            BoardState = FenParser.Parse(fen, out _currentMoveNumber);
         }
 
-        public bool MakeMove(Position from, Position to, MoveFlags flags)
+        public void MakeMove(Move move)
         {
-            Span<Move> moves = stackalloc Move[128];
-            var movesCount = _boardState.GetAvailableMoves(moves);
-
-            for (var i = 0; i < movesCount; i++)
+            BoardState.MakeMove(move);
+            if (BoardState.ColorToMove == Color.White)
             {
-                if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
-                {
-                    if (flags == MoveFlags.None || (moves[i].Flags & flags) != 0)
-                    {
-                        _boardState.MakeMove(moves[i]);
-                        if (_boardState.ColorToMove == Color.White)
-                        {
-                            _currentMoveNumber++;
-                        }
-
-                        return true;
-                    }
-                }
+                _currentMoveNumber++;
             }
-
-            return false;
         }
 
         public Move SearchBestMove(int whiteTime, int blackTime, int depth)
         {
             var remainingTime = _currentColor == Color.White ? whiteTime : blackTime;
-            var bestMove = IterativeDeepening.FindBestMove(_boardState, remainingTime, depth, _currentMoveNumber);
+            var bestMove = IterativeDeepening.FindBestMove(BoardState, remainingTime, depth, _currentMoveNumber);
 
             return bestMove;
         }

@@ -1,4 +1,6 @@
-﻿using Cosette.Engine.Common;
+﻿using System;
+using Cosette.Engine.Board;
+using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Moves
 {
@@ -33,6 +35,29 @@ namespace Cosette.Engine.Moves
         public static bool operator !=(Move a, Move b)
         {
             return a.From != b.From || a.To != b.To || a.Piece != b.Piece || a.Flags != b.Flags;
+        }
+
+        public static Move FromTextNotation(BoardState board, string textNotation)
+        {
+            var from = Position.FromText(textNotation.Substring(0, 2));
+            var to = Position.FromText(textNotation.Substring(2, 2));
+            var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.None;
+
+            Span<Move> moves = stackalloc Move[128];
+            var movesCount = board.GetAvailableMoves(moves);
+
+            for (var i = 0; i < movesCount; i++)
+            {
+                if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
+                {
+                    if (flags == MoveFlags.None || (moves[i].Flags & flags) != 0)
+                    {
+                        return moves[i];
+                    }
+                }
+            }
+
+            return new Move();
         }
 
         public bool IsQuiet()
@@ -73,6 +98,19 @@ namespace Cosette.Engine.Moves
             }
 
             return null;
+        }
+
+        private static MoveFlags GetMoveFlags(char promotionPiece)
+        {
+            switch (promotionPiece)
+            {
+                case 'q': return MoveFlags.QueenPromotion;
+                case 'r': return MoveFlags.RookPromotion;
+                case 'b': return MoveFlags.BishopPromotion;
+                case 'n': return MoveFlags.KnightPromotion;
+            }
+
+            throw new InvalidOperationException();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai.Ordering;
@@ -15,6 +16,7 @@ namespace Cosette.Engine.Ai.Search
     {
         public static bool AbortSearch { get; set; }
         public static bool WaitForStopCommand { get; set; }
+        public static List<Move> MoveRestrictions { get; set; }
         public static event EventHandler<SearchStatistics> OnSearchUpdate;
 
         public static Move FindBestMove(BoardState board, int remainingTime, int depth, int moveNumber)

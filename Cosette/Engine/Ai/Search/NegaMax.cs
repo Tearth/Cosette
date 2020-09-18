@@ -119,6 +119,15 @@ namespace Cosette.Engine.Ai.Search
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
+
+                if (IterativeDeepening.MoveRestrictions != null && ply == 0)
+                {
+                    if (!IterativeDeepening.MoveRestrictions.Contains(moves[moveIndex]))
+                    {
+                        continue;
+                    }
+                }
+
                 board.MakeMove(moves[moveIndex]);
 
                 var score = 0;
