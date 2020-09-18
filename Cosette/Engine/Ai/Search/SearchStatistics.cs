@@ -9,6 +9,7 @@ namespace Cosette.Engine.Ai.Search
         public BoardState Board { get; set; }
 
         public int Depth { get; set; }
+        public int SelectiveDepth { get; set; }
         public int Score { get; set; }
         public ulong SearchTime { get; set; }
 
@@ -61,6 +62,7 @@ namespace Cosette.Engine.Ai.Search
             Board = null;
 
             Depth = 0;
+            SelectiveDepth = 0;
             Score = 0;
             SearchTime = 0;
 

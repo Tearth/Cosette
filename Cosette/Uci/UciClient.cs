@@ -110,7 +110,8 @@ namespace Cosette.Uci
             var score = FormatScore(stats.Score);
             var principalVariation = FormatPrincipalVariation(stats.PrincipalVariation, stats.PrincipalVariationMovesCount);
 
-            Send($"info depth {stats.Depth} time {stats.SearchTime} pv {principalVariation} score {score} nodes {stats.TotalNodes} nps {stats.TotalNodesPerSecond}");
+            Send($"info depth {stats.Depth} seldepth {stats.SelectiveDepth} time {stats.SearchTime}  " +
+                 $"score {score} nodes {stats.TotalNodes} nps {stats.TotalNodesPerSecond} pv {principalVariation}");
 
             if (_debugMode)
             {

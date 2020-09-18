@@ -13,6 +13,11 @@ namespace Cosette.Engine.Ai.Search
         {
             statistics.QNodes++;
 
+            if (ply > statistics.SelectiveDepth)
+            {
+                statistics.SelectiveDepth = ply;
+            }
+
             if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
             {
                 statistics.QLeafs++;
