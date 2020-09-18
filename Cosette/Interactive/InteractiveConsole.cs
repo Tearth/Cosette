@@ -17,8 +17,8 @@ namespace Cosette.Interactive
         private ConsoleColor _numberColor;
         private ConsoleColor _symbolColor;
 
-        private string _splitRegex = @"(\s|\,|\:|\(|\))";
-        private string _moveRegex = @"([a-h][1-8]){2}[nbrq]?";
+        private Regex _splitRegex = new Regex(@"(\s|\,|\:|\(|\))", RegexOptions.Compiled);
+        private Regex _moveRegex = new Regex(@"([a-h][1-8]){2}[nbrq]?", RegexOptions.Compiled);
 
         public InteractiveConsole()
         {
@@ -73,10 +73,10 @@ namespace Cosette.Interactive
 
         public void WriteLine(string message)
         {
-            var splitMessage = Regex.Split(message, _splitRegex);
+            var splitMessage = _splitRegex.Split(message);
             foreach (var chunk in splitMessage.Where(p => !string.IsNullOrEmpty(p)))
             {
-                if(Regex.IsMatch(chunk, _moveRegex))
+                if(_moveRegex.IsMatch(chunk))
                 {
                     Console.ForegroundColor = _moveColor;
                 }
