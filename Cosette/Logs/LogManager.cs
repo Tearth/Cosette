@@ -23,22 +23,24 @@ namespace Cosette.Logs
 
         public static void LogInfo(string message)
         {
+#if LOGGER
             Log(Path.Combine(_basePath, _logFile), message);
+#endif
         }
 
         public static void LogError(string message)
         {
+#if LOGGER
             Log(Path.Combine(_basePath, $"error-{DateTime.Now.Ticks}.log"), message);
+#endif
         }
 
         private static void Log(string filePath, string message)
         {
-#if LOGGER
             using (var streamWriter = new StreamWriter(filePath, true))
             {
                 streamWriter.WriteLine(message);
             }
-#endif
         }
     }
 }
