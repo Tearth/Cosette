@@ -102,7 +102,7 @@ namespace Cosette.Interactive
 
         private void DisplayIntro()
         {
-            Console.WriteLine($"Cosette v1.0 (Aqua) @ {Environment.OSVersion}");
+            Console.WriteLine($"Cosette v1.0 (Aqua), 19.09.2020 @ {Environment.OSVersion}");
             Console.WriteLine("Homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine();
             Console.WriteLine("\"There are two types of sacrifices: correct ones, and mine.\" ~ Mikhail Tal");
