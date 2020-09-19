@@ -1,9 +1,14 @@
 # Cosette
+**Current version: v1.0 (Aqua), 19.09.2020**
 
 A brand new UCI-compliant chess engine written in C# for .NET Core platform. The project is still in the early stage of development and lacks a few major performance improvements like more advanced pruning, extensions, or better evaluation. The current strength is estimated at 1900 ELO and hopefully will significantly improve in the future.
 
+![asd](https://i.imgur.com/ck4GbbF.png)
+
 ## How to play?
-Cosette has an official account on lichess.org platform, which allows everybody to challenge her - feel free to do it!
+The simplest way is to download the newest version from the [Releases page](https://github.com/Tearth/Cosette/releases) and use it with graphical interface like Arena or WinBoard. Engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
+
+Cosette has an official account on [lichess.org](https://lichess.org/) platform, which allows everybody to challenge her - feel free to do it!
 
 **https://lichess.org/@/CosetteBot**
 
