@@ -20,7 +20,7 @@ namespace Cosette.Interactive.Commands
 
         public void Run(params string[] parameters)
         {
-            _interactiveConsole.WriteLine("List of Cosette commands in the interactive mode");
+            _interactiveConsole.WriteLine("List of Cosette commands in the interactive mode:");
 
             foreach (var command in _commands)
             {
