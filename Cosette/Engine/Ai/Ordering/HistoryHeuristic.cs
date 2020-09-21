@@ -4,24 +4,24 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class HistoryHeuristic
     {
-        private static readonly int[][][] _historyMoves;
+        private static readonly byte[][][] _historyMoves;
 
         static HistoryHeuristic()
         {
-            _historyMoves = new int[2][][];
-            _historyMoves[(int)Color.White] = new int[64][];
-            _historyMoves[(int)Color.Black] = new int[64][];
+            _historyMoves = new byte[2][][];
+            _historyMoves[(int)Color.White] = new byte[64][];
+            _historyMoves[(int)Color.Black] = new byte[64][];
 
             for (var i = 0; i < 64; i++)
             {
-                _historyMoves[(int)Color.White][i] = new int[64];
-                _historyMoves[(int)Color.Black][i] = new int[64];
+                _historyMoves[(int)Color.White][i] = new byte[64];
+                _historyMoves[(int)Color.Black][i] = new byte[64];
             }
         }
 
-        public static void AddHistoryMove(Color color, byte from, byte to, int value)
+        public static void AddHistoryMove(Color color, byte from, byte to, byte depth)
         {
-            _historyMoves[(int)color][from][to] = value;
+            _historyMoves[(int)color][from][to] = (byte)(depth * depth);
         }
 
         public static int GetHistoryMoveValue(Color color, byte from, byte to)

@@ -12,6 +12,8 @@ namespace Cosette.Engine.Moves
         public readonly Piece Piece;
         public readonly MoveFlags Flags;
 
+        public static Move Empty = new Move();
+
         public Move(byte from, byte to, Piece piece, MoveFlags flags)
         {
             From = from;
@@ -78,7 +80,7 @@ namespace Cosette.Engine.Moves
                 }
             }
 
-            return new Move();
+            return Empty;
         }
 
         public bool IsQuiet()

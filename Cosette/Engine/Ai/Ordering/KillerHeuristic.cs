@@ -21,7 +21,7 @@ namespace Cosette.Engine.Ai.Ordering
             }
         }
 
-        public static void AddKillerMove(Move move, Color color, int depth)
+        public static void AddKillerMove(Move move, Color color, byte depth)
         {
             for (var i = MoveOrderingConstants.KillerSlots - 2; i >= 0; i--)
             {
@@ -31,7 +31,7 @@ namespace Cosette.Engine.Ai.Ordering
             _killerMoves[(int)color][depth][0] = move;
         }
 
-        public static bool KillerMoveExists(Move move, Color color, int depth)
+        public static bool KillerMoveExists(Move move, Color color, byte depth)
         {
             for (var i = 0; i < MoveOrderingConstants.KillerSlots; i++)
             {
@@ -52,7 +52,7 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     for (var slot = 0; slot < MoveOrderingConstants.KillerSlots; slot++)
                     {
-                        _killerMoves[color][depth][slot] = new Move();
+                        _killerMoves[color][depth][slot] = Move.Empty;
                     }
                 }
             }

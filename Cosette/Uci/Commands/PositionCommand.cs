@@ -59,7 +59,7 @@ namespace Cosette.Uci.Commands
             foreach (var move in moves)
             {
                 var parsedMove = Move.FromTextNotation(_uciGame.BoardState, move);
-                if (parsedMove == new Move())
+                if (parsedMove == Move.Empty)
                 {
                     throw new InvalidOperationException();
                 }

@@ -34,11 +34,11 @@ namespace Cosette.Engine.Ai.Search
             var timeLimit = TimeScheduler.CalculateTimeForMove(remainingTime, moveNumber);
             var stopwatch = Stopwatch.StartNew();
             var lastTotalNodesCount = 100ul;
-            var bestMove = new Move();
+            var bestMove = Move.Empty;
 
             AbortSearch = false;
 
-            for (var currentDepth = 1; currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
+            for (byte currentDepth = 1; currentDepth < SearchConstants.MaxDepth && !IsScoreCheckmate(statistics.Score); currentDepth++)
             {
                 if (expectedExecutionTime > timeLimit)
                 {

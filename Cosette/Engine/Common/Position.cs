@@ -5,6 +5,8 @@
         public readonly int X;
         public readonly int Y;
 
+        public static Position Empty = new Position();
+
         public Position(int x, int y)
         {
             X = x;
