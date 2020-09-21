@@ -53,6 +53,21 @@
             return a.X != b.X || a.Y != b.Y;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return this == (Position)obj;
+        }
+
         public override int GetHashCode()
         {
             return X * 8 + Y;

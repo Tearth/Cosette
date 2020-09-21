@@ -38,6 +38,26 @@ namespace Cosette.Engine.Moves
             return a.From != b.From || a.To != b.To || a.Piece != b.Piece || a.Flags != b.Flags;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return this == (Move)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return From ^ To ^ (byte)Piece ^ (byte)Flags;
+        }
+
         public static Move FromTextNotation(BoardState board, string textNotation)
         {
             var from = Position.FromText(textNotation.Substring(0, 2));
