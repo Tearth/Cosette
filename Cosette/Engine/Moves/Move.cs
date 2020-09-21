@@ -22,8 +22,8 @@ namespace Cosette.Engine.Moves
 
         public Move(int from, int to, Piece piece, MoveFlags flags)
         {
-            From = (byte) from;
-            To = (byte) to;
+            From = (byte)from;
+            To = (byte)to;
             Piece = piece;
             Flags = flags;
         }
@@ -89,7 +89,7 @@ namespace Cosette.Engine.Moves
         public override string ToString()
         {
             var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
-            if ((int) Flags >= 16)
+            if ((int)Flags >= 16)
             {
                 return baseMove + GetPromotionSymbol(Flags);
             }

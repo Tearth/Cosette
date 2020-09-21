@@ -50,7 +50,7 @@ namespace Cosette.Engine.Ai.Search
                 statistics.Board = board;
                 statistics.Depth = currentDepth;
                 statistics.Score = NegaMax.FindBestMove(board, currentDepth, 0, alpha, beta, true, true, statistics);
-                statistics.SearchTime = (ulong) stopwatch.ElapsedMilliseconds;
+                statistics.SearchTime = (ulong)stopwatch.ElapsedMilliseconds;
                 statistics.PrincipalVariationMovesCount = GetPrincipalVariation(board, statistics.PrincipalVariation, 0);
 
                 bestMove = statistics.PrincipalVariation[0];
@@ -116,7 +116,7 @@ namespace Cosette.Engine.Ai.Search
             var king = board.Pieces[(int)enemyColor][(int)Piece.King];
             var kingField = BitOperations.BitScan(king);
 
-            if (board.IsFieldAttacked(enemyColor, (byte) kingField))
+            if (board.IsFieldAttacked(enemyColor, (byte)kingField))
             {
                 board.UndoMove(entry.BestMove);
                 return movesCount;

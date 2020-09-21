@@ -529,7 +529,7 @@ namespace Cosette.Engine.Board
             var attackingRooks = fileRankAttacks & Pieces[(int)color][(int)Piece.Rook];
             if (attackingRooks != 0)
             {
-                result |= 1 << (int) Piece.Rook;
+                result |= 1 << (int)Piece.Rook;
             }
 
             var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)color];
@@ -604,7 +604,7 @@ namespace Cosette.Engine.Board
             {
                 if ((Pieces[(int)color][i] & field) != 0)
                 {
-                    return (Piece) i;
+                    return (Piece)i;
                 }
             }
 

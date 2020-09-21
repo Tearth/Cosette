@@ -28,7 +28,7 @@ namespace Cosette.Engine.Ai.Transposition
 
         public static void Clear()
         {
-            Array.Clear(_table, 0, (int) _size);
+            Array.Clear(_table, 0, (int)_size);
         }
     }
 }

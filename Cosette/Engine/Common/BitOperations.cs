@@ -54,7 +54,7 @@ namespace Cosette.Engine.Common
         public static int BitScan(ulong value)
         {
 #if BMI
-            return (int) Bmi1.X64.TrailingZeroCount(value);
+            return (int)Bmi1.X64.TrailingZeroCount(value);
 #else
             return BitScanValues[((ulong)((long)value & -(long)value) * 0x03f79d71b4cb0a89) >> 58];
 #endif

@@ -41,8 +41,8 @@ namespace Cosette.Engine.Ai.Ordering
             {
                 for (var capturedPieceIndex = 0; capturedPieceIndex < 6; capturedPieceIndex++)
                 {
-                    var attackingPiece = (Piece) attackingPieceIndex;
-                    var capturedPiece = (Piece) capturedPieceIndex;
+                    var attackingPiece = (Piece)attackingPieceIndex;
+                    var capturedPiece = (Piece)capturedPieceIndex;
 
                     for (ulong attackerIndex = 0; attackerIndex < 64; attackerIndex++)
                     {

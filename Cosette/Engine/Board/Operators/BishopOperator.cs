@@ -71,7 +71,7 @@ namespace Cosette.Engine.Board.Operators
 
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = BishopMovesGenerator.GetMoves(boardState.OccupancySummary, from);
-                mobility += (int) BitOperations.Count(availableMoves);
+                mobility += (int)BitOperations.Count(availableMoves);
             }
 
             return mobility;
