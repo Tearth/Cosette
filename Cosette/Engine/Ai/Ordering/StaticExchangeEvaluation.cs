@@ -5,7 +5,7 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class StaticExchangeEvaluation
     {
-        private static int[][][][] _table;
+        private static short[][][][] _table;
 
         static StaticExchangeEvaluation()
         {
@@ -13,23 +13,23 @@ namespace Cosette.Engine.Ai.Ordering
             PopulateTable();
         }
 
-        public static int Evaluate(Piece attackingPiece, Piece capturedPiece, byte attacker, byte defender)
+        public static short Evaluate(Piece attackingPiece, Piece capturedPiece, byte attacker, byte defender)
         {
             return _table[(int)attackingPiece][(int)capturedPiece][attacker][defender];
         }
 
         private static void InitTable()
         {
-            _table = new int[6][][][];
+            _table = new short[6][][][];
             for (var attackingPieceIndex = 0; attackingPieceIndex < 6; attackingPieceIndex++)
             {
-                _table[attackingPieceIndex] = new int[6][][];
-                for (var defendingPieceIndex = 0; defendingPieceIndex < 6; defendingPieceIndex++)
+                _table[attackingPieceIndex] = new short[6][][];
+                for (var capturedPieceIndex = 0; capturedPieceIndex < 6; capturedPieceIndex++)
                 {
-                    _table[attackingPieceIndex][defendingPieceIndex] = new int[64][];
-                    for (var defenderIndex = 0; defenderIndex < 64; defenderIndex++)
+                    _table[attackingPieceIndex][capturedPieceIndex] = new short[64][];
+                    for (var attackerIndex = 0; attackerIndex < 64; attackerIndex++)
                     {
-                        _table[attackingPieceIndex][defendingPieceIndex][defenderIndex] = new int[64];
+                        _table[attackingPieceIndex][capturedPieceIndex][attackerIndex] = new short[64];
                     }
                 }
             }
@@ -57,8 +57,8 @@ namespace Cosette.Engine.Ai.Ordering
                             if (defenders != 0)
                             {
                                 var leastValuableDefenderField = BitOperations.GetLsb(defenders);
-                                defenders = (byte)BitOperations.PopLsb(defenders);
                                 var leastValuableDefenderPiece = (Piece)BitOperations.BitScan(leastValuableDefenderField);
+                                defenders = BitOperations.PopLsb(defenders);
 
                                 result -= EvaluationConstants.Pieces[(int)currentPieceOnField];
                                 currentPieceOnField = leastValuableDefenderPiece;
@@ -66,9 +66,10 @@ namespace Cosette.Engine.Ai.Ordering
                                 while (attackers != 0)
                                 {
                                     var updatedResult = result;
+
                                     var leastValuableAttackerField = BitOperations.GetLsb(attackers);
-                                    attackers = (byte)BitOperations.PopLsb(attackers);
                                     var leastValuableAttackerPiece = (Piece)BitOperations.BitScan(leastValuableAttackerField);
+                                    attackers = BitOperations.PopLsb(attackers);
 
                                     updatedResult += EvaluationConstants.Pieces[(int)currentPieceOnField];
                                     currentPieceOnField = leastValuableAttackerPiece;
@@ -76,8 +77,8 @@ namespace Cosette.Engine.Ai.Ordering
                                     if (defenders != 0)
                                     {
                                         leastValuableDefenderField = BitOperations.GetLsb(defenders);
-                                        defenders = (byte)BitOperations.PopLsb(defenders);
                                         leastValuableDefenderPiece = (Piece)BitOperations.BitScan(leastValuableDefenderField);
+                                        defenders = BitOperations.PopLsb(defenders);
 
                                         updatedResult -= EvaluationConstants.Pieces[(int)currentPieceOnField];
                                         currentPieceOnField = leastValuableDefenderPiece;

@@ -8,20 +8,17 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class MoveOrdering
     {
-        public static void AssignValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount, byte depth, TranspositionTableEntry entry)
+        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, byte depth, TranspositionTableEntry entry)
         {
-            var enemyColor = ColorOperations.Invert(board.ColorToMove);
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                if (entry.Type != TranspositionTableEntryType.Invalid && entry.BestMove == moves[moveIndex])
+                if (entry.BestMove == moves[moveIndex])
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.HashMove;
                 }
                 else if (moves[moveIndex].IsQuiet())
                 {
-                    if (moves[moveIndex].Piece == Piece.Pawn &&
-                        (board.ColorToMove == Color.White && moves[moveIndex].To >= 40 || 
-                         board.ColorToMove == Color.Black && moves[moveIndex].To <= 23))
+                    if (moves[moveIndex].IsPawnNearPromotion(board.ColorToMove))
                     {
                         moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
                     }
@@ -36,12 +33,16 @@ namespace Cosette.Engine.Ai.Ordering
                 }
                 else if ((moves[moveIndex].Flags & MoveFlags.Kill) != 0)
                 {
+                    var enemyColor = ColorOperations.Invert(board.ColorToMove);
+
                     var attackingPiece = moves[moveIndex].Piece;
                     var capturedPiece = board.GetPiece(enemyColor, moves[moveIndex].To);
 
                     var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
                     var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[moveIndex].To);
-                    moveValues[moveIndex] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+                    var seeEvaluation = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+
+                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
                 }
                 else if ((int)moves[moveIndex].Flags >= 16)
                 {
@@ -50,7 +51,7 @@ namespace Cosette.Engine.Ai.Ordering
             }
         }
 
-        public static void AssignQValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount)
+        public static void AssignQValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount)
         {
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
             for (var i = 0; i < movesCount; i++)
@@ -66,14 +67,16 @@ namespace Cosette.Engine.Ai.Ordering
 
                     var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
                     var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
-                    moveValues[i] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+                    var seeEvaluation = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+
+                    moveValues[i] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
                 }
             }
         }
 
-        public static void SortNextBestMove(Span<Move> moves, Span<int> moveValues, int movesCount, int currentIndex)
+        public static void SortNextBestMove(Span<Move> moves, Span<short> moveValues, int movesCount, int currentIndex)
         {
-            var max = int.MinValue;
+            var max = short.MinValue;
             var maxIndex = -1;
 
             for (var i = currentIndex; i < movesCount; i++)
@@ -85,13 +88,8 @@ namespace Cosette.Engine.Ai.Ordering
                 }
             }
 
-            var tempMove = moves[maxIndex];
-            moves[maxIndex] = moves[currentIndex];
-            moves[currentIndex] = tempMove;
-
-            var tempMoveValue = moveValues[maxIndex];
-            moveValues[maxIndex] = moveValues[currentIndex];
-            moveValues[currentIndex] = tempMoveValue;
+            (moves[maxIndex], moves[currentIndex]) = (moves[currentIndex], moves[maxIndex]);
+            (moveValues[maxIndex], moveValues[currentIndex]) = (moveValues[currentIndex], moveValues[maxIndex]);
         }
     }
 }

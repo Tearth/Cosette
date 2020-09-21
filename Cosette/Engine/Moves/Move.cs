@@ -88,6 +88,19 @@ namespace Cosette.Engine.Moves
             return Flags == MoveFlags.None || Flags == MoveFlags.DoublePush;
         }
 
+        public bool IsPawnNearPromotion(Color color)
+        {
+            if (Piece == Piece.Pawn)
+            {
+                if (color == Color.White && To >= 40 || color == Color.Black && To <= 23)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public override string ToString()
         {
             var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
