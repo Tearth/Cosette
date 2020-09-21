@@ -58,12 +58,22 @@ namespace Cosette.Engine.Ai.Search
                 {
                     switch (entry.Type)
                     {
+                        case TranspositionTableEntryType.AlphaScore:
+                        {
+                            if (entry.Score < beta)
+                            {
+                                beta = entry.Score;
+                            }
+
+                            break;
+                        }
+
                         case TranspositionTableEntryType.ExactScore:
                         {
                             return entry.Score;
                         }
 
-                        case TranspositionTableEntryType.LowerBound:
+                        case TranspositionTableEntryType.BetaScore:
                         {
                             if (entry.Score > alpha)
                             {
@@ -71,12 +81,6 @@ namespace Cosette.Engine.Ai.Search
                                 bestMove = entry.BestMove;
                             }
 
-                            break;
-                        }
-
-                        case TranspositionTableEntryType.UpperBound:
-                        {
-                            beta = Math.Min(beta, entry.Score);
                             break;
                         }
                     }
@@ -115,8 +119,8 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            Span<Move> moves = stackalloc Move[128];
-            Span<int> moveValues = stackalloc int[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
+            Span<int> moveValues = stackalloc int[SearchConstants.MaxMovesCount];
 
             var movesCount = board.GetAvailableMoves(moves);
             MoveOrdering.AssignValues(board, moves, moveValues, movesCount, depth, entry);
@@ -193,8 +197,8 @@ namespace Cosette.Engine.Ai.Search
                 alpha = 0;
             }
 
-            var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.UpperBound :
-                            alpha >= beta ? TranspositionTableEntryType.LowerBound :
+            var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.AlphaScore :
+                            alpha >= beta ? TranspositionTableEntryType.BetaScore :
                             TranspositionTableEntryType.ExactScore;
             TranspositionTable.Add(board.Hash, (byte)depth, (short)alpha, bestMove, entryType);
 

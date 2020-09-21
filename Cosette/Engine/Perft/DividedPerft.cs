@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -10,7 +11,7 @@ namespace Cosette.Engine.Perft
     {
         public static DividedPerftResult Run(BoardState boardState, int depth)
         {
-            Span<Move> moves = stackalloc Move[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             var movesCount = boardState.GetAvailableMoves(moves);
 
             var result = new DividedPerftResult();
@@ -42,7 +43,7 @@ namespace Cosette.Engine.Perft
                 return 1;
             }
 
-            Span<Move> moves = stackalloc Move[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             var movesCount = boardState.GetAvailableMoves(moves);
 
             ulong nodes = 0;

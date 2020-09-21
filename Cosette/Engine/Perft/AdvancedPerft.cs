@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -21,7 +22,7 @@ namespace Cosette.Engine.Perft
 
         private static void Perft(BoardState boardState, int depth, AdvancedPerftResult result)
         {
-            Span<Move> moves = stackalloc Move[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             var movesCount = boardState.GetAvailableMoves(moves);
 
             if (depth <= 0)

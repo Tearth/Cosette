@@ -4,7 +4,7 @@
     {
         Invalid,
         ExactScore,
-        LowerBound,
-        UpperBound
+        BetaScore,
+        AlphaScore
     }
 }

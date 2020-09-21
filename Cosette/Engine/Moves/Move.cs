@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 
@@ -43,7 +44,7 @@ namespace Cosette.Engine.Moves
             var to = Position.FromText(textNotation.Substring(2, 2));
             var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.None;
 
-            Span<Move> moves = stackalloc Move[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             var movesCount = board.GetAvailableMoves(moves);
 
             for (var i = 0; i < movesCount; i++)

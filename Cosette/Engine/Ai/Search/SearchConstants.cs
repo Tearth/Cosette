@@ -5,6 +5,7 @@
         public const int MinValue = -10000000;
         public const int MaxValue =  10000000;
         public const int MaxDepth = 32;
+        public const int MaxMovesCount = 128;
 
         public const int DefaultHashTableSize = 8;
         public const int DefaultPawnHashTableSize = 8;
