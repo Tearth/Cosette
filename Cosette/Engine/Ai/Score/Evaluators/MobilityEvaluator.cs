@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Board;
+﻿using Cosette.Engine.Board;
 using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 

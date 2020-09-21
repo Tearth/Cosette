@@ -5,8 +5,8 @@ namespace Cosette.Logs
 {
     public static class LogManager
     {
-        private static string _logFile;
-        private static string _basePath;
+        private static readonly string _logFile;
+        private static readonly string _basePath;
 
         static LogManager()
         {

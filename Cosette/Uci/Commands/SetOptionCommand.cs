@@ -1,5 +1,4 @@
-﻿using System;
-using Cosette.Engine.Ai.Search;
+﻿using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
 
 namespace Cosette.Uci.Commands

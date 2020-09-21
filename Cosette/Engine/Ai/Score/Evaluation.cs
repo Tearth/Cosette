@@ -1,11 +1,6 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Ai.Score.Evaluators;
-using Cosette.Engine.Ai.Score.PieceSquareTables;
-using Cosette.Engine.Ai.Transposition;
+﻿using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Board;
-using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
-using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Ai.Score
 {

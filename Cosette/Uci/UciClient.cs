@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Cosette.Engine.Ai;
-using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
-using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Interactive;
 using Cosette.Logs;
@@ -16,11 +13,11 @@ namespace Cosette.Uci
 {
     public class UciClient
     {
-        private UciGame _uciGame;
+        private readonly UciGame _uciGame;
         private bool _debugMode;
 
-        private InteractiveConsole _interactiveConsole;
-        private Dictionary<string, IUciCommand> _commands;
+        private readonly InteractiveConsole _interactiveConsole;
+        private readonly Dictionary<string, IUciCommand> _commands;
 
         public UciClient(InteractiveConsole interactiveConsole)
         {

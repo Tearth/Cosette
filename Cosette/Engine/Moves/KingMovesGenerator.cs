@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Moves.Patterns;
+﻿using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Moves
 {

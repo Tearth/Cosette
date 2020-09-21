@@ -9,16 +9,16 @@ namespace Cosette.Interactive
 {
     public class InteractiveConsole
     {
-        private Dictionary<string, ICommand> _commands;
-        private List<string> _symbols;
+        private readonly Dictionary<string, ICommand> _commands;
+        private readonly List<string> _symbols;
 
-        private ConsoleColor _keywordColor;
-        private ConsoleColor _moveColor;
-        private ConsoleColor _numberColor;
-        private ConsoleColor _symbolColor;
+        private readonly ConsoleColor _keywordColor;
+        private readonly ConsoleColor _moveColor;
+        private readonly ConsoleColor _numberColor;
+        private readonly ConsoleColor _symbolColor;
 
-        private Regex _splitRegex = new Regex(@"(\s|\,|\:|\(|\))", RegexOptions.Compiled);
-        private Regex _moveRegex = new Regex(@"([a-h][1-8]){2}[nbrq]?", RegexOptions.Compiled);
+        private readonly Regex _splitRegex = new Regex(@"(\s|\,|\:|\(|\))", RegexOptions.Compiled);
+        private readonly Regex _moveRegex = new Regex(@"([a-h][1-8]){2}[nbrq]?", RegexOptions.Compiled);
 
         public InteractiveConsole()
         {

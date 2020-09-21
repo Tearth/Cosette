@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 

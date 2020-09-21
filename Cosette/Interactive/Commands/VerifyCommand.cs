@@ -1,22 +1,13 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Xml.XPath;
-using Cosette.Engine.Board;
-using Cosette.Engine.Common;
+﻿using Cosette.Engine.Board;
 using Cosette.Engine.Fen;
-using Cosette.Engine.Moves;
-using Cosette.Engine.Moves.Magic;
 using Cosette.Engine.Perft;
-using Cosette.Engine.Perft.Results;
 
 namespace Cosette.Interactive.Commands
 {
     public class VerifyCommand : ICommand
     {
         public string Description { get; }
-        private InteractiveConsole _interactiveConsole;
+        private readonly InteractiveConsole _interactiveConsole;
 
         public VerifyCommand(InteractiveConsole interactiveConsole)
         {

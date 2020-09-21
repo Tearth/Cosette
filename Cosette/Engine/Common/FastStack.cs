@@ -1,10 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Cosette.Engine.Common
+﻿namespace Cosette.Engine.Common
 {
     public class FastStack<T>
     {
-        private T[] _stack;
+        private readonly T[] _stack;
         private int _pointer;
 
         public FastStack(int capacity)

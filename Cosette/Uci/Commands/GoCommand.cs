@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Search;
-using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Logs;
 
@@ -15,8 +11,8 @@ namespace Cosette.Uci.Commands
 {
     public class GoCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
+        private readonly UciGame _uciGame;
 
         public GoCommand(UciClient uciClient, UciGame uciGame)
         {

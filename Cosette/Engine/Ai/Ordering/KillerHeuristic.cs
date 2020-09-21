@@ -6,7 +6,7 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class KillerHeuristic
     {
-        private static Move[][][] _killerMoves;
+        private static readonly Move[][][] _killerMoves;
 
         static KillerHeuristic()
         {

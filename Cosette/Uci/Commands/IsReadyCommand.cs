@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Cosette.Uci.Commands
+﻿namespace Cosette.Uci.Commands
 {
     public class IsReadyCommand : IUciCommand
     {
-        private UciClient _uciClient;
+        private readonly UciClient _uciClient;
         private UciGame _uciGame;
 
         public IsReadyCommand(UciClient uciClient, UciGame uciGame)

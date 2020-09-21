@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Net;
-using System.Runtime.CompilerServices;
-using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Common.Extensions;
 
@@ -9,11 +6,11 @@ namespace Cosette.Engine.Board
 {
     public static class ZobristHashing
     {
-        private static ulong[][][] _fieldHashes;
-        private static ulong[] _castlingHashes;
-        private static ulong[] _enPassantHashes;
-        private static ulong _blackSideHash;
-        private static Random _random;
+        private static readonly ulong[][][] _fieldHashes;
+        private static readonly ulong[] _castlingHashes;
+        private static readonly ulong[] _enPassantHashes;
+        private static readonly ulong _blackSideHash;
+        private static readonly Random _random;
 
         static ZobristHashing()
         {

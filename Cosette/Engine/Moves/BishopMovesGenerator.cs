@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Moves.Magic;
+﻿using Cosette.Engine.Moves.Magic;
 
 namespace Cosette.Engine.Moves
 {

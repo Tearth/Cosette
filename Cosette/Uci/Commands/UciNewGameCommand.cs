@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Cosette.Uci.Commands
+﻿namespace Cosette.Uci.Commands
 {
     public class UciNewGameCommand : IUciCommand
     {
         private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciGame _uciGame;
 
         public UciNewGameCommand(UciClient uciClient, UciGame uciGame)
         {

@@ -1,26 +1,16 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Xml.XPath;
-using Cosette.Engine.Ai;
+﻿using System.Diagnostics;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
-using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
-using Cosette.Engine.Moves;
-using Cosette.Engine.Moves.Magic;
-using Cosette.Engine.Perft;
-using Cosette.Engine.Perft.Results;
 
 namespace Cosette.Interactive.Commands
 {
     public class BenchmarkCommand : ICommand
     {
         public string Description { get; }
-        private InteractiveConsole _interactiveConsole;
+        private readonly InteractiveConsole _interactiveConsole;
 
         public BenchmarkCommand(InteractiveConsole interactiveConsole)
         {
@@ -83,7 +73,7 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine();
         }
 
-        private void IterativeDeepening_OnOnSearchUpdate(object? sender, SearchStatistics statistics)
+        private void IterativeDeepening_OnOnSearchUpdate(object sender, SearchStatistics statistics)
         {
             // Main search result
             _interactiveConsole.WriteLine($"  === Depth: {statistics.Depth}, Score: {statistics.Score}, Best: {statistics.PrincipalVariation[0]}, " +

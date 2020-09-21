@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Cosette.Engine.Board;
-using Cosette.Engine.Common;
-using Cosette.Engine.Moves;
+﻿using Cosette.Engine.Board;
 using Cosette.Engine.Perft;
 
 namespace Cosette.Interactive.Commands
@@ -10,7 +6,7 @@ namespace Cosette.Interactive.Commands
     public class AdvancedPerftCommand : ICommand
     {
         public string Description { get; }
-        private InteractiveConsole _interactiveConsole;
+        private readonly InteractiveConsole _interactiveConsole;
 
         public AdvancedPerftCommand(InteractiveConsole interactiveConsole)
         {

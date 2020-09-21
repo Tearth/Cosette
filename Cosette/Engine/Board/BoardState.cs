@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Board.Operators;
@@ -33,7 +30,7 @@ namespace Cosette.Engine.Board
         private readonly FastStack<ulong> _hashes;
         private readonly FastStack<ulong> _pawnHashes;
 
-        private int _materialAtOpening;
+        private readonly int _materialAtOpening;
 
         public BoardState()
         {

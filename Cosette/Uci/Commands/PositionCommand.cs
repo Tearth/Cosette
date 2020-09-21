@@ -9,7 +9,7 @@ namespace Cosette.Uci.Commands
     public class PositionCommand : IUciCommand
     {
         private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciGame _uciGame;
 
         public PositionCommand(UciClient uciClient, UciGame uciGame)
         {

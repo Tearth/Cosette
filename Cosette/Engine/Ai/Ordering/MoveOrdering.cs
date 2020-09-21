@@ -1,12 +1,10 @@
 ﻿using System;
-using Cosette.Engine.Ai.Ordering;
-using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
-namespace Cosette.Engine.Ai.Search
+namespace Cosette.Engine.Ai.Ordering
 {
     public static class MoveOrdering
     {

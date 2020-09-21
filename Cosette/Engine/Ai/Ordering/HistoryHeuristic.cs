@@ -1,11 +1,10 @@
-﻿using System;
-using Cosette.Engine.Common;
+﻿using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Ai.Ordering
 {
     public static class HistoryHeuristic
     {
-        private static int[][][] _historyMoves;
+        private static readonly int[][][] _historyMoves;
 
         static HistoryHeuristic()
         {

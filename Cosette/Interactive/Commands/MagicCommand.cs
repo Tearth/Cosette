@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Cosette.Engine.Moves.Magic;
 
 namespace Cosette.Interactive.Commands
@@ -7,7 +6,7 @@ namespace Cosette.Interactive.Commands
     public class MagicCommand : ICommand
     {
         public string Description { get; }
-        private InteractiveConsole _interactiveConsole;
+        private readonly InteractiveConsole _interactiveConsole;
 
         public MagicCommand(InteractiveConsole interactiveConsole)
         {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common.Extensions;
 using Cosette.Engine.Moves.Patterns;
@@ -10,7 +9,7 @@ namespace Cosette.Engine.Moves.Magic
     {
         private static MagicContainer[] _rookMagicArray;
         private static MagicContainer[] _bishopMagicArray;
-        private static Random _random;
+        private static readonly Random _random;
 
         static MagicBitboards()
         {

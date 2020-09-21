@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Cosette.Engine.Common
+﻿namespace Cosette.Engine.Common
 {
     public static class ColorOperations
     {
