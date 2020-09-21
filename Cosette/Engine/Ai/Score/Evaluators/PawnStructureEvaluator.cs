@@ -100,8 +100,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
-            var doubledPawnsScore = doubledPawns * EvaluationConstants.DoubledPawns[(int) GamePhase.Opening] * openingPhase +
-                                    doubledPawns * EvaluationConstants.DoubledPawns[(int) GamePhase.Ending] * endingPhase;
+            var doubledPawnsScore = doubledPawns * EvaluationConstants.DoubledPawns[(int)GamePhase.Opening] * openingPhase +
+                                    doubledPawns * EvaluationConstants.DoubledPawns[(int)GamePhase.Ending] * endingPhase;
 
             var isolatedPawnsScore = isolatedPawns * EvaluationConstants.IsolatedPawns[(int)GamePhase.Opening] * openingPhase +
                                      isolatedPawns * EvaluationConstants.IsolatedPawns[(int)GamePhase.Ending] * endingPhase;

@@ -91,7 +91,7 @@ namespace Cosette.Engine.Board
             var result = 0ul;
             for (var color = 0; color < 2; color++)
             {
-                var piecesToParse = board.Pieces[color][(int) Piece.Pawn];
+                var piecesToParse = board.Pieces[color][(int)Piece.Pawn];
                 while (piecesToParse != 0)
                 {
                     var lsb = BitOperations.GetLsb(piecesToParse);
@@ -107,7 +107,7 @@ namespace Cosette.Engine.Board
 
             public static ulong MovePiece(ulong hash, Color color, Piece piece, byte from, byte to)
         {
-            return hash ^ _fieldHashes[(int) color][(int) piece][from] ^ _fieldHashes[(int)color][(int)piece][to];
+            return hash ^ _fieldHashes[(int)color][(int)piece][from] ^ _fieldHashes[(int)color][(int)piece][to];
         }
 
         public static ulong AddOrRemovePiece(ulong hash, Color color, Piece piece, byte at)

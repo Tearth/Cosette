@@ -26,7 +26,7 @@ namespace Cosette.Engine.Ai.Ordering
 
         public static int GetHistoryMoveValue(Color color, byte from, byte to)
         {
-            return _historyMoves[(int) color][from][to];
+            return _historyMoves[(int)color][from][to];
         }
 
         public static void Clear()

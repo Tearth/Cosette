@@ -54,30 +54,30 @@ namespace Cosette.Engine.Board
             _pawnHashes = new FastStack<ulong>(512);
 
             _materialAtOpening =
-                EvaluationConstants.Pieces[(int) Piece.King] +
-                EvaluationConstants.Pieces[(int) Piece.Queen] +
-                EvaluationConstants.Pieces[(int) Piece.Rook] * 2 +
-                EvaluationConstants.Pieces[(int) Piece.Bishop] * 2+
-                EvaluationConstants.Pieces[(int) Piece.Knight] * 2+
-                EvaluationConstants.Pieces[(int) Piece.Pawn] * 8;
+                EvaluationConstants.Pieces[(int)Piece.King] +
+                EvaluationConstants.Pieces[(int)Piece.Queen] +
+                EvaluationConstants.Pieces[(int)Piece.Rook] * 2 +
+                EvaluationConstants.Pieces[(int)Piece.Bishop] * 2+
+                EvaluationConstants.Pieces[(int)Piece.Knight] * 2+
+                EvaluationConstants.Pieces[(int)Piece.Pawn] * 8;
             _materialAtOpening *= 2;
         }
 
         public void SetDefaultState()
         {
-            Pieces[(int)Color.White][(int) Piece.Pawn] = 65280;
-            Pieces[(int)Color.White][(int) Piece.Rook] = 129;
-            Pieces[(int)Color.White][(int) Piece.Knight] = 66;
-            Pieces[(int)Color.White][(int) Piece.Bishop] = 36;
-            Pieces[(int)Color.White][(int) Piece.Queen] = 16;
-            Pieces[(int)Color.White][(int) Piece.King] = 8;
+            Pieces[(int)Color.White][(int)Piece.Pawn] = 65280;
+            Pieces[(int)Color.White][(int)Piece.Rook] = 129;
+            Pieces[(int)Color.White][(int)Piece.Knight] = 66;
+            Pieces[(int)Color.White][(int)Piece.Bishop] = 36;
+            Pieces[(int)Color.White][(int)Piece.Queen] = 16;
+            Pieces[(int)Color.White][(int)Piece.King] = 8;
 
-            Pieces[(int)Color.Black][(int) Piece.Pawn] = 71776119061217280;
-            Pieces[(int)Color.Black][(int) Piece.Rook] = 9295429630892703744;
-            Pieces[(int)Color.Black][(int) Piece.Knight] = 4755801206503243776;
-            Pieces[(int)Color.Black][(int) Piece.Bishop] = 2594073385365405696;
-            Pieces[(int)Color.Black][(int) Piece.Queen] = 1152921504606846976;
-            Pieces[(int)Color.Black][(int) Piece.King] = 576460752303423488;
+            Pieces[(int)Color.Black][(int)Piece.Pawn] = 71776119061217280;
+            Pieces[(int)Color.Black][(int)Piece.Rook] = 9295429630892703744;
+            Pieces[(int)Color.Black][(int)Piece.Knight] = 4755801206503243776;
+            Pieces[(int)Color.Black][(int)Piece.Bishop] = 2594073385365405696;
+            Pieces[(int)Color.Black][(int)Piece.Queen] = 1152921504606846976;
+            Pieces[(int)Color.Black][(int)Piece.King] = 576460752303423488;
 
             Occupancy[(int)Color.White] = 65535;
             Occupancy[(int)Color.Black] = 18446462598732840960;
@@ -575,7 +575,7 @@ namespace Cosette.Engine.Board
 
         public bool IsKingChecked(Color color)
         {
-            var king = Pieces[(int) color][(int) Piece.King];
+            var king = Pieces[(int)color][(int)Piece.King];
             var kingField = BitOperations.BitScan(king);
 
             return IsFieldAttacked(color, (byte)kingField);
@@ -585,7 +585,7 @@ namespace Cosette.Engine.Board
         {
             var move = (1ul << from) | (1ul << to);
 
-            Pieces[(int) color][(int) piece] ^= move;
+            Pieces[(int)color][(int)piece] ^= move;
             Occupancy[(int)color] ^= move;
             OccupancySummary ^= move;
             
@@ -674,7 +674,7 @@ namespace Cosette.Engine.Board
         public float GetPhaseRatio()
         {
             var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
-            var boardDelta = Material[(int) Color.White] + Material[(int) Color.Black] - EvaluationConstants.OpeningEndgameEdge;
+            var boardDelta = Material[(int)Color.White] + Material[(int)Color.Black] - EvaluationConstants.OpeningEndgameEdge;
             var ratio = (float) boardDelta / openingDelta;
 
             return Math.Max(0, ratio);
@@ -682,7 +682,7 @@ namespace Cosette.Engine.Board
 
         public GamePhase GetGamePhase()
         {
-            var totalMaterial = Material[(int) Color.White] + Material[(int) Color.Black];
+            var totalMaterial = Material[(int)Color.White] + Material[(int)Color.Black];
             return totalMaterial > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
         }
 

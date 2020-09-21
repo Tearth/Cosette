@@ -11,8 +11,8 @@ namespace Cosette.Engine.Ai.Ordering
         static KillerHeuristic()
         {
             _killerMoves = new Move[2][][];
-            _killerMoves[(int) Color.White] = new Move[SearchConstants.MaxDepth][];
-            _killerMoves[(int) Color.Black] = new Move[SearchConstants.MaxDepth][];
+            _killerMoves[(int)Color.White] = new Move[SearchConstants.MaxDepth][];
+            _killerMoves[(int)Color.Black] = new Move[SearchConstants.MaxDepth][];
 
             for (var i = 0; i < SearchConstants.MaxDepth; i++)
             {
@@ -25,7 +25,7 @@ namespace Cosette.Engine.Ai.Ordering
         {
             for (var i = MoveOrderingConstants.KillerSlots - 2; i >= 0; i--)
             {
-                _killerMoves[(int) color][depth][i + 1] = _killerMoves[(int)color][depth][i];
+                _killerMoves[(int)color][depth][i + 1] = _killerMoves[(int)color][depth][i];
             }
 
             _killerMoves[(int)color][depth][0] = move;

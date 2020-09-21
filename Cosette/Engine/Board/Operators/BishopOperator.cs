@@ -9,7 +9,7 @@ namespace Cosette.Engine.Board.Operators
         public static int GetAvailableMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
         {
             var enemyColor = ColorOperations.Invert(color);
-            var bishops = boardState.Pieces[(int) color][(int) Piece.Bishop];
+            var bishops = boardState.Pieces[(int)color][(int)Piece.Bishop];
 
             while (bishops != 0)
             {
