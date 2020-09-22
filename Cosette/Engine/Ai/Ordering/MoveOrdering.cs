@@ -8,7 +8,7 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class MoveOrdering
     {
-        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, byte depth, TranspositionTableEntry entry)
+        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, TranspositionTableEntry entry)
         {
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {

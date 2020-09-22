@@ -19,12 +19,12 @@ namespace Cosette.Engine.Ai.Ordering
             }
         }
 
-        public static void AddHistoryMove(Color color, byte from, byte to, byte depth)
+        public static void AddHistoryMove(Color color, int from, int to, int depth)
         {
             _historyMoves[(int)color][from][to] = (byte)(depth * depth);
         }
 
-        public static byte GetHistoryMoveValue(Color color, byte from, byte to)
+        public static byte GetHistoryMoveValue(Color color, int from, int to)
         {
             return _historyMoves[(int)color][from][to];
         }

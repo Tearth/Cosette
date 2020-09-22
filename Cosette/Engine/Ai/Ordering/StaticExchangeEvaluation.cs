@@ -13,7 +13,7 @@ namespace Cosette.Engine.Ai.Ordering
             PopulateTable();
         }
 
-        public static short Evaluate(Piece attackingPiece, Piece capturedPiece, byte attacker, byte defender)
+        public static short Evaluate(Piece attackingPiece, Piece capturedPiece, int attacker, int defender)
         {
             return _table[(int)attackingPiece][(int)capturedPiece][attacker][defender];
         }
@@ -96,7 +96,7 @@ namespace Cosette.Engine.Ai.Ordering
                                 }
                             }
 
-                            _table[attackingPieceIndex][capturedPieceIndex][attackerIndex][defenderIndex] = result;
+                            _table[attackingPieceIndex][capturedPieceIndex][attackerIndex][defenderIndex] = (short)result;
                         }
                     }
                 }

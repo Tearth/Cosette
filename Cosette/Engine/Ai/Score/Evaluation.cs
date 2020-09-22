@@ -18,8 +18,7 @@ namespace Cosette.Engine.Ai.Score
             result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase);
 
-            var sign = color == Color.White ? 1 : -1;
-            return sign * result;
+            return color == Color.White ? result : -result;
         }
     }
 }
