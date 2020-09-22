@@ -92,10 +92,10 @@ namespace Cosette.Engine.Board
             Material[Color.White] = CalculateMaterial(Color.White);
             Material[Color.Black] = CalculateMaterial(Color.Black);
 
-            Position[Color.White][(int)GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
-            Position[Color.White][(int)GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
-            Position[Color.Black][(int)GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
-            Position[Color.Black][(int)GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
+            Position[Color.White][GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
+            Position[Color.White][GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
+            Position[Color.Black][GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
+            Position[Color.Black][GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
 
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
@@ -589,11 +589,11 @@ namespace Cosette.Engine.Board
             Occupancy[color] ^= move;
             OccupancySummary ^= move;
             
-            Position[color][(int)GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][(int)GamePhase.Opening][from];
-            Position[color][(int)GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][(int)GamePhase.Opening][to];
+            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][from];
+            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][to];
 
-            Position[color][(int)GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][(int)GamePhase.Ending][from];
-            Position[color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][(int)GamePhase.Ending][to];
+            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][from];
+            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][to];
         }
 
         public int GetPiece(int color, byte from)
@@ -621,8 +621,8 @@ namespace Cosette.Engine.Board
 
             Material[color] += EvaluationConstants.Pieces[piece];
 
-            Position[color][(int)GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][(int)GamePhase.Opening][at];
-            Position[color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][(int)GamePhase.Ending][at];
+            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][at];
+            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][at];
         }
 
         public void RemovePiece(int color, int piece, byte at)
@@ -635,8 +635,8 @@ namespace Cosette.Engine.Board
 
             Material[color] -= EvaluationConstants.Pieces[piece];
 
-            Position[color][(int)GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][(int)GamePhase.Opening][at];
-            Position[color][(int)GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][(int)GamePhase.Ending][at];
+            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][at];
+            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][at];
         }
 
         public int CalculateMaterial(int color)
@@ -651,7 +651,7 @@ namespace Cosette.Engine.Board
             return material;
         }
 
-        public int CalculatePosition(int color, GamePhase phase)
+        public int CalculatePosition(int color, int phase)
         {
             var result = 0;
 
@@ -664,7 +664,7 @@ namespace Cosette.Engine.Board
                     pieces = BitOperations.PopLsb(pieces);
                     var fieldIndex = BitOperations.BitScan(lsb);
 
-                    result += PieceSquareTablesData.Values[pieceIndex][color][(int)phase][fieldIndex];
+                    result += PieceSquareTablesData.Values[pieceIndex][color][phase][fieldIndex];
                 }
             }
 
@@ -680,7 +680,7 @@ namespace Cosette.Engine.Board
             return Math.Max(0, ratio);
         }
 
-        public GamePhase GetGamePhase()
+        public int GetGamePhase()
         {
             var totalMaterial = Material[Color.White] + Material[Color.Black];
             return totalMaterial > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;

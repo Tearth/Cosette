@@ -100,17 +100,17 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
-            var doubledPawnsScore = doubledPawns * EvaluationConstants.DoubledPawns[(int)GamePhase.Opening] * openingPhase +
-                                    doubledPawns * EvaluationConstants.DoubledPawns[(int)GamePhase.Ending] * endingPhase;
+            var doubledPawnsScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening] * openingPhase +
+                                    doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Ending] * endingPhase;
 
-            var isolatedPawnsScore = isolatedPawns * EvaluationConstants.IsolatedPawns[(int)GamePhase.Opening] * openingPhase +
-                                     isolatedPawns * EvaluationConstants.IsolatedPawns[(int)GamePhase.Ending] * endingPhase;
+            var isolatedPawnsScore = isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Opening] * openingPhase +
+                                     isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Ending] * endingPhase;
 
-            var chainedPawnsScore = chainedPawns * EvaluationConstants.ChainedPawns[(int)GamePhase.Opening] * openingPhase +
-                                    chainedPawns * EvaluationConstants.ChainedPawns[(int)GamePhase.Ending] * endingPhase;
+            var chainedPawnsScore = chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Opening] * openingPhase +
+                                    chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Ending] * endingPhase;
 
-            var passingPawnsScore = passingPawns * EvaluationConstants.PassingPawns[(int)GamePhase.Opening] * openingPhase +
-                                    passingPawns * EvaluationConstants.PassingPawns[(int)GamePhase.Ending] * endingPhase;
+            var passingPawnsScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Opening] * openingPhase +
+                                    passingPawns * EvaluationConstants.PassingPawns[GamePhase.Ending] * endingPhase;
 
             return (int)(doubledPawnsScore + isolatedPawnsScore + chainedPawnsScore + passingPawnsScore);
         }

@@ -15,14 +15,14 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var result = 0;
             if (board.CastlingDone[color])
             {
-                result = (int)(EvaluationConstants.CastlingDone[(int)GamePhase.Opening] * openingPhase) +
-                         (int)(EvaluationConstants.CastlingDone[(int)GamePhase.Ending] * endingPhase);
+                result = (int)(EvaluationConstants.CastlingDone[GamePhase.Opening] * openingPhase) +
+                         (int)(EvaluationConstants.CastlingDone[GamePhase.Ending] * endingPhase);
             }
             else if (color == Color.White && (board.Castling & Castling.WhiteCastling) == 0 ||
                      color == Color.Black && (board.Castling & Castling.BlackCastling) == 0)
             {
-                result = (int)(EvaluationConstants.CastlingFailed[(int)GamePhase.Opening] * openingPhase) +
-                         (int)(EvaluationConstants.CastlingFailed[(int)GamePhase.Ending] * endingPhase);
+                result = (int)(EvaluationConstants.CastlingFailed[GamePhase.Opening] * openingPhase) +
+                         (int)(EvaluationConstants.CastlingFailed[GamePhase.Ending] * endingPhase);
             }
 
             return result;

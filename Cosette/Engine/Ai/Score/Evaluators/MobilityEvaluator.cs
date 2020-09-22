@@ -16,8 +16,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var mobility = KnightOperator.GetMobility(board, color) + BishopOperator.GetMobility(board, color) +
                            RookOperator.GetMobility(board, color) + QueenOperator.GetMobility(board, color);
             
-            return (int)(mobility * EvaluationConstants.Mobility[(int)GamePhase.Opening] * openingPhase +
-                         mobility * EvaluationConstants.Mobility[(int)GamePhase.Ending] * endingPhase);
+            return (int)(mobility * EvaluationConstants.Mobility[GamePhase.Opening] * openingPhase +
+                         mobility * EvaluationConstants.Mobility[GamePhase.Ending] * endingPhase);
         }
     }
 }
