@@ -46,9 +46,10 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 return entry.Score;
             }
 
-            var result = Evaluate(board, Color.White, openingPhase, endingPhase) - Evaluate(board, Color.Black, openingPhase, endingPhase);
-            PawnHashTable.Add(board.PawnHash, (short)result);
+            var result = Evaluate(board, Color.White, openingPhase, endingPhase) - 
+                         Evaluate(board, Color.Black, openingPhase, endingPhase);
 
+            PawnHashTable.Add(board.PawnHash, (short)result);
             return result;
         }
 
@@ -60,11 +61,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var passingPawns = 0;
             var enemyColor = ColorOperations.Invert(color);
 
-            for (var i = 0; i < 8; i++)
+            for (var file = 0; file < 8; file++)
             {
-                var pawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & _innerFileMasks[i];
-                var pawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & _outerFileMasks[i];
-                var enemyPawnsOnInnerMask = board.Pieces[enemyColor][Piece.Pawn] & _innerFileMasks[i];
+                var pawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & _innerFileMasks[file];
+                var pawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & _outerFileMasks[file];
+                var enemyPawnsOnInnerMask = board.Pieces[enemyColor][Piece.Pawn] & _innerFileMasks[file];
 
                 var pawnsCount = (int)BitOperations.Count(pawnsOnInnerMask);
                 if (pawnsCount > 1)
@@ -90,8 +91,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             while (pieces != 0)
             {
                 var lsb = BitOperations.GetLsb(pieces);
-                pieces = BitOperations.PopLsb(pieces);
                 var field = BitOperations.BitScan(lsb);
+                pieces = BitOperations.PopLsb(pieces);
 
                 var chain = _chainMasks[field] & board.Pieces[color][Piece.Pawn];
                 if (chain != 0)

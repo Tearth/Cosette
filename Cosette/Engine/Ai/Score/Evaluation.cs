@@ -9,9 +9,9 @@ namespace Cosette.Engine.Ai.Score
         public static int Evaluate(BoardState board, int color)
         {
             var openingPhase = board.GetPhaseRatio();
-            var endingPhase = 1 - openingPhase;
+            var endingPhase = 1f - openingPhase;
 
-            var result = MaterialEvaluator.Evaluate(board, openingPhase, endingPhase);
+            var result = MaterialEvaluator.Evaluate(board);
             result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += PawnStructureEvaluator.Evaluate(board, openingPhase, endingPhase);

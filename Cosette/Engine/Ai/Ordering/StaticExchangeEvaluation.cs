@@ -21,15 +21,15 @@ namespace Cosette.Engine.Ai.Ordering
         private static void InitTable()
         {
             _table = new short[6][][][];
-            for (var attackingPieceIndex = 0; attackingPieceIndex < 6; attackingPieceIndex++)
+            for (var attackingPiece = 0; attackingPiece < 6; attackingPiece++)
             {
-                _table[attackingPieceIndex] = new short[6][][];
-                for (var capturedPieceIndex = 0; capturedPieceIndex < 6; capturedPieceIndex++)
+                _table[attackingPiece] = new short[6][][];
+                for (var capturedPiece = 0; capturedPiece < 6; capturedPiece++)
                 {
-                    _table[attackingPieceIndex][capturedPieceIndex] = new short[64][];
+                    _table[attackingPiece][capturedPiece] = new short[64][];
                     for (var attackerIndex = 0; attackerIndex < 64; attackerIndex++)
                     {
-                        _table[attackingPieceIndex][capturedPieceIndex][attackerIndex] = new short[64];
+                        _table[attackingPiece][capturedPiece][attackerIndex] = new short[64];
                     }
                 }
             }
@@ -37,18 +37,15 @@ namespace Cosette.Engine.Ai.Ordering
 
         private static void PopulateTable()
         {
-            for (var attackingPieceIndex = 0; attackingPieceIndex < 6; attackingPieceIndex++)
+            for (var attackingPiece = 0; attackingPiece < 6; attackingPiece++)
             {
-                for (var capturedPieceIndex = 0; capturedPieceIndex < 6; capturedPieceIndex++)
+                for (var capturedPiece = 0; capturedPiece < 6; capturedPiece++)
                 {
-                    var attackingPiece = attackingPieceIndex;
-                    var capturedPiece = capturedPieceIndex;
-
                     for (ulong attackerIndex = 0; attackerIndex < 64; attackerIndex++)
                     {
                         for (ulong defenderIndex = 0; defenderIndex < 64; defenderIndex++)
                         {
-                            var attackers = attackerIndex & ~(1ul << attackingPieceIndex);
+                            var attackers = attackerIndex & ~(1ul << attackingPiece);
                             var defenders = defenderIndex;
 
                             var currentPieceOnField = attackingPiece;
@@ -96,7 +93,7 @@ namespace Cosette.Engine.Ai.Ordering
                                 }
                             }
 
-                            _table[attackingPieceIndex][capturedPieceIndex][attackerIndex][defenderIndex] = (short)result;
+                            _table[attackingPiece][capturedPiece][attackerIndex][defenderIndex] = (short)result;
                         }
                     }
                 }

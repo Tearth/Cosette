@@ -115,7 +115,7 @@ namespace Cosette.Uci
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = 1 - openingPhase;
 
-                var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
                 var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);

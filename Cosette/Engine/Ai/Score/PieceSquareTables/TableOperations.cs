@@ -5,9 +5,9 @@
         public static int[] FlipVertically(int[] array)
         {
             var result = new int[64];
-            for (var i = 0; i < 64; i++)
+            for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
             {
-                result[i] = array[63 - i];
+                result[fieldIndex] = array[63 - fieldIndex];
             }
 
             return result;

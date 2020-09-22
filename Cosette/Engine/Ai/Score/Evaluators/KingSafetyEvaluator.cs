@@ -8,7 +8,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
     {
         public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase) - Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return Evaluate(board, Color.White, openingPhase, endingPhase) - 
+                   Evaluate(board, Color.Black, openingPhase, endingPhase);
         }
 
         public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
@@ -21,8 +22,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             while (fieldsAroundKing != 0)
             {
                 var lsb = BitOperations.GetLsb(fieldsAroundKing);
-                fieldsAroundKing = BitOperations.PopLsb(fieldsAroundKing);
                 var field = BitOperations.BitScan(lsb);
+                fieldsAroundKing = BitOperations.PopLsb(fieldsAroundKing);
 
                 var attackingPieces = board.IsFieldAttacked(color, (byte)field);
                 if (attackingPieces)

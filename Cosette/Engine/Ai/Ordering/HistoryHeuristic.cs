@@ -12,10 +12,10 @@ namespace Cosette.Engine.Ai.Ordering
             _historyMoves[Color.White] = new byte[64][];
             _historyMoves[Color.Black] = new byte[64][];
 
-            for (var i = 0; i < 64; i++)
+            for (var from = 0; from < 64; from++)
             {
-                _historyMoves[Color.White][i] = new byte[64];
-                _historyMoves[Color.Black][i] = new byte[64];
+                _historyMoves[Color.White][from] = new byte[64];
+                _historyMoves[Color.Black][from] = new byte[64];
             }
         }
 

@@ -54,22 +54,22 @@ namespace Cosette.Engine.Ai.Ordering
         public static void AssignQValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount)
         {
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
-            for (var i = 0; i < movesCount; i++)
+            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
+                if ((moves[moveIndex].Flags & MoveFlags.EnPassant) != 0)
                 {
-                    moveValues[i] = MoveOrderingConstants.Capture;
+                    moveValues[moveIndex] = MoveOrderingConstants.Capture;
                 }
                 else
                 {
-                    var attackingPiece = moves[i].PieceType;
-                    var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
+                    var attackingPiece = moves[moveIndex].PieceType;
+                    var capturedPiece = board.GetPiece(enemyColor, moves[moveIndex].To);
 
-                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
-                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
+                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
+                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[moveIndex].To);
                     var seeEvaluation = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
-                    moveValues[i] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
+                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
                 }
             }
         }
