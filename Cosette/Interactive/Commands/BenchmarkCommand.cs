@@ -61,13 +61,13 @@ namespace Cosette.Interactive.Commands
             KillerHeuristic.Clear();
             HistoryHeuristic.Clear();
 
-            IterativeDeepening.AbortSearch = false;
-            IterativeDeepening.WaitForStopCommand = false;
-            IterativeDeepening.MoveRestrictions = null;
-            IterativeDeepening.MaxNodesCount = ulong.MaxValue;
+            var context = new SearchContext(boardState)
+            {
+                MaxDepth = depth
+            };
 
             IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
-            IterativeDeepening.FindBestMove(boardState, int.MaxValue, depth, 1);
+            IterativeDeepening.FindBestMove(context);
             IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnOnSearchUpdate;
 
             _interactiveConsole.WriteLine();

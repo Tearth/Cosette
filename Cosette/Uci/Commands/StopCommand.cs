@@ -15,8 +15,8 @@ namespace Cosette.Uci.Commands
 
         public void Run(params string[] parameters)
         {
-            IterativeDeepening.AbortSearch = true;
-            IterativeDeepening.WaitForStopCommand = false;
+            _uciGame.SearchContext.AbortSearch = true;
+            _uciGame.SearchContext.WaitForStopCommand = false;
         }
     }
 }

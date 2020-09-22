@@ -1,4 +1,5 @@
 ﻿using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Ai.Time;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
@@ -9,8 +10,9 @@ namespace Cosette.Uci
     public class UciGame
     {
         public BoardState BoardState;
-        private int _currentColor;
-        private int _currentMoveNumber;
+        public SearchContext SearchContext;
+        public int CurrentColor;
+        public int CurrentMoveNumber;
 
         public UciGame()
         {
@@ -20,13 +22,13 @@ namespace Cosette.Uci
         public void SetDefaultState()
         {
             BoardState.SetDefaultState();
-            _currentColor = Color.White;
-            _currentMoveNumber = 1;
+            CurrentColor = Color.White;
+            CurrentMoveNumber = 1;
         }
 
         public void SetFen(string fen)
         {
-            BoardState = FenParser.Parse(fen, out _currentMoveNumber);
+            BoardState = FenParser.Parse(fen, out CurrentMoveNumber);
         }
 
         public void MakeMove(Move move)
@@ -34,21 +36,19 @@ namespace Cosette.Uci
             BoardState.MakeMove(move);
             if (BoardState.ColorToMove == Color.White)
             {
-                _currentMoveNumber++;
+                CurrentMoveNumber++;
             }
         }
 
-        public Move SearchBestMove(int whiteTime, int blackTime, int depth)
+        public Move SearchBestMove(SearchContext context)
         {
-            var remainingTime = _currentColor == Color.White ? whiteTime : blackTime;
-            var bestMove = IterativeDeepening.FindBestMove(BoardState, remainingTime, depth, _currentMoveNumber);
-
-            return bestMove;
+            SearchContext = context;
+            return IterativeDeepening.FindBestMove(context);
         }
 
         public void SetCurrentColor(int color)
         {
-            _currentColor = color;
+            CurrentColor = color;
         }
     }
 }
