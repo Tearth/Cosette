@@ -4,13 +4,11 @@ namespace Cosette.Uci.Commands
 {
     public class QuitCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public QuitCommand(UciClient uciClient, UciGame uciGame)
+        public QuitCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)

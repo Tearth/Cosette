@@ -2,18 +2,16 @@
 {
     public class UciNewGameCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private readonly UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public UciNewGameCommand(UciClient uciClient, UciGame uciGame)
+        public UciNewGameCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)
         {
-            _uciGame.SetDefaultState();
+            _uciClient.BoardState.SetDefaultState();
         }
     }
 }

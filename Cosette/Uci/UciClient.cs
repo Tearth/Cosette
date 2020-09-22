@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Board;
 using Cosette.Engine.Moves;
 using Cosette.Interactive;
 using Cosette.Logs;
@@ -13,7 +14,9 @@ namespace Cosette.Uci
 {
     public class UciClient
     {
-        private readonly UciGame _uciGame;
+        public BoardState BoardState;
+        public SearchContext SearchContext;
+
         private bool _debugMode;
 
         private readonly InteractiveConsole _interactiveConsole;
@@ -21,23 +24,24 @@ namespace Cosette.Uci
 
         public UciClient(InteractiveConsole interactiveConsole)
         {
-            _interactiveConsole = interactiveConsole;
+            BoardState = new BoardState();
+            BoardState.SetDefaultState();
 
-            _uciGame = new UciGame();
+            _interactiveConsole = interactiveConsole;
 
 #if UCI_DEBUG_OUTPUT
             _debugMode = true;
 #endif
 
             _commands = new Dictionary<string, IUciCommand>();
-            _commands["quit"] = new QuitCommand(this, _uciGame);
-            _commands["setoption"] = new SetOptionCommand(this, _uciGame);
-            _commands["isready"] = new IsReadyCommand(this, _uciGame);
-            _commands["ucinewgame"] = new UciNewGameCommand(this, _uciGame);
-            _commands["position"] = new PositionCommand(this, _uciGame);
-            _commands["debug"] = new DebugCommand(this, _uciGame);
-            _commands["go"] = new GoCommand(this, _uciGame);
-            _commands["stop"] = new StopCommand(this, _uciGame);
+            _commands["quit"] = new QuitCommand(this);
+            _commands["setoption"] = new SetOptionCommand(this);
+            _commands["isready"] = new IsReadyCommand(this);
+            _commands["ucinewgame"] = new UciNewGameCommand(this);
+            _commands["position"] = new PositionCommand(this);
+            _commands["debug"] = new DebugCommand(this);
+            _commands["go"] = new GoCommand(this);
+            _commands["stop"] = new StopCommand(this);
 
             IterativeDeepening.OnSearchUpdate += OnSearchUpdate;
         }

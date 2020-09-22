@@ -3,12 +3,10 @@
     public class DebugCommand : IUciCommand
     {
         private readonly UciClient _uciClient;
-        private UciGame _uciGame;
 
-        public DebugCommand(UciClient uciClient, UciGame uciGame)
+        public DebugCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)

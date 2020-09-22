@@ -14,20 +14,18 @@ namespace Cosette.Uci.Commands
     public class GoCommand : IUciCommand
     {
         private readonly UciClient _uciClient;
-        private readonly UciGame _uciGame;
 
-        public GoCommand(UciClient uciClient, UciGame uciGame)
+        public GoCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)
         {
             var whiteTime = GetParameter(parameters, "wtime", int.MaxValue);
             var blackTime = GetParameter(parameters, "btime", int.MaxValue);
-            var colorTime = _uciGame.BoardState.ColorToMove == Color.White ? whiteTime : blackTime;
-            var maxColorTime = TimeScheduler.CalculateTimeForMove(colorTime, _uciGame.BoardState.MovesCount);
+            var colorTime = _uciClient.BoardState.ColorToMove == Color.White ? whiteTime : blackTime;
+            var maxColorTime = TimeScheduler.CalculateTimeForMove(colorTime, _uciClient.BoardState.MovesCount);
 
             var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth);
             var moveTime = GetParameter(parameters, "movetime", 0);
@@ -35,7 +33,7 @@ namespace Cosette.Uci.Commands
             var searchMoves = GetParameterWithMoves(parameters, "searchmoves");
             var infiniteFlag = GetFlag(parameters, "infinite");
 
-            var context = new SearchContext(_uciGame.BoardState)
+            var context = new SearchContext(_uciClient.BoardState)
             {
                 MaxDepth = depth,
                 MaxNodesCount = nodesCount,
@@ -74,7 +72,7 @@ namespace Cosette.Uci.Commands
         {
             try
             {
-                var bestMove = _uciGame.SearchBestMove(context);
+                var bestMove = IterativeDeepening.FindBestMove(context);
                 _uciClient.Send($"bestmove {bestMove}");
             }
             catch (Exception ex)
@@ -107,7 +105,7 @@ namespace Cosette.Uci.Commands
                     for (var moveIndex = i + 1; moveIndex < parameters.Length; moveIndex++)
                     {
                         var moveTextNotation = parameters[moveIndex];
-                        var parsedMove = Move.FromTextNotation(_uciGame.BoardState, moveTextNotation);
+                        var parsedMove = Move.FromTextNotation(_uciClient.BoardState, moveTextNotation);
                         movesList.Add(parsedMove);
                     }
                 }
