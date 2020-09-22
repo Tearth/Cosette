@@ -6,7 +6,7 @@ namespace Cosette.Engine.Fen
 {
     public static class FenParser
     {
-        public static BoardState Parse(string fen, out int moveNumber)
+        public static BoardState Parse(string fen)
         {
             var split = fen.Split(' ');
             var boardState = split[0];
@@ -14,7 +14,7 @@ namespace Cosette.Engine.Fen
             var castlingState = split[2];
             var enPassantState = split[3];
             var halfmoveClock = int.Parse(split[4]);
-            moveNumber = int.Parse(split[5]);
+            var movesCount = int.Parse(split[5]);
 
             var result = new BoardState();
             var currentColor = ParseCurrentColor(colorState);
@@ -31,6 +31,7 @@ namespace Cosette.Engine.Fen
             result.Position[Color.Black][GamePhase.Opening] = result.CalculatePosition(Color.Black, GamePhase.Opening);
             result.Position[Color.Black][GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
 
+            result.MovesCount = movesCount;
             result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
             result.Hash = ZobristHashing.CalculateHash(result);
             result.PawnHash = ZobristHashing.CalculatePawnHash(result);

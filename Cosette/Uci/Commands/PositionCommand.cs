@@ -67,8 +67,6 @@ namespace Cosette.Uci.Commands
                 _uciGame.MakeMove(parsedMove);
                 color = ColorOperations.Invert(color);
             }
-
-            _uciGame.SetCurrentColor(color);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Cosette.Engine.Common.Extensions
         {
             var bytes = new byte[8];
             random.NextBytes(bytes);
+
             return BitConverter.ToUInt64(bytes, 0);
         }
     }

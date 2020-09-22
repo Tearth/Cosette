@@ -26,8 +26,8 @@ namespace Cosette.Uci.Commands
         {
             var whiteTime = GetParameter(parameters, "wtime", int.MaxValue);
             var blackTime = GetParameter(parameters, "btime", int.MaxValue);
-            var colorTime = _uciGame.CurrentColor == Color.White ? whiteTime : blackTime;
-            var maxColorTime = TimeScheduler.CalculateTimeForMove(colorTime, _uciGame.CurrentMoveNumber);
+            var colorTime = _uciGame.BoardState.ColorToMove == Color.White ? whiteTime : blackTime;
+            var maxColorTime = TimeScheduler.CalculateTimeForMove(colorTime, _uciGame.BoardState.MovesCount);
 
             var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth);
             var moveTime = GetParameter(parameters, "movetime", 0);

@@ -11,8 +11,6 @@ namespace Cosette.Uci
     {
         public BoardState BoardState;
         public SearchContext SearchContext;
-        public int CurrentColor;
-        public int CurrentMoveNumber;
 
         public UciGame()
         {
@@ -22,33 +20,22 @@ namespace Cosette.Uci
         public void SetDefaultState()
         {
             BoardState.SetDefaultState();
-            CurrentColor = Color.White;
-            CurrentMoveNumber = 1;
         }
 
         public void SetFen(string fen)
         {
-            BoardState = FenParser.Parse(fen, out CurrentMoveNumber);
+            BoardState = FenParser.Parse(fen);
         }
 
         public void MakeMove(Move move)
         {
             BoardState.MakeMove(move);
-            if (BoardState.ColorToMove == Color.White)
-            {
-                CurrentMoveNumber++;
-            }
         }
 
         public Move SearchBestMove(SearchContext context)
         {
             SearchContext = context;
             return IterativeDeepening.FindBestMove(context);
-        }
-
-        public void SetCurrentColor(int color)
-        {
-            CurrentColor = color;
         }
     }
 }

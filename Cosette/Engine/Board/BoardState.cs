@@ -15,6 +15,7 @@ namespace Cosette.Engine.Board
         public ulong EnPassant { get; set; }
         public Castling Castling { get; set; }
         public int ColorToMove { get; set; }
+        public int MovesCount { get; set; }
 
         public bool[] CastlingDone { get; set; }
         public int[] Material { get; set; }
@@ -135,6 +136,10 @@ namespace Cosette.Engine.Board
         public void MakeMove(Move move)
         {
             var enemyColor = ColorOperations.Invert(ColorToMove);
+            if (ColorToMove == Color.White)
+            {
+                MovesCount++;
+            }
 
             _castlings.Push(Castling);
             _hashes.Push(Hash);
@@ -449,10 +454,20 @@ namespace Cosette.Engine.Board
             Hash = _hashes.Pop();
             Castling = _castlings.Pop();
             EnPassant = _enPassants.Pop();
+
+            if (ColorToMove == Color.White)
+            {
+                MovesCount--;
+            }
         }
 
         public void MakeNullMove()
         {
+            if (ColorToMove == Color.White)
+            {
+                MovesCount++;
+            }
+
             _enPassants.Push(EnPassant);
             _hashes.Push(Hash);
 
@@ -473,6 +488,11 @@ namespace Cosette.Engine.Board
 
             Hash = _hashes.Pop();
             EnPassant = _enPassants.Pop();
+
+            if (ColorToMove == Color.White)
+            {
+                MovesCount--;
+            }
         }
 
         public bool IsFieldAttacked(int color, int fieldIndex)
