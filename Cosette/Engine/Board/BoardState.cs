@@ -475,7 +475,7 @@ namespace Cosette.Engine.Board
             EnPassant = _enPassants.Pop();
         }
 
-        public bool IsFieldAttacked(int color, byte fieldIndex)
+        public bool IsFieldAttacked(int color, int fieldIndex)
         {
             var enemyColor = ColorOperations.Invert(color);
 
@@ -521,7 +521,7 @@ namespace Cosette.Engine.Board
             return false;
         }
 
-        public byte GetAttackingPiecesWithColor(int color, byte fieldIndex)
+        public byte GetAttackingPiecesWithColor(int color, int fieldIndex)
         {
             byte result = 0;
 
@@ -581,7 +581,7 @@ namespace Cosette.Engine.Board
             return IsFieldAttacked(color, (byte)kingField);
         }
 
-        public void MovePiece(int color, int piece, byte from, byte to)
+        public void MovePiece(int color, int piece, int from, int to)
         {
             var move = (1ul << from) | (1ul << to);
 
@@ -596,7 +596,7 @@ namespace Cosette.Engine.Board
             Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][to];
         }
 
-        public int GetPiece(int color, byte from)
+        public int GetPiece(int color, int from)
         {
             var field = 1ul << from;
 
@@ -611,9 +611,9 @@ namespace Cosette.Engine.Board
             throw new InvalidOperationException();
         }
 
-        public void AddPiece(int color, int piece, byte at)
+        public void AddPiece(int color, int piece, int fieldIndex)
         {
-            var field = 1ul << at;
+            var field = 1ul << fieldIndex;
 
             Pieces[color][piece] ^= field;
             Occupancy[color] ^= field;
@@ -621,13 +621,13 @@ namespace Cosette.Engine.Board
 
             Material[color] += EvaluationConstants.Pieces[piece];
 
-            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][at];
-            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][at];
+            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
+            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
         }
 
-        public void RemovePiece(int color, int piece, byte at)
+        public void RemovePiece(int color, int piece, int fieldIndex)
         {
-            var field = 1ul << at;
+            var field = 1ul << fieldIndex;
 
             Pieces[color][piece] ^= field;
             Occupancy[color] ^= field;
@@ -635,8 +635,8 @@ namespace Cosette.Engine.Board
 
             Material[color] -= EvaluationConstants.Pieces[piece];
 
-            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][at];
-            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][at];
+            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
+            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
         }
 
         public int CalculateMaterial(int color)
@@ -704,24 +704,24 @@ namespace Cosette.Engine.Board
 
         private int GetPromotionPiece(MoveFlags flags)
         {
-            if ((flags & MoveFlags.KnightPromotion) != 0)
+            if ((flags & MoveFlags.QueenPromotion) != 0)
             {
-                return Piece.Knight;
+                return Piece.Queen;
             }
-            
-            if ((flags & MoveFlags.BishopPromotion) != 0)
-            {
-                return Piece.Bishop;
-            }
-            
+
             if ((flags & MoveFlags.RookPromotion) != 0)
             {
                 return Piece.Rook;
             }
-            
-            if ((flags & MoveFlags.QueenPromotion) != 0)
+
+            if ((flags & MoveFlags.BishopPromotion) != 0)
             {
-                return Piece.Queen;
+                return Piece.Bishop;
+            }
+
+            if ((flags & MoveFlags.KnightPromotion) != 0)
+            {
+                return Piece.Knight;
             }
 
             throw new InvalidOperationException();

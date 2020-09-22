@@ -22,13 +22,13 @@ namespace Cosette.Engine.Board
             _fieldHashes[Color.White] = new ulong[6][];
             _fieldHashes[Color.Black] = new ulong[6][];
 
-            for (var i = 0; i < 6; i++)
+            for (var piece = 0; piece < 6; piece++)
             {
-                _fieldHashes[0][i] = new ulong[64];
-                _fieldHashes[1][i] = new ulong[64];
+                _fieldHashes[0][piece] = new ulong[64];
+                _fieldHashes[1][piece] = new ulong[64];
 
-                PopulateHashArrays(_fieldHashes[Color.White][i]);
-                PopulateHashArrays(_fieldHashes[Color.Black][i]);
+                PopulateHashArrays(_fieldHashes[Color.White][piece]);
+                PopulateHashArrays(_fieldHashes[Color.Black][piece]);
             }
 
             PopulateHashArrays(_castlingHashes);
@@ -105,7 +105,7 @@ namespace Cosette.Engine.Board
             return result;
         }
 
-            public static ulong MovePiece(ulong hash, int color, int piece, byte from, byte to)
+        public static ulong MovePiece(ulong hash, int color, int piece, byte from, byte to)
         {
             return hash ^ _fieldHashes[color][piece][from] ^ _fieldHashes[color][piece][to];
         }
