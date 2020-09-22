@@ -55,8 +55,8 @@ namespace Cosette.Engine.Perft
 
         private static bool VerifyBoard(BoardState board)
         {
-            if (board.Material[(int)Color.White] != board.CalculateMaterial(Color.White) ||
-                board.Material[(int)Color.Black] != board.CalculateMaterial(Color.Black))
+            if (board.Material[Color.White] != board.CalculateMaterial(Color.White) ||
+                board.Material[Color.Black] != board.CalculateMaterial(Color.Black))
             {
                 return false;
             }
@@ -71,10 +71,10 @@ namespace Cosette.Engine.Perft
                 return false;
             }
 
-            if (board.Position[(int)Color.White][(int)GamePhase.Opening] != board.CalculatePosition(Color.White, GamePhase.Opening) ||
-                board.Position[(int)Color.White][(int)GamePhase.Ending] != board.CalculatePosition(Color.White, GamePhase.Ending) ||
-                board.Position[(int)Color.Black][(int)GamePhase.Opening] != board.CalculatePosition(Color.Black, GamePhase.Opening) ||
-                board.Position[(int)Color.Black][(int)GamePhase.Ending] != board.CalculatePosition(Color.Black, GamePhase.Ending))
+            if (board.Position[Color.White][(int)GamePhase.Opening] != board.CalculatePosition(Color.White, GamePhase.Opening) ||
+                board.Position[Color.White][(int)GamePhase.Ending] != board.CalculatePosition(Color.White, GamePhase.Ending) ||
+                board.Position[Color.Black][(int)GamePhase.Opening] != board.CalculatePosition(Color.Black, GamePhase.Opening) ||
+                board.Position[Color.Black][(int)GamePhase.Ending] != board.CalculatePosition(Color.Black, GamePhase.Ending))
             {
                 return false;
             }

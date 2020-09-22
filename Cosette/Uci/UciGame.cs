@@ -9,7 +9,7 @@ namespace Cosette.Uci
     public class UciGame
     {
         public BoardState BoardState;
-        private Color _currentColor;
+        private int _currentColor;
         private int _currentMoveNumber;
 
         public UciGame()
@@ -46,7 +46,7 @@ namespace Cosette.Uci
             return bestMove;
         }
 
-        public void SetCurrentColor(Color color)
+        public void SetCurrentColor(int color)
         {
             _currentColor = color;
         }

@@ -13,9 +13,9 @@ namespace Cosette.Engine.Ai.Ordering
             PopulateTable();
         }
 
-        public static short Evaluate(Piece attackingPiece, Piece capturedPiece, int attacker, int defender)
+        public static short Evaluate(int attackingPiece, int capturedPiece, int attacker, int defender)
         {
-            return _table[(int)attackingPiece][(int)capturedPiece][attacker][defender];
+            return _table[attackingPiece][capturedPiece][attacker][defender];
         }
 
         private static void InitTable()
@@ -41,8 +41,8 @@ namespace Cosette.Engine.Ai.Ordering
             {
                 for (var capturedPieceIndex = 0; capturedPieceIndex < 6; capturedPieceIndex++)
                 {
-                    var attackingPiece = (Piece)attackingPieceIndex;
-                    var capturedPiece = (Piece)capturedPieceIndex;
+                    var attackingPiece = attackingPieceIndex;
+                    var capturedPiece = capturedPieceIndex;
 
                     for (ulong attackerIndex = 0; attackerIndex < 64; attackerIndex++)
                     {
@@ -52,15 +52,15 @@ namespace Cosette.Engine.Ai.Ordering
                             var defenders = defenderIndex;
 
                             var currentPieceOnField = attackingPiece;
-                            var result = EvaluationConstants.Pieces[(int)capturedPiece];
+                            var result = EvaluationConstants.Pieces[capturedPiece];
 
                             if (defenders != 0)
                             {
                                 var leastValuableDefenderField = BitOperations.GetLsb(defenders);
-                                var leastValuableDefenderPiece = (Piece)BitOperations.BitScan(leastValuableDefenderField);
+                                var leastValuableDefenderPiece = BitOperations.BitScan(leastValuableDefenderField);
                                 defenders = BitOperations.PopLsb(defenders);
 
-                                result -= EvaluationConstants.Pieces[(int)currentPieceOnField];
+                                result -= EvaluationConstants.Pieces[currentPieceOnField];
                                 currentPieceOnField = leastValuableDefenderPiece;
 
                                 while (attackers != 0)
@@ -68,19 +68,19 @@ namespace Cosette.Engine.Ai.Ordering
                                     var updatedResult = result;
 
                                     var leastValuableAttackerField = BitOperations.GetLsb(attackers);
-                                    var leastValuableAttackerPiece = (Piece)BitOperations.BitScan(leastValuableAttackerField);
+                                    var leastValuableAttackerPiece = BitOperations.BitScan(leastValuableAttackerField);
                                     attackers = BitOperations.PopLsb(attackers);
 
-                                    updatedResult += EvaluationConstants.Pieces[(int)currentPieceOnField];
+                                    updatedResult += EvaluationConstants.Pieces[currentPieceOnField];
                                     currentPieceOnField = leastValuableAttackerPiece;
 
                                     if (defenders != 0)
                                     {
                                         leastValuableDefenderField = BitOperations.GetLsb(defenders);
-                                        leastValuableDefenderPiece = (Piece)BitOperations.BitScan(leastValuableDefenderField);
+                                        leastValuableDefenderPiece = BitOperations.BitScan(leastValuableDefenderField);
                                         defenders = BitOperations.PopLsb(defenders);
 
-                                        updatedResult -= EvaluationConstants.Pieces[(int)currentPieceOnField];
+                                        updatedResult -= EvaluationConstants.Pieces[currentPieceOnField];
                                         currentPieceOnField = leastValuableDefenderPiece;
                                     }
                                     else

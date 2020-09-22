@@ -11,9 +11,9 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             return Evaluate(board, Color.White, openingPhase, endingPhase) - Evaluate(board, Color.Black, openingPhase, endingPhase);
         }
 
-        public static int Evaluate(BoardState board, Color color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
         {
-            var king = board.Pieces[(int)color][(int)Piece.King];
+            var king = board.Pieces[color][Piece.King];
             var kingField = BitOperations.BitScan(king);
             var fieldsAroundKing = BoxPatternGenerator.GetPattern(kingField);
 

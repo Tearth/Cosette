@@ -11,31 +11,31 @@ namespace Cosette.Engine.Ai.Ordering
         static KillerHeuristic()
         {
             _killerMoves = new Move[2][][];
-            _killerMoves[(int)Color.White] = new Move[SearchConstants.MaxDepth][];
-            _killerMoves[(int)Color.Black] = new Move[SearchConstants.MaxDepth][];
+            _killerMoves[Color.White] = new Move[SearchConstants.MaxDepth][];
+            _killerMoves[Color.Black] = new Move[SearchConstants.MaxDepth][];
 
             for (var i = 0; i < SearchConstants.MaxDepth; i++)
             {
-                _killerMoves[(int)Color.White][i] = new Move[MoveOrderingConstants.KillerSlots];
-                _killerMoves[(int)Color.Black][i] = new Move[MoveOrderingConstants.KillerSlots];
+                _killerMoves[Color.White][i] = new Move[MoveOrderingConstants.KillerSlots];
+                _killerMoves[Color.Black][i] = new Move[MoveOrderingConstants.KillerSlots];
             }
         }
 
-        public static void AddKillerMove(Move move, Color color, int depth)
+        public static void AddKillerMove(Move move, int color, int depth)
         {
             for (var i = MoveOrderingConstants.KillerSlots - 2; i >= 0; i--)
             {
-                _killerMoves[(int)color][depth][i + 1] = _killerMoves[(int)color][depth][i];
+                _killerMoves[color][depth][i + 1] = _killerMoves[color][depth][i];
             }
 
-            _killerMoves[(int)color][depth][0] = move;
+            _killerMoves[color][depth][0] = move;
         }
 
-        public static bool KillerMoveExists(Move move, Color color, int depth)
+        public static bool KillerMoveExists(Move move, int color, int depth)
         {
             for (var i = 0; i < MoveOrderingConstants.KillerSlots; i++)
             {
-                if (_killerMoves[(int)color][depth][i] == move)
+                if (_killerMoves[color][depth][i] == move)
                 {
                     return true;
                 }

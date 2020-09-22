@@ -11,7 +11,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             return Evaluate(board, Color.White, openingPhase, endingPhase) - Evaluate(board, Color.Black, openingPhase, endingPhase);
         }
 
-        public static int Evaluate(BoardState board, Color color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
         {
             var mobility = KnightOperator.GetMobility(board, color) + BishopOperator.GetMobility(board, color) +
                            RookOperator.GetMobility(board, color) + QueenOperator.GetMobility(board, color);

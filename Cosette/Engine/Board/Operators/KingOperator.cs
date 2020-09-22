@@ -6,13 +6,13 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class KingOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
+        public static int GetAvailableMoves(BoardState boardState, int color, Span<Move> moves, int offset)
         {
             var enemyColor = ColorOperations.Invert(color);
-            var piece = boardState.Pieces[(int)color][(int)Piece.King];
+            var piece = boardState.Pieces[color][Piece.King];
 
             var from = BitOperations.BitScan(piece);
-            var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.Occupancy[(int)color];
+            var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.Occupancy[color];
 
             while (availableMoves != 0)
             {
@@ -20,7 +20,7 @@ namespace Cosette.Engine.Board.Operators
                 availableMoves = BitOperations.PopLsb(availableMoves);
                 var fieldIndex = BitOperations.BitScan(field);
 
-                var flags = (field & boardState.Occupancy[(int)enemyColor]) != 0 ? MoveFlags.Kill : MoveFlags.None;
+                var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Kill : MoveFlags.None;
                 moves[offset++] = new Move(from, fieldIndex, Piece.King, flags);
             }
 
@@ -64,13 +64,13 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetAvailableQMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
+        public static int GetAvailableQMoves(BoardState boardState, int color, Span<Move> moves, int offset)
         {
             var enemyColor = ColorOperations.Invert(color);
-            var piece = boardState.Pieces[(int)color][(int)Piece.King];
+            var piece = boardState.Pieces[color][Piece.King];
 
             var from = BitOperations.BitScan(piece);
-            var availableMoves = KingMovesGenerator.GetMoves(from) & boardState.Occupancy[(int)enemyColor];
+            var availableMoves = KingMovesGenerator.GetMoves(from) & boardState.Occupancy[enemyColor];
 
             while (availableMoves != 0)
             {

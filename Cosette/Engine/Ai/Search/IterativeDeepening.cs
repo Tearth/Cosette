@@ -113,7 +113,7 @@ namespace Cosette.Engine.Ai.Search
             board.MakeMove(entry.BestMove);
 
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
-            var king = board.Pieces[(int)enemyColor][(int)Piece.King];
+            var king = board.Pieces[enemyColor][Piece.King];
             var kingField = BitOperations.BitScan(king);
 
             if (board.IsFieldAttacked(enemyColor, (byte)kingField))

@@ -26,7 +26,7 @@ namespace Cosette.Engine.Ai.Search
 
             statistics.Nodes++;
 
-            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
+            if (board.Pieces[board.ColorToMove][Piece.King] == 0)
             {
                 statistics.Leafs++;
                 return -EvaluationConstants.Checkmate + ply;

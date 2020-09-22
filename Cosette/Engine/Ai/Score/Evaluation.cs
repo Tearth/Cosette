@@ -6,7 +6,7 @@ namespace Cosette.Engine.Ai.Score
 {
     public class Evaluation
     {
-        public static int Evaluate(BoardState board, Color color)
+        public static int Evaluate(BoardState board, int color)
         {
             var openingPhase = board.GetPhaseRatio();
             var endingPhase = 1 - openingPhase;

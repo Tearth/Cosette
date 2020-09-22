@@ -18,7 +18,7 @@ namespace Cosette.Engine.Ai.Search
                 statistics.SelectiveDepth = ply;
             }
 
-            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
+            if (board.Pieces[board.ColorToMove][Piece.King] == 0)
             {
                 statistics.QLeafs++;
                 return -EvaluationConstants.Checkmate + ply;

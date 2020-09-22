@@ -9,24 +9,24 @@ namespace Cosette.Engine.Ai.Ordering
         static HistoryHeuristic()
         {
             _historyMoves = new byte[2][][];
-            _historyMoves[(int)Color.White] = new byte[64][];
-            _historyMoves[(int)Color.Black] = new byte[64][];
+            _historyMoves[Color.White] = new byte[64][];
+            _historyMoves[Color.Black] = new byte[64][];
 
             for (var i = 0; i < 64; i++)
             {
-                _historyMoves[(int)Color.White][i] = new byte[64];
-                _historyMoves[(int)Color.Black][i] = new byte[64];
+                _historyMoves[Color.White][i] = new byte[64];
+                _historyMoves[Color.Black][i] = new byte[64];
             }
         }
 
-        public static void AddHistoryMove(Color color, int from, int to, int depth)
+        public static void AddHistoryMove(int color, int from, int to, int depth)
         {
-            _historyMoves[(int)color][from][to] = (byte)(depth * depth);
+            _historyMoves[color][from][to] = (byte)(depth * depth);
         }
 
-        public static byte GetHistoryMoveValue(Color color, int from, int to)
+        public static byte GetHistoryMoveValue(int color, int from, int to)
         {
-            return _historyMoves[(int)color][from][to];
+            return _historyMoves[color][from][to];
         }
 
         public static void Clear()

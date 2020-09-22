@@ -35,7 +35,7 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     var enemyColor = ColorOperations.Invert(board.ColorToMove);
 
-                    var attackingPiece = moves[moveIndex].Piece;
+                    var attackingPiece = moves[moveIndex].PieceType;
                     var capturedPiece = board.GetPiece(enemyColor, moves[moveIndex].To);
 
                     var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
@@ -62,7 +62,7 @@ namespace Cosette.Engine.Ai.Ordering
                 }
                 else
                 {
-                    var attackingPiece = moves[i].Piece;
+                    var attackingPiece = moves[i].PieceType;
                     var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
 
                     var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);

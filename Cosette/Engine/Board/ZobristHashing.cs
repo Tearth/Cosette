@@ -19,16 +19,16 @@ namespace Cosette.Engine.Board
             _enPassantHashes = new ulong[8];
             _random = new Random();
 
-            _fieldHashes[(int)Color.White] = new ulong[6][];
-            _fieldHashes[(int)Color.Black] = new ulong[6][];
+            _fieldHashes[Color.White] = new ulong[6][];
+            _fieldHashes[Color.Black] = new ulong[6][];
 
             for (var i = 0; i < 6; i++)
             {
                 _fieldHashes[0][i] = new ulong[64];
                 _fieldHashes[1][i] = new ulong[64];
 
-                PopulateHashArrays(_fieldHashes[(int)Color.White][i]);
-                PopulateHashArrays(_fieldHashes[(int)Color.Black][i]);
+                PopulateHashArrays(_fieldHashes[Color.White][i]);
+                PopulateHashArrays(_fieldHashes[Color.Black][i]);
             }
 
             PopulateHashArrays(_castlingHashes);
@@ -91,28 +91,28 @@ namespace Cosette.Engine.Board
             var result = 0ul;
             for (var color = 0; color < 2; color++)
             {
-                var piecesToParse = board.Pieces[color][(int)Piece.Pawn];
+                var piecesToParse = board.Pieces[color][Piece.Pawn];
                 while (piecesToParse != 0)
                 {
                     var lsb = BitOperations.GetLsb(piecesToParse);
                     piecesToParse = BitOperations.PopLsb(piecesToParse);
 
                     var fieldIndex = BitOperations.BitScan(lsb);
-                    result ^= _fieldHashes[color][(int)Piece.Pawn][fieldIndex];
+                    result ^= _fieldHashes[color][Piece.Pawn][fieldIndex];
                 }
             }
 
             return result;
         }
 
-            public static ulong MovePiece(ulong hash, Color color, Piece piece, byte from, byte to)
+            public static ulong MovePiece(ulong hash, int color, int piece, byte from, byte to)
         {
-            return hash ^ _fieldHashes[(int)color][(int)piece][from] ^ _fieldHashes[(int)color][(int)piece][to];
+            return hash ^ _fieldHashes[color][piece][from] ^ _fieldHashes[color][piece][to];
         }
 
-        public static ulong AddOrRemovePiece(ulong hash, Color color, Piece piece, byte at)
+        public static ulong AddOrRemovePiece(ulong hash, int color, int piece, byte at)
         {
-            return hash ^ _fieldHashes[(int)color][(int)piece][at];
+            return hash ^ _fieldHashes[color][piece][at];
         }
 
         public static ulong RemoveCastlingFlag(ulong hash, Castling currentCastling, Castling castlingChange)

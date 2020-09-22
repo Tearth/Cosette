@@ -23,13 +23,13 @@ namespace Cosette.Engine.Fen
             ParseCastlingState(castlingState, result);
             ParseEnPassantState(enPassantState, currentColor, result);
 
-            result.Material[(int)Color.White] = result.CalculateMaterial(Color.White);
-            result.Material[(int)Color.Black] = result.CalculateMaterial(Color.Black);
+            result.Material[Color.White] = result.CalculateMaterial(Color.White);
+            result.Material[Color.Black] = result.CalculateMaterial(Color.Black);
 
-            result.Position[(int)Color.White][(int)GamePhase.Opening] = result.CalculatePosition(Color.White, GamePhase.Opening);
-            result.Position[(int)Color.White][(int)GamePhase.Ending] = result.CalculatePosition(Color.White, GamePhase.Ending);
-            result.Position[(int)Color.Black][(int)GamePhase.Opening] = result.CalculatePosition(Color.Black, GamePhase.Opening);
-            result.Position[(int)Color.Black][(int)GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
+            result.Position[Color.White][(int)GamePhase.Opening] = result.CalculatePosition(Color.White, GamePhase.Opening);
+            result.Position[Color.White][(int)GamePhase.Ending] = result.CalculatePosition(Color.White, GamePhase.Ending);
+            result.Position[Color.Black][(int)GamePhase.Opening] = result.CalculatePosition(Color.Black, GamePhase.Opening);
+            result.Position[Color.Black][(int)GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
 
             result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
             result.Hash = ZobristHashing.CalculateHash(result);
@@ -66,7 +66,7 @@ namespace Cosette.Engine.Fen
             }
         }
 
-        private static Color ParseCurrentColor(string currentColor)
+        private static int ParseCurrentColor(string currentColor)
         {
             return currentColor == "w" ? Color.White : Color.Black;
         }
@@ -94,7 +94,7 @@ namespace Cosette.Engine.Fen
             }
         }
 
-        private static void ParseEnPassantState(string enPassantState, Color color, BoardState result)
+        private static void ParseEnPassantState(string enPassantState, int color, BoardState result)
         {
             if (enPassantState != "-")
             {
@@ -103,7 +103,7 @@ namespace Cosette.Engine.Fen
             }
         }
 
-        private static Piece ConvertToPiece(char c)
+        private static int ConvertToPiece(char c)
         {
             switch (char.ToLower(c))
             {
@@ -118,7 +118,7 @@ namespace Cosette.Engine.Fen
             throw new InvalidOperationException();
         }
 
-        private static Color ConvertToColor(char c)
+        private static int ConvertToColor(char c)
         {
             return char.IsUpper(c) ? Color.White : Color.Black;
         }
