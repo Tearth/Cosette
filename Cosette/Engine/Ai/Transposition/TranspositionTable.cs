@@ -16,9 +16,9 @@ namespace Cosette.Engine.Ai.Transposition
             _table = new TranspositionTableEntry[_size];
         }
 
-        public static void Add(ulong hash, byte depth, short score, Move bestMove, TranspositionTableEntryType type)
+        public static void Add(ulong hash, byte depth, short score, Move bestMove, TranspositionTableEntryFlags flags)
         {
-            _table[hash % _size] = new TranspositionTableEntry(hash, depth, score, bestMove, type);
+            _table[hash % _size] = new TranspositionTableEntry(hash, depth, score, bestMove, flags);
         }
 
         public static TranspositionTableEntry Get(ulong hash)
@@ -30,9 +30,9 @@ namespace Cosette.Engine.Ai.Transposition
         {
             for (var i = 0; i < _table.Length; i++)
             {
-                if (_table[i].Type != TranspositionTableEntryType.Invalid)
+                if (_table[i].Flags != TranspositionTableEntryFlags.Invalid)
                 {
-                    _table[i].Type |= TranspositionTableEntryType.Old;
+                    _table[i].Flags |= TranspositionTableEntryFlags.Old;
                 }
             }
         }

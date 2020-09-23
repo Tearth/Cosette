@@ -3,7 +3,7 @@
 namespace Cosette.Engine.Ai.Transposition
 {
     [Flags]
-    public enum TranspositionTableEntryType : byte
+    public enum TranspositionTableEntryFlags : byte
     {
         Invalid = 0,
         ExactScore = 1,
