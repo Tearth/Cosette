@@ -21,7 +21,7 @@ namespace Cosette.Engine.Fen
 
             ParseBoardState(boardState, result);
             ParseCastlingState(castlingState, result);
-            ParseEnPassantState(enPassantState, currentColor, result);
+            ParseEnPassantState(enPassantState, result);
 
             result.Material[Color.White] = result.CalculateMaterial(Color.White);
             result.Material[Color.Black] = result.CalculateMaterial(Color.Black);
@@ -95,7 +95,7 @@ namespace Cosette.Engine.Fen
             }
         }
 
-        private static void ParseEnPassantState(string enPassantState, int color, BoardState result)
+        private static void ParseEnPassantState(string enPassantState, BoardState result)
         {
             if (enPassantState != "-")
             {

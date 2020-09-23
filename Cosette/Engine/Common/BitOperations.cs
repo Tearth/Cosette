@@ -1,11 +1,13 @@
-﻿using System.Runtime.Intrinsics.X86;
+﻿#if BMI
+using System.Runtime.Intrinsics.X86;
+#endif
 
 namespace Cosette.Engine.Common
 {
     public static class BitOperations
     {
 #if !BMI
-        private static int[] BitScanValues = {
+        private static readonly int[] BitScanValues = {
             0,  1,  48,  2, 57, 49, 28,  3,
             61, 58, 50, 42, 38, 29, 17,  4,
             62, 55, 59, 36, 53, 51, 43, 22,

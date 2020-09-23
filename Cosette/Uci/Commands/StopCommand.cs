@@ -1,6 +1,4 @@
-﻿using Cosette.Engine.Ai.Search;
-
-namespace Cosette.Uci.Commands
+﻿namespace Cosette.Uci.Commands
 {
     public class StopCommand : IUciCommand
     {
