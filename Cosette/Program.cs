@@ -7,7 +7,7 @@ namespace Cosette
 {
     public class Program
     {
-        static void Main()
+        private static void Main()
         {
             TranspositionTable.Init(SearchConstants.DefaultHashTableSize);
             PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);

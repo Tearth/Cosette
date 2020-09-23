@@ -1,6 +1,4 @@
-using System;
 using Cosette.Engine.Board;
-using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Engine.Perft;
