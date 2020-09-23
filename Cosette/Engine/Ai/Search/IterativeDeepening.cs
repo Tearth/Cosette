@@ -16,7 +16,6 @@ namespace Cosette.Engine.Ai.Search
 
         public static Move FindBestMove(SearchContext context)
         {
-            TranspositionTable.SetEntriesAsOld();
             HistoryHeuristic.Clear();
 
             var expectedExecutionTime = 0;

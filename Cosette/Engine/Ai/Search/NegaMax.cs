@@ -55,23 +55,37 @@ namespace Cosette.Engine.Ai.Search
 
                 if (entry.Depth >= depth)
                 {
-                    if ((entry.Flags & TranspositionTableEntryFlags.AlphaScore) != 0)
+                    switch (entry.Flags)
                     {
-                        if (entry.Score < beta)
+                        case TranspositionTableEntryFlags.AlphaScore:
                         {
-                            beta = entry.Score;
+                            if (entry.Score < beta)
+                            {
+                                beta = entry.Score;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (entry.Flags == TranspositionTableEntryFlags.ExactScore)
-                    {
-                        return entry.Score;
-                    }
-                    else if((entry.Flags & TranspositionTableEntryFlags.BetaScore) != 0)
-                    {
-                        if (entry.Score > alpha)
+
+                        case TranspositionTableEntryFlags.ExactScore:
                         {
-                            alpha = entry.Score;
-                            bestMove = entry.BestMove;
+                            if (entry.Age == context.TranspositionTableEntryAge)
+                            {
+                                return entry.Score;
+                            }
+
+                            break;
+                        }
+
+                        case TranspositionTableEntryFlags.BetaScore:
+                        {
+                            if (entry.Score > alpha)
+                            {
+                                alpha = entry.Score;
+                                bestMove = entry.BestMove;
+                            }
+
+                            break;
                         }
                     }
 
@@ -185,12 +199,14 @@ namespace Cosette.Engine.Ai.Search
                 alpha = 0;
             }
 
-            if ((entry.Flags & TranspositionTableEntryFlags.Old) != 0 || entry.Depth < depth)
+            if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)
             {
                 var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
                     alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
                     TranspositionTableEntryFlags.ExactScore;
-                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)alpha, bestMove, entryType);
+
+                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)alpha, 
+                    (byte)context.TranspositionTableEntryAge, bestMove, entryType);
 
 #if DEBUG
                 context.Statistics.TTEntries++;

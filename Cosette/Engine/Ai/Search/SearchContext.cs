@@ -15,6 +15,7 @@ namespace Cosette.Engine.Ai.Search
         public bool WaitForStopCommand { get; set; }
         public ulong MaxNodesCount { get; set; }
         public List<Move> MoveRestrictions { get; set; }
+        public int TranspositionTableEntryAge { get; set; }
 
         public SearchContext(BoardState boardState)
         {
@@ -26,6 +27,7 @@ namespace Cosette.Engine.Ai.Search
             WaitForStopCommand = false;
             MaxNodesCount = ulong.MaxValue;
             MoveRestrictions = null;
+            TranspositionTableEntryAge = boardState.MovesCount;
         }
     }
 }
