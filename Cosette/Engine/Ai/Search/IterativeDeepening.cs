@@ -54,12 +54,7 @@ namespace Cosette.Engine.Ai.Search
                 Task.Delay(1).GetAwaiter().GetResult();
             }
 
-            if (context.AbortSearch)
-            {
-                TranspositionTable.Clear();
-                context.AbortSearch = false;
-            }
-
+            context.AbortSearch = false;
             return bestMove;
         }
 
