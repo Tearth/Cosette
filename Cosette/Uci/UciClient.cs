@@ -134,7 +134,7 @@ namespace Cosette.Uci
 
         private string FormatScore(int score)
         {
-            if (IterativeDeepening.IsScoreCheckmate(score))
+            if (IterativeDeepening.IsScoreNearCheckmate(score))
             {
                 var movesToCheckmate = IterativeDeepening.GetMovesToCheckmate(score);
                 if (score < 0)

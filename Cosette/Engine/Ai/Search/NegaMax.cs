@@ -28,7 +28,7 @@ namespace Cosette.Engine.Ai.Search
             if (context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King] == 0)
             {
                 context.Statistics.Leafs++;
-                return -EvaluationConstants.Checkmate + ply;
+                return -EvaluationConstants.Checkmate + 1;
             }
 
             if (context.BoardState.IsThreefoldRepetition())
@@ -71,7 +71,7 @@ namespace Cosette.Engine.Ai.Search
                         {
                             if (entry.Age == context.TranspositionTableEntryAge)
                             {
-                                return entry.Score;
+                                return SearchHelpers.PostProcessScore(entry.Score);
                             }
 
                             break;
@@ -91,7 +91,7 @@ namespace Cosette.Engine.Ai.Search
 
                     if (alpha >= beta)
                     {
-                        context.Statistics.Leafs++;
+                        context.Statistics.BetaCutoffs++;
                         return entry.Score;
                     }
                 }
@@ -194,9 +194,13 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            if (alpha == -EvaluationConstants.Checkmate + ply + 2 && !context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+            if (alpha == -EvaluationConstants.Checkmate + 2 && !context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
             {
                 alpha = 0;
+            }
+            else
+            {
+                alpha = SearchHelpers.PostProcessScore(alpha);
             }
 
             if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)

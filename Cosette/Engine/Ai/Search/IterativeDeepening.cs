@@ -25,7 +25,7 @@ namespace Cosette.Engine.Ai.Search
             var bestMove = Move.Empty;
             var stopwatch = Stopwatch.StartNew();
 
-            for (var depth = 1; expectedExecutionTime <= context.MaxTime && depth <= context.MaxDepth && !IsScoreCheckmate(context.Statistics.Score); depth++)
+            for (var depth = 1; expectedExecutionTime <= context.MaxTime && depth <= context.MaxDepth && !IsScoreNearCheckmate(context.Statistics.Score); depth++)
             {
                 context.Statistics.Clear();
 
@@ -59,8 +59,13 @@ namespace Cosette.Engine.Ai.Search
 
         public static bool IsScoreCheckmate(int score)
         {
+            return Math.Abs(score) == EvaluationConstants.Checkmate;
+        }
+
+        public static bool IsScoreNearCheckmate(int score)
+        {
             var scoreAbs = Math.Abs(score);
-            return scoreAbs > EvaluationConstants.Checkmate - SearchConstants.MaxDepth && 
+            return scoreAbs > EvaluationConstants.Checkmate - SearchConstants.MaxDepth &&
                    scoreAbs < EvaluationConstants.Checkmate + SearchConstants.MaxDepth;
         }
 
