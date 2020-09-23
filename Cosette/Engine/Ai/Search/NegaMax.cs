@@ -55,32 +55,26 @@ namespace Cosette.Engine.Ai.Search
 
                 if (entry.Depth >= depth)
                 {
-                    switch (entry.Type)
+                    if ((entry.Type & TranspositionTableEntryType.AlphaScore) != 0)
                     {
-                        case TranspositionTableEntryType.AlphaScore:
+                        if (entry.Score < beta)
                         {
-                            if (entry.Score < beta)
-                            {
-                                beta = entry.Score;
-                            }
-
-                            break;
+                            beta = entry.Score;
                         }
-
-                        case TranspositionTableEntryType.ExactScore:
+                    }
+                    else if ((entry.Type & TranspositionTableEntryType.ExactScore) != 0)
+                    {
+                        if ((entry.Type & TranspositionTableEntryType.Old) == 0)
                         {
                             return entry.Score;
                         }
-
-                        case TranspositionTableEntryType.BetaScore:
+                    }
+                    else if((entry.Type & TranspositionTableEntryType.BetaScore) != 0)
+                    {
+                        if (entry.Score > alpha)
                         {
-                            if (entry.Score > alpha)
-                            {
-                                alpha = entry.Score;
-                                bestMove = entry.BestMove;
-                            }
-
-                            break;
+                            alpha = entry.Score;
+                            bestMove = entry.BestMove;
                         }
                     }
 
@@ -95,13 +89,11 @@ namespace Cosette.Engine.Ai.Search
             else
             {
                 context.Statistics.TTNonHits++;
-            }
-#endif
 
-#if DEBUG
-            if (entry.Type != TranspositionTableEntryType.Invalid && !entry.IsKeyValid(context.BoardState.Hash))
-            {
-                context.Statistics.TTCollisions++;
+                if (entry.Type != TranspositionTableEntryType.Invalid && entry.Type != TranspositionTableEntryType.Old)
+                {
+                    context.Statistics.TTCollisions++;
+                }
             }
 #endif
 
@@ -196,14 +188,17 @@ namespace Cosette.Engine.Ai.Search
                 alpha = 0;
             }
 
-            var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.AlphaScore :
-                            alpha >= beta ? TranspositionTableEntryType.BetaScore :
-                            TranspositionTableEntryType.ExactScore;
-            TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)alpha, bestMove, entryType);
+            if ((entry.Type & TranspositionTableEntryType.Old) != 0 || entry.Depth < depth)
+            {
+                var entryType = alpha <= originalAlpha ? TranspositionTableEntryType.AlphaScore :
+                    alpha >= beta ? TranspositionTableEntryType.BetaScore :
+                    TranspositionTableEntryType.ExactScore;
+                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)alpha, bestMove, entryType);
 
 #if DEBUG
-            context.Statistics.TTEntries++;
+                context.Statistics.TTEntries++;
 #endif
+            }
 
             return alpha;
         }

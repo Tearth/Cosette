@@ -16,6 +16,6 @@
         public static int[] Mobility = { 4, 1 };
         public static int[] KingInDanger = { -20, -5 };
 
-        public const int OpeningEndgameEdge = 2 * 21000;
+        public const int OpeningEndgameEdge = 20500;
     }
 }

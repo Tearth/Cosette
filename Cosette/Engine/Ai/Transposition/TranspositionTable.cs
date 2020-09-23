@@ -26,6 +26,17 @@ namespace Cosette.Engine.Ai.Transposition
             return _table[hash % _size];
         }
 
+        public static void SetEntriesAsOld()
+        {
+            for (var i = 0; i < _table.Length; i++)
+            {
+                if (_table[i].Type != TranspositionTableEntryType.Invalid)
+                {
+                    _table[i].Type |= TranspositionTableEntryType.Old;
+                }
+            }
+        }
+
         public static void Clear()
         {
             Array.Clear(_table, 0, (int)_size);

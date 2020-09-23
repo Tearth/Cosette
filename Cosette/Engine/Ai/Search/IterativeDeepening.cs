@@ -16,11 +16,10 @@ namespace Cosette.Engine.Ai.Search
 
         public static Move FindBestMove(SearchContext context)
         {
-            var expectedExecutionTime = 0;
-
-            TranspositionTable.Clear();
+            TranspositionTable.SetEntriesAsOld();
             HistoryHeuristic.Clear();
 
+            var expectedExecutionTime = 0;
             var alpha = SearchConstants.MinValue;
             var beta = SearchConstants.MaxValue;
             var lastSearchTime = 10ul;
@@ -79,7 +78,7 @@ namespace Cosette.Engine.Ai.Search
         private static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)
         {
             var entry = TranspositionTable.Get(board.Hash);
-            if (entry.Type == TranspositionTableEntryType.ExactScore && entry.IsKeyValid(board.Hash) && movesCount < SearchConstants.MaxDepth)
+            if ((entry.Type & TranspositionTableEntryType.ExactScore) != 0 && entry.IsKeyValid(board.Hash) && movesCount < SearchConstants.MaxDepth)
             {
                 moves[movesCount] = entry.BestMove;
                 board.MakeMove(entry.BestMove);
