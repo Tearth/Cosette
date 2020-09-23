@@ -33,7 +33,7 @@ namespace Cosette.Uci.Commands
             var searchMoves = GetParameterWithMoves(parameters, "searchmoves");
             var infiniteFlag = GetFlag(parameters, "infinite");
 
-            var context = new SearchContext(_uciClient.BoardState)
+            _uciClient.SearchContext = new SearchContext(_uciClient.BoardState)
             {
                 MaxDepth = depth,
                 MaxNodesCount = nodesCount,
@@ -43,7 +43,7 @@ namespace Cosette.Uci.Commands
             if (moveTime != 0)
             {
                 maxColorTime = int.MaxValue;
-                context.WaitForStopCommand = true;
+                _uciClient.SearchContext.WaitForStopCommand = true;
 
                 Task.Run(() =>
                 {
@@ -53,26 +53,26 @@ namespace Cosette.Uci.Commands
                         Task.Delay(1).GetAwaiter().GetResult();
                     }
 
-                    context.AbortSearch = true;
-                    context.WaitForStopCommand = false;
+                    _uciClient.SearchContext.AbortSearch = true;
+                    _uciClient.SearchContext.WaitForStopCommand = false;
                 });
             }
 
             if (infiniteFlag)
             {
                 maxColorTime = int.MaxValue;
-                context.WaitForStopCommand = true;
+                _uciClient.SearchContext.WaitForStopCommand = true;
             }
 
-            context.MaxTime = maxColorTime;
-            Task.Run(() => SearchEntryPoint(context));
+            _uciClient.SearchContext.MaxTime = maxColorTime;
+            Task.Run(SearchEntryPoint);
         }
 
-        private void SearchEntryPoint(SearchContext context)
+        private void SearchEntryPoint()
         {
             try
             {
-                var bestMove = IterativeDeepening.FindBestMove(context);
+                var bestMove = IterativeDeepening.FindBestMove(_uciClient.SearchContext);
                 _uciClient.Send($"bestmove {bestMove}");
             }
             catch (Exception ex)
@@ -88,7 +88,7 @@ namespace Cosette.Uci.Commands
             {
                 if (parameters[i] == name)
                 {
-                    return (T) Convert.ChangeType(parameters[i + 1], typeof(T));
+                    return (T)Convert.ChangeType(parameters[i + 1], typeof(T));
                 }
             }
 
