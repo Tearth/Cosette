@@ -61,7 +61,6 @@ namespace Cosette.Engine.Board
                 EvaluationConstants.Pieces[Piece.Bishop] * 2+
                 EvaluationConstants.Pieces[Piece.Knight] * 2+
                 EvaluationConstants.Pieces[Piece.Pawn] * 8;
-            _materialAtOpening *= 2;
         }
 
         public void SetDefaultState()
@@ -693,8 +692,10 @@ namespace Cosette.Engine.Board
 
         public float GetPhaseRatio()
         {
+            var materialOfWeakerSide = Math.Min(Material[Color.White], Material[Color.Black]);
+
             var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
-            var boardDelta = Material[Color.White] + Material[Color.Black] - EvaluationConstants.OpeningEndgameEdge;
+            var boardDelta = materialOfWeakerSide - EvaluationConstants.OpeningEndgameEdge;
             var ratio = (float) boardDelta / openingDelta;
 
             return Math.Max(0, ratio);
@@ -702,8 +703,8 @@ namespace Cosette.Engine.Board
 
         public int GetGamePhase()
         {
-            var totalMaterial = Material[Color.White] + Material[Color.Black];
-            return totalMaterial > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
+            var materialOfWeakerSide = Math.Min(Material[Color.White], Material[Color.Black]);
+            return materialOfWeakerSide > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
         }
 
         public bool IsThreefoldRepetition()
