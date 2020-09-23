@@ -47,7 +47,7 @@ namespace Cosette.Engine.Ai.Search
             var bestMove = Move.Empty;
 
             var entry = TranspositionTable.Get(context.BoardState.Hash);
-            if (entry.Hash == context.BoardState.Hash)
+            if (entry.IsKeyValid(context.BoardState.Hash))
             {
 #if DEBUG
                 context.Statistics.TTHits++;
@@ -99,7 +99,7 @@ namespace Cosette.Engine.Ai.Search
 #endif
 
 #if DEBUG
-            if (entry.Type != TranspositionTableEntryType.Invalid && entry.Hash != context.BoardState.Hash)
+            if (entry.Type != TranspositionTableEntryType.Invalid && !entry.IsKeyValid(context.BoardState.Hash))
             {
                 context.Statistics.TTCollisions++;
             }

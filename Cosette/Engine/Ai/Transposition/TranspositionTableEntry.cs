@@ -6,7 +6,7 @@ namespace Cosette.Engine.Ai.Transposition
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TranspositionTableEntry
     {
-        public ulong Hash { get; set; }
+        public uint Key { get; set; }
         public short Score { get; set; }
         public byte Depth { get; set; }
         public TranspositionTableEntryType Type { get; set; }
@@ -14,11 +14,16 @@ namespace Cosette.Engine.Ai.Transposition
 
         public TranspositionTableEntry(ulong hash, byte depth, short score, Move bestMove, TranspositionTableEntryType type)
         {
-            Hash = hash;
+            Key = (uint)(hash >> 32);
             Depth = depth;
             Score = score;
             BestMove = bestMove;
             Type = type;
+        }
+
+        public bool IsKeyValid(ulong hash)
+        {
+            return Key == (uint)(hash >> 32);
         }
     }
 }

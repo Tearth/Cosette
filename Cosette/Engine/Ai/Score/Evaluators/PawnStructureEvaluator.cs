@@ -41,7 +41,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
         public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
         {
             var entry = PawnHashTable.Get(board.PawnHash);
-            if (entry.Hash == board.PawnHash)
+            if (entry.IsKeyValid(board.PawnHash))
             {
                 return entry.Score;
             }

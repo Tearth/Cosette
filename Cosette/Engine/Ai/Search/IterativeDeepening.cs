@@ -79,26 +79,24 @@ namespace Cosette.Engine.Ai.Search
         private static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)
         {
             var entry = TranspositionTable.Get(board.Hash);
-            if (entry.Type != TranspositionTableEntryType.ExactScore || entry.Hash != board.Hash || movesCount >= SearchConstants.MaxDepth)
+            if (entry.Type == TranspositionTableEntryType.ExactScore && entry.IsKeyValid(board.Hash) && movesCount < SearchConstants.MaxDepth)
             {
-                return movesCount;
-            }
+                moves[movesCount] = entry.BestMove;
+                board.MakeMove(entry.BestMove);
 
-            moves[movesCount] = entry.BestMove;
-            board.MakeMove(entry.BestMove);
+                var enemyColor = ColorOperations.Invert(board.ColorToMove);
+                var king = board.Pieces[enemyColor][Piece.King];
+                var kingField = BitOperations.BitScan(king);
 
-            var enemyColor = ColorOperations.Invert(board.ColorToMove);
-            var king = board.Pieces[enemyColor][Piece.King];
-            var kingField = BitOperations.BitScan(king);
+                if (board.IsFieldAttacked(enemyColor, (byte)kingField))
+                {
+                    board.UndoMove(entry.BestMove);
+                    return movesCount;
+                }
 
-            if (board.IsFieldAttacked(enemyColor, (byte)kingField))
-            {
+                movesCount = GetPrincipalVariation(board, moves, movesCount + 1);
                 board.UndoMove(entry.BestMove);
-                return movesCount;
             }
-
-            movesCount = GetPrincipalVariation(board, moves, movesCount + 1);
-            board.UndoMove(entry.BestMove);
 
             return movesCount;
         }
