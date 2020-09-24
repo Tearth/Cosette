@@ -62,8 +62,8 @@ namespace Cosette.Engine.Board
                 EvaluationConstants.Pieces[Piece.King] +
                 EvaluationConstants.Pieces[Piece.Queen] +
                 EvaluationConstants.Pieces[Piece.Rook] * 2 +
-                EvaluationConstants.Pieces[Piece.Bishop] * 2+
-                EvaluationConstants.Pieces[Piece.Knight] * 2+
+                EvaluationConstants.Pieces[Piece.Bishop] * 2 +
+                EvaluationConstants.Pieces[Piece.Knight] * 2 +
                 EvaluationConstants.Pieces[Piece.Pawn] * 8;
         }
 
