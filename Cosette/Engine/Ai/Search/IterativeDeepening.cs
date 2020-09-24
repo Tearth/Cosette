@@ -59,7 +59,7 @@ namespace Cosette.Engine.Ai.Search
 
         public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
-            return depth <= context.MaxDepth &&
+            return depth < context.MaxDepth &&
                     expectedExecutionTime <= context.MaxTime &&
                     GetMovesToCheckmate(context.Statistics.Score) != depth - 1;
         }
