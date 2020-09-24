@@ -31,7 +31,7 @@ namespace Cosette.Engine.Ai.Search
                 return -EvaluationConstants.Checkmate + ply;
             }
 
-            if (context.BoardState.IsThreefoldRepetition())
+            if (context.BoardState.IsDraw())
             {
                 context.Statistics.Leafs++;
                 return EvaluationConstants.ThreefoldRepetition;

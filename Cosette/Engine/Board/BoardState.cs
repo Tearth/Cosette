@@ -16,6 +16,8 @@ namespace Cosette.Engine.Board
         public Castling Castling { get; set; }
         public int ColorToMove { get; set; }
         public int MovesCount { get; set; }
+        public int IrreversibleMovesCount { get; set; }
+        public int NullMoves { get; set; }
 
         public bool[] CastlingDone { get; set; }
         public int[] Material { get; set; }
@@ -30,6 +32,7 @@ namespace Cosette.Engine.Board
         private readonly FastStack<int> _promotedPieces;
         private readonly FastStack<ulong> _hashes;
         private readonly FastStack<ulong> _pawnHashes;
+        private readonly FastStack<int> _irreversibleMovesCounts;
 
         private readonly int _materialAtOpening;
 
@@ -53,6 +56,7 @@ namespace Cosette.Engine.Board
             _promotedPieces = new FastStack<int>(512);
             _hashes = new FastStack<ulong>(512);
             _pawnHashes = new FastStack<ulong>(512);
+            _irreversibleMovesCounts = new FastStack<int>(512);
 
             _materialAtOpening =
                 EvaluationConstants.Pieces[Piece.King] +
@@ -83,8 +87,12 @@ namespace Cosette.Engine.Board
             Occupancy[Color.Black] = 18446462598732840960;
             OccupancySummary = Occupancy[Color.White] | Occupancy[Color.Black];
 
+            EnPassant = 0;
             Castling = Castling.Everything;
             ColorToMove = Color.White;
+            MovesCount = 0;
+            IrreversibleMovesCount = 0;
+            NullMoves = 0;
 
             CastlingDone[Color.White] = false;
             CastlingDone[Color.Black] = false;
@@ -106,6 +114,7 @@ namespace Cosette.Engine.Board
             _promotedPieces.Clear();
             _hashes.Clear();
             _pawnHashes.Clear();
+            _irreversibleMovesCounts.Clear();
         }
 
         public int GetAvailableMoves(Span<Move> moves)
@@ -144,6 +153,16 @@ namespace Cosette.Engine.Board
             _hashes.Push(Hash);
             _pawnHashes.Push(PawnHash);
             _enPassants.Push(EnPassant);
+            _irreversibleMovesCounts.Push(IrreversibleMovesCount);
+
+            if (move.PieceType == Piece.Pawn || (move.Flags & MoveFlags.Kill) != 0)
+            {
+                IrreversibleMovesCount = 0;
+            }
+            else
+            {
+                IrreversibleMovesCount++;
+            }
 
             if (EnPassant != 0)
             {
@@ -449,6 +468,7 @@ namespace Cosette.Engine.Board
                 AddPiece(ColorToMove, move.PieceType, move.From);
             }
 
+            IrreversibleMovesCount = _irreversibleMovesCounts.Pop();
             PawnHash = _pawnHashes.Pop();
             Hash = _hashes.Pop();
             Castling = _castlings.Pop();
@@ -462,6 +482,7 @@ namespace Cosette.Engine.Board
 
         public void MakeNullMove()
         {
+            NullMoves++;
             if (ColorToMove == Color.White)
             {
                 MovesCount++;
@@ -483,6 +504,7 @@ namespace Cosette.Engine.Board
 
         public void UndoNullMove()
         {
+            NullMoves--;
             ColorToMove = ColorOperations.Invert(ColorToMove);
 
             Hash = _hashes.Pop();
@@ -707,9 +729,14 @@ namespace Cosette.Engine.Board
             return materialOfWeakerSide > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
         }
 
+        public bool IsDraw()
+        {
+            return IsThreefoldRepetition() || IsFiftyMoveRuleDraw();
+        }
+
         public bool IsThreefoldRepetition()
         {
-            if (_hashes.Count() >= 8)
+            if (NullMoves == 0 && _hashes.Count() >= 8)
             {
                 var first = _hashes.Peek(3);
                 var second = _hashes.Peek(7);
@@ -718,6 +745,16 @@ namespace Cosette.Engine.Board
                 {
                     return true;
                 }
+            }
+
+            return false;
+        }
+
+        public bool IsFiftyMoveRuleDraw()
+        {
+            if (NullMoves == 0 && IrreversibleMovesCount >= 100)
+            {
+                return true;
             }
 
             return false;

@@ -128,7 +128,8 @@ namespace Cosette.Uci
                 var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + mobility + kingSafety;
 
                 Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
-                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety}");
+                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
+                     $"irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 
