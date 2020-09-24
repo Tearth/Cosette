@@ -20,7 +20,7 @@ namespace Cosette.Engine.Ai.Search
             if (context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King] == 0)
             {
                 context.Statistics.QLeafs++;
-                return -EvaluationConstants.Checkmate + 1;
+                return -EvaluationConstants.Checkmate + ply;
             }
 
             var standPat = Evaluation.Evaluate(context.BoardState, context.BoardState.ColorToMove);
@@ -72,7 +72,7 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            return SearchHelpers.PostProcessScore(alpha);
+            return alpha;
         }
     }
 }

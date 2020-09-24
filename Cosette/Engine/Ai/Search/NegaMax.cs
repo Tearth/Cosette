@@ -28,7 +28,7 @@ namespace Cosette.Engine.Ai.Search
             if (context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King] == 0)
             {
                 context.Statistics.Leafs++;
-                return -EvaluationConstants.Checkmate + 1;
+                return -EvaluationConstants.Checkmate + ply;
             }
 
             if (context.BoardState.IsThreefoldRepetition())
@@ -55,6 +55,18 @@ namespace Cosette.Engine.Ai.Search
 
                 if (entry.Depth >= depth)
                 {
+                    if (IterativeDeepening.IsScoreNearCheckmate(entry.Score))
+                    {
+                        if (entry.Score > 0)
+                        {
+                            entry.Score = (short)(entry.Score - ply);
+                        }
+                        else
+                        {
+                            entry.Score = (short)(entry.Score + ply);
+                        }
+                    }
+
                     switch (entry.Flags)
                     {
                         case TranspositionTableEntryFlags.AlphaScore:
@@ -71,7 +83,7 @@ namespace Cosette.Engine.Ai.Search
                         {
                             if (entry.Age == context.TranspositionTableEntryAge)
                             {
-                                return SearchHelpers.PostProcessScore(entry.Score);
+                                return entry.Score;
                             }
 
                             break;
@@ -107,7 +119,7 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 #endif
-
+            
             if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode))
             {
                 context.BoardState.MakeNullMove();
@@ -120,7 +132,7 @@ namespace Cosette.Engine.Ai.Search
                     return score;
                 }
             }
-
+            
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
 
@@ -194,22 +206,34 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            if (alpha == -EvaluationConstants.Checkmate + 2 && !context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+            if (alpha == -EvaluationConstants.Checkmate + ply + 2 && !context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
             {
-                alpha = 0;
-            }
-            else
-            {
-                alpha = SearchHelpers.PostProcessScore(alpha);
+                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, 0,
+                    (byte)context.TranspositionTableEntryAge, bestMove, TranspositionTableEntryFlags.ExactScore);
+
+                return 0;
             }
 
             if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)
             {
+                var valueToSave = alpha;
+                if (IterativeDeepening.IsScoreNearCheckmate(valueToSave))
+                {
+                    if (valueToSave > 0)
+                    {
+                        valueToSave = (short)(valueToSave + ply);
+                    }
+                    else
+                    {
+                        valueToSave = (short)(valueToSave - ply);
+                    }
+                }
+
                 var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
                     alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
                     TranspositionTableEntryFlags.ExactScore;
 
-                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)alpha, 
+                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)valueToSave, 
                     (byte)context.TranspositionTableEntryAge, bestMove, entryType);
 
 #if DEBUG
