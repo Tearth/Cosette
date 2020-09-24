@@ -32,6 +32,7 @@ namespace Cosette.Engine.Fen
             result.Position[Color.Black][GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
 
             result.MovesCount = movesCount;
+            result.IrreversibleMovesCount = halfmoveClock;
             result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
             result.Hash = ZobristHashing.CalculateHash(result);
             result.PawnHash = ZobristHashing.CalculatePawnHash(result);
