@@ -55,18 +55,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (entry.Depth >= depth)
                 {
-                    if (IterativeDeepening.IsScoreNearCheckmate(entry.Score))
-                    {
-                        if (entry.Score > 0)
-                        {
-                            entry.Score = (short)(entry.Score - ply);
-                        }
-                        else
-                        {
-                            entry.Score = (short)(entry.Score + ply);
-                        }
-                    }
-
+                    entry.Score = (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
                     switch (entry.Flags)
                     {
                         case TranspositionTableEntryFlags.AlphaScore:
@@ -216,19 +205,7 @@ namespace Cosette.Engine.Ai.Search
 
             if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)
             {
-                var valueToSave = alpha;
-                if (IterativeDeepening.IsScoreNearCheckmate(valueToSave))
-                {
-                    if (valueToSave > 0)
-                    {
-                        valueToSave = (short)(valueToSave + ply);
-                    }
-                    else
-                    {
-                        valueToSave = (short)(valueToSave - ply);
-                    }
-                }
-
+                var valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
                 var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
                     alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
                     TranspositionTableEntryFlags.ExactScore;

@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Ai.Transposition
@@ -29,6 +30,40 @@ namespace Cosette.Engine.Ai.Transposition
         public static void Clear()
         {
             Array.Clear(_table, 0, (int)_size);
+        }
+
+        public static int RegularToTTScore(int score, int ply)
+        {
+            if (IterativeDeepening.IsScoreNearCheckmate(score))
+            {
+                if (score > 0)
+                {
+                    return score + ply;
+                }
+                else
+                {
+                    return score - ply;
+                }
+            }
+
+            return score;
+        }
+
+        public static int TTToRegularScore(int score, int ply)
+        {
+            if (IterativeDeepening.IsScoreNearCheckmate(score))
+            {
+                if (score > 0)
+                {
+                    return score - ply;
+                }
+                else
+                {
+                    return score + ply;
+                }
+            }
+
+            return score;
         }
     }
 }
