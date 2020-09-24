@@ -729,11 +729,6 @@ namespace Cosette.Engine.Board
             return materialOfWeakerSide > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
         }
 
-        public bool IsDraw()
-        {
-            return IsThreefoldRepetition() || IsFiftyMoveRuleDraw();
-        }
-
         public bool IsThreefoldRepetition()
         {
             if (NullMoves == 0 && _hashes.Count() >= 8)

@@ -31,9 +31,21 @@ namespace Cosette.Engine.Ai.Search
                 return -EvaluationConstants.Checkmate + ply;
             }
 
-            if (context.BoardState.IsDraw())
+            if (context.BoardState.IsThreefoldRepetition())
             {
                 context.Statistics.Leafs++;
+                return EvaluationConstants.ThreefoldRepetition;
+            }
+
+            if (context.BoardState.IsFiftyMoveRuleDraw())
+            {
+                context.Statistics.Leafs++;
+                
+                if (context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+                {
+                    return EvaluationConstants.Checkmate + ply;
+                }
+                
                 return EvaluationConstants.ThreefoldRepetition;
             }
 
