@@ -209,10 +209,7 @@ namespace Cosette.Engine.Ai.Search
 
             if (alpha == -EvaluationConstants.Checkmate + ply + 2 && !context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
             {
-                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, 0,
-                    (byte)context.TranspositionTableEntryAge, bestMove, TranspositionTableEntryFlags.ExactScore);
-
-                return 0;
+                alpha = 0;
             }
 
             if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)

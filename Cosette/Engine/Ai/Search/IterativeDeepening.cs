@@ -61,7 +61,7 @@ namespace Cosette.Engine.Ai.Search
         {
             return depth < context.MaxDepth &&
                     expectedExecutionTime <= context.MaxTime &&
-                    GetMovesToCheckmate(context.Statistics.Score) != depth - 1;
+                    !IsScoreNearCheckmate(context.Statistics.Score);
         }
 
         public static bool IsScoreNearCheckmate(int score)
