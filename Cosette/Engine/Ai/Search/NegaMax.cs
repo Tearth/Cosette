@@ -81,9 +81,9 @@ namespace Cosette.Engine.Ai.Search
 
                         case TranspositionTableEntryFlags.ExactScore:
                         {
-                            entry.Score = (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
-                            if (entry.Age == context.TranspositionTableEntryAge)
+                            if (!pvNode || entry.Age == context.TranspositionTableEntryAge)
                             {
+                                entry.Score = (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
                                 return entry.Score;
                             }
 
