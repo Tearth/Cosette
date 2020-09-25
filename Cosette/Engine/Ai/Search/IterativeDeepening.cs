@@ -59,9 +59,15 @@ namespace Cosette.Engine.Ai.Search
 
         public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
+            var entry = TranspositionTable.Get(context.BoardState.Hash);
+            if (entry.Flags != TranspositionTableEntryFlags.ExactScore && entry.IsKeyValid(context.BoardState.Hash))
+            {
+                return true;
+            }
+
             return depth < context.MaxDepth &&
-                    expectedExecutionTime <= context.MaxTime &&
-                    !IsScoreNearCheckmate(context.Statistics.Score);
+                   expectedExecutionTime <= context.MaxTime &&
+                   !IsScoreNearCheckmate(context.Statistics.Score);
         }
 
         public static bool IsScoreNearCheckmate(int score)
@@ -79,7 +85,7 @@ namespace Cosette.Engine.Ai.Search
         private static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)
         {
             var entry = TranspositionTable.Get(board.Hash);
-            if ((entry.Flags & TranspositionTableEntryFlags.ExactScore) != 0 && entry.IsKeyValid(board.Hash) && movesCount < SearchConstants.MaxDepth)
+            if (entry.Flags == TranspositionTableEntryFlags.ExactScore && entry.IsKeyValid(board.Hash) && movesCount < SearchConstants.MaxDepth)
             {
                 moves[movesCount] = entry.BestMove;
                 board.MakeMove(entry.BestMove);
