@@ -207,8 +207,13 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            if (alpha == -EvaluationConstants.Checkmate + ply + 2 && !context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+            if (alpha == -EvaluationConstants.Checkmate + ply + 2)
             {
+                if (context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+                {
+                    return alpha;
+                }
+
                 return 0;
             }
 
