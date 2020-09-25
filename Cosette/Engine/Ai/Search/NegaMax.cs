@@ -67,7 +67,6 @@ namespace Cosette.Engine.Ai.Search
 
                 if (entry.Depth >= depth)
                 {
-                    entry.Score = (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
                     switch (entry.Flags)
                     {
                         case TranspositionTableEntryFlags.AlphaScore:
@@ -82,6 +81,7 @@ namespace Cosette.Engine.Ai.Search
 
                         case TranspositionTableEntryFlags.ExactScore:
                         {
+                            entry.Score = (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
                             if (entry.Age == context.TranspositionTableEntryAge)
                             {
                                 return entry.Score;
@@ -209,20 +209,23 @@ namespace Cosette.Engine.Ai.Search
 
             if (alpha == -EvaluationConstants.Checkmate + ply + 2)
             {
-                if (context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+                if (!context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
                 {
-                    return alpha;
+                    alpha = 0;
                 }
-
-                return 0;
             }
 
             if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)
             {
-                var valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
+                var valueToSave = alpha;
                 var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
                     alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
                     TranspositionTableEntryFlags.ExactScore;
+
+                if (entryType == TranspositionTableEntryFlags.ExactScore)
+                {
+                    valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
+                }
 
                 TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)valueToSave, 
                     (byte)context.TranspositionTableEntryAge, bestMove, entryType);

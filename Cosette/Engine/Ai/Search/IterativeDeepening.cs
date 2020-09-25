@@ -59,15 +59,9 @@ namespace Cosette.Engine.Ai.Search
 
         public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
-            var entry = TranspositionTable.Get(context.BoardState.Hash);
-            if (entry.Flags != TranspositionTableEntryFlags.ExactScore && entry.IsKeyValid(context.BoardState.Hash))
-            {
-                return true;
-            }
-
             return depth < context.MaxDepth &&
                    expectedExecutionTime <= context.MaxTime &&
-                   !IsScoreNearCheckmate(context.Statistics.Score);
+                   GetMovesToCheckmate(context.Statistics.Score) != 0;
         }
 
         public static bool IsScoreNearCheckmate(int score)
