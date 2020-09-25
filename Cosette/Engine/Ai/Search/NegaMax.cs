@@ -209,7 +209,7 @@ namespace Cosette.Engine.Ai.Search
 
             if (alpha == -EvaluationConstants.Checkmate + ply + 2 && !context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
             {
-                alpha = 0;
+                return 0;
             }
 
             if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)
