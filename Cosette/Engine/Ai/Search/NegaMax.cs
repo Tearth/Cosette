@@ -207,6 +207,13 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
+            // Don't add invalid move (done after checkmate) to prevent strange behaviors
+            if (alpha == -(-EvaluationConstants.Checkmate + ply + 1))
+            {
+                return alpha;
+            }
+
+            // Set alpha to zero if the stalemate has been detected
             if (alpha == -EvaluationConstants.Checkmate + ply + 2)
             {
                 if (!context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
