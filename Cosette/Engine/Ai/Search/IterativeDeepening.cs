@@ -60,13 +60,7 @@ namespace Cosette.Engine.Ai.Search
         public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
             return depth < context.MaxDepth &&
-                   expectedExecutionTime <= context.MaxTime &&
-                   !IsScoreCheckmate(context.Statistics.Score);
-        }
-
-        public static bool IsScoreCheckmate(int score)
-        {
-            return GetMovesToCheckmate(score) == 0;
+                   expectedExecutionTime <= context.MaxTime;
         }
 
         public static bool IsScoreNearCheckmate(int score)
@@ -78,7 +72,7 @@ namespace Cosette.Engine.Ai.Search
 
         public static int GetMovesToCheckmate(int score)
         {
-            return Math.Abs(Math.Abs(score) - EvaluationConstants.Checkmate) / 2 - 1;
+            return Math.Abs(Math.Abs(score) - EvaluationConstants.Checkmate) / 2;
         }
 
         private static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)
