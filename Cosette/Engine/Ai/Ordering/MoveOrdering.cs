@@ -44,6 +44,10 @@ namespace Cosette.Engine.Ai.Ordering
 
                     moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
                 }
+                else if ((moves[moveIndex].Flags & MoveFlags.EnPassant) != 0)
+                {
+                    moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
+                }
                 else if ((int)moves[moveIndex].Flags >= 16)
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.Promotion;
@@ -58,7 +62,7 @@ namespace Cosette.Engine.Ai.Ordering
             {
                 if ((moves[moveIndex].Flags & MoveFlags.EnPassant) != 0)
                 {
-                    moveValues[moveIndex] = MoveOrderingConstants.Capture;
+                    moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
                 }
                 else
                 {
@@ -69,7 +73,7 @@ namespace Cosette.Engine.Ai.Ordering
                     var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[moveIndex].To);
                     var seeEvaluation = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
-                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
+                    moveValues[moveIndex] = seeEvaluation;
                 }
             }
         }
