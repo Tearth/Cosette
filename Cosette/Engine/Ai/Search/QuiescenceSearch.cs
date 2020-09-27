@@ -27,7 +27,7 @@ namespace Cosette.Engine.Ai.Search
             if (standPat >= beta)
             {
                 context.Statistics.QLeafs++;
-                return beta;
+                return standPat;
             }
 
             if (alpha < standPat)
@@ -49,7 +49,12 @@ namespace Cosette.Engine.Ai.Search
                 var score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha);
                 context.BoardState.UndoMove(moves[moveIndex]);
 
-                if (score >= beta)
+                if (score > alpha)
+                {
+                    alpha = score;
+                }
+
+                if (alpha >= beta)
                 {
 #if DEBUG
                     if (moveIndex == 0)
@@ -63,12 +68,7 @@ namespace Cosette.Engine.Ai.Search
 #endif
 
                     context.Statistics.QBetaCutoffs++;
-                    return beta;
-                }
-
-                if (score > alpha)
-                {
-                    alpha = score;
+                    break;
                 }
             }
 
