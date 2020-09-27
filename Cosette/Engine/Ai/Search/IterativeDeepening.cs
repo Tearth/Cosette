@@ -31,7 +31,7 @@ namespace Cosette.Engine.Ai.Search
 
                 context.Statistics.Board = context.BoardState;
                 context.Statistics.Depth = depth;
-                context.Statistics.Score = NegaMax.FindBestMove(context, depth, 0, alpha, beta, true, true);
+                context.Statistics.Score = NegaMax.FindBestMove(context, depth, 0, alpha, beta, true);
                 context.Statistics.SearchTime = (ulong)stopwatch.ElapsedMilliseconds;
                 context.Statistics.PrincipalVariationMovesCount = GetPrincipalVariation(context.BoardState, context.Statistics.PrincipalVariation, 0);
                 bestMove = context.Statistics.PrincipalVariation[0];

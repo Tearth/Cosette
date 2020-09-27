@@ -1,6 +1,7 @@
 # Version 2.0 (Darkness), --.--.----
  - Improve transposition tables: entries are now smaller, have proper checkmate scores (relative to position) and are used between moves (aging)
  - Add fifty-move rule detection
+ - Fix PV node detection
 
 Estimated strength: ???? ELO
 

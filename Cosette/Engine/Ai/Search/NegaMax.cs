@@ -10,7 +10,7 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool pvNode)
+        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove)
         {
             if (context.Statistics.Nodes >= context.MaxNodesCount)
             {
@@ -57,6 +57,7 @@ namespace Cosette.Engine.Ai.Search
 
             var originalAlpha = alpha;
             var bestMove = Move.Empty;
+            var pvNode = beta - alpha > 1;
 
             var entry = TranspositionTable.Get(context.BoardState.Hash);
             if (entry.IsKeyValid(context.BoardState.Hash))
@@ -124,7 +125,7 @@ namespace Cosette.Engine.Ai.Search
             if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode))
             {
                 context.BoardState.MakeNullMove();
-                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false, pvNode);
+                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false);
                 context.BoardState.UndoNullMove();
 
                 if (score >= beta)
@@ -158,7 +159,7 @@ namespace Cosette.Engine.Ai.Search
                 var score = 0;
                 if (pvs)
                 {
-                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, true);
+                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove);
                     pvs = false;
                 }
                 else
@@ -169,10 +170,10 @@ namespace Cosette.Engine.Ai.Search
                         reducedDepth = LMRGetReducedDepth(depth, pvNode);
                     }
 
-                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, false);
+                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, false);
+                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove);
                     }
                 }
 
