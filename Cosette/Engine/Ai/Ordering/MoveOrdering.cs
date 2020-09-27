@@ -8,11 +8,11 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class MoveOrdering
     {
-        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, TranspositionTableEntry entry)
+        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
         {
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                if (entry.BestMove == moves[moveIndex])
+                if (hashOrPvMove == moves[moveIndex])
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.HashMove;
                 }

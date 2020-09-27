@@ -65,6 +65,10 @@ namespace Cosette.Engine.Ai.Search
 #if DEBUG
                 context.Statistics.TTHits++;
 #endif
+                if (entry.Flags != TranspositionTableEntryFlags.AlphaScore)
+                {
+                    bestMove = entry.BestMove;
+                }
 
                 if (entry.Depth >= depth)
                 {
@@ -96,7 +100,6 @@ namespace Cosette.Engine.Ai.Search
                             if (entry.Score > alpha)
                             {
                                 alpha = entry.Score;
-                                bestMove = entry.BestMove;
                             }
 
                             break;
@@ -139,7 +142,7 @@ namespace Cosette.Engine.Ai.Search
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
 
             var movesCount = context.BoardState.GetAvailableMoves(moves);
-            MoveOrdering.AssignValues(context.BoardState, moves, moveValues, movesCount, depth, entry);
+            MoveOrdering.AssignValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
 
             var pvs = true;
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
