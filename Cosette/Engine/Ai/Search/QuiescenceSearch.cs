@@ -52,23 +52,23 @@ namespace Cosette.Engine.Ai.Search
                 if (score > alpha)
                 {
                     alpha = score;
-                }
 
-                if (alpha >= beta)
-                {
+                    if (alpha >= beta)
+                    {
 #if DEBUG
-                    if (moveIndex == 0)
-                    {
-                        context.Statistics.QBetaCutoffsAtFirstMove++;
-                    }
-                    else
-                    {
-                        context.Statistics.QBetaCutoffsNotAtFirstMove++;
-                    }
+                        if (moveIndex == 0)
+                        {
+                            context.Statistics.QBetaCutoffsAtFirstMove++;
+                        }
+                        else
+                        {
+                            context.Statistics.QBetaCutoffsNotAtFirstMove++;
+                        }
 #endif
 
-                    context.Statistics.QBetaCutoffs++;
-                    break;
+                        context.Statistics.QBetaCutoffs++;
+                        break;
+                    }
                 }
             }
 

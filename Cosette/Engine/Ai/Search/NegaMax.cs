@@ -180,34 +180,35 @@ namespace Cosette.Engine.Ai.Search
                     }
                 }
 
+                context.BoardState.UndoMove(moves[moveIndex]);
+
                 if (score > alpha)
                 {
                     alpha = score;
                     bestMove = moves[moveIndex];
-                }
 
-                context.BoardState.UndoMove(moves[moveIndex]);
-                if (alpha >= beta)
-                {
-                    if (moves[moveIndex].IsQuiet())
+                    if (alpha >= beta)
                     {
-                        KillerHeuristic.AddKillerMove(moves[moveIndex], context.BoardState.ColorToMove, depth);
-                        HistoryHeuristic.AddHistoryMove(context.BoardState.ColorToMove, moves[moveIndex].From, moves[moveIndex].To, depth);
-                    }
+                        if (moves[moveIndex].IsQuiet())
+                        {
+                            KillerHeuristic.AddKillerMove(moves[moveIndex], context.BoardState.ColorToMove, depth);
+                            HistoryHeuristic.AddHistoryMove(context.BoardState.ColorToMove, moves[moveIndex].From, moves[moveIndex].To, depth);
+                        }
 
 #if DEBUG
-                    if (moveIndex == 0)
-                    {
-                        context.Statistics.BetaCutoffsAtFirstMove++;
-                    }
-                    else
-                    {
-                        context.Statistics.BetaCutoffsNotAtFirstMove++;
-                    }
+                        if (moveIndex == 0)
+                        {
+                            context.Statistics.BetaCutoffsAtFirstMove++;
+                        }
+                        else
+                        {
+                            context.Statistics.BetaCutoffsNotAtFirstMove++;
+                        }
 #endif
 
-                    context.Statistics.BetaCutoffs++;
-                    break;
+                        context.Statistics.BetaCutoffs++;
+                        break;
+                    }
                 }
             }
 
