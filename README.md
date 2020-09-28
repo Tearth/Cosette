@@ -26,6 +26,9 @@ Cosette has an official account on [lichess.org](https://lichess.org/) platform,
  - mobility
  - king safety
  - pawn structure (cached in pawn hash table)
+ - doubled rooks
+ - rooks on open files
+ - bishop pair
 
 **Search:**
  - negamax
