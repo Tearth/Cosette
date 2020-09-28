@@ -63,24 +63,25 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
             for (var file = 0; file < 8; file++)
             {
-                var pawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & _innerFileMasks[file];
-                var pawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & _outerFileMasks[file];
+                var friendlyPawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & _innerFileMasks[file];
+                var friendlyPawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & _outerFileMasks[file];
                 var enemyPawnsOnInnerMask = board.Pieces[enemyColor][Piece.Pawn] & _innerFileMasks[file];
+                var enemyPawnsOnOuterMask = board.Pieces[enemyColor][Piece.Pawn] & _outerFileMasks[file];
 
-                var pawnsCount = (int)BitOperations.Count(pawnsOnInnerMask);
+                var pawnsCount = BitOperations.Count(friendlyPawnsOnInnerMask);
                 if (pawnsCount > 1)
                 {
-                    doubledPawns += pawnsCount - 1;
+                    doubledPawns += (int)(pawnsCount - 1);
                 }
 
-                if (pawnsOnInnerMask != 0)
+                if (friendlyPawnsOnInnerMask != 0)
                 {
-                    if (pawnsOnOuterMask == 0)
+                    if (friendlyPawnsOnOuterMask == 0)
                     {
-                        isolatedPawns += (int)BitOperations.Count(pawnsOnInnerMask);
+                        isolatedPawns += (int)BitOperations.Count(pawnsCount);
                     }
 
-                    if (enemyPawnsOnInnerMask == 0)
+                    if (enemyPawnsOnInnerMask == 0 && enemyPawnsOnOuterMask == 0)
                     {
                         passingPawns++;
                     }
