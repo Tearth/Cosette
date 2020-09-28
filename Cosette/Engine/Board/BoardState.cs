@@ -3,6 +3,7 @@ using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
+using Cosette.Engine.Fen;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Board
@@ -639,6 +640,17 @@ namespace Cosette.Engine.Board
 
         public int GetPiece(int color, int from)
         {
+            var result = TryGetPiece(color, from);
+            if (result == -1)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return result;
+        }
+
+        public int TryGetPiece(int color, int from)
+        {
             var field = 1ul << from;
 
             for (var i = 0; i < 6; i++)
@@ -649,7 +661,7 @@ namespace Cosette.Engine.Board
                 }
             }
 
-            throw new InvalidOperationException();
+            return -1;
         }
 
         public void AddPiece(int color, int piece, int fieldIndex)
@@ -753,6 +765,11 @@ namespace Cosette.Engine.Board
             }
 
             return false;
+        }
+
+        public override string ToString()
+        {
+            return BoardToFen.Parse(this);
         }
 
         private int GetPromotionPiece(MoveFlags flags)

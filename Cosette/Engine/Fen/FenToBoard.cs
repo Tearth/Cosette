@@ -4,7 +4,7 @@ using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Fen
 {
-    public static class FenParser
+    public static class FenToBoard
     {
         public static BoardState Parse(string fen)
         {
@@ -33,7 +33,7 @@ namespace Cosette.Engine.Fen
 
             result.MovesCount = movesCount;
             result.IrreversibleMovesCount = halfmoveClock;
-            result.ColorToMove = colorState == "w" ? Color.White : Color.Black;
+            result.ColorToMove = currentColor;
             result.Hash = ZobristHashing.CalculateHash(result);
             result.PawnHash = ZobristHashing.CalculatePawnHash(result);
 
@@ -61,7 +61,6 @@ namespace Cosette.Engine.Fen
                     {
                         position += new Position(c - '0', 0);
                     }
-
                 }
 
                 position = new Position(0, position.Y - 1);
