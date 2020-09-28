@@ -50,7 +50,7 @@ namespace Cosette.Engine.Ai.Ordering
                 }
                 else if ((int)moves[moveIndex].Flags >= 16)
                 {
-                    moveValues[moveIndex] = MoveOrderingConstants.Promotion;
+                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace Cosette.Engine.Board
             _fieldHashes = new ulong[2][][];
             _castlingHashes = new ulong[4];
             _enPassantHashes = new ulong[8];
-            _random = new Random();
+            _random = new Random(123456789);
 
             _fieldHashes[Color.White] = new ulong[6][];
             _fieldHashes[Color.Black] = new ulong[6][];
