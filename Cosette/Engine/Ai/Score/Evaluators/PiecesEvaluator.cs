@@ -16,14 +16,15 @@ namespace Cosette.Engine.Ai.Score.Evaluators
         {
             var doubledRooks = 0;
             var rooksOnOpenFile = 0;
+            var pairOfBishops = 0;
             var enemyColor = ColorOperations.Invert(color);
 
-            var pieces = board.Pieces[color][Piece.Rook];
-            while (pieces != 0)
+            var rooks = board.Pieces[color][Piece.Rook];
+            while (rooks != 0)
             {
-                var lsb = BitOperations.GetLsb(pieces);
+                var lsb = BitOperations.GetLsb(rooks);
                 var field = BitOperations.BitScan(lsb);
-                pieces = BitOperations.PopLsb(pieces);
+                rooks = BitOperations.PopLsb(rooks);
 
                 var file = FilePatternGenerator.GetPattern(field) | lsb;
                 var rooksOnFile = file & board.Pieces[color][Piece.Rook];
@@ -42,13 +43,22 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
+            var bishops = board.Pieces[color][Piece.Bishop];
+            if (BitOperations.Count(bishops) > 1)
+            {
+                pairOfBishops = 1;
+            }
+
             var doubledRooksScore = doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Opening] * openingPhase +
                                     doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Ending] * endingPhase;
 
             var rooksOnOpenFileScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Opening] * openingPhase +
                                        rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Ending] * endingPhase;
 
-            return (int)(doubledRooksScore + rooksOnOpenFileScore);
+            var pairOfBishopsScore = pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Opening] * openingPhase +
+                                     pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Ending] * endingPhase;
+
+            return (int)(doubledRooksScore + rooksOnOpenFileScore + pairOfBishopsScore);
         }
     }
 }

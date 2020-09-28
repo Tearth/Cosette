@@ -17,6 +17,7 @@
         public static int[] KingInDanger = { -20, -5 };
         public static int[] DoubledRooks = { 20, 5 };
         public static int[] RookOnOpenFile = { 20, 0 };
+        public static int[] PairOfBishops = { 30, 20 };
 
         public const int OpeningEndgameEdge = 20500;
     }
