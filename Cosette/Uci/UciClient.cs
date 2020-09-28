@@ -5,6 +5,7 @@ using System.Text;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
+using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Interactive;
 using Cosette.Logs;
@@ -125,11 +126,14 @@ namespace Cosette.Uci
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + mobility + kingSafety;
+                var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+
+                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + 
+                            mobility + kingSafety + pieces;
 
                 Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"irrmoves {stats.Board.IrreversibleMovesCount}");
+                     $"pieces {pieces} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 
