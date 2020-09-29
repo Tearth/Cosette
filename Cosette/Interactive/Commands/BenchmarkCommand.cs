@@ -100,6 +100,11 @@ namespace Cosette.Interactive.Commands
             // Transposition statistics
             _interactiveConsole.WriteLine($"   Transposition: Entries: {statistics.TTEntries}, Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
                                           $"NonHits: {statistics.TTNonHits}, Collisions: {statistics.TTCollisions}");
+
+            // Pawn hash table statistics
+            _interactiveConsole.WriteLine($"   Pawn hash table: Entries: {statistics.EvaluationStatistics.PHTEntries}, " +
+                                          $"Hits: {statistics.EvaluationStatistics.PHTHits} ({statistics.EvaluationStatistics.PHTHitsPercent:F} %), " +
+                                          $"NonHits: {statistics.EvaluationStatistics.PHTNonHits}, Collisions: {statistics.EvaluationStatistics.PHTCollisions}");
 #endif
 
 

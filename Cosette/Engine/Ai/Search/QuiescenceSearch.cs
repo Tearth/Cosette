@@ -23,7 +23,7 @@ namespace Cosette.Engine.Ai.Search
                 return -EvaluationConstants.Checkmate + ply;
             }
 
-            var standPat = Evaluation.Evaluate(context.BoardState, context.BoardState.ColorToMove);
+            var standPat = Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
             if (standPat >= beta)
             {
                 context.Statistics.QLeafs++;

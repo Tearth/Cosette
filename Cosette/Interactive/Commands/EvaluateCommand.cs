@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Fen;
 
@@ -19,6 +20,7 @@ namespace Cosette.Interactive.Commands
         {
             var fen = string.Join(' ', parameters);
             var boardState = FenToBoard.Parse(fen);
+            var evaluationStatistics = new EvaluationStatistics();
 
             var openingPhase = boardState.GetPhaseRatio();
             var endingPhase = 1 - openingPhase;
@@ -26,7 +28,7 @@ namespace Cosette.Interactive.Commands
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
             var castlingEvaluation = CastlingEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var positionEvaluation = PositionEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(boardState, evaluationStatistics, openingPhase, endingPhase);
             var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var pieces = PiecesEvaluator.Evaluate(boardState, openingPhase, endingPhase);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
@@ -117,13 +118,14 @@ namespace Cosette.Uci
 
             if (_debugMode)
             {
+                var evaluationStatistics = new EvaluationStatistics();
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = 1 - openingPhase;
 
                 var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
                 var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);

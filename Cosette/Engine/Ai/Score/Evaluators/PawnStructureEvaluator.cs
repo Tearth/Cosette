@@ -38,18 +38,36 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
         }
 
-        public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, EvaluationStatistics statistics, float openingPhase, float endingPhase)
         {
             var entry = PawnHashTable.Get(board.PawnHash);
             if (entry.IsKeyValid(board.PawnHash))
             {
+#if DEBUG
+                statistics.PHTHits++;
+#endif
                 return entry.Score;
             }
+#if DEBUG
+            else
+            {
+                statistics.PHTNonHits++;
+
+                if (entry.Key != 0 || entry.Score != 0)
+                {
+                    statistics.PHTCollisions++;
+                }
+            }
+#endif
 
             var result = Evaluate(board, Color.White, openingPhase, endingPhase) - 
                          Evaluate(board, Color.Black, openingPhase, endingPhase);
 
             PawnHashTable.Add(board.PawnHash, (short)result);
+
+#if DEBUG
+            statistics.PHTEntries++;
+#endif
             return result;
         }
 
