@@ -58,6 +58,7 @@ namespace Cosette.Interactive.Commands
 
             TranspositionTable.Clear();
             PawnHashTable.Clear();
+            EvaluationHashTable.Clear();
             KillerHeuristic.Clear();
             HistoryHeuristic.Clear();
 

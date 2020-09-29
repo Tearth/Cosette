@@ -16,6 +16,7 @@ namespace Cosette.Uci.Commands
         {
             TranspositionTable.Clear();
             PawnHashTable.Clear();
+            EvaluationHashTable.Clear();
             KillerHeuristic.Clear();
             HistoryHeuristic.Clear();
 
