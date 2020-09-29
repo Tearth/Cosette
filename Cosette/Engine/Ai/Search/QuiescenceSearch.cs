@@ -1,6 +1,7 @@
 ﻿using System;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
+using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
@@ -23,7 +24,19 @@ namespace Cosette.Engine.Ai.Search
                 return -EvaluationConstants.Checkmate + ply;
             }
 
-            var standPat = Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
+            var standPat = 0;
+
+            var evaluationEntry = EvaluationHashTable.Get(context.BoardState.Hash);
+            if (evaluationEntry.IsKeyValid(context.BoardState.Hash))
+            {
+                standPat = evaluationEntry.Score;
+            }
+            else
+            {
+                standPat = Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
+                EvaluationHashTable.Add(context.BoardState.Hash, (short)standPat);
+            }    
+
             if (standPat >= beta)
             {
                 context.Statistics.QLeafs++;

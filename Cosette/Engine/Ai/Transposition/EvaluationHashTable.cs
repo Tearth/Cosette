@@ -15,9 +15,9 @@ namespace Cosette.Engine.Ai.Transposition
             _table = new EvaluationHashTableEntry[_size];
         }
 
-        public static void Add(ulong hash, bool kingChecked)
+        public static void Add(ulong hash, short score)
         {
-            _table[hash % _size] = new EvaluationHashTableEntry(hash, kingChecked);
+            _table[hash % _size] = new EvaluationHashTableEntry(hash, score);
         }
 
         public static EvaluationHashTableEntry Get(ulong hash)

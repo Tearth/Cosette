@@ -6,12 +6,12 @@ namespace Cosette.Engine.Ai.Transposition
     public struct EvaluationHashTableEntry
     {
         public uint Key { get; set; }
-        public bool KingChecked { get; set; }
+        public short Score { get; set; }
 
-        public EvaluationHashTableEntry(ulong hash, bool kingChecked)
+        public EvaluationHashTableEntry(ulong hash, short score)
         {
             Key = (uint)(hash >> 32);
-            KingChecked = kingChecked;
+            Score = score;
         }
 
         public bool IsKeyValid(ulong hash)
