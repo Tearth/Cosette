@@ -13,6 +13,7 @@ namespace Cosette
         {
             TranspositionTable.Init(SearchConstants.DefaultHashTableSize);
             PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);
+            EvaluationHashTable.Init(SearchConstants.DefaultEvaluationHashTableSize);
             MagicBitboards.InitWithInternalKeys();
 
             new InteractiveConsole().Run();

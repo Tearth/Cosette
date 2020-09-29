@@ -90,7 +90,9 @@ namespace Cosette.Uci
 
         private void SendOptions()
         {
-            var defaultHashTablesSize = SearchConstants.DefaultHashTableSize + SearchConstants.DefaultPawnHashTableSize;
+            var defaultHashTablesSize = SearchConstants.DefaultHashTableSize + 
+                                        SearchConstants.DefaultPawnHashTableSize +
+                                        SearchConstants.DefaultEvaluationHashTableSize;
 
             Send($"option name Hash type spin default {defaultHashTablesSize} min 1 max 2048");
             Send("uciok");
