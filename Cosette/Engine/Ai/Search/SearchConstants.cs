@@ -3,7 +3,7 @@
     public static class SearchConstants
     {
         public const int MinValue = short.MinValue;
-        public const int MaxValue =  short.MaxValue;
+        public const int MaxValue = short.MaxValue;
         public const int MaxDepth = 32;
         public const int MaxMovesCount = 128;
 
