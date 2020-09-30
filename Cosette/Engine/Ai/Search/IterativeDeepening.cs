@@ -27,7 +27,7 @@ namespace Cosette.Engine.Ai.Search
 
             for (var depth = 1; ShouldContinueDeepening(context, depth, expectedExecutionTime); depth++)
             {
-                context.Statistics.Clear();
+                context.Statistics = new SearchStatistics();
 
                 context.Statistics.Board = context.BoardState;
                 context.Statistics.Depth = depth;

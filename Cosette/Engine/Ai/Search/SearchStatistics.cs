@@ -59,39 +59,5 @@ namespace Cosette.Engine.Ai.Search
             EvaluationStatistics = new EvaluationStatistics();
             PrincipalVariation = new Move[SearchConstants.MaxDepth];
         }
-
-        public void Clear()
-        {
-            Board = null;
-            EvaluationStatistics.Clear();
-
-            Depth = 0;
-            SelectiveDepth = 0;
-            Score = 0;
-            SearchTime = 0;
-
-            Nodes = 0;
-            QNodes = 0;
-
-            Leafs = 0;
-            QLeafs = 0;
-
-            BetaCutoffs = 0;
-            QBetaCutoffs = 0;
-
-            TTEntries = 0;
-            TTCollisions = 0;
-            TTHits = 0;
-            TTNonHits = 0;
-
-            BetaCutoffsAtFirstMove = 0;
-            QBetaCutoffsAtFirstMove = 0;
-
-            BetaCutoffsNotAtFirstMove = 0;
-            QBetaCutoffsNotAtFirstMove = 0;
-
-            Array.Clear(PrincipalVariation, 0, PrincipalVariation.Length);
-            PrincipalVariationMovesCount = 0;
-        }
     }
 }

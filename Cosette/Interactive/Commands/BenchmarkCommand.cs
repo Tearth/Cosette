@@ -106,6 +106,11 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine($"   Pawn hash table: Entries: {statistics.EvaluationStatistics.PHTEntries}, " +
                                           $"Hits: {statistics.EvaluationStatistics.PHTHits} ({statistics.EvaluationStatistics.PHTHitsPercent:F} %), " +
                                           $"NonHits: {statistics.EvaluationStatistics.PHTNonHits}, Collisions: {statistics.EvaluationStatistics.PHTCollisions}");
+
+            // Evaluation hash table statistics
+            _interactiveConsole.WriteLine($"   Evaluation hash table: Entries: {statistics.EvaluationStatistics.EHTEntries}, " +
+                                          $"Hits: {statistics.EvaluationStatistics.EHTHits} ({statistics.EvaluationStatistics.EHTHitsPercent:F} %), " +
+                                          $"NonHits: {statistics.EvaluationStatistics.EHTNonHits}, Collisions: {statistics.EvaluationStatistics.EHTCollisions}");
 #endif
 
 

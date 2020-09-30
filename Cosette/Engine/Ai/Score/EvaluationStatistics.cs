@@ -13,18 +13,5 @@
         public ulong EHTHits { get; set; }
         public ulong EHTNonHits { get; set; }
         public float EHTHitsPercent => (float)EHTHits * 100 / (EHTHits + EHTNonHits);
-
-        public void Clear()
-        {
-            PHTEntries = 0;
-            PHTCollisions = 0;
-            PHTHits = 0;
-            PHTNonHits = 0;
-
-            EHTEntries = 0;
-            EHTCollisions = 0;
-            EHTHits = 0;
-            EHTNonHits = 0;
-        }
     }
 }
