@@ -30,11 +30,25 @@ namespace Cosette.Engine.Ai.Search
             if (evaluationEntry.IsKeyValid(context.BoardState.Hash))
             {
                 standPat = evaluationEntry.Score;
+
+#if DEBUG
+                context.Statistics.EvaluationStatistics.EHTHits++;
+#endif
             }
             else
             {
                 standPat = Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
                 EvaluationHashTable.Add(context.BoardState.Hash, (short)standPat);
+
+#if DEBUG
+                context.Statistics.EvaluationStatistics.EHTNonHits++;
+                context.Statistics.EvaluationStatistics.EHTEntries++;
+
+                if (evaluationEntry.Key != 0 || evaluationEntry.Score != 0)
+                {
+                    context.Statistics.EvaluationStatistics.EHTCollisions++;
+                }
+#endif
             }    
 
             if (standPat >= beta)

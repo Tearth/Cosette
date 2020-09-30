@@ -82,9 +82,13 @@ namespace Cosette.Engine.Ai.Search
             TTEntries = 0;
             TTCollisions = 0;
             TTHits = 0;
+            TTNonHits = 0;
 
             BetaCutoffsAtFirstMove = 0;
             QBetaCutoffsAtFirstMove = 0;
+
+            BetaCutoffsNotAtFirstMove = 0;
+            QBetaCutoffsNotAtFirstMove = 0;
 
             Array.Clear(PrincipalVariation, 0, PrincipalVariation.Length);
             PrincipalVariationMovesCount = 0;
