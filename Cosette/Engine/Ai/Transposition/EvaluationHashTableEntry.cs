@@ -2,7 +2,6 @@
 
 namespace Cosette.Engine.Ai.Transposition
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct EvaluationHashTableEntry
     {
         public uint Key { get; set; }

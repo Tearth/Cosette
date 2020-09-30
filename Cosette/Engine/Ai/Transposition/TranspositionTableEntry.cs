@@ -3,7 +3,6 @@ using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Ai.Transposition
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TranspositionTableEntry
     {
         public uint Key { get; set; }
