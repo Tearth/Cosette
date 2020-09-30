@@ -7,6 +7,7 @@
  - Added "evaluate" command to get FEN position evaluation
  - Added ability to postpone moves generation before PV move check
  - Improved move ordering: better promotions are now prioritized
+ - Added evaluation hash table
 
 Estimated strength: ???? ELO
 
