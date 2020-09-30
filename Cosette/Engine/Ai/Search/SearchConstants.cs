@@ -7,9 +7,9 @@
         public const int MaxDepth = 32;
         public const int MaxMovesCount = 128;
 
-        public const int DefaultHashTableSize = 8;
-        public const int DefaultPawnHashTableSize = 8;
-        public const int DefaultEvaluationHashTableSize = 8;
+        public const int DefaultHashTableSize = 32;
+        public const int DefaultPawnHashTableSize = 1;
+        public const int DefaultEvaluationHashTableSize = 32;
 
         public const int NullWindowMinimalDepth = 5;
         public const byte NullWindowDepthReduction = 3;
