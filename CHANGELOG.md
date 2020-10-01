@@ -8,6 +8,9 @@
  - Added ability to postpone moves generation before PV move check
  - Improved move ordering: better promotions are now prioritized
  - Added evaluation hash table
+ - Redefined and reduced size of Move structure (from 4 bytes to 2 bytes)
+ - Reduced size of TranspositionTableEntry (from 16 bytes to 12 bytes)
+ - Improved method of probing piece type at the specified field
 
 Estimated strength: ???? ELO
 
