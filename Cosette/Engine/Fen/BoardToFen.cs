@@ -34,8 +34,8 @@ namespace Cosette.Engine.Fen
                 {
                     var fieldIndex = rank * 8 + file;
                     
-                    var possibleWhitePiece = board.TryGetPiece(Color.White, fieldIndex);
-                    var possibleBlackPiece = board.TryGetPiece(Color.Black, fieldIndex);
+                    var possibleWhitePiece = board.PieceTable[fieldIndex];
+                    var possibleBlackPiece = board.PieceTable[fieldIndex];
                     var color = possibleWhitePiece != -1 ? Color.White : Color.Black;
 
                     var piece = 

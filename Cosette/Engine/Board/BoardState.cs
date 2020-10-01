@@ -24,7 +24,7 @@ namespace Cosette.Engine.Board
         public int[] Material { get; set; }
         public int[][] Position { get; set; }
 
-        public int[] PiecesTable { get; set; }
+        public int[] PieceTable { get; set; }
 
         public ulong Hash { get; set; }
         public ulong PawnHash { get; set; }
@@ -53,7 +53,7 @@ namespace Cosette.Engine.Board
             Position[Color.White] = new int[2];
             Position[Color.Black] = new int[2];
 
-            PiecesTable = new int[64];
+            PieceTable = new int[64];
 
             _killedPieces = new FastStack<int>(512);
             _enPassants = new FastStack<ulong>(512);
@@ -110,43 +110,43 @@ namespace Cosette.Engine.Board
             Position[Color.Black][GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
             Position[Color.Black][GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
 
-            Array.Fill(PiecesTable, -1);
+            Array.Fill(PieceTable, -1);
 
-            PiecesTable[0] = Piece.Rook;
-            PiecesTable[1] = Piece.Knight;
-            PiecesTable[2] = Piece.Bishop;
-            PiecesTable[3] = Piece.King;
-            PiecesTable[4] = Piece.Queen;
-            PiecesTable[5] = Piece.Bishop;
-            PiecesTable[6] = Piece.Knight;
-            PiecesTable[7] = Piece.Rook;
+            PieceTable[0] = Piece.Rook;
+            PieceTable[1] = Piece.Knight;
+            PieceTable[2] = Piece.Bishop;
+            PieceTable[3] = Piece.King;
+            PieceTable[4] = Piece.Queen;
+            PieceTable[5] = Piece.Bishop;
+            PieceTable[6] = Piece.Knight;
+            PieceTable[7] = Piece.Rook;
 
-            PiecesTable[8] = Piece.Pawn;
-            PiecesTable[9] = Piece.Pawn;
-            PiecesTable[10] = Piece.Pawn;
-            PiecesTable[11] = Piece.Pawn;
-            PiecesTable[12] = Piece.Pawn;
-            PiecesTable[13] = Piece.Pawn;
-            PiecesTable[14] = Piece.Pawn;
-            PiecesTable[15] = Piece.Pawn;
+            PieceTable[8] = Piece.Pawn;
+            PieceTable[9] = Piece.Pawn;
+            PieceTable[10] = Piece.Pawn;
+            PieceTable[11] = Piece.Pawn;
+            PieceTable[12] = Piece.Pawn;
+            PieceTable[13] = Piece.Pawn;
+            PieceTable[14] = Piece.Pawn;
+            PieceTable[15] = Piece.Pawn;
 
-            PiecesTable[48] = Piece.Pawn;
-            PiecesTable[49] = Piece.Pawn;
-            PiecesTable[50] = Piece.Pawn;
-            PiecesTable[51] = Piece.Pawn;
-            PiecesTable[52] = Piece.Pawn;
-            PiecesTable[53] = Piece.Pawn;
-            PiecesTable[54] = Piece.Pawn;
-            PiecesTable[55] = Piece.Pawn;
+            PieceTable[48] = Piece.Pawn;
+            PieceTable[49] = Piece.Pawn;
+            PieceTable[50] = Piece.Pawn;
+            PieceTable[51] = Piece.Pawn;
+            PieceTable[52] = Piece.Pawn;
+            PieceTable[53] = Piece.Pawn;
+            PieceTable[54] = Piece.Pawn;
+            PieceTable[55] = Piece.Pawn;
 
-            PiecesTable[56] = Piece.Rook;
-            PiecesTable[57] = Piece.Knight;
-            PiecesTable[58] = Piece.Bishop;
-            PiecesTable[59] = Piece.King;
-            PiecesTable[60] = Piece.Queen;
-            PiecesTable[61] = Piece.Bishop;
-            PiecesTable[62] = Piece.Knight;
-            PiecesTable[63] = Piece.Rook;
+            PieceTable[56] = Piece.Rook;
+            PieceTable[57] = Piece.Knight;
+            PieceTable[58] = Piece.Bishop;
+            PieceTable[59] = Piece.King;
+            PieceTable[60] = Piece.Queen;
+            PieceTable[61] = Piece.Bishop;
+            PieceTable[62] = Piece.Knight;
+            PieceTable[63] = Piece.Rook;
 
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
@@ -238,7 +238,7 @@ namespace Cosette.Engine.Board
             }
             else if ((move.Flags & MoveFlags.Kill) != 0)
             {
-                var killedPiece = GetPiece(enemyColor, move.To);
+                var killedPiece = PieceTable[move.To];
 
                 RemovePiece(enemyColor, killedPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, move.To);
@@ -366,7 +366,7 @@ namespace Cosette.Engine.Board
             else if ((move.Flags & MoveFlags.EnPassant) != 0)
             {
                 var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
-                var killedPiece = GetPiece(enemyColor, enemyPieceField);
+                var killedPiece = PieceTable[enemyPieceField];
 
                 RemovePiece(enemyColor, killedPiece, enemyPieceField);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, enemyPieceField);
@@ -679,24 +679,8 @@ namespace Cosette.Engine.Board
             Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][from];
             Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][to];
 
-            PiecesTable[from] = -1;
-            PiecesTable[to] = piece;
-        }
-
-        public int GetPiece(int color, int from)
-        {
-            var result = TryGetPiece(color, from);
-            if (result == -1)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return result;
-        }
-
-        public int TryGetPiece(int color, int from)
-        {
-            return PiecesTable[from];
+            PieceTable[from] = -1;
+            PieceTable[to] = piece;
         }
 
         public void AddPiece(int color, int piece, int fieldIndex)
@@ -712,7 +696,7 @@ namespace Cosette.Engine.Board
             Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
             Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
 
-            PiecesTable[fieldIndex] = piece;
+            PieceTable[fieldIndex] = piece;
         }
 
         public void RemovePiece(int color, int piece, int fieldIndex)
@@ -728,7 +712,7 @@ namespace Cosette.Engine.Board
             Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
             Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
 
-            PiecesTable[fieldIndex] = -1;
+            PieceTable[fieldIndex] = -1;
         }
 
         public int CalculateMaterial(int color)
