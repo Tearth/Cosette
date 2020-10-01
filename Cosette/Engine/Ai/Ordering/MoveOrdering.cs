@@ -18,7 +18,8 @@ namespace Cosette.Engine.Ai.Ordering
                 }
                 else if (moves[moveIndex].IsQuiet())
                 {
-                    if (moves[moveIndex].IsPawnNearPromotion(board.ColorToMove))
+                    var pieceType = board.PieceTable[moves[moveIndex].From];
+                    if (pieceType == Piece.Pawn && IsPawnNearPromotion(board.ColorToMove, moves[moveIndex].To))
                     {
                         moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
                     }
@@ -35,7 +36,7 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     var enemyColor = ColorOperations.Invert(board.ColorToMove);
 
-                    var attackingPiece = moves[moveIndex].PieceType;
+                    var attackingPiece = board.PieceTable[moves[moveIndex].From];
                     var capturedPiece = board.PieceTable[moves[moveIndex].To];
 
                     var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
@@ -66,7 +67,7 @@ namespace Cosette.Engine.Ai.Ordering
                 }
                 else
                 {
-                    var attackingPiece = moves[moveIndex].PieceType;
+                    var attackingPiece = board.PieceTable[moves[moveIndex].From];
                     var capturedPiece = board.PieceTable[moves[moveIndex].To];
 
                     var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
@@ -94,6 +95,17 @@ namespace Cosette.Engine.Ai.Ordering
 
             (moves[maxIndex], moves[currentIndex]) = (moves[currentIndex], moves[maxIndex]);
             (moveValues[maxIndex], moveValues[currentIndex]) = (moveValues[currentIndex], moveValues[maxIndex]);
+        }
+
+
+        private static bool IsPawnNearPromotion(int color, byte to)
+        {
+            if (color == Color.White && to >= 40 || color == Color.Black && to <= 23)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

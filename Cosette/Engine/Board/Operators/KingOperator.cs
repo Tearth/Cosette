@@ -21,7 +21,7 @@ namespace Cosette.Engine.Board.Operators
                 availableMoves = BitOperations.PopLsb(availableMoves);
 
                 var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Kill : MoveFlags.None;
-                moves[offset++] = new Move(from, fieldIndex, Piece.King, flags);
+                moves[offset++] = new Move(from, fieldIndex, flags);
             }
 
             if (color == Color.White)
@@ -30,7 +30,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 1) && !boardState.IsFieldAttacked(color, 2) && !boardState.IsFieldAttacked(color, 3))
                     {
-                        moves[offset++] = new Move(3, 1, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(3, 1, MoveFlags.Castling);
                     }
                 }
                 
@@ -38,7 +38,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 3) && !boardState.IsFieldAttacked(color, 4) && !boardState.IsFieldAttacked(color, 5))
                     {
-                        moves[offset++] = new Move(3, 5, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(3, 5, MoveFlags.Castling);
                     }
                 }
             }
@@ -48,7 +48,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 57) && !boardState.IsFieldAttacked(color, 58) && !boardState.IsFieldAttacked(color, 59))
                     {
-                        moves[offset++] = new Move(59, 57, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(59, 57, MoveFlags.Castling);
                     }
                 }
                 
@@ -56,7 +56,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 59) && !boardState.IsFieldAttacked(color, 60) && !boardState.IsFieldAttacked(color, 61))
                     {
-                        moves[offset++] = new Move(59, 61, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(59, 61, MoveFlags.Castling);
                     }
                 }
             }
@@ -78,7 +78,7 @@ namespace Cosette.Engine.Board.Operators
                 var fieldIndex = BitOperations.BitScan(field);
                 availableMoves = BitOperations.PopLsb(availableMoves);
 
-                moves[offset++] = new Move(from, fieldIndex, Piece.King, MoveFlags.Kill);
+                moves[offset++] = new Move(from, fieldIndex, MoveFlags.Kill);
             }
 
             return offset;

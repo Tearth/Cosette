@@ -54,14 +54,14 @@ namespace Cosette.Engine.Board.Operators
 
                 if ((piece & promotionRank) != 0)
                 {
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.QueenPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.KnightPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.BishopPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.QueenPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.RookPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.KnightPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.BishopPromotion);
                 }
                 else
                 {
-                    moves[offset++] = new Move(from, to, Piece.Pawn, 0);
+                    moves[offset++] = new Move(from, to, 0);
                 }
             }
 
@@ -98,7 +98,7 @@ namespace Cosette.Engine.Board.Operators
                 var from = BitOperations.BitScan(piece) - shift;
                 var to = BitOperations.BitScan(piece);
 
-                moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.DoublePush);
+                moves[offset++] = new Move(from, to, MoveFlags.DoublePush);
             }
 
             return offset;
@@ -136,20 +136,20 @@ namespace Cosette.Engine.Board.Operators
 
                 if ((piece & promotionRank) != 0)
                 {
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.QueenPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.KnightPromotion);
-                    moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill | MoveFlags.BishopPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.QueenPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.RookPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.KnightPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.BishopPromotion);
                 }
                 else
                 {
                     if ((piece & boardState.EnPassant) != 0)
                     {
-                        moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.EnPassant);
+                        moves[offset++] = new Move(from, to, MoveFlags.EnPassant);
                     }
                     else
                     {
-                        moves[offset++] = new Move(from, to, Piece.Pawn, MoveFlags.Kill);
+                        moves[offset++] = new Move(from, to, MoveFlags.Kill);
                     }
                 }
             }

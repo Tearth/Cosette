@@ -9,35 +9,32 @@ namespace Cosette.Engine.Moves
     {
         public readonly byte From;
         public readonly byte To;
-        public readonly byte PieceType;
         public readonly MoveFlags Flags;
 
         public static Move Empty = new Move();
 
-        public Move(byte from, byte to, byte pieceType, MoveFlags flags)
+        public Move(byte from, byte to, MoveFlags flags)
         {
             From = from;
             To = to;
-            PieceType = pieceType;
             Flags = flags;
         }
 
-        public Move(int from, int to, int pieceType, MoveFlags flags)
+        public Move(int from, int to, MoveFlags flags)
         {
             From = (byte)from;
             To = (byte)to;
-            PieceType = (byte)pieceType;
             Flags = flags;
         }
 
         public static bool operator ==(Move a, Move b)
         {
-            return a.From == b.From && a.To == b.To && a.PieceType == b.PieceType && a.Flags == b.Flags;
+            return a.From == b.From && a.To == b.To && a.Flags == b.Flags;
         }
 
         public static bool operator !=(Move a, Move b)
         {
-            return a.From != b.From || a.To != b.To || a.PieceType != b.PieceType || a.Flags != b.Flags;
+            return a.From != b.From || a.To != b.To || a.Flags != b.Flags;
         }
 
         public override bool Equals(object obj)
@@ -57,7 +54,7 @@ namespace Cosette.Engine.Moves
 
         public override int GetHashCode()
         {
-            return From ^ To ^ PieceType ^ (byte)Flags;
+            return From ^ To ^ (byte)Flags;
         }
 
         public static Move FromTextNotation(BoardState board, string textNotation)
@@ -86,19 +83,6 @@ namespace Cosette.Engine.Moves
         public bool IsQuiet()
         {
             return Flags == MoveFlags.None || Flags == MoveFlags.DoublePush;
-        }
-
-        public bool IsPawnNearPromotion(int color)
-        {
-            if (PieceType == Piece.Pawn)
-            {
-                if (color == Color.White && To >= 40 || color == Color.Black && To <= 23)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         public override string ToString()
