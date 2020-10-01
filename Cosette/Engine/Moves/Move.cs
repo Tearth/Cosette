@@ -5,21 +5,14 @@ using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Moves
 {
-    public struct Move
+    public readonly struct Move
     {
         public byte From => (byte)(_data & 0x3F);
         public byte To => (byte)((_data >> 6) & 0x3F);
         public MoveFlags Flags => (MoveFlags)(_data >> 12);
         public static Move Empty = new Move();
 
-        private ushort _data;
-
-        public Move(byte from, byte to, MoveFlags flags)
-        {
-            _data = from;
-            _data |= (ushort)(to << 6);
-            _data |= (ushort)((byte)flags << 12);
-        }
+        private readonly ushort _data;
 
         public Move(int from, int to, MoveFlags flags)
         {
@@ -55,7 +48,7 @@ namespace Cosette.Engine.Moves
 
         public override int GetHashCode()
         {
-            return From ^ To ^ (byte)Flags;
+            return _data;
         }
 
         public static Move FromTextNotation(BoardState board, string textNotation)
@@ -71,7 +64,7 @@ namespace Cosette.Engine.Moves
             {
                 if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
                 {
-                    if (flags == MoveFlags.Quiet || moves[i].Flags == flags)
+                    if (flags == MoveFlags.Quiet || ((byte)moves[i].Flags & ~MoveFlagFields.Capture) == (byte)flags)
                     {
                         return moves[i];
                     }
