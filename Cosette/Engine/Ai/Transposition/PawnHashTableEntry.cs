@@ -4,18 +4,18 @@ namespace Cosette.Engine.Ai.Transposition
 {
     public struct PawnHashTableEntry
     {
-        public uint Key { get; set; }
+        public ushort Key { get; set; }
         public short Score { get; set; }
 
         public PawnHashTableEntry(ulong hash, short score)
         {
-            Key = (uint)(hash >> 32);
+            Key = (ushort)(hash >> 48);
             Score = score;
         }
 
         public bool IsKeyValid(ulong hash)
         {
-            return Key == (uint)(hash >> 32);
+            return Key == hash >> 48;
         }
     }
 }

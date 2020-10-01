@@ -9,7 +9,7 @@
  - Improved move ordering: better promotions are now prioritized
  - Added evaluation hash table
  - Redefined and reduced size of Move structure (from 4 bytes to 2 bytes)
- - Reduced size of TranspositionTableEntry (from 16 bytes to 12 bytes)
+ - Reduced size of transposition table entry (from 16 bytes to 12 bytes), evaluation hash table entry (from 8 bytes to 4 bytes) and pawn hash table entry (from 8 bytes to 4 bytes)
  - Improved method of probing piece type at the specified field
 
 Estimated strength: ???? ELO
