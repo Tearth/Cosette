@@ -32,7 +32,11 @@ namespace Cosette.Engine.Ai.Ordering
                         moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
                     }
                 }
-                else if ((moves[moveIndex].Flags & MoveFlags.Kill) != 0)
+                else if (moves[moveIndex].Flags == MoveFlags.EnPassant)
+                {
+                    moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
+                }
+                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Capture) != 0)
                 {
                     var enemyColor = ColorOperations.Invert(board.ColorToMove);
 
@@ -44,10 +48,6 @@ namespace Cosette.Engine.Ai.Ordering
                     var seeEvaluation = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
                     moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
-                }
-                else if ((moves[moveIndex].Flags & MoveFlags.EnPassant) != 0)
-                {
-                    moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
                 }
                 else if ((int)moves[moveIndex].Flags >= 16)
                 {
@@ -61,7 +61,7 @@ namespace Cosette.Engine.Ai.Ordering
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                if ((moves[moveIndex].Flags & MoveFlags.EnPassant) != 0)
+                if (moves[moveIndex].Flags == MoveFlags.EnPassant)
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
                 }

@@ -136,10 +136,10 @@ namespace Cosette.Engine.Board.Operators
 
                 if ((piece & promotionRank) != 0)
                 {
-                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.QueenPromotion);
-                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.KnightPromotion);
-                    moves[offset++] = new Move(from, to, MoveFlags.Kill | MoveFlags.BishopPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.QueenPromotionCapture);
+                    moves[offset++] = new Move(from, to, MoveFlags.RookPromotionCapture);
+                    moves[offset++] = new Move(from, to, MoveFlags.KnightPromotionCapture);
+                    moves[offset++] = new Move(from, to, MoveFlags.BishopPromotionCapture);
                 }
                 else
                 {
@@ -149,7 +149,7 @@ namespace Cosette.Engine.Board.Operators
                     }
                     else
                     {
-                        moves[offset++] = new Move(from, to, MoveFlags.Kill);
+                        moves[offset++] = new Move(from, to, MoveFlags.Capture);
                     }
                 }
             }

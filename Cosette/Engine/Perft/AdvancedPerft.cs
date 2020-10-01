@@ -57,12 +57,12 @@ namespace Cosette.Engine.Perft
 
                 if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    if ((moves[i].Flags & MoveFlags.Kill) != 0)
+                    if (((byte)moves[i].Flags & MoveFlagFields.Capture) != 0)
                     {
                         result.Captures++;
                     }
 
-                    if ((moves[i].Flags & MoveFlags.Castling) != 0)
+                    if (moves[i].Flags == MoveFlags.KingCastle || moves[i].Flags == MoveFlags.QueenCastle)
                     {
                         result.Castles++;
                     }

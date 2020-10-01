@@ -25,7 +25,7 @@ namespace Cosette.Engine.Board.Operators
                     var fieldIndex = BitOperations.BitScan(field);
                     availableMoves = BitOperations.PopLsb(availableMoves);
 
-                    var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Kill : MoveFlags.None;
+                    var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Capture : MoveFlags.Quiet;
                     moves[offset++] = new Move(from, fieldIndex, flags);
                 }
             }
@@ -52,7 +52,7 @@ namespace Cosette.Engine.Board.Operators
                     var fieldIndex = BitOperations.BitScan(field);
                     availableMoves = BitOperations.PopLsb(availableMoves);
 
-                    moves[offset++] = new Move(from, fieldIndex, MoveFlags.Kill);
+                    moves[offset++] = new Move(from, fieldIndex, MoveFlags.Capture);
                 }
             }
 

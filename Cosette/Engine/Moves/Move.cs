@@ -5,36 +5,37 @@ using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Moves
 {
-    public readonly struct Move
+    public struct Move
     {
-        public readonly byte From;
-        public readonly byte To;
-        public readonly MoveFlags Flags;
-
+        public byte From => (byte)(_data & 0x3F);
+        public byte To => (byte)((_data >> 6) & 0x3F);
+        public MoveFlags Flags => (MoveFlags)(_data >> 12);
         public static Move Empty = new Move();
+
+        private ushort _data;
 
         public Move(byte from, byte to, MoveFlags flags)
         {
-            From = from;
-            To = to;
-            Flags = flags;
+            _data = from;
+            _data |= (ushort)(to << 6);
+            _data |= (ushort)((byte)flags << 12);
         }
 
         public Move(int from, int to, MoveFlags flags)
         {
-            From = (byte)from;
-            To = (byte)to;
-            Flags = flags;
+            _data = (ushort)from;
+            _data |= (ushort)(to << 6);
+            _data |= (ushort)((byte)flags << 12);
         }
 
         public static bool operator ==(Move a, Move b)
         {
-            return a.From == b.From && a.To == b.To && a.Flags == b.Flags;
+            return a._data == b._data;
         }
 
         public static bool operator !=(Move a, Move b)
         {
-            return a.From != b.From || a.To != b.To || a.Flags != b.Flags;
+            return a._data != b._data;
         }
 
         public override bool Equals(object obj)
@@ -61,7 +62,7 @@ namespace Cosette.Engine.Moves
         {
             var from = Position.FromText(textNotation.Substring(0, 2));
             var to = Position.FromText(textNotation.Substring(2, 2));
-            var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.None;
+            var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.Quiet;
 
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             var movesCount = board.GetAvailableMoves(moves);
@@ -70,7 +71,7 @@ namespace Cosette.Engine.Moves
             {
                 if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
                 {
-                    if (flags == MoveFlags.None || (moves[i].Flags & flags) != 0)
+                    if (flags == MoveFlags.Quiet || (moves[i].Flags & flags) != 0)
                     {
                         return moves[i];
                     }
@@ -82,7 +83,7 @@ namespace Cosette.Engine.Moves
 
         public bool IsQuiet()
         {
-            return Flags == MoveFlags.None || Flags == MoveFlags.DoublePush;
+            return Flags == MoveFlags.Quiet || Flags == MoveFlags.DoublePush;
         }
 
         public override string ToString()
