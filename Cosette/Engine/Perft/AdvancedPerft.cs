@@ -67,7 +67,7 @@ namespace Cosette.Engine.Perft
                         result.Castles++;
                     }
 
-                    if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
+                    if (moves[i].Flags == MoveFlags.EnPassant)
                     {
                         result.EnPassants++;
                         result.Captures++;

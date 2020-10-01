@@ -800,24 +800,31 @@ namespace Cosette.Engine.Board
 
         private int GetPromotionPiece(MoveFlags flags)
         {
-            if ((flags & MoveFlags.QueenPromotion) != 0)
+            switch (flags)
             {
-                return Piece.Queen;
-            }
+                case MoveFlags.QueenPromotion:
+                case MoveFlags.QueenPromotionCapture:
+                {
+                    return Piece.Queen;
+                }
 
-            if ((flags & MoveFlags.RookPromotion) != 0)
-            {
-                return Piece.Rook;
-            }
+                case MoveFlags.RookPromotion:
+                case MoveFlags.RookPromotionCapture:
+                {
+                    return Piece.Rook;
+                }
 
-            if ((flags & MoveFlags.BishopPromotion) != 0)
-            {
-                return Piece.Bishop;
-            }
+                case MoveFlags.BishopPromotion:
+                case MoveFlags.BishopPromotionCapture:
+                {
+                    return Piece.Bishop;
+                }
 
-            if ((flags & MoveFlags.KnightPromotion) != 0)
-            {
-                return Piece.Knight;
+                case MoveFlags.KnightPromotion:
+                case MoveFlags.KnightPromotionCapture:
+                {
+                    return Piece.Knight;
+                }
             }
 
             throw new InvalidOperationException();

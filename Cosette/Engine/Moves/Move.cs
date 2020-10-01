@@ -71,7 +71,7 @@ namespace Cosette.Engine.Moves
             {
                 if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
                 {
-                    if (flags == MoveFlags.Quiet || (moves[i].Flags & flags) != 0)
+                    if (flags == MoveFlags.Quiet || moves[i].Flags == flags)
                     {
                         return moves[i];
                     }
@@ -101,24 +101,34 @@ namespace Cosette.Engine.Moves
 
         private string GetPromotionSymbol(MoveFlags flags)
         {
-            if ((flags & MoveFlags.KnightPromotion) != 0)
+            switch (flags)
             {
-                return "n";
-            }
-            else if ((flags & MoveFlags.BishopPromotion) != 0)
-            {
-                return "b";
-            }
-            else if((flags & MoveFlags.RookPromotion) != 0)
-            {
-                return "r";
-            }
-            else if((flags & MoveFlags.QueenPromotion) != 0)
-            {
-                return "q";
+                case MoveFlags.QueenPromotion:
+                case MoveFlags.QueenPromotionCapture:
+                {
+                    return "q";
+                }
+
+                case MoveFlags.RookPromotion:
+                case MoveFlags.RookPromotionCapture:
+                {
+                    return "r";
+                }
+
+                case MoveFlags.BishopPromotion:
+                case MoveFlags.BishopPromotionCapture:
+                {
+                    return "b";
+                }
+
+                case MoveFlags.KnightPromotion:
+                case MoveFlags.KnightPromotionCapture:
+                {
+                    return "n";
+                }
             }
 
-            return null;
+            throw new InvalidOperationException();
         }
 
         private static MoveFlags GetMoveFlags(char promotionPiece)
