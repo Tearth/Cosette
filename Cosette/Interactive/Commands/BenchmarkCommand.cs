@@ -100,7 +100,7 @@ namespace Cosette.Interactive.Commands
             // Transposition statistics
             _interactiveConsole.WriteLine($"   TT: " +
                                           $"Added: {statistics.TTAddedEntries}, " +
-                                          $"Replacements: {statistics.TTReplacements}, " +
+                                          $"Replacements: {statistics.TTReplacements} ({statistics.TTReplacesPercent:F} %), " +
                                           $"Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
                                           $"Missed: {statistics.TTNonHits}, " +
                                           $"Filled: {TranspositionTable.GetFillLevel():F} %");
@@ -108,7 +108,7 @@ namespace Cosette.Interactive.Commands
             // Pawn hash table statistics
             _interactiveConsole.WriteLine($"   PHT: " +
                                           $"Added: {statistics.EvaluationStatistics.PHTAddedEntries}, " +
-                                          $"Replacements: {statistics.EvaluationStatistics.PHTReplacements}, " +
+                                          $"Replacements: {statistics.EvaluationStatistics.PHTReplacements} ({statistics.EvaluationStatistics.PHTReplacesPercent:F} %), " +
                                           $"Hits: {statistics.EvaluationStatistics.PHTHits} ({statistics.EvaluationStatistics.PHTHitsPercent:F} %), " +
                                           $"Missed: {statistics.EvaluationStatistics.PHTNonHits}, " +
                                           $"Filled: {PawnHashTable.GetFillLevel():F} %");
@@ -116,7 +116,7 @@ namespace Cosette.Interactive.Commands
             // Evaluation hash table statistics
             _interactiveConsole.WriteLine($"   EHT: " +
                                           $"Added: {statistics.EvaluationStatistics.EHTAddedEntries}, " +
-                                          $"Replacements: {statistics.EvaluationStatistics.EHTReplacements}, " +
+                                          $"Replacements: {statistics.EvaluationStatistics.EHTReplacements} ({statistics.EvaluationStatistics.EHTReplacesPercent:F} %), " +
                                           $"Hits: {statistics.EvaluationStatistics.EHTHits} ({statistics.EvaluationStatistics.EHTHitsPercent:F} %), " +
                                           $"Missed: {statistics.EvaluationStatistics.EHTNonHits}, " +
                                           $"Filled: {EvaluationHashTable.GetFillLevel():F} %");
