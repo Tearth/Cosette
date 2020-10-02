@@ -663,8 +663,12 @@ namespace Cosette.Engine.Board
         public bool IsKingChecked(int color)
         {
             var king = Pieces[color][Piece.King];
-            var kingField = BitOperations.BitScan(king);
+            if (king == 0)
+            {
+                return false;
+            }
 
+            var kingField = BitOperations.BitScan(king);
             return IsFieldAttacked(color, (byte)kingField);
         }
 
