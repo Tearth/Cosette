@@ -21,7 +21,8 @@ namespace Cosette.Interactive.Commands
         public void Run(params string[] parameters)
         {
             TranspositionTable.Init(512);
-            PawnHashTable.Init(8);
+            PawnHashTable.Init(2);
+            EvaluationHashTable.Init(8);
 
             var stopwatch = Stopwatch.StartNew();
             TestOpening();
@@ -99,18 +100,28 @@ namespace Cosette.Interactive.Commands
                                           $"Q Beta cutoffs at first move: {statistics.QBetaCutoffsAtFirstMove} ({statistics.QBetaCutoffsAtFirstMovePercent:F} %)");
 
             // Transposition statistics
-            _interactiveConsole.WriteLine($"   Transposition: Entries: {statistics.TTEntries}, Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
-                                          $"NonHits: {statistics.TTNonHits}, Collisions: {statistics.TTCollisions}");
+            _interactiveConsole.WriteLine($"   TT: " +
+                                          $"Added: {statistics.TTAddedEntries}, " +
+                                          $"Replacements: {statistics.TTReplacements}, " +
+                                          $"Hits: {statistics.TTHits} ({statistics.TTHitsPercent:F} %), " +
+                                          $"Missed: {statistics.TTNonHits}, " +
+                                          $"Filled: {TranspositionTable.GetFillLevel():F} %");
 
             // Pawn hash table statistics
-            _interactiveConsole.WriteLine($"   Pawn hash table: Entries: {statistics.EvaluationStatistics.PHTEntries}, " +
+            _interactiveConsole.WriteLine($"   PHT: " +
+                                          $"Added: {statistics.EvaluationStatistics.PHTAddedEntries}, " +
+                                          $"Replacements: {statistics.EvaluationStatistics.PHTReplacements}, " +
                                           $"Hits: {statistics.EvaluationStatistics.PHTHits} ({statistics.EvaluationStatistics.PHTHitsPercent:F} %), " +
-                                          $"NonHits: {statistics.EvaluationStatistics.PHTNonHits}, Collisions: {statistics.EvaluationStatistics.PHTCollisions}");
+                                          $"Missed: {statistics.EvaluationStatistics.PHTNonHits}, " +
+                                          $"Filled: {PawnHashTable.GetFillLevel():F} %");
 
             // Evaluation hash table statistics
-            _interactiveConsole.WriteLine($"   Evaluation hash table: Entries: {statistics.EvaluationStatistics.EHTEntries}, " +
+            _interactiveConsole.WriteLine($"   EHT: " +
+                                          $"Added: {statistics.EvaluationStatistics.EHTAddedEntries}, " +
+                                          $"Replacements: {statistics.EvaluationStatistics.EHTReplacements}, " +
                                           $"Hits: {statistics.EvaluationStatistics.EHTHits} ({statistics.EvaluationStatistics.EHTHitsPercent:F} %), " +
-                                          $"NonHits: {statistics.EvaluationStatistics.EHTNonHits}, Collisions: {statistics.EvaluationStatistics.EHTCollisions}");
+                                          $"Missed: {statistics.EvaluationStatistics.EHTNonHits}, " +
+                                          $"Filled: {EvaluationHashTable.GetFillLevel():F} %");
 #endif
 
 

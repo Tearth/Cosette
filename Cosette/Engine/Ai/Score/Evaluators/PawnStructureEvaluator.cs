@@ -55,7 +55,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
                 if (entry.Key != 0 || entry.Score != 0)
                 {
-                    statistics.PHTCollisions++;
+                    statistics.PHTReplacements++;
                 }
             }
 #endif
@@ -66,7 +66,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             PawnHashTable.Add(board.PawnHash, (short)result);
 
 #if DEBUG
-            statistics.PHTEntries++;
+            statistics.PHTAddedEntries++;
 #endif
             return result;
         }

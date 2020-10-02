@@ -42,11 +42,11 @@ namespace Cosette.Engine.Ai.Search
 
 #if DEBUG
                 context.Statistics.EvaluationStatistics.EHTNonHits++;
-                context.Statistics.EvaluationStatistics.EHTEntries++;
+                context.Statistics.EvaluationStatistics.EHTAddedEntries++;
 
                 if (evaluationEntry.Key != 0 || evaluationEntry.Score != 0)
                 {
-                    context.Statistics.EvaluationStatistics.EHTCollisions++;
+                    context.Statistics.EvaluationStatistics.EHTReplacements++;
                 }
 #endif
             }    

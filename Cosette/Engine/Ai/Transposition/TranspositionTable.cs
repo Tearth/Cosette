@@ -27,6 +27,20 @@ namespace Cosette.Engine.Ai.Transposition
             return _table[hash % _size];
         }
 
+        public static float GetFillLevel()
+        {
+            var filledEntries = 0;
+            for (var i = 0; i < 1000; i++)
+            {
+                if (_table[i].Key != 0 || _table[i].Score != 0)
+                {
+                    filledEntries++;
+                }
+            }
+
+            return (float)filledEntries / 10;
+        }
+
         public static void Clear()
         {
             Array.Clear(_table, 0, (int)_size);

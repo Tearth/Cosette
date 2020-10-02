@@ -117,11 +117,6 @@ namespace Cosette.Engine.Ai.Search
             else
             {
                 context.Statistics.TTNonHits++;
-
-                if (entry.Flags != TranspositionTableEntryFlags.Invalid)
-                {
-                    context.Statistics.TTCollisions++;
-                }
             }
 #endif
             
@@ -262,7 +257,12 @@ namespace Cosette.Engine.Ai.Search
                     (byte)context.TranspositionTableEntryAge, bestMove, entryType);
 
 #if DEBUG
-                context.Statistics.TTEntries++;
+                if (entry.Flags != TranspositionTableEntryFlags.Invalid)
+                {
+                    context.Statistics.TTReplacements++;
+                }
+
+                context.Statistics.TTAddedEntries++;
 #endif
             }
 

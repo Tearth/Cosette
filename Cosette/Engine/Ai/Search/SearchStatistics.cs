@@ -34,8 +34,8 @@ namespace Cosette.Engine.Ai.Search
         public ulong QBetaCutoffs { get; set; }
         public ulong TotalBetaCutoffs => BetaCutoffs + QBetaCutoffs;
 
-        public ulong TTEntries { get; set; }
-        public ulong TTCollisions { get; set; }
+        public ulong TTAddedEntries { get; set; }
+        public ulong TTReplacements { get; set; }
         public ulong TTHits { get; set; }
         public ulong TTNonHits { get; set; }
         public float TTHitsPercent => (float) TTHits * 100 / (TTHits + TTNonHits);
