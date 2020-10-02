@@ -183,7 +183,12 @@ namespace Cosette.Engine.Ai.Search
 
             for (var pass = 0; pass < 2 && !containsTestedMove; pass++)
             {
-                var futilityPruningAllowed = pass == 0;
+                var futilityPruningAllowed = 
+                    pass == 0 && 
+                    !pvNode &&
+                    depth <= 3 &&
+                    futilityScore + 350 + (depth - 1) * 300 < alpha;
+
                 for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
                 {
                     if (pass == 0)
@@ -203,8 +208,7 @@ namespace Cosette.Engine.Ai.Search
 
                     var kingCheckedAfterMove = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
 
-                    if (futilityPruningAllowed && FutilityPruningCanBeApplied(depth, alpha, moves[moveIndex].Flags, pvNode, kingCheckedAfterMove) &&
-                        futilityScore + 300 + (depth - 1) * 300 < alpha)
+                    if (futilityPruningAllowed && FutilityPruningCanBeApplied(alpha, beta, moves[moveIndex].Flags, kingCheckedAfterMove))
                     {
                         context.BoardState.UndoMove(moves[moveIndex]);
                     }
@@ -330,12 +334,11 @@ namespace Cosette.Engine.Ai.Search
                    moves[moveIndex].IsQuiet() && !kingChecked;
         }
 
-        private static bool FutilityPruningCanBeApplied(int depth, int alpha, MoveFlags moveFlags, bool pvNode, bool kingChecked)
+        private static bool FutilityPruningCanBeApplied(int alpha, int beta, MoveFlags moveFlags, bool kingChecked)
         {
-            return depth >= 1 && depth <= 3 && 
-                   !IterativeDeepening.IsScoreNearCheckmate(alpha) && 
-                   (moveFlags == MoveFlags.Quiet || moveFlags == MoveFlags.DoublePush || moveFlags == MoveFlags.KingCastle || moveFlags == MoveFlags.QueenCastle) && 
-                   !pvNode && 
+            return (moveFlags == MoveFlags.Quiet || moveFlags == MoveFlags.DoublePush || moveFlags == MoveFlags.KingCastle || moveFlags == MoveFlags.QueenCastle) &&
+                   !IterativeDeepening.IsScoreNearCheckmate(alpha) &&
+                   !IterativeDeepening.IsScoreNearCheckmate(beta) &&
                    !kingChecked;
         }
 
