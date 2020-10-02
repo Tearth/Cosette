@@ -18,10 +18,9 @@ namespace Cosette.Uci.Commands
             {
                 case "Hash":
                 {
-                    var transpositionTableSize = ulong.Parse(parameters[3]);
+                    var hashTablesSize = int.Parse(parameters[3]);
+                    HashTableAllocator.Allocate(hashTablesSize);
 
-                    TranspositionTable.Init(transpositionTableSize - SearchConstants.DefaultPawnHashTableSize - SearchConstants.DefaultEvaluationHashTableSize);
-                    PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);
                     break;
                 }
             }

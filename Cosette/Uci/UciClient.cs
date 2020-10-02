@@ -5,6 +5,7 @@ using System.Text;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -90,11 +91,7 @@ namespace Cosette.Uci
 
         private void SendOptions()
         {
-            var defaultHashTablesSize = SearchConstants.DefaultHashTableSize + 
-                                        SearchConstants.DefaultPawnHashTableSize +
-                                        SearchConstants.DefaultEvaluationHashTableSize;
-
-            Send($"option name Hash type spin default {defaultHashTablesSize} min 1 max 2048");
+            Send($"option name Hash type spin default {HashTableConstants.DefaultHashTablesSize} min 3 max 65536");
             Send("uciok");
         }
 

@@ -7,11 +7,11 @@ namespace Cosette.Engine.Ai.Transposition
         private static PawnHashTableEntry[] _table;
         private static ulong _size;
 
-        public static unsafe void Init(ulong sizeMegabytes)
+        public static unsafe void Init(int sizeMegabytes)
         {
             var entrySize = sizeof(PawnHashTableEntry);
 
-            _size = sizeMegabytes * 1024ul * 1024ul / (ulong)entrySize;
+            _size = (ulong)sizeMegabytes * 1024ul * 1024ul / (ulong)entrySize;
             _table = new PawnHashTableEntry[_size];
         }
 

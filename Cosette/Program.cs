@@ -11,9 +11,7 @@ namespace Cosette
     {
         private static void Main()
         {
-            TranspositionTable.Init(SearchConstants.DefaultHashTableSize);
-            PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);
-            EvaluationHashTable.Init(SearchConstants.DefaultEvaluationHashTableSize);
+            HashTableAllocator.Allocate();
             MagicBitboards.InitWithInternalKeys();
 
             new InteractiveConsole().Run();

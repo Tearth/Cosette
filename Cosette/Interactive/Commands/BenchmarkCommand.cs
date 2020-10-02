@@ -20,9 +20,7 @@ namespace Cosette.Interactive.Commands
 
         public void Run(params string[] parameters)
         {
-            TranspositionTable.Init(512);
-            PawnHashTable.Init(2);
-            EvaluationHashTable.Init(8);
+            HashTableAllocator.Allocate(512);
 
             var stopwatch = Stopwatch.StartNew();
             TestOpening();

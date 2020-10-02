@@ -7,10 +7,6 @@
         public const int MaxDepth = 32;
         public const int MaxMovesCount = 128;
 
-        public const int DefaultHashTableSize = 32;
-        public const int DefaultPawnHashTableSize = 2;
-        public const int DefaultEvaluationHashTableSize = 32;
-
         public const int NullWindowMinimalDepth = 5;
         public const int NullWindowDepthReduction = 3;
 
