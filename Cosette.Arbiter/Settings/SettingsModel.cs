@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Cosette.Arbiter.Settings
 {
@@ -15,6 +16,8 @@ namespace Cosette.Arbiter.Settings
 
         [JsonProperty("engine2_path")]
         public string Engine2Path { get; set; }
+
+        public List<string> Options { get; set; }
 
         [JsonProperty("milliseconds_per_move")]
         public int MillisecondsPerMove { get; set; }

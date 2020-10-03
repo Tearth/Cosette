@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Cosette.Arbiter.Settings;
 
 namespace Cosette.Arbiter.Engine
 {
@@ -19,8 +20,33 @@ namespace Cosette.Arbiter.Engine
             _engineProcess = Process.Start(new ProcessStartInfo
             {
                 FileName = _enginePath,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true
             });
+
+            Write("uci");
+            WaitForMessage("uciok");
+
+            SettingsLoader.Data.Options.ForEach(Write);
+
+            Write("isready");
+            WaitForMessage("readyok");
+        }
+
+        public void Write(string message)
+        {
+            _engineProcess.StandardInput.WriteLine(message);
+        }
+
+        public string Read()
+        {
+            return _engineProcess.StandardOutput.ReadLine();
+        }
+
+        public void WaitForMessage(string message)
+        {
+            while (Read() != message) ;
         }
     }
 }
