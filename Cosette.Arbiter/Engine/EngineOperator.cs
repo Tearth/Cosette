@@ -63,7 +63,6 @@ namespace Cosette.Arbiter.Engine
             while (true)
             {
                 var response = Read();
-                Console.WriteLine(response);
                 if (response.StartsWith("info depth"))
                 {
                     bestMoveData.LastInfoData = InfoData.FromString(response);
@@ -80,7 +79,6 @@ namespace Cosette.Arbiter.Engine
 
         public void Write(string message)
         {
-            Console.WriteLine(message);
             _engineProcess.StandardInput.WriteLine(message);
         }
 

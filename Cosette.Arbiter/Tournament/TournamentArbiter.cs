@@ -23,7 +23,7 @@ namespace Cosette.Arbiter.Tournament
 
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount; gameIndex++)
             {
-                LogManager.LogLine($"Game {gameIndex}: ");
+                LogManager.Log($"Game {gameIndex}: ");
                 var gameData = new GameData();
 
                 _engine1.InitNewGame();
@@ -35,7 +35,8 @@ namespace Cosette.Arbiter.Tournament
                     var bestMoveData = currentEngineToMove.Go(gameData.MovesDone);
                     gameData.MakeMove(bestMoveData);
 
-                    LogManager.Log(bestMoveData.BestMove + " " + bestMoveData.LastInfoData.ScoreMate.ToString() + " " + bestMoveData.LastInfoData.ScoreCp + " ");
+                    LogManager.Log(bestMoveData.BestMove);
+                    LogManager.Log(" ");
                     currentEngineToMove = currentEngineToMove == _engine1 ? _engine2 : _engine1;
                 }
 
