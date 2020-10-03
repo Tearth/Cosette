@@ -15,7 +15,8 @@
         public const int LMRPvNodeDepthReduction = 1;
         public const int LMRNonPvNodeDepthDivisor = 3;
 
-        public const int FutilityPruningBaseMargin = 350;
-        public const int FutilityPruningMarginIncrementation = 300;
+        public const int FutilityPruningMaxDepth = 3;
+        public const int FutilityPruningBaseMargin = 300;
+        public const int FutilityPruningMarginIncrementation = 250;
     }
 }
