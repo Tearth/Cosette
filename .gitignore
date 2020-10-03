@@ -349,3 +349,4 @@ MigrationBackup/
 .ionide/
 /cloc.exe
 /cloc.bat
+/Cosette.Arbiter/settings.json

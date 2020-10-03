@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosette.Arbiter.Settings;
+using Cosette.Arbiter.Tournament;
 
 namespace Cosette.Arbiter
 {
@@ -6,7 +7,8 @@ namespace Cosette.Arbiter
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            SettingsLoader.Init("settings.json");
+            new TournamentArbiter().Run();
         }
     }
 }
