@@ -152,30 +152,35 @@ namespace Cosette.Engine.Ai.Search
                 movesCount = 1;
             }
 
-            var futilityScore = 0;
-            var evaluationEntry = EvaluationHashTable.Get(context.BoardState.Hash);
-            if (evaluationEntry.IsKeyValid(context.BoardState.Hash))
+            short futilityScore = 0;
+            var futilityPruningAllowed = FutilityPruningCanBeAppliedToNode(depth, alpha, beta, pvNode, kingChecked);
+
+            if (futilityPruningAllowed)
             {
-                futilityScore = evaluationEntry.Score;
-
-#if DEBUG
-                context.Statistics.EvaluationStatistics.EHTHits++;
-#endif
-            }
-            else
-            {
-                futilityScore = Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
-                EvaluationHashTable.Add(context.BoardState.Hash, (short)futilityScore);
-
-#if DEBUG
-                context.Statistics.EvaluationStatistics.EHTNonHits++;
-                context.Statistics.EvaluationStatistics.EHTAddedEntries++;
-
-                if (evaluationEntry.Key != 0 || evaluationEntry.Score != 0)
+                var evaluationEntry = EvaluationHashTable.Get(context.BoardState.Hash);
+                if (evaluationEntry.IsKeyValid(context.BoardState.Hash))
                 {
-                    context.Statistics.EvaluationStatistics.EHTReplacements++;
-                }
+                    futilityScore = evaluationEntry.Score;
+
+#if DEBUG
+                    context.Statistics.EvaluationStatistics.EHTHits++;
 #endif
+                }
+                else
+                {
+                    futilityScore = (short)Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
+                    EvaluationHashTable.Add(context.BoardState.Hash, futilityScore);
+
+#if DEBUG
+                    context.Statistics.EvaluationStatistics.EHTNonHits++;
+                    context.Statistics.EvaluationStatistics.EHTAddedEntries++;
+
+                    if (evaluationEntry.Key != 0 || evaluationEntry.Score != 0)
+                    {
+                        context.Statistics.EvaluationStatistics.EHTReplacements++;
+                    }
+#endif
+                }
             }
 
             var pvs = true;
@@ -183,12 +188,6 @@ namespace Cosette.Engine.Ai.Search
 
             for (var pass = 0; pass < 2 && !containsTestedMove; pass++)
             {
-                var futilityPruningAllowed = 
-                    pass == 0 && 
-                    !pvNode &&
-                    depth <= 3 &&
-                    futilityScore + 350 + (depth - 1) * 300 < alpha;
-
                 for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
                 {
                     if (pass == 0)
@@ -207,8 +206,7 @@ namespace Cosette.Engine.Ai.Search
                     context.BoardState.MakeMove(moves[moveIndex]);
 
                     var kingCheckedAfterMove = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
-
-                    if (futilityPruningAllowed && FutilityPruningCanBeApplied(alpha, beta, moves[moveIndex].Flags, kingCheckedAfterMove))
+                    if (pass == 0 && futilityPruningAllowed && FutilityPruningCanBeAppliedToMove(depth, futilityScore, alpha, moves[moveIndex].IsQuiet(), kingCheckedAfterMove))
                     {
                         context.BoardState.UndoMove(moves[moveIndex]);
                     }
@@ -334,12 +332,20 @@ namespace Cosette.Engine.Ai.Search
                    moves[moveIndex].IsQuiet() && !kingChecked;
         }
 
-        private static bool FutilityPruningCanBeApplied(int alpha, int beta, MoveFlags moveFlags, bool kingChecked)
+        private static bool FutilityPruningCanBeAppliedToNode(int depth, int alpha, int beta, bool pvNode, bool parentKingChecked)
         {
-            return (moveFlags == MoveFlags.Quiet || moveFlags == MoveFlags.DoublePush || moveFlags == MoveFlags.KingCastle || moveFlags == MoveFlags.QueenCastle) &&
+            return depth <= 3 &&
+                   !pvNode &&
+                   !parentKingChecked &&
+                   !IterativeDeepening.IsScoreNearCheckmate(beta);
+        }
+
+        private static bool FutilityPruningCanBeAppliedToMove(int depth, short futilityScore, int alpha, bool quietMove, bool kingChecked)
+        {
+            return quietMove &&
+                   !kingChecked &&
                    !IterativeDeepening.IsScoreNearCheckmate(alpha) &&
-                   !IterativeDeepening.IsScoreNearCheckmate(beta) &&
-                   !kingChecked;
+                   futilityScore + SearchConstants.FutilityPruningBaseMargin + (depth - 1) * SearchConstants.FutilityPruningMarginIncrementation <= alpha;
         }
 
         private static int LMRGetReducedDepth(int depth, bool pvNode)
