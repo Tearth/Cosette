@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Cosette.Arbiter.Logs;
 using Cosette.Arbiter.Settings;
 
 namespace Cosette.Arbiter.Engine
@@ -17,6 +18,8 @@ namespace Cosette.Arbiter.Engine
 
         public void Init()
         {
+            LogManager.Log("Initializing process...", _name);
+
             _engineProcess = Process.Start(new ProcessStartInfo
             {
                 FileName = _enginePath,
@@ -32,6 +35,8 @@ namespace Cosette.Arbiter.Engine
 
             Write("isready");
             WaitForMessage("readyok");
+
+            LogManager.Log("UCI initialization done", _name);
         }
 
         public void Write(string message)

@@ -21,6 +21,10 @@ namespace Cosette.Arbiter.Tournament
             _engine2.Init();
 
             Console.ReadLine();
+            for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount; gameIndex++)
+            {
+
+            }
         }
     }
 }
