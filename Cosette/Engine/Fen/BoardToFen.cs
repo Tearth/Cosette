@@ -36,12 +36,14 @@ namespace Cosette.Engine.Fen
                     
                     var possibleWhitePiece = board.PieceTable[fieldIndex];
                     var possibleBlackPiece = board.PieceTable[fieldIndex];
-                    var color = possibleWhitePiece != -1 ? Color.White : Color.Black;
+                    
+                    var color = (board.Occupancy[Color.White] & (1ul << fieldIndex)) != 0 ? Color.White :
+                                (board.Occupancy[Color.Black] & (1ul << fieldIndex)) != 0 ? Color.Black :
+                                -1;
 
-                    var piece = 
-                        possibleWhitePiece != -1 ? possibleWhitePiece :
-                        possibleBlackPiece != -1 ? possibleBlackPiece :
-                        -1;
+                    var piece = color == Color.White ? possibleWhitePiece :
+                                color == Color.Black ? possibleBlackPiece :
+                                -1;
 
                     if (piece != -1)
                     {
