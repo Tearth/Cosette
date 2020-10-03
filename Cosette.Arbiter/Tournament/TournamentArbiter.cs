@@ -1,5 +1,6 @@
 ﻿using System;
 using Cosette.Arbiter.Engine;
+using Cosette.Arbiter.Logs;
 using Cosette.Arbiter.Settings;
 
 namespace Cosette.Arbiter.Tournament
@@ -20,10 +21,32 @@ namespace Cosette.Arbiter.Tournament
             _engine1.Init();
             _engine2.Init();
 
-            Console.ReadLine();
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount; gameIndex++)
             {
+                LogManager.LogLine($"Game {gameIndex}: ");
+                var gameData = new GameData();
 
+                _engine1.InitNewGame();
+                _engine2.InitNewGame();
+
+                var currentEngineToMove = _engine1;
+                while (!gameData.IsOver())
+                {
+                    var bestMoveData = currentEngineToMove.Go(gameData.MovesDone);
+                    gameData.MakeMove(bestMoveData);
+
+                    LogManager.Log(bestMoveData.BestMove + " " + bestMoveData.LastInfoData.ScoreMate.ToString() + " " + bestMoveData.LastInfoData.ScoreCp + " ");
+                    currentEngineToMove = currentEngineToMove == _engine1 ? _engine2 : _engine1;
+                }
+
+                if (gameData.IsDraw())
+                {
+                    LogManager.LogLine($" === Result: draw");
+                }
+                else if (gameData.IsCheckmate())
+                {
+                    LogManager.LogLine($" === Result: {gameData.GetWinner()} won");
+                }
             }
         }
     }

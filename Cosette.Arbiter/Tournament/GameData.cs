@@ -24,11 +24,19 @@ namespace Cosette.Arbiter.Tournament
         {
             MovesDone.Add(bestMoveData.BestMove);
             _lastBestMove = bestMoveData;
-
+            
             if (IsCheckmate())
             {
                 _gameIsDone = true;
                 _winner = _colorToMove;
+                return;
+            }
+
+            if (IsDraw())
+            {
+                _gameIsDone = true;
+                _winner = Color.None;
+                return;
             }
 
             _colorToMove = _colorToMove == Color.White ? Color.Black : Color.White;
@@ -36,15 +44,15 @@ namespace Cosette.Arbiter.Tournament
 
         public bool IsOver()
         {
-            return IsCheckmate() || IsDraw();
+            return _gameIsDone;
         }
 
         public bool IsCheckmate()
         {
-            if (_lastBestMove != null)
+            if (_lastBestMove != null && _lastBestMove.LastInfoData.ScoreMate != 0)
             {
-                var scoreAbs = Math.Abs(_lastBestMove.Score);
-                if (scoreAbs >= 31999 && scoreAbs <= 32001)
+                var scoreAbs = Math.Abs(_lastBestMove.LastInfoData.ScoreMate);
+                if (scoreAbs <= 1)
                 {
                     return true;
                 }
@@ -55,7 +63,7 @@ namespace Cosette.Arbiter.Tournament
 
         public bool IsDraw()
         {
-            if (_lastBestMove.IrreversibleMovesCount >= 100)
+            if (MovesDone.Count > 200)
             {
                 return true;
             }
@@ -66,6 +74,11 @@ namespace Cosette.Arbiter.Tournament
             }
 
             return false;
+        }
+
+        public Color GetWinner()
+        {
+            return _winner;
         }
     }
 }
