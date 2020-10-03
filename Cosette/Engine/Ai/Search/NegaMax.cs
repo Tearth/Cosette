@@ -186,6 +186,7 @@ namespace Cosette.Engine.Ai.Search
 
             var pvs = true;
             var containsTestedMove = false;
+            var kingCheckChecked = false;
 
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
@@ -199,15 +200,39 @@ namespace Cosette.Engine.Ai.Search
                     }
                 }
 
-                context.BoardState.MakeMove(moves[moveIndex]);
+                var moveDone = false;
+                var kingCheckedAfterMove = false;
+                if (futilityAllowed)
+                {
+                    var fromPattern = QueenMovesGenerator.GetMoves(context.BoardState.OccupancySummary, moves[moveIndex].From) | 
+                                      KnightMovesGenerator.GetMoves(moves[moveIndex].From);
+                    var toPattern = QueenMovesGenerator.GetMoves(context.BoardState.OccupancySummary, moves[moveIndex].To) |
+                                    KnightMovesGenerator.GetMoves(moves[moveIndex].To);
+                    var kings = context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King];
+                    
+                    if ((fromPattern & kings) != 0 || (toPattern & kings) != 0)
+                    {
+                        context.BoardState.MakeMove(moves[moveIndex]);
+                        kingCheckedAfterMove = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+                        moveDone = true;
+                    }
 
-                var kingCheckedAfterMove = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+                    kingCheckChecked = true;
+                }
+
                 if (futilityAllowed && FutilityPruningCanBeAppliedToMove(futilityScore, (short)futilityMargin, alpha, moves[moveIndex].IsQuiet(), kingCheckedAfterMove))
                 {
-                    context.BoardState.UndoMove(moves[moveIndex]);
+                    if (moveDone)
+                    {
+                        context.BoardState.UndoMove(moves[moveIndex]);
+                    }
                 }
                 else
                 {
+                    if (!moveDone)
+                    {
+                        context.BoardState.MakeMove(moves[moveIndex]);
+                    }
                     containsTestedMove = true;
 
                     var score = 0;
@@ -218,6 +243,20 @@ namespace Cosette.Engine.Ai.Search
                     }
                     else
                     {
+                        if (!kingCheckChecked)
+                        {
+                            var fromPattern = QueenMovesGenerator.GetMoves(context.BoardState.OccupancySummary, moves[moveIndex].From) |
+                                              KnightMovesGenerator.GetMoves(moves[moveIndex].From);
+                            var toPattern = QueenMovesGenerator.GetMoves(context.BoardState.OccupancySummary, moves[moveIndex].To) |
+                                            KnightMovesGenerator.GetMoves(moves[moveIndex].To);
+                            var kings = context.BoardState.Pieces[Color.White][Piece.King] | context.BoardState.Pieces[Color.Black][Piece.King];
+
+                            if ((fromPattern & kings) != 0 || (toPattern & kings) != 0)
+                            {
+                                kingCheckedAfterMove = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+                            }
+                        }
+
                         var reducedDepth = depth;
                         if (LMRCanBeApplied(depth, kingCheckedAfterMove, moveIndex, moves))
                         {
