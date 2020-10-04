@@ -12,6 +12,7 @@ namespace Cosette.Arbiter.Tournament
         public int Wins { get; set; }
         public int Losses { get; set; }
         public int Draws { get; set; }
+        public int Errors { get; set; }
 
         public TournamentParticipant(EngineData engineData, EngineOperator engineOperator)
         {

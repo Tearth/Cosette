@@ -23,7 +23,7 @@ namespace Cosette.Arbiter.Tournament
             MovesDone.Add(bestMoveData.BestMove);
             _lastBestMove = bestMoveData;
             
-            if (IsCheckmate())
+            if (IsCheckmate() || bestMoveData.LastInfoData.ScoreCp >= 2000)
             {
                 GameIsDone = true;
                 Winner = _colorToMove;
@@ -54,7 +54,7 @@ namespace Cosette.Arbiter.Tournament
 
             if (MovesDone.Count > 8)
             {
-                return MovesDone[0] == MovesDone[4] && MovesDone[4] == MovesDone[8];
+                return MovesDone[^1] == MovesDone[^5] && MovesDone[^5] == MovesDone[^9];
             }
 
             return false;
