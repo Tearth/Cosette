@@ -57,15 +57,23 @@ namespace Cosette.Arbiter.Engine
 
             while (true)
             {
-                var response = Read();
-                if (response.StartsWith("info depth"))
+                try
                 {
-                    bestMoveData.LastInfoData = InfoData.FromString(response);
+                    var response = Read();
+                    if (response.StartsWith("info depth"))
+                    {
+                        bestMoveData.LastInfoData = InfoData.FromString(response);
+                    }
+                    else if (response.StartsWith("bestmove"))
+                    {
+                        bestMoveData.BestMove = response.Split(' ')[1];
+                        break;
+                    }
                 }
-                else if (response.StartsWith("bestmove"))
+                catch
                 {
-                    bestMoveData.BestMove = response.Split(' ')[1];
-                    break;
+                    Init();
+                    return null;
                 }
             }
 

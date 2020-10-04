@@ -50,6 +50,12 @@ namespace Cosette.Arbiter.Tournament
                 while (true)
                 {
                     var bestMoveData = currentEngineToMove.EngineOperator.Go(gameData.MovesDone);
+                    if (bestMoveData == null)
+                    {
+                        currentEngineToMove.Errors++;
+                        break;
+                    }
+
                     gameData.MakeMove(bestMoveData);
 
                     Console.Write(bestMoveData.BestMove);
@@ -57,13 +63,16 @@ namespace Cosette.Arbiter.Tournament
 
                     if (gameData.GameIsDone)
                     {
-                        currentEngineToMove.Wins++;
-                        break;
-                    }
-                    else if (gameData.IsDraw())
-                    {
-                        _participants[playerA].Draws++;
-                        _participants[playerB].Draws++;
+                        if (gameData.Winner == Color.None)
+                        {
+                            _participants[playerA].Draws++;
+                            _participants[playerB].Draws++;
+                        }
+                        else
+                        {
+                            currentEngineToMove.Wins++;
+                        }
+
                         break;
                     }
 
@@ -76,7 +85,8 @@ namespace Cosette.Arbiter.Tournament
         {
             foreach (var participant in _participants)
             {
-                Console.WriteLine($"{participant.EngineData.Name}: {participant.Wins} wins, {participant.Losses} losses, {participant.Draws} draws");
+                Console.WriteLine($"{participant.EngineData.Name}: {participant.Wins} wins, {participant.Losses} losses, " +
+                                  $"{participant.Draws} draws, {participant.Errors} errors");
             }
         }
     }
