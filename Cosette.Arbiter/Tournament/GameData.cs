@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Cosette.Arbiter.Engine;
 
 namespace Cosette.Arbiter.Tournament
@@ -7,12 +6,11 @@ namespace Cosette.Arbiter.Tournament
     public class GameData
     {
         public List<string> MovesDone { get; set; }
+        public bool GameIsDone { get; private set; }
+        public Color Winner { get; private set; }
 
         private BestMoveData _lastBestMove;
         private Color _colorToMove;
-
-        private bool _gameIsDone;
-        private Color _winner;
 
         public GameData()
         {
@@ -27,38 +25,24 @@ namespace Cosette.Arbiter.Tournament
             
             if (IsCheckmate())
             {
-                _gameIsDone = true;
-                _winner = _colorToMove;
+                GameIsDone = true;
+                Winner = _colorToMove;
                 return;
             }
 
             if (IsDraw())
             {
-                _gameIsDone = true;
-                _winner = Color.None;
+                GameIsDone = true;
+                Winner = Color.None;
                 return;
             }
 
             _colorToMove = _colorToMove == Color.White ? Color.Black : Color.White;
         }
 
-        public bool IsOver()
-        {
-            return _gameIsDone;
-        }
-
         public bool IsCheckmate()
         {
-            if (_lastBestMove != null && _lastBestMove.LastInfoData.ScoreMate != 0)
-            {
-                var scoreAbs = Math.Abs(_lastBestMove.LastInfoData.ScoreMate);
-                if (scoreAbs <= 1)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return _lastBestMove != null && _lastBestMove.LastInfoData.ScoreMate == 1;
         }
 
         public bool IsDraw()
@@ -74,11 +58,6 @@ namespace Cosette.Arbiter.Tournament
             }
 
             return false;
-        }
-
-        public Color GetWinner()
-        {
-            return _winner;
         }
     }
 }
