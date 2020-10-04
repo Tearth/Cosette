@@ -13,6 +13,7 @@
  - Improved method of probing piece type at the specified field
  - Added extended futility pruning
  - Added Arbiter app to speed up the process of testing engine
+ - Fixed invalid best move when search has been aborted
 
 Estimated strength: ???? ELO
 
