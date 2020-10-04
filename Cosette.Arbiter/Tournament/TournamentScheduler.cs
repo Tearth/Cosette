@@ -54,7 +54,7 @@ namespace Cosette.Arbiter.Tournament
 
                 for (var i = 0; i < teamsCount; i++)
                 {
-                    _pairs.Add((firstRow[i], secondRow[i]));
+                    _pairs.Add((firstRow[i] - 1, secondRow[i] - 1));
                 }
             }
         }
