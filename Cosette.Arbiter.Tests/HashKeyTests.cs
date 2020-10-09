@@ -22,6 +22,11 @@ namespace Cosette.Arbiter.Tests
             var polyglotBoard = new PolyglotBoard();
             polyglotBoard.InitDefaultState();
 
+            foreach (var move in moves)
+            {
+                polyglotBoard.MakeMove(move);
+            }
+
             Assert.Equal(expectedHashKey, polyglotBoard.CalculateHash());
         }
     }
