@@ -11,7 +11,6 @@ namespace Cosette.Arbiter.Tournament
         public EngineOperator EngineOperator { get; }
         public List<ArchivedGame> History { get; }
 
-        public int CurrentRating { get; set; }
         public int Wins => History.Count(p => p.Result == GameResult.Win);
         public int Losses => History.Count(p => p.Result == GameResult.Loss);
         public int Draws => History.Count(p => p.Result == GameResult.Draw);
@@ -21,8 +20,16 @@ namespace Cosette.Arbiter.Tournament
             EngineData = engineData;
             EngineOperator = engineOperator;
             History = new List<ArchivedGame>();
+        }
 
-            CurrentRating = engineData.Rating;
+        public int CalculatePerformanceRating()
+        {
+            if (History.Count == 0)
+            {
+                return EngineData.Rating;
+            }
+
+            return (History.Sum(p => p.Opponent.EngineData.Rating) + 400 * (Wins - Losses)) / History.Count;
         }
     }
 }

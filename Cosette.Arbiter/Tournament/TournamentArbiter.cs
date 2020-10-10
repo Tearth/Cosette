@@ -37,14 +37,24 @@ namespace Cosette.Arbiter.Tournament
             {
                 var gameData = new GameData(_polyglotBook.GetRandomOpening());
                 var (playerA, playerB) = _scheduler.GetPair(gameIndex);
+
+                if (playerA >= _participants.Count || playerB >= _participants.Count)
+                {
+                    continue;
+                }
+
                 var participantA = _participants[playerA];
                 var participantB = _participants[playerB];
+
+                var whitePlayer = DateTime.UtcNow.Ticks % 2 == 0 ? participantA : participantB;
+                var blackPlayer = whitePlayer == participantA ? participantB : participantA;
+                var (playerToMove, opponent) = (whitePlayer, blackPlayer);
 
                 Console.Clear();
                 WriteResults();
 
                 Console.WriteLine();
-                Console.WriteLine($"Game {gameIndex}");
+                Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name})");
                 Console.Write("Moves: ");
                 Console.Write(string.Join(' ', gameData.MovesDone));
                 Console.Write(" ");
@@ -52,9 +62,6 @@ namespace Cosette.Arbiter.Tournament
                 participantA.EngineOperator.InitNewGame();
                 participantB.EngineOperator.InitNewGame();
 
-                var whitePlayer = DateTime.UtcNow.Ticks % 2 == 0 ? participantA : participantB;
-                var blackPlayer = whitePlayer == participantA ? participantB : participantA;
-                var (playerToMove, opponent) = (whitePlayer, blackPlayer);
 
                 while (true)
                 {
@@ -74,13 +81,13 @@ namespace Cosette.Arbiter.Tournament
                     {
                         if (gameData.Winner == Color.None)
                         {
-                            _participants[playerA].History.Add(new ArchivedGame(gameData, GameResult.Draw));
-                            _participants[playerB].History.Add(new ArchivedGame(gameData, GameResult.Draw));
+                            playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
+                            opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
                         }
                         else
                         {
-                            playerToMove.History.Add(new ArchivedGame(gameData, GameResult.Win));
-                            opponent.History.Add(new ArchivedGame(gameData, GameResult.Loss));
+                            playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Win));
+                            opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Loss));
                         }
 
                         break;
@@ -95,7 +102,11 @@ namespace Cosette.Arbiter.Tournament
         {
             foreach (var participant in _participants)
             {
-                Console.WriteLine($"{participant.EngineData.Name}: {participant.Wins} wins, {participant.Losses} losses, " +
+                var originalRating = participant.EngineData.Rating;
+                var performance = participant.CalculatePerformanceRating() - originalRating;
+
+                Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}): " +
+                                  $"{participant.Wins} wins, {participant.Losses} losses, " +
                                   $"{participant.Draws} draws, {_errors} errors");
             }
         }
