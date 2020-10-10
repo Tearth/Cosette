@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Common;
+﻿using System;
+using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Ai.Ordering
 {
@@ -35,10 +36,7 @@ namespace Cosette.Engine.Ai.Ordering
             {
                 for (var from = 0; from < 64; from++)
                 {
-                    for (var to = 0; to < 64; to++)
-                    {
-                        _historyMoves[color][from][to] = 0;
-                    }
+                    Array.Clear(_historyMoves[color][from], 0, 64);
                 }
             }
         }
