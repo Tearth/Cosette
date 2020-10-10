@@ -8,6 +8,9 @@ namespace Cosette.Arbiter.Settings
         public List<EngineData> Engines { get; set; }
         public List<string> Options { get; set; }
 
+        [JsonProperty("polyglot_opening_book")]
+        public string PolyglotOpeningBook { get; set; }
+
         [JsonProperty("milliseconds_per_move")]
         public int MillisecondsPerMove { get; set; }
 
