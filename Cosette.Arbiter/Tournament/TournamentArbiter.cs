@@ -11,6 +11,7 @@ namespace Cosette.Arbiter.Tournament
         private List<TournamentParticipant> _participants;
         private TournamentScheduler _scheduler;
         private PolyglotBook _polyglotBook;
+        private int _errors;
 
         public TournamentArbiter()
         {
@@ -51,13 +52,16 @@ namespace Cosette.Arbiter.Tournament
                 participantA.EngineOperator.InitNewGame();
                 participantB.EngineOperator.InitNewGame();
 
-                var currentEngineToMove = DateTime.UtcNow.Ticks % 2 == 0 ? participantA : participantB;
+                var whitePlayer = DateTime.UtcNow.Ticks % 2 == 0 ? participantA : participantB;
+                var blackPlayer = whitePlayer == participantA ? participantB : participantA;
+                var (playerToMove, opponent) = (whitePlayer, blackPlayer);
+
                 while (true)
                 {
-                    var bestMoveData = currentEngineToMove.EngineOperator.Go(gameData.MovesDone);
+                    var bestMoveData = playerToMove.EngineOperator.Go(gameData.MovesDone);
                     if (bestMoveData == null)
                     {
-                        currentEngineToMove.Errors++;
+                        _errors++;
                         break;
                     }
 
@@ -70,18 +74,19 @@ namespace Cosette.Arbiter.Tournament
                     {
                         if (gameData.Winner == Color.None)
                         {
-                            _participants[playerA].Draws++;
-                            _participants[playerB].Draws++;
+                            _participants[playerA].History.Add(new ArchivedGame(gameData, GameResult.Draw));
+                            _participants[playerB].History.Add(new ArchivedGame(gameData, GameResult.Draw));
                         }
                         else
                         {
-                            currentEngineToMove.Wins++;
+                            playerToMove.History.Add(new ArchivedGame(gameData, GameResult.Win));
+                            opponent.History.Add(new ArchivedGame(gameData, GameResult.Loss));
                         }
 
                         break;
                     }
 
-                    currentEngineToMove = currentEngineToMove == participantA ? participantB : participantA;
+                    (playerToMove, opponent) = (opponent, playerToMove);
                 }
             }
         }
@@ -91,7 +96,7 @@ namespace Cosette.Arbiter.Tournament
             foreach (var participant in _participants)
             {
                 Console.WriteLine($"{participant.EngineData.Name}: {participant.Wins} wins, {participant.Losses} losses, " +
-                                  $"{participant.Draws} draws, {participant.Errors} errors");
+                                  $"{participant.Draws} draws, {_errors} errors");
             }
         }
     }
