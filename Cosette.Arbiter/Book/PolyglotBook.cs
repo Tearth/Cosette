@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Cosette.Arbiter.Settings;
 
@@ -15,7 +16,7 @@ namespace Cosette.Arbiter.Book
             _random = new Random();
         }
 
-        public List<PolyglotBookEntry> GetRandomOpening()
+        public List<string> GetRandomOpening()
         {
             var movesList = new List<PolyglotBookEntry>();
             var polyglotBoard = new PolyglotBoard();
@@ -35,7 +36,7 @@ namespace Cosette.Arbiter.Book
                 polyglotBoard.MakeMove(entry.Move.ToString());
             }
 
-            return movesList;
+            return movesList.Select(p => p.Move.ToString()).ToList();
         }
 
         public unsafe List<PolyglotBookEntry> GetBookEntries(ulong hash)

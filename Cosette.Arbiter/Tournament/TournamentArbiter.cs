@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cosette.Arbiter.Book;
 using Cosette.Arbiter.Engine;
 using Cosette.Arbiter.Settings;
 
@@ -9,11 +10,13 @@ namespace Cosette.Arbiter.Tournament
     {
         private List<TournamentParticipant> _participants;
         private TournamentScheduler _scheduler;
+        private PolyglotBook _polyglotBook;
 
         public TournamentArbiter()
         {
             _participants = new List<TournamentParticipant>();
             _scheduler = new TournamentScheduler();
+            _polyglotBook = new PolyglotBook();
             
             foreach (var engineData in SettingsLoader.Data.Engines)
             {
@@ -31,7 +34,7 @@ namespace Cosette.Arbiter.Tournament
             _participants.ForEach(p => p.EngineOperator.Init());
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount; gameIndex++)
             {
-                var gameData = new GameData();
+                var gameData = new GameData(_polyglotBook.GetRandomOpening());
                 var (playerA, playerB) = _scheduler.GetPair(gameIndex);
                 var participantA = _participants[playerA];
                 var participantB = _participants[playerB];
@@ -42,6 +45,8 @@ namespace Cosette.Arbiter.Tournament
                 Console.WriteLine();
                 Console.WriteLine($"Game {gameIndex}");
                 Console.Write("Moves: ");
+                Console.Write(string.Join(' ', gameData.MovesDone));
+                Console.Write(" ");
 
                 participantA.EngineOperator.InitNewGame();
                 participantB.EngineOperator.InitNewGame();

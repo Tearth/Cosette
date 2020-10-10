@@ -12,9 +12,9 @@ namespace Cosette.Arbiter.Tournament
         private BestMoveData _lastBestMove;
         private Color _colorToMove;
 
-        public GameData()
+        public GameData(List<string> opening)
         {
-            MovesDone = new List<string>();
+            MovesDone = opening;
             _colorToMove = Color.White;
         }
 
