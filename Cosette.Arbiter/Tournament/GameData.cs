@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using Cosette.Arbiter.Engine;
+using Cosette.Arbiter.Settings;
 
 namespace Cosette.Arbiter.Tournament
 {
     public class GameData
     {
-        public List<string> MovesDone { get; set; }
+        public List<string> HalfMovesDone { get; set; }
         public bool GameIsDone { get; private set; }
         public Color Winner { get; private set; }
 
@@ -14,13 +15,13 @@ namespace Cosette.Arbiter.Tournament
 
         public GameData(List<string> opening)
         {
-            MovesDone = opening;
+            HalfMovesDone = opening;
             _colorToMove = Color.White;
         }
 
         public void MakeMove(BestMoveData bestMoveData)
         {
-            MovesDone.Add(bestMoveData.BestMove);
+            HalfMovesDone.Add(bestMoveData.BestMove);
             _lastBestMove = bestMoveData;
             
             if (IsCheckmate() || bestMoveData.LastInfoData.ScoreCp >= 2000)
@@ -47,14 +48,14 @@ namespace Cosette.Arbiter.Tournament
 
         public bool IsDraw()
         {
-            if (MovesDone.Count > 200)
+            if (HalfMovesDone.Count > SettingsLoader.Data.MaxMovesCount * 2)
             {
                 return true;
             }
 
-            if (MovesDone.Count > 8)
+            if (HalfMovesDone.Count > 8)
             {
-                return MovesDone[^1] == MovesDone[^5] && MovesDone[^5] == MovesDone[^9];
+                return HalfMovesDone[^1] == HalfMovesDone[^5] && HalfMovesDone[^5] == HalfMovesDone[^9];
             }
 
             return false;

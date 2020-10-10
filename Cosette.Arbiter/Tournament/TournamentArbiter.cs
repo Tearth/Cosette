@@ -56,7 +56,7 @@ namespace Cosette.Arbiter.Tournament
                 Console.WriteLine();
                 Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name})");
                 Console.Write("Moves: ");
-                Console.Write(string.Join(' ', gameData.MovesDone));
+                Console.Write(string.Join(' ', gameData.HalfMovesDone));
                 Console.Write(" ");
 
                 participantA.EngineOperator.InitNewGame();
@@ -65,7 +65,7 @@ namespace Cosette.Arbiter.Tournament
 
                 while (true)
                 {
-                    var bestMoveData = playerToMove.EngineOperator.Go(gameData.MovesDone);
+                    var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone);
                     if (bestMoveData == null)
                     {
                         _errors++;

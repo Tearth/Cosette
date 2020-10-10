@@ -17,6 +17,9 @@ namespace Cosette.Arbiter.Settings
         [JsonProperty("milliseconds_per_move")]
         public int MillisecondsPerMove { get; set; }
 
+        [JsonProperty("max_moves_count")]
+        public int MaxMovesCount { get; set; }
+
         [JsonProperty("games_count")]
         public int GamesCount { get; set; }
     }
