@@ -48,8 +48,29 @@ namespace Cosette.Arbiter.Book
         {
             var from = $"{(char)(FromFile + 'a')}{(char)(FromRank + '1')}";
             var to = $"{(char)(ToFile + 'a')}{(char)(ToRank + '1')}";
+            var result = from + to;
 
-            return from + to;
+            if (result == "e1h1")
+            {
+                return "e1g1";
+            }
+
+            if (result == "e8h8")
+            {
+                return "e8g8";
+            }
+            
+            if (result == "e1a1")
+            {
+                return "e1c1";
+            }
+
+            if (result == "e8a8")
+            {
+                return "e8c8";
+            }
+
+            return result;
         }
     }
 }
