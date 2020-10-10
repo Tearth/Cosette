@@ -31,5 +31,15 @@ namespace Cosette.Arbiter.Tournament
 
             return (History.Sum(p => p.Opponent.EngineData.Rating) + 400 * (Wins - Losses)) / History.Count;
         }
+
+        public int WonGamesPercent()
+        {
+            if (History.Count == 0 || History.Count == Draws)
+            {
+                return 0;
+            }
+
+            return (int)((float)Wins * 100 / (Wins + Losses));
+        }
     }
 }

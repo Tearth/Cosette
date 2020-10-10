@@ -104,8 +104,9 @@ namespace Cosette.Arbiter.Tournament
             {
                 var originalRating = participant.EngineData.Rating;
                 var performance = participant.CalculatePerformanceRating() - originalRating;
+                var wonGamesPercent = participant.WonGamesPercent();
 
-                Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}): " +
+                Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}, {wonGamesPercent}%): " +
                                   $"{participant.Wins} wins, {participant.Losses} losses, " +
                                   $"{participant.Draws} draws, {_errors} errors");
             }
