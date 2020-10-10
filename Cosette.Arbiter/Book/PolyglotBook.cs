@@ -22,7 +22,7 @@ namespace Cosette.Arbiter.Book
             var polyglotBoard = new PolyglotBoard();
             polyglotBoard.InitDefaultState();
 
-            for (var i = 0; i < SettingsLoader.Data.PolyglotMaxMoves; i++)
+            for (var moveIndex = 0; moveIndex < SettingsLoader.Data.PolyglotMaxMoves; moveIndex++)
             {
                 var availableMoves = GetBookEntries(polyglotBoard.CalculateHash());
                 if (availableMoves.Count == 0)
@@ -30,10 +30,25 @@ namespace Cosette.Arbiter.Book
                     break;
                 }
 
-                var entry = availableMoves[_random.Next(0, availableMoves.Count)];
-                movesList.Add(entry);
+                availableMoves = availableMoves.OrderBy(p => p.Weight).ToList();
+                var weightSum = availableMoves.Sum(p => p.Weight);
 
-                polyglotBoard.MakeMove(entry.Move.ToString());
+                var probabilityArray = new double[availableMoves.Count];
+                for (var availableMoveIndex = 0; availableMoveIndex < availableMoves.Count; availableMoveIndex++)
+                {
+                    probabilityArray[availableMoveIndex] = (double)availableMoves[availableMoveIndex].Weight / weightSum;
+                }
+
+                var randomValue = _random.NextDouble();
+                for (var availableMoveIndex = 0; availableMoveIndex < availableMoves.Count; availableMoveIndex++)
+                {
+                    if (probabilityArray[availableMoveIndex] > randomValue || availableMoveIndex == availableMoves.Count - 1)
+                    {
+                        movesList.Add(availableMoves[availableMoveIndex]);
+                        polyglotBoard.MakeMove(availableMoves[availableMoveIndex].Move.ToString());
+                        break;
+                    }
+                }
             }
 
             return movesList.Select(p => p.Move.ToString()).ToList();
