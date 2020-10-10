@@ -11,6 +11,9 @@ namespace Cosette.Arbiter.Settings
         [JsonProperty("polyglot_opening_book")]
         public string PolyglotOpeningBook { get; set; }
 
+        [JsonProperty("polyglot_max_moves")]
+        public int PolyglotMaxMoves { get; set; }
+
         [JsonProperty("milliseconds_per_move")]
         public int MillisecondsPerMove { get; set; }
 

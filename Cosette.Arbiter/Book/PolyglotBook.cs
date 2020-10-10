@@ -8,9 +8,34 @@ namespace Cosette.Arbiter.Book
 {
     public class PolyglotBook
     {
-        public List<string> GetRandomOpening()
+        private Random _random;
+
+        public PolyglotBook()
         {
-            return null;
+            _random = new Random();
+        }
+
+        public List<PolyglotBookEntry> GetRandomOpening()
+        {
+            var movesList = new List<PolyglotBookEntry>();
+            var polyglotBoard = new PolyglotBoard();
+            polyglotBoard.InitDefaultState();
+
+            for (var i = 0; i < SettingsLoader.Data.PolyglotMaxMoves; i++)
+            {
+                var availableMoves = GetBookEntries(polyglotBoard.CalculateHash());
+                if (availableMoves.Count == 0)
+                {
+                    break;
+                }
+
+                var entry = availableMoves[_random.Next(0, availableMoves.Count)];
+                movesList.Add(entry);
+
+                polyglotBoard.MakeMove(entry.Move.ToString());
+            }
+
+            return movesList;
         }
 
         public unsafe List<PolyglotBookEntry> GetBookEntries(ulong hash)
@@ -49,7 +74,10 @@ namespace Cosette.Arbiter.Book
                     var entry = ReadEntry(binaryReader, buffer, bufferPtr, left++, entrySize);
                     if (entry.Hash == hash)
                     {
-                        foundEntries.Add(entry);
+                        if (entry.Move != PolyglotBookMove.Zero)
+                        {
+                            foundEntries.Add(entry);
+                        }
                     }
                     else
                     {

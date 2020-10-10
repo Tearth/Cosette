@@ -1,4 +1,6 @@
-﻿namespace Cosette.Arbiter.Book
+﻿#pragma warning disable 649
+
+namespace Cosette.Arbiter.Book
 {
     public struct PolyglotBookMove
     {
@@ -8,7 +10,39 @@
         public byte FromRank => (byte)((_data >> 9) & 0x7);
         public byte PromotionPiece => (byte)((_data >> 12) & 0x7);
 
+        public static PolyglotBookMove Zero = new PolyglotBookMove();
+
         private ushort _data;
+
+        public static bool operator ==(PolyglotBookMove a, PolyglotBookMove b)
+        {
+            return a._data == b._data;
+        }
+
+        public static bool operator !=(PolyglotBookMove a, PolyglotBookMove b)
+        {
+            return a._data != b._data;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return this == (PolyglotBookMove)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return _data;
+        }
 
         public override string ToString()
         {
