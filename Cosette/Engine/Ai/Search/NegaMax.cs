@@ -311,6 +311,12 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
+            // Don't save invalid scores to the transposition table
+            if (context.AbortSearch)
+            {
+                return 0;
+            }
+
             // Don't add invalid move (done after checkmate) to prevent strange behaviors
             if (alpha == -(-EvaluationConstants.Checkmate + ply + 1))
             {
