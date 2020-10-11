@@ -14,6 +14,7 @@
  - Added extended futility pruning
  - Added Arbiter app to speed up the process of testing engine
  - Fixed invalid best move when search has been aborted
+ - Improved time management - now allocated time depends from the moves count
 
 Estimated strength: ???? ELO
 
