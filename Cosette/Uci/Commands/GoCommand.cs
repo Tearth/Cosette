@@ -28,7 +28,7 @@ namespace Cosette.Uci.Commands
             var maxColorTime = TimeScheduler.CalculateTimeForMove(colorTime, _uciClient.BoardState.MovesCount);
 
             var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth);
-            var moveTime = GetParameter(parameters, "movetime", int.MaxValue);
+            var moveTime = GetParameter(parameters, "movetime", 0);
             var nodesCount = GetParameter(parameters, "nodes", ulong.MaxValue);
             var searchMoves = GetParameterWithMoves(parameters, "searchmoves");
             var infiniteFlag = GetFlag(parameters, "infinite");
@@ -40,17 +40,10 @@ namespace Cosette.Uci.Commands
                 MoveRestrictions = searchMoves
             };
 
-            if (colorTime != int.MaxValue)
+            if (moveTime != 0)
             {
-                moveTime = maxColorTime;
-            }
-
-            if (moveTime != int.MaxValue)
-            {
-                if (GetFlag(parameters, "movetime"))
-                {
-                    _uciClient.SearchContext.WaitForStopCommand = true;
-                }
+                maxColorTime = int.MaxValue;
+                _uciClient.SearchContext.WaitForStopCommand = true;
 
                 Task.Run(() =>
                 {
