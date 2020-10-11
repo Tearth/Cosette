@@ -18,14 +18,12 @@ namespace Cosette.Engine.Ai.Search
         {
             HistoryHeuristic.Clear();
 
-            var expectedExecutionTime = 0;
             var alpha = SearchConstants.MinValue;
             var beta = SearchConstants.MaxValue;
-            var lastSearchTime = 10ul;
             var bestMove = Move.Empty;
             var stopwatch = Stopwatch.StartNew();
 
-            for (var depth = 1; ShouldContinueDeepening(context, depth, expectedExecutionTime); depth++)
+            for (var depth = 1; depth < context.MaxDepth; depth++)
             {
                 context.Statistics = new SearchStatistics();
 
@@ -43,10 +41,6 @@ namespace Cosette.Engine.Ai.Search
                 bestMove = context.Statistics.PrincipalVariation[0];
 
                 OnSearchUpdate?.Invoke(null, context.Statistics);
-
-                var ratio = (float)context.Statistics.SearchTime / lastSearchTime;
-                expectedExecutionTime = (int)(context.Statistics.SearchTime * ratio);
-                lastSearchTime = context.Statistics.SearchTime;
             }
 
             while (context.WaitForStopCommand)
@@ -56,12 +50,6 @@ namespace Cosette.Engine.Ai.Search
 
             context.AbortSearch = false;
             return bestMove;
-        }
-
-        public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
-        {
-            return depth < context.MaxDepth &&
-                   expectedExecutionTime <= context.MaxTime;
         }
 
         public static bool IsScoreNearCheckmate(int score)
