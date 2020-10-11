@@ -49,7 +49,7 @@ namespace Cosette.Engine.Ai.Ordering
 
                     moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
                 }
-                else if ((int)moves[moveIndex].Flags >= 16)
+                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
                 {
                     moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
                 }

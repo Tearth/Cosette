@@ -20,9 +20,9 @@
 
     public static class MoveFlagFields
     {
-        public static int Special0 = 1;
-        public static int Special1 = 2;
-        public static int Capture = 4;
-        public static int Promotion = 8;
+        public const int Special0 = 1;
+        public const int Special1 = 2;
+        public const int Capture = 4;
+        public const int Promotion = 8;
     }
 }

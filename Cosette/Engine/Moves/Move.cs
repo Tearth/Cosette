@@ -82,7 +82,7 @@ namespace Cosette.Engine.Moves
         public override string ToString()
         {
             var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
-            if ((int)Flags >= 16)
+            if (((byte)Flags & MoveFlagFields.Promotion) != 0)
             {
                 return baseMove + GetPromotionSymbol(Flags);
             }
