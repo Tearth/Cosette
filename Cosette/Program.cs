@@ -1,9 +1,8 @@
-﻿using Cosette.Engine.Ai.Search;
+﻿using System;
 using Cosette.Engine.Ai.Transposition;
-using Cosette.Engine.Board;
-using Cosette.Engine.Fen;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Interactive;
+using Cosette.Logs;
 
 namespace Cosette
 {
@@ -11,10 +10,17 @@ namespace Cosette
     {
         private static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
             HashTableAllocator.Allocate();
             MagicBitboards.InitWithInternalKeys();
 
             new InteractiveConsole().Run();
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            LogManager.LogError(e.ExceptionObject.ToString());
         }
     }
 }

@@ -18,7 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>TRACE;DEBUG;UCI_DEBUG_OUTPUT;LOGGER</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UCI_DEBUG_OUTPUT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -30,7 +30,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>TRACE;UCI_DEBUG_OUTPUT;LOGGER</DefineConstants>
+    <DefineConstants>TRACE;UCI_DEBUG_OUTPUT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BMI|AnyCPU'">
@@ -43,7 +43,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BMI|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>TRACE;BMI;UCI_DEBUG_OUTPUT;LOGGER</DefineConstants>
+    <DefineConstants>TRACE;BMI;UCI_DEBUG_OUTPUT</DefineConstants>
     <Optimize>true</Optimize>
   </PropertyGroup>
 
