@@ -15,17 +15,19 @@ namespace Cosette.Logs
             _basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
             _logFile = Path.Combine(_basePath, $"info-{DateTime.Now.Ticks}.log");
 
-            _infoLogStreamWriter = new StreamWriter(_logFile);
-
             if (!Directory.Exists(_basePath))
             {
                 Directory.CreateDirectory(_basePath);
             }
+
+#if LOGGER
+            _infoLogStreamWriter = new StreamWriter(_logFile);
+#endif
         }
 
         public static void LogInfo(string message)
         {
-#if UCI_DEBUG_OUTPUT
+#if LOGGER
             _infoLogStreamWriter.WriteLine(message);
 #endif
         }

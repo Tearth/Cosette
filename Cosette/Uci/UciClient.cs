@@ -70,7 +70,7 @@ namespace Cosette.Uci
                 var input = Console.ReadLine();
                 if (input == null)
                 {
-                    continue;
+                    Environment.Exit(0);
                 }
 
                 var splitInput = input.Split(' ');
