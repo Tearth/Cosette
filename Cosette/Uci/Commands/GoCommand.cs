@@ -70,8 +70,16 @@ namespace Cosette.Uci.Commands
 
         private void SearchEntryPoint()
         {
-            var bestMove = IterativeDeepening.FindBestMove(_uciClient.SearchContext);
-            _uciClient.Send($"bestmove {bestMove}");
+            try
+            {
+                var bestMove = IterativeDeepening.FindBestMove(_uciClient.SearchContext);
+                _uciClient.Send($"bestmove {bestMove}");
+            }
+            catch (Exception e)
+            {
+                Program.OnUnhandledException(this, new UnhandledExceptionEventArgs(e, true));
+                Environment.Exit(-1);
+            }
         }
 
         private T GetParameter<T>(string[] parameters, string name, T defaultValue)

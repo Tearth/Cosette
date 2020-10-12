@@ -18,7 +18,7 @@ namespace Cosette
             new InteractiveConsole().Run();
         }
 
-        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        public static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             LogManager.LogError(e.ExceptionObject.ToString());
         }

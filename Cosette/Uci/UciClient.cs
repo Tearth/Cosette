@@ -65,13 +65,21 @@ namespace Cosette.Uci
 
         public (string Command, string[] parameters) Receive()
         {
-            var input = Console.ReadLine();
-            var splitInput = input.Split(' ');
-            var command = splitInput[0].ToLower();
-            var parameters = splitInput.Skip(1).ToArray();
+            while (true)
+            {
+                var input = Console.ReadLine();
+                if (input == null)
+                {
+                    continue;
+                }
 
-            LogManager.LogInfo("[RECV] " + input);
-            return (command, parameters);
+                var splitInput = input.Split(' ');
+                var command = splitInput[0].ToLower();
+                var parameters = splitInput.Skip(1).ToArray();
+
+                LogManager.LogInfo("[RECV] " + input);
+                return (command, parameters);
+            }
         }
 
         public void SetDebugMode(bool state)
