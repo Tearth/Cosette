@@ -53,7 +53,6 @@ namespace Cosette.Arbiter.Tournament
                 Console.Clear();
                 WriteResults();
 
-                Console.WriteLine();
                 Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name})");
                 Console.Write("Moves: ");
                 Console.Write(string.Join(' ', gameData.HalfMovesDone));
@@ -72,6 +71,7 @@ namespace Cosette.Arbiter.Tournament
                         break;
                     }
 
+                    playerToMove.Logs.Add(bestMoveData.LastInfoData);
                     gameData.MakeMove(bestMoveData);
 
                     Console.Write(bestMoveData.BestMove);
@@ -109,6 +109,9 @@ namespace Cosette.Arbiter.Tournament
                 Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}, {wonGamesPercent}%): " +
                                   $"{participant.Wins} wins, {participant.Losses} losses, " +
                                   $"{participant.Draws} draws, {_errors} errors");
+                Console.WriteLine($" === {participant.AverageDepth:F1} average depth, {participant.AverageNodesCount} average nodes, " +
+                                  $"{participant.AverageNps} average nodes per second");
+                Console.WriteLine();
             }
         }
     }
