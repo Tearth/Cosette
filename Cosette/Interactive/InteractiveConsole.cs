@@ -74,31 +74,38 @@ namespace Cosette.Interactive
 
         public void WriteLine(string message)
         {
-            var splitMessage = _splitRegex.Split(message);
-            foreach (var chunk in splitMessage.Where(p => !string.IsNullOrEmpty(p)))
+            if (Console.IsOutputRedirected)
             {
-                if(_moveRegex.IsMatch(chunk))
-                {
-                    Console.ForegroundColor = _moveColor;
-                }
-                else if (_symbols.Contains(chunk))
-                {
-                    Console.ForegroundColor = _symbolColor;
-                }
-                else if (float.TryParse(chunk, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
-                {
-                    Console.ForegroundColor = _numberColor;
-                }
-                else
-                {
-                    Console.ForegroundColor = _keywordColor;
-                }
-
-                Console.Write(chunk);
-                Console.ResetColor();
+                Console.WriteLine(message);
             }
+            else
+            {
+                var splitMessage = _splitRegex.Split(message);
+                foreach (var chunk in splitMessage.Where(p => !string.IsNullOrEmpty(p)))
+                {
+                    if (_moveRegex.IsMatch(chunk))
+                    {
+                        Console.ForegroundColor = _moveColor;
+                    }
+                    else if (_symbols.Contains(chunk))
+                    {
+                        Console.ForegroundColor = _symbolColor;
+                    }
+                    else if (float.TryParse(chunk, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
+                    {
+                        Console.ForegroundColor = _numberColor;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = _keywordColor;
+                    }
 
-            Console.WriteLine();
+                    Console.Write(chunk);
+                    Console.ResetColor();
+                }
+
+                Console.WriteLine();
+            }
         }
 
         private void DisplayIntro()
