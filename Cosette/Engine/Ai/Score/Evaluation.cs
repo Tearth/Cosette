@@ -21,5 +21,11 @@ namespace Cosette.Engine.Ai.Score
 
             return board.ColorToMove == Color.White ? result : -result;
         }
+
+        public static int FastEvaluate(BoardState board)
+        {
+            var result = MaterialEvaluator.Evaluate(board);
+            return board.ColorToMove == Color.White ? result : -result;
+        }
     }
 }
