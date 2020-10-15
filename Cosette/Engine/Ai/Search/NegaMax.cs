@@ -291,23 +291,6 @@ namespace Cosette.Engine.Ai.Search
                    moves[moveIndex].IsQuiet() && !kingChecked;
         }
 
-        private static bool FutilityPruningCanBeAppliedToNode(int depth, int alpha, int beta, bool pvNode, bool parentKingChecked)
-        {
-            return depth <= SearchConstants.FutilityPruningMaxDepth &&
-                   !pvNode &&
-                   !parentKingChecked && 
-                   !IterativeDeepening.IsScoreNearCheckmate(alpha) &&
-                   !IterativeDeepening.IsScoreNearCheckmate(beta);
-        }
-
-        private static bool FutilityPruningCanBeAppliedToMove(short futilityScore, short futilityMargin, int alpha, bool quietMove, bool kingChecked)
-        {
-            return quietMove &&
-                   !kingChecked &&
-                   !IterativeDeepening.IsScoreNearCheckmate(alpha) &&
-                   futilityScore + futilityMargin <= alpha;
-        }
-
         private static int LMRGetReducedDepth(int depth, bool pvNode)
         {
             return pvNode ? 
