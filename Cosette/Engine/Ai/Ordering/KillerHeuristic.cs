@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Ai.Search;
+﻿using System;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
@@ -50,10 +51,7 @@ namespace Cosette.Engine.Ai.Ordering
             {
                 for (var depth = 0; depth < SearchConstants.MaxDepth; depth++)
                 {
-                    for (var slot = 0; slot < MoveOrderingConstants.KillerSlots; slot++)
-                    {
-                        _killerMoves[color][depth][slot] = Move.Empty;
-                    }
+                    Array.Clear(_killerMoves[color][depth], 0, MoveOrderingConstants.KillerSlots);
                 }
             }
         }

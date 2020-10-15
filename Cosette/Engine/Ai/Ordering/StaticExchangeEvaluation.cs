@@ -7,7 +7,7 @@ namespace Cosette.Engine.Ai.Ordering
     {
         private static short[][][][] _table;
 
-        static StaticExchangeEvaluation()
+        public static void Init()
         {
             InitTable();
             PopulateTable();

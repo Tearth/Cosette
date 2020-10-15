@@ -66,14 +66,14 @@ namespace Cosette.Interactive.Commands
                 MaxDepth = depth
             };
 
-            IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnOnSearchUpdate;
+            IterativeDeepening.OnSearchUpdate += IterativeDeepening_OnSearchUpdate;
             IterativeDeepening.FindBestMove(context);
-            IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnOnSearchUpdate;
+            IterativeDeepening.OnSearchUpdate -= IterativeDeepening_OnSearchUpdate;
 
             _interactiveConsole.WriteLine();
         }
 
-        private void IterativeDeepening_OnOnSearchUpdate(object sender, SearchStatistics statistics)
+        private void IterativeDeepening_OnSearchUpdate(object sender, SearchStatistics statistics)
         {
             // Main search result
             _interactiveConsole.WriteLine($"  === Depth: {statistics.Depth}, Score: {statistics.Score}, Best: {statistics.PrincipalVariation[0]}, " +

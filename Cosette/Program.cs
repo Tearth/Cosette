@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Interactive;
@@ -14,6 +15,7 @@ namespace Cosette
 
             HashTableAllocator.Allocate();
             MagicBitboards.InitWithInternalKeys();
+            StaticExchangeEvaluation.Init();
 
             new InteractiveConsole().Run();
         }
