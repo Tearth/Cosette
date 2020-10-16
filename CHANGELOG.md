@@ -6,7 +6,7 @@
  - Fixed invalid detection of passing pawns
  - Added "evaluate" command to get FEN position evaluation
  - Added ability to postpone moves generation before PV move check
- - Improved move ordering: better promotions are now prioritized
+ - Improved move ordering: castling and better promotions are now prioritized
  - Added evaluation hash table
  - Redefined and reduced the size of Move structure (from 4 bytes to 2 bytes)
  - Reduced size of transposition table entry (from 16 bytes to 12 bytes), evaluation hash table entry (from 8 bytes to 4 bytes) and pawn hash table entry (from 8 bytes to 4 bytes)
