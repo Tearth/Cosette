@@ -121,8 +121,7 @@ namespace Cosette.Engine.Ai.Search
             }
 #endif
 
-            var kingChecked = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
-            if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, kingChecked))
+            if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode))
             {
                 context.BoardState.MakeNullMove();
                 var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false);
@@ -279,10 +278,11 @@ namespace Cosette.Engine.Ai.Search
             return alpha;
         }
 
-        private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool kingChecked)
+        private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode)
         {
             return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
-                   board.GetGamePhase() == GamePhase.Opening && !kingChecked;
+                   board.GetGamePhase() == GamePhase.Opening &&
+                   !board.IsKingChecked(board.ColorToMove);
         }
 
         private static bool LMRCanBeApplied(int depth, bool kingChecked, int moveIndex, Span<Move> moves)
