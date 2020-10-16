@@ -49,6 +49,10 @@ namespace Cosette.Engine.Ai.Ordering
 
                     moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
                 }
+                else if (moves[moveIndex].Flags == MoveFlags.KingCastle || moves[moveIndex].Flags == MoveFlags.QueenCastle)
+                {
+                    moveValues[moveIndex] = MoveOrderingConstants.Castling;
+                }
                 else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
                 {
                     moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
