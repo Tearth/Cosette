@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Ai.Score;
+﻿using System.Collections.Generic;
+using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Ai.Ordering
@@ -37,6 +38,7 @@ namespace Cosette.Engine.Ai.Ordering
 
         private static void PopulateTable()
         {
+            var gainList = new List<int>();
             for (var attackingPiece = 0; attackingPiece < 6; attackingPiece++)
             {
                 for (var capturedPiece = 0; capturedPiece < 6; capturedPiece++)
@@ -51,6 +53,8 @@ namespace Cosette.Engine.Ai.Ordering
                             var currentPieceOnField = attackingPiece;
                             var result = EvaluationConstants.Pieces[capturedPiece];
 
+                            gainList.Add(result);
+
                             if (defenders != 0)
                             {
                                 var leastValuableDefenderField = BitOperations.GetLsb(defenders);
@@ -60,16 +64,24 @@ namespace Cosette.Engine.Ai.Ordering
                                 result -= EvaluationConstants.Pieces[currentPieceOnField];
                                 currentPieceOnField = leastValuableDefenderPiece;
 
+                                gainList.Add(result);
+
                                 while (attackers != 0)
                                 {
-                                    var updatedResult = result;
-
                                     var leastValuableAttackerField = BitOperations.GetLsb(attackers);
                                     var leastValuableAttackerPiece = BitOperations.BitScan(leastValuableAttackerField);
                                     attackers = BitOperations.PopLsb(attackers);
 
-                                    updatedResult += EvaluationConstants.Pieces[currentPieceOnField];
+                                    result += EvaluationConstants.Pieces[currentPieceOnField];
                                     currentPieceOnField = leastValuableAttackerPiece;
+
+                                    gainList.Add(result);
+
+                                    if (gainList[^1] > gainList[^3])
+                                    {
+                                        result = gainList[^3];
+                                        break;
+                                    }
 
                                     if (defenders != 0)
                                     {
@@ -77,16 +89,18 @@ namespace Cosette.Engine.Ai.Ordering
                                         leastValuableDefenderPiece = BitOperations.BitScan(leastValuableDefenderField);
                                         defenders = BitOperations.PopLsb(defenders);
 
-                                        updatedResult -= EvaluationConstants.Pieces[currentPieceOnField];
+                                        result -= EvaluationConstants.Pieces[currentPieceOnField];
                                         currentPieceOnField = leastValuableDefenderPiece;
+
+                                        gainList.Add(result);
+
+                                        if (gainList[^1] < gainList[^3])
+                                        {
+                                            result = gainList[^3];
+                                            break;
+                                        }
                                     }
                                     else
-                                    {
-                                        result = updatedResult;
-                                        break;
-                                    }
-
-                                    if (updatedResult < result)
                                     {
                                         break;
                                     }
@@ -94,6 +108,7 @@ namespace Cosette.Engine.Ai.Ordering
                             }
 
                             _table[attackingPiece][capturedPiece][attackerIndex][defenderIndex] = (short)result;
+                            gainList.Clear();
                         }
                     }
                 }

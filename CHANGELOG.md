@@ -16,6 +16,7 @@
  - Fixed invalid best move when search has been aborted
  - Improved time management - now allocated time depends from the moves count
  - Optimized printing UCI output
+ - Fixed static exchange evaluation - in rare cases the table was returning invalid score
 
 Estimated strength: ???? ELO
 
