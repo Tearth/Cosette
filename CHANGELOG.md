@@ -6,6 +6,7 @@
  - Added evaluation hash table
  - Added extended futility pruning
  - Added Arbiter app to speed up the process of testing engine
+ - Added support for UCI's winc and binc
  - Fixed PV node detection
  - Fixed invalid detection of passing pawns
  - Fixed invalid best move when search has been aborted
