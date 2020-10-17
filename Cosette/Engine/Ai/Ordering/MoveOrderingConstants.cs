@@ -11,5 +11,6 @@
         public const int PawnNearPromotion = 50;
 
         public const int KillerSlots = 3;
+        public const int HistoryHeuristicMaxScore = 80;
     }
 }

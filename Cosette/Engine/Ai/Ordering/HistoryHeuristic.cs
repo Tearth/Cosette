@@ -5,29 +5,35 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class HistoryHeuristic
     {
-        private static readonly byte[][][] _historyMoves;
+        private static readonly uint[][][] _historyMoves;
+        private static uint _max;
 
         static HistoryHeuristic()
         {
-            _historyMoves = new byte[2][][];
-            _historyMoves[Color.White] = new byte[64][];
-            _historyMoves[Color.Black] = new byte[64][];
+            _historyMoves = new uint[2][][];
+            _historyMoves[Color.White] = new uint[64][];
+            _historyMoves[Color.Black] = new uint[64][];
 
             for (var from = 0; from < 64; from++)
             {
-                _historyMoves[Color.White][from] = new byte[64];
-                _historyMoves[Color.Black][from] = new byte[64];
+                _historyMoves[Color.White][from] = new uint[64];
+                _historyMoves[Color.Black][from] = new uint[64];
             }
+
+            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
         }
 
         public static void AddHistoryMove(int color, int from, int to, int depth)
         {
-            _historyMoves[color][from][to] = (byte)(depth * depth);
+            var newValue = _historyMoves[color][from][to] + (uint)(depth * depth);
+
+            _max = Math.Max(_max, newValue);
+            _historyMoves[color][from][to] = newValue;
         }
 
-        public static byte GetHistoryMoveValue(int color, int from, int to)
+        public static short GetHistoryMoveValue(int color, int from, int to)
         {
-            return _historyMoves[color][from][to];
+            return (short)(_historyMoves[color][from][to] / (_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
         }
 
         public static void Clear()
@@ -39,6 +45,8 @@ namespace Cosette.Engine.Ai.Ordering
                     Array.Clear(_historyMoves[color][from], 0, 64);
                 }
             }
+
+            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
         }
     }
 }
