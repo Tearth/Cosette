@@ -17,6 +17,7 @@
  - Improved time management - now allocated time depends from the moves count
  - Optimized printing UCI output
  - Fixed static exchange evaluation - in rare cases the table was returning invalid score
+ - Adjusted move ordering scores
 
 Estimated strength: ???? ELO
 
