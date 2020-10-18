@@ -19,6 +19,7 @@
  - Reduced size of transposition table entry (from 16 bytes to 12 bytes), evaluation hash table entry (from 8 bytes to 4 bytes) and pawn hash table entry (from 8 bytes to 4 bytes)
  - Optimized printing UCI output
  - Adjusted move ordering scores
+ - Updated .NET Core runtime version to 3.1.403
 
 Estimated strength: ???? ELO
 
