@@ -5,7 +5,7 @@ A brand new UCI-compliant chess engine written in C# for .NET Core platform. The
 
 The engine has **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/engine_details.cgi?match_length=30&print=Details&each_game=1&eng=Cosette%201.0%2064-bit#Cosette_1_0_64-bit)** (Computer Chess Rating Lists) where you can check the best strength estimation. Also, feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
 
-![asd](https://i.imgur.com/ck4GbbF.png)
+![Cosette interactive console example](https://i.imgur.com/hIcaAmz.png)
 
 ## How to play?
 The simplest way is to download the newest version from the [Releases page](https://github.com/Tearth/Cosette/releases) and use it with a graphical interface like Arena or WinBoard. The engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
