@@ -32,7 +32,7 @@ namespace Cosette.Uci.Commands
 
             var maxColorTime = TimeScheduler.CalculateTimeForMove(colorTime, incTime, _uciClient.BoardState.MovesCount);
 
-            var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth);
+            var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth - 1);
             var moveTime = GetParameter(parameters, "movetime", 0);
             var nodesCount = GetParameter(parameters, "nodes", ulong.MaxValue);
             var searchMoves = GetParameterWithMoves(parameters, "searchmoves");
@@ -40,7 +40,7 @@ namespace Cosette.Uci.Commands
 
             _uciClient.SearchContext = new SearchContext(_uciClient.BoardState)
             {
-                MaxDepth = depth,
+                MaxDepth = depth + 1,
                 MaxNodesCount = nodesCount,
                 MoveRestrictions = searchMoves
             };
