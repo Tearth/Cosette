@@ -3,6 +3,8 @@
 
 A brand new UCI-compliant chess engine written in C# for .NET Core platform. The project is still in the early stage of development and lacks a few major performance improvements like more advanced pruning, extensions, or better evaluation. The current strength is estimated at 1900 ELO and hopefully will significantly improve in the future.
 
+The engine has **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/engine_details.cgi?match_length=30&print=Details&each_game=1&eng=Cosette%201.0%2064-bit#Cosette_1_0_64-bit)** (Computer Chess Rating Lists) where you can check the best strength estimation. Also, feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
+
 ![asd](https://i.imgur.com/ck4GbbF.png)
 
 ## How to play?
