@@ -110,10 +110,10 @@ namespace Cosette.Interactive
 
         private void DisplayIntro()
         {
-            Console.WriteLine($"Cosette v2.0 dev (Darkness), --.--.---- @ {Environment.OSVersion}");
+            Console.WriteLine($"Cosette v2.0 (Darkness), 19.10.2020 @ {Environment.OSVersion}");
             Console.WriteLine("Homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine();
-            Console.WriteLine("\"There are two types of sacrifices: correct ones, and mine.\" ~ Mikhail Tal");
+            Console.WriteLine("\"The blunders are all there on the board, waiting to be made.\" ~ Savielly Tartakower");
             Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
         }

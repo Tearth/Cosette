@@ -1,4 +1,4 @@
-# Version 2.0 (Darkness), --.--.----
+# Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
  - Added new evaluations functions: pawn shield, bishop pair, doubled rooks, a rook on open file
  - Added "evaluate" command to get FEN position evaluation
@@ -21,7 +21,7 @@
  - Adjusted move ordering scores
  - Updated .NET Core runtime version to 3.1.403
 
-Estimated strength: ???? ELO
+Estimated strength: 2000 ELO
 
 # Version 1.0 (Aqua), 19.09.2020
  - Initial version
