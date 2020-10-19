@@ -20,7 +20,7 @@
  - Adjusted move ordering scores
  - Updated .NET Core runtime version to 3.1.403
 
-Estimated strength: 2000 ELO
+Estimated strength: 1950 ELO
 
 # Version 1.0 (Aqua), 19.09.2020
  - Initial version
