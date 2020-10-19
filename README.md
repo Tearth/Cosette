@@ -8,9 +8,9 @@ The engine has **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404
 ![Cosette interactive console example](https://i.imgur.com/hIcaAmz.png)
 
 ## How to play?
-The simplest way is to download the newest version from the [Releases page](https://github.com/Tearth/Cosette/releases) and use it with a graphical interface like Arena or WinBoard. The engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
+The simplest way is to download the newest version from the **[Releases page](https://github.com/Tearth/Cosette/releases)** and use it with a graphical interface like Arena or WinBoard. The engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
 
-Cosette has an official account on [lichess.org](https://lichess.org/) platform, which allows everybody to challenge her - feel free to do it!
+Cosette has an official account on **[lichess.org](https://lichess.org/)** platform, which allows everybody to challenge her - feel free to do it!
 
 **https://lichess.org/@/CosetteBot**
 
