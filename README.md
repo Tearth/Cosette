@@ -1,5 +1,5 @@
 # Cosette
-**Current version: v1.0 (Aqua), 19.09.2020**
+**Current version: v1.0 (Darkness), 19.10.2020**
 
 A brand new UCI-compliant chess engine written in C# for .NET Core platform. The project is still in the early stage of development and lacks a few major performance improvements like more advanced pruning, extensions, or better evaluation. The current strength is estimated at 1950 ELO and hopefully will significantly improve in the future.
 
