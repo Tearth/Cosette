@@ -9,16 +9,16 @@ namespace Cosette.Interactive
 {
     public class InteractiveConsole
     {
-        private Dictionary<string, ICommand> _commands;
-        private List<string> _symbols;
+        private readonly Dictionary<string, ICommand> _commands;
+        private readonly List<string> _symbols;
 
-        private ConsoleColor _keywordColor;
-        private ConsoleColor _moveColor;
-        private ConsoleColor _numberColor;
-        private ConsoleColor _symbolColor;
+        private readonly ConsoleColor _keywordColor;
+        private readonly ConsoleColor _moveColor;
+        private readonly ConsoleColor _numberColor;
+        private readonly ConsoleColor _symbolColor;
 
-        private Regex _splitRegex = new Regex(@"(\s|\,|\:|\(|\))", RegexOptions.Compiled);
-        private Regex _moveRegex = new Regex(@"([a-h][1-8]){2}[nbrq]?", RegexOptions.Compiled);
+        private readonly Regex _splitRegex = new Regex(@"(\s|\,|\:|\(|\))", RegexOptions.Compiled);
+        private readonly Regex _moveRegex = new Regex(@"([a-h][1-8]){2}[nbrq]?", RegexOptions.Compiled);
 
         public InteractiveConsole()
         {
@@ -30,6 +30,7 @@ namespace Cosette.Interactive
             _commands["perft"] = new SimplePerftCommand(this);
             _commands["benchmark"] = new BenchmarkCommand(this);
             _commands["verify"] = new VerifyCommand(this);
+            _commands["evaluate"] = new EvaluateCommand(this);
             _commands["uci"] = new UciCommand(this);
             _commands["quit"] = new QuitCommand(this);
 
@@ -73,39 +74,48 @@ namespace Cosette.Interactive
 
         public void WriteLine(string message)
         {
-            var splitMessage = _splitRegex.Split(message);
-            foreach (var chunk in splitMessage.Where(p => !string.IsNullOrEmpty(p)))
+            if (Console.IsOutputRedirected)
             {
-                if(_moveRegex.IsMatch(chunk))
-                {
-                    Console.ForegroundColor = _moveColor;
-                }
-                else if (_symbols.Contains(chunk))
-                {
-                    Console.ForegroundColor = _symbolColor;
-                }
-                else if (float.TryParse(chunk, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
-                {
-                    Console.ForegroundColor = _numberColor;
-                }
-                else
-                {
-                    Console.ForegroundColor = _keywordColor;
-                }
-
-                Console.Write(chunk);
-                Console.ResetColor();
+                Console.WriteLine(message);
             }
+            else
+            {
+                var splitMessage = _splitRegex.Split(message);
+                foreach (var chunk in splitMessage.Where(p => !string.IsNullOrEmpty(p)))
+                {
+                    if (_moveRegex.IsMatch(chunk))
+                    {
+                        Console.ForegroundColor = _moveColor;
+                    }
+                    else if (_symbols.Contains(chunk))
+                    {
+                        Console.ForegroundColor = _symbolColor;
+                    }
+                    else if (float.TryParse(chunk, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
+                    {
+                        Console.ForegroundColor = _numberColor;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = _keywordColor;
+                    }
 
-            Console.WriteLine();
+                    Console.Write(chunk);
+                    Console.ResetColor();
+                }
+
+                Console.WriteLine();
+            }
         }
 
         private void DisplayIntro()
         {
-            Console.WriteLine($"Cosette v1.0 (Aqua), 19.09.2020 @ {Environment.OSVersion}");
-            Console.WriteLine("Homepage and source code: https://github.com/Tearth/Cosette");
+            var runtimeVersion = $"{Environment.Version.Major}.{Environment.Version.Minor}.{Environment.Version.Build}";
+
+            Console.WriteLine($"Cosette v2.0 (Darkness), 19.10.2020 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
+            Console.WriteLine("Distributed under AGPL license, homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine();
-            Console.WriteLine("\"There are two types of sacrifices: correct ones, and mine.\" ~ Mikhail Tal");
+            Console.WriteLine("\"The blunders are all there on the board, waiting to be made.\" ~ Savielly Tartakower");
             Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
         }

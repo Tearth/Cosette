@@ -1,16 +1,12 @@
-﻿using System;
-
-namespace Cosette.Uci.Commands
+﻿namespace Cosette.Uci.Commands
 {
     public class DebugCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public DebugCommand(UciClient uciClient, UciGame uciGame)
+        public DebugCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)

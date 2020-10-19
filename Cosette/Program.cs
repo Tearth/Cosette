@@ -1,26 +1,28 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using Cosette.Engine.Ai;
+﻿using System;
 using Cosette.Engine.Ai.Ordering;
-using Cosette.Engine.Ai.Score.PieceSquareTables;
-using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
-using Cosette.Engine.Common;
-using Cosette.Engine.Moves;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Interactive;
+using Cosette.Logs;
 
 namespace Cosette
 {
     public class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
-            TranspositionTable.Init(SearchConstants.DefaultHashTableSize);
-            PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            HashTableAllocator.Allocate();
             MagicBitboards.InitWithInternalKeys();
+            StaticExchangeEvaluation.Init();
 
             new InteractiveConsole().Run();
+        }
+
+        public static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            LogManager.LogError(e.ExceptionObject.ToString());
         }
     }
 }

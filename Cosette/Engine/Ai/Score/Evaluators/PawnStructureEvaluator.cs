@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Ai.Transposition;
+﻿using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves.Patterns;
@@ -39,21 +38,40 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
         }
 
-        public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, EvaluationStatistics statistics, float openingPhase, float endingPhase)
         {
             var entry = PawnHashTable.Get(board.PawnHash);
-            if (entry.Hash == board.PawnHash)
+            if (entry.IsKeyValid(board.PawnHash))
             {
+#if DEBUG
+                statistics.PHTHits++;
+#endif
                 return entry.Score;
             }
+#if DEBUG
+            else
+            {
+                statistics.PHTNonHits++;
 
-            var result = Evaluate(board, Color.White, openingPhase, endingPhase) - Evaluate(board, Color.Black, openingPhase, endingPhase);
+                if (entry.Key != 0 || entry.Score != 0)
+                {
+                    statistics.PHTReplacements++;
+                }
+            }
+#endif
+
+            var result = Evaluate(board, Color.White, openingPhase, endingPhase) - 
+                         Evaluate(board, Color.Black, openingPhase, endingPhase);
+
             PawnHashTable.Add(board.PawnHash, (short)result);
 
+#if DEBUG
+            statistics.PHTAddedEntries++;
+#endif
             return result;
         }
 
-        public static int Evaluate(BoardState board, Color color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
         {
             var doubledPawns = 0;
             var isolatedPawns = 0;
@@ -61,57 +79,58 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var passingPawns = 0;
             var enemyColor = ColorOperations.Invert(color);
 
-            for (var i = 0; i < 8; i++)
+            for (var file = 0; file < 8; file++)
             {
-                var pawnsOnInnerMask = board.Pieces[(int)color][(int)Piece.Pawn] & _innerFileMasks[i];
-                var pawnsOnOuterMask = board.Pieces[(int)color][(int)Piece.Pawn] & _outerFileMasks[i];
-                var enemyPawnsOnInnerMask = board.Pieces[(int)enemyColor][(int)Piece.Pawn] & _innerFileMasks[i];
+                var friendlyPawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & _innerFileMasks[file];
+                var friendlyPawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & _outerFileMasks[file];
+                var enemyPawnsOnInnerMask = board.Pieces[enemyColor][Piece.Pawn] & _innerFileMasks[file];
+                var enemyPawnsOnOuterMask = board.Pieces[enemyColor][Piece.Pawn] & _outerFileMasks[file];
 
-                var pawnsCount = (int)BitOperations.Count(pawnsOnInnerMask);
+                var pawnsCount = BitOperations.Count(friendlyPawnsOnInnerMask);
                 if (pawnsCount > 1)
                 {
-                    doubledPawns += pawnsCount - 1;
+                    doubledPawns += (int)(pawnsCount - 1);
                 }
 
-                if (pawnsOnInnerMask != 0)
+                if (friendlyPawnsOnInnerMask != 0)
                 {
-                    if (pawnsOnOuterMask == 0)
+                    if (friendlyPawnsOnOuterMask == 0)
                     {
-                        isolatedPawns += (int)BitOperations.Count(pawnsOnInnerMask);
+                        isolatedPawns += (int)BitOperations.Count(pawnsCount);
                     }
 
-                    if (enemyPawnsOnInnerMask == 0)
+                    if (enemyPawnsOnInnerMask == 0 && enemyPawnsOnOuterMask == 0)
                     {
                         passingPawns++;
                     }
                 }
             }
 
-            var pieces = board.Pieces[(int)color][(int)Piece.Pawn];
+            var pieces = board.Pieces[color][Piece.Pawn];
             while (pieces != 0)
             {
                 var lsb = BitOperations.GetLsb(pieces);
-                pieces = BitOperations.PopLsb(pieces);
                 var field = BitOperations.BitScan(lsb);
+                pieces = BitOperations.PopLsb(pieces);
 
-                var chain = _chainMasks[field] & board.Pieces[(int)color][(int)Piece.Pawn];
+                var chain = _chainMasks[field] & board.Pieces[color][Piece.Pawn];
                 if (chain != 0)
                 {
                     chainedPawns += (int)BitOperations.Count(chain);
                 }
             }
 
-            var doubledPawnsScore = doubledPawns * EvaluationConstants.DoubledPawns[(int) GamePhase.Opening] * openingPhase +
-                                    doubledPawns * EvaluationConstants.DoubledPawns[(int) GamePhase.Ending] * endingPhase;
+            var doubledPawnsScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening] * openingPhase +
+                                    doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Ending] * endingPhase;
 
-            var isolatedPawnsScore = isolatedPawns * EvaluationConstants.IsolatedPawns[(int)GamePhase.Opening] * openingPhase +
-                                     isolatedPawns * EvaluationConstants.IsolatedPawns[(int)GamePhase.Ending] * endingPhase;
+            var isolatedPawnsScore = isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Opening] * openingPhase +
+                                     isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Ending] * endingPhase;
 
-            var chainedPawnsScore = chainedPawns * EvaluationConstants.ChainedPawns[(int)GamePhase.Opening] * openingPhase +
-                                    chainedPawns * EvaluationConstants.ChainedPawns[(int)GamePhase.Ending] * endingPhase;
+            var chainedPawnsScore = chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Opening] * openingPhase +
+                                    chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Ending] * endingPhase;
 
-            var passingPawnsScore = passingPawns * EvaluationConstants.PassingPawns[(int)GamePhase.Opening] * openingPhase +
-                                    passingPawns * EvaluationConstants.PassingPawns[(int)GamePhase.Ending] * endingPhase;
+            var passingPawnsScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Opening] * openingPhase +
+                                    passingPawns * EvaluationConstants.PassingPawns[GamePhase.Ending] * endingPhase;
 
             return (int)(doubledPawnsScore + isolatedPawnsScore + chainedPawnsScore + passingPawnsScore);
         }

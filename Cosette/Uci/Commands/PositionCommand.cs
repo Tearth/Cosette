@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cosette.Engine.Common;
+using Cosette.Engine.Fen;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Uci.Commands
 {
     public class PositionCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public PositionCommand(UciClient uciClient, UciGame uciGame)
+        public PositionCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)
@@ -43,13 +42,13 @@ namespace Cosette.Uci.Commands
 
         private void ParseStartPos(List<string> moves)
         {
-            _uciGame.SetDefaultState();
+            _uciClient.BoardState.SetDefaultState();
             ParseMoves(moves);
         }
 
         private void ParseFen(string fen, List<string> moves)
         {
-            _uciGame.SetFen(fen);
+            _uciClient.BoardState = FenToBoard.Parse(fen);
             ParseMoves(moves);
         }
 
@@ -58,17 +57,15 @@ namespace Cosette.Uci.Commands
             var color = Color.White;
             foreach (var move in moves)
             {
-                var parsedMove = Move.FromTextNotation(_uciGame.BoardState, move);
-                if (parsedMove == new Move())
+                var parsedMove = Move.FromTextNotation(_uciClient.BoardState, move);
+                if (parsedMove == Move.Empty)
                 {
                     throw new InvalidOperationException();
                 }
 
-                _uciGame.MakeMove(parsedMove);
+                _uciClient.BoardState.MakeMove(parsedMove);
                 color = ColorOperations.Invert(color);
             }
-
-            _uciGame.SetCurrentColor(color);
         }
     }
 }

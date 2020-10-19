@@ -6,22 +6,22 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class KingOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
+        public static int GetAvailableMoves(BoardState boardState, int color, Span<Move> moves, int offset)
         {
             var enemyColor = ColorOperations.Invert(color);
-            var piece = boardState.Pieces[(int)color][(int)Piece.King];
+            var piece = boardState.Pieces[color][Piece.King];
 
             var from = BitOperations.BitScan(piece);
-            var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.Occupancy[(int)color];
+            var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.Occupancy[color];
 
             while (availableMoves != 0)
             {
                 var field = BitOperations.GetLsb(availableMoves);
-                availableMoves = BitOperations.PopLsb(availableMoves);
                 var fieldIndex = BitOperations.BitScan(field);
+                availableMoves = BitOperations.PopLsb(availableMoves);
 
-                var flags = (field & boardState.Occupancy[(int)enemyColor]) != 0 ? MoveFlags.Kill : MoveFlags.None;
-                moves[offset++] = new Move(from, fieldIndex, Piece.King, flags);
+                var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Capture : MoveFlags.Quiet;
+                moves[offset++] = new Move(from, fieldIndex, flags);
             }
 
             if (color == Color.White)
@@ -30,7 +30,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 1) && !boardState.IsFieldAttacked(color, 2) && !boardState.IsFieldAttacked(color, 3))
                     {
-                        moves[offset++] = new Move(3, 1, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(3, 1, MoveFlags.KingCastle);
                     }
                 }
                 
@@ -38,7 +38,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 3) && !boardState.IsFieldAttacked(color, 4) && !boardState.IsFieldAttacked(color, 5))
                     {
-                        moves[offset++] = new Move(3, 5, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(3, 5, MoveFlags.QueenCastle);
                     }
                 }
             }
@@ -48,7 +48,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 57) && !boardState.IsFieldAttacked(color, 58) && !boardState.IsFieldAttacked(color, 59))
                     {
-                        moves[offset++] = new Move(59, 57, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(59, 57, MoveFlags.KingCastle);
                     }
                 }
                 
@@ -56,7 +56,7 @@ namespace Cosette.Engine.Board.Operators
                 {
                     if (!boardState.IsFieldAttacked(color, 59) && !boardState.IsFieldAttacked(color, 60) && !boardState.IsFieldAttacked(color, 61))
                     {
-                        moves[offset++] = new Move(59, 61, Piece.King, MoveFlags.Castling);
+                        moves[offset++] = new Move(59, 61, MoveFlags.QueenCastle);
                     }
                 }
             }
@@ -64,21 +64,21 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetAvailableQMoves(BoardState boardState, Color color, Span<Move> moves, int offset)
+        public static int GetAvailableQMoves(BoardState boardState, int color, Span<Move> moves, int offset)
         {
             var enemyColor = ColorOperations.Invert(color);
-            var piece = boardState.Pieces[(int)color][(int)Piece.King];
+            var piece = boardState.Pieces[color][Piece.King];
 
             var from = BitOperations.BitScan(piece);
-            var availableMoves = KingMovesGenerator.GetMoves(from) & boardState.Occupancy[(int)enemyColor];
+            var availableMoves = KingMovesGenerator.GetMoves(from) & boardState.Occupancy[enemyColor];
 
             while (availableMoves != 0)
             {
                 var field = BitOperations.GetLsb(availableMoves);
-                availableMoves = BitOperations.PopLsb(availableMoves);
                 var fieldIndex = BitOperations.BitScan(field);
+                availableMoves = BitOperations.PopLsb(availableMoves);
 
-                moves[offset++] = new Move(from, fieldIndex, Piece.King, MoveFlags.Kill);
+                moves[offset++] = new Move(from, fieldIndex, MoveFlags.Capture);
             }
 
             return offset;

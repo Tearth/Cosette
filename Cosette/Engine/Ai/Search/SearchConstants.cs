@@ -2,12 +2,10 @@
 {
     public static class SearchConstants
     {
-        public const int MinValue = -10000000;
-        public const int MaxValue =  10000000;
+        public const int MinValue = short.MinValue;
+        public const int MaxValue = short.MaxValue;
         public const int MaxDepth = 32;
-
-        public const int DefaultHashTableSize = 8;
-        public const int DefaultPawnHashTableSize = 8;
+        public const int MaxMovesCount = 128;
 
         public const int NullWindowMinimalDepth = 5;
         public const int NullWindowDepthReduction = 3;

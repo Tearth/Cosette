@@ -1,28 +1,27 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Common;
+﻿using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Moves.Patterns
 {
     public static class DiagonalPatternGenerator
     {
-        private static readonly ulong[] Patterns = new ulong[64];
+        private static readonly ulong[] _patterns = new ulong[64];
 
         static DiagonalPatternGenerator()
         {
-            for (var i = 0; i < Patterns.Length; i++)
+            for (var i = 0; i < _patterns.Length; i++)
             {
                 var rightTopPattern = GetPatternForField(i, new Position(-1, 1));
                 var leftTopPattern = GetPatternForField(i, new Position(1, 1));
                 var rightBottomPattern = GetPatternForField(i, new Position(-1, -1));
                 var leftBottomPattern = GetPatternForField(i, new Position(1, -1));
 
-                Patterns[i] = rightTopPattern | leftTopPattern | rightBottomPattern | leftBottomPattern;
+                _patterns[i] = rightTopPattern | leftTopPattern | rightBottomPattern | leftBottomPattern;
             }
         }
 
         public static ulong GetPattern(int fieldIndex)
         {
-            return Patterns[fieldIndex];
+            return _patterns[fieldIndex];
         }
 
         private static ulong GetPatternForField(int fieldIndex, Position shift)

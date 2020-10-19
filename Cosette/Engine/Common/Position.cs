@@ -5,6 +5,8 @@
         public readonly int X;
         public readonly int Y;
 
+        public static Position Empty = new Position();
+
         public Position(int x, int y)
         {
             X = x;
@@ -51,6 +53,21 @@
         public static bool operator !=(Position a, Position b)
         {
             return a.X != b.X || a.Y != b.Y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return this == (Position)obj;
         }
 
         public override int GetHashCode()

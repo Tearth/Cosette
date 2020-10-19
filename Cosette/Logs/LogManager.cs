@@ -5,12 +5,13 @@ namespace Cosette.Logs
 {
     public static class LogManager
     {
-        private static string _logFile;
-        private static string _basePath;
+        private static readonly string _logFile;
+        private static readonly string _basePath;
+
+        private static StreamWriter _infoLogStreamWriter;
 
         static LogManager()
         {
-#if LOGGER
             _basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
             _logFile = Path.Combine(_basePath, $"info-{DateTime.Now.Ticks}.log");
 
@@ -18,26 +19,22 @@ namespace Cosette.Logs
             {
                 Directory.CreateDirectory(_basePath);
             }
+
+#if LOGGER
+            _infoLogStreamWriter = new StreamWriter(_logFile);
 #endif
         }
 
         public static void LogInfo(string message)
         {
 #if LOGGER
-            Log(Path.Combine(_basePath, _logFile), message);
+            _infoLogStreamWriter.WriteLine(message);
 #endif
         }
 
         public static void LogError(string message)
         {
-#if LOGGER
-            Log(Path.Combine(_basePath, $"error-{DateTime.Now.Ticks}.log"), message);
-#endif
-        }
-
-        private static void Log(string filePath, string message)
-        {
-            using (var streamWriter = new StreamWriter(filePath, true))
+            using (var streamWriter = new StreamWriter(Path.Combine(_basePath, $"error-{DateTime.Now.Ticks}.log"), true))
             {
                 streamWriter.WriteLine(message);
             }

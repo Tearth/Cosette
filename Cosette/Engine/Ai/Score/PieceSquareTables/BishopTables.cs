@@ -8,22 +8,22 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
         {
             // Opening
             new[] {  -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5,
-                     -5,  0,   0,   0,   0,   0,   0,   -5,
-                     -5,  0,   0,   5,   5,   0,   0,   -5,
-                     -5,  0,   5,   5,   5,   5,   0,   -5,
-                     -5,  5,   5,   10,  10,  5,   5,   -5,
-                     -5,  5,   10,  10,  10,  10,  5,   -5,
-                     -5,  10,  0,   5,   5,   0,   10,  -5,
-                     -5,  -5,  0,   -5,  -5,  0,   -5,  -5 },
+                     -5,   0,   0,   0,   0,   0,   0,  -5,
+                     -5,   0,   0,   5,   5,   0,   0,  -5,
+                     -5,   0,   5,   5,   5,   5,   0,  -5,
+                     -5,   5,   5,  10,  10,   5,   5,  -5,
+                     -5,   5,  10,  10,  10,  10,   5,  -5,
+                     -5,  10,   0,   5,   5,   0,  10,  -5,
+                     -5,  -5,   0,  -5,  -5,   0,  -5,  -5 },
 
             // Ending
             new[] {  -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5,
-                     -5,  0,   0,   0,   0,   0,   0,   -5,
-                     -5,  0,   0,   0,   0,   0,   0,   -5,
-                     -5,  0,   0,   0,   0,   0,   0,   -5,
-                     -5,  0,   0,   0,   0,   0,   0,   -5,
-                     -5,  0,   0,   0,   0,   0,   0,   -5,
-                     -5,  0,   0,   0,   0,   0,   0,   -5,
+                     -5,   0,   0,   0,   0,   0,   0,  -5,
+                     -5,   0,   0,   0,   0,   0,   0,  -5,
+                     -5,   0,   0,   0,   0,   0,   0,  -5,
+                     -5,   0,   0,   0,   0,   0,   0,  -5,
+                     -5,   0,   0,   0,   0,   0,   0,  -5,
+                     -5,   0,   0,   0,   0,   0,   0,  -5,
                      -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5 }
         };
 
@@ -32,15 +32,15 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
             // White
             new []
             {
-                TableOperations.FlipVertically(Pattern[(int)GamePhase.Opening]),
-                TableOperations.FlipVertically(Pattern[(int)GamePhase.Ending])
+                TableOperations.FlipVertically(Pattern[GamePhase.Opening]),
+                TableOperations.FlipVertically(Pattern[GamePhase.Ending])
             },
 
             // Black
             new []
             {
-                TableOperations.FlipHorizontally(Pattern[(int)GamePhase.Opening]),
-                TableOperations.FlipHorizontally(Pattern[(int)GamePhase.Ending])
+                TableOperations.FlipHorizontally(Pattern[GamePhase.Opening]),
+                TableOperations.FlipHorizontally(Pattern[GamePhase.Ending])
             }
         };
     }

@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Board;
+﻿using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves.Patterns;
 
@@ -9,21 +8,25 @@ namespace Cosette.Engine.Ai.Score.Evaluators
     {
         public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase) - Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return Evaluate(board, Color.White, openingPhase, endingPhase) - 
+                   Evaluate(board, Color.Black, openingPhase, endingPhase);
         }
 
-        public static int Evaluate(BoardState board, Color color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
         {
-            var king = board.Pieces[(int)color][(int)Piece.King];
+            var king = board.Pieces[color][Piece.King];
             var kingField = BitOperations.BitScan(king);
             var fieldsAroundKing = BoxPatternGenerator.GetPattern(kingField);
 
             var attackersCount = 0;
-            while (fieldsAroundKing != 0)
+            var pawnShield = 0;
+
+            var attackedFieldsToCheck = fieldsAroundKing;
+            while (attackedFieldsToCheck != 0)
             {
-                var lsb = BitOperations.GetLsb(fieldsAroundKing);
-                fieldsAroundKing = BitOperations.PopLsb(fieldsAroundKing);
+                var lsb = BitOperations.GetLsb(attackedFieldsToCheck);
                 var field = BitOperations.BitScan(lsb);
+                attackedFieldsToCheck = BitOperations.PopLsb(attackedFieldsToCheck);
 
                 var attackingPieces = board.IsFieldAttacked(color, (byte)field);
                 if (attackingPieces)
@@ -32,8 +35,16 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
-            return (int)(attackersCount * EvaluationConstants.KingInDanger[(int)GamePhase.Opening] * openingPhase +
-                         attackersCount * EvaluationConstants.KingInDanger[(int)GamePhase.Ending] * endingPhase);
+            var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
+            pawnShield = (int)BitOperations.Count(pawnsNearKing);
+
+            var attackersCountScore = attackersCount * EvaluationConstants.KingInDanger[GamePhase.Opening] * openingPhase +
+                                      attackersCount * EvaluationConstants.KingInDanger[GamePhase.Ending] * endingPhase;
+
+            var pawnShieldScore = pawnShield * EvaluationConstants.PawnShield[GamePhase.Opening] * openingPhase +
+                                  pawnShield * EvaluationConstants.PawnShield[GamePhase.Ending] * endingPhase;
+
+            return (int)(attackersCountScore + pawnShieldScore);
         }
     }
 }

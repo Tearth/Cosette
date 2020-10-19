@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 
@@ -6,69 +7,82 @@ namespace Cosette.Engine.Moves
 {
     public readonly struct Move
     {
-        public readonly byte From;
-        public readonly byte To;
-        public readonly Piece Piece;
-        public readonly MoveFlags Flags;
+        public byte From => (byte)(_data & 0x3F);
+        public byte To => (byte)((_data >> 6) & 0x3F);
+        public MoveFlags Flags => (MoveFlags)(_data >> 12);
+        public static Move Empty = new Move();
 
-        public Move(byte from, byte to, Piece piece, MoveFlags flags)
-        {
-            From = from;
-            To = to;
-            Piece = piece;
-            Flags = flags;
-        }
+        private readonly ushort _data;
 
-        public Move(int from, int to, Piece piece, MoveFlags flags)
+        public Move(int from, int to, MoveFlags flags)
         {
-            From = (byte) from;
-            To = (byte) to;
-            Piece = piece;
-            Flags = flags;
+            _data = (ushort)from;
+            _data |= (ushort)(to << 6);
+            _data |= (ushort)((byte)flags << 12);
         }
 
         public static bool operator ==(Move a, Move b)
         {
-            return a.From == b.From && a.To == b.To && a.Piece == b.Piece && a.Flags == b.Flags;
+            return a._data == b._data;
         }
 
         public static bool operator !=(Move a, Move b)
         {
-            return a.From != b.From || a.To != b.To || a.Piece != b.Piece || a.Flags != b.Flags;
+            return a._data != b._data;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return this == (Move)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return _data;
         }
 
         public static Move FromTextNotation(BoardState board, string textNotation)
         {
             var from = Position.FromText(textNotation.Substring(0, 2));
             var to = Position.FromText(textNotation.Substring(2, 2));
-            var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.None;
+            var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.Quiet;
 
-            Span<Move> moves = stackalloc Move[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             var movesCount = board.GetAvailableMoves(moves);
 
             for (var i = 0; i < movesCount; i++)
             {
                 if (Position.FromFieldIndex(moves[i].From) == from && Position.FromFieldIndex(moves[i].To) == to)
                 {
-                    if (flags == MoveFlags.None || (moves[i].Flags & flags) != 0)
+                    if (flags == MoveFlags.Quiet || ((byte)moves[i].Flags & ~MoveFlagFields.Capture) == (byte)flags)
                     {
                         return moves[i];
                     }
                 }
             }
 
-            return new Move();
+            return Empty;
         }
 
         public bool IsQuiet()
         {
-            return Flags == MoveFlags.None || Flags == MoveFlags.DoublePush;
+            return Flags == MoveFlags.Quiet || Flags == MoveFlags.DoublePush;
         }
 
         public override string ToString()
         {
             var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
-            if ((int) Flags >= 16)
+            if (((byte)Flags & MoveFlagFields.Promotion) != 0)
             {
                 return baseMove + GetPromotionSymbol(Flags);
             }
@@ -80,24 +94,34 @@ namespace Cosette.Engine.Moves
 
         private string GetPromotionSymbol(MoveFlags flags)
         {
-            if ((flags & MoveFlags.KnightPromotion) != 0)
+            switch (flags)
             {
-                return "n";
-            }
-            else if ((flags & MoveFlags.BishopPromotion) != 0)
-            {
-                return "b";
-            }
-            else if((flags & MoveFlags.RookPromotion) != 0)
-            {
-                return "r";
-            }
-            else if((flags & MoveFlags.QueenPromotion) != 0)
-            {
-                return "q";
+                case MoveFlags.QueenPromotion:
+                case MoveFlags.QueenPromotionCapture:
+                {
+                    return "q";
+                }
+
+                case MoveFlags.RookPromotion:
+                case MoveFlags.RookPromotionCapture:
+                {
+                    return "r";
+                }
+
+                case MoveFlags.BishopPromotion:
+                case MoveFlags.BishopPromotionCapture:
+                {
+                    return "b";
+                }
+
+                case MoveFlags.KnightPromotion:
+                case MoveFlags.KnightPromotionCapture:
+                {
+                    return "n";
+                }
             }
 
-            return null;
+            throw new InvalidOperationException();
         }
 
         private static MoveFlags GetMoveFlags(char promotionPiece)

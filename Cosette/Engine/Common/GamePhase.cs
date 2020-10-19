@@ -1,8 +1,8 @@
 ﻿namespace Cosette.Engine.Common
 {
-    public enum GamePhase
+    public static class GamePhase
     {
-        Opening,
-        Ending
+        public const int Opening = 0;
+        public const int Ending = 1;
     }
 }

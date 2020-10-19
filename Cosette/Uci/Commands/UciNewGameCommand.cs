@@ -1,21 +1,26 @@
-﻿using System;
+﻿using Cosette.Engine.Ai.Ordering;
+using Cosette.Engine.Ai.Transposition;
 
 namespace Cosette.Uci.Commands
 {
     public class UciNewGameCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public UciNewGameCommand(UciClient uciClient, UciGame uciGame)
+        public UciNewGameCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)
         {
-            _uciGame.SetDefaultState();
+            TranspositionTable.Clear();
+            PawnHashTable.Clear();
+            EvaluationHashTable.Clear();
+            KillerHeuristic.Clear();
+            HistoryHeuristic.Clear();
+
+            _uciClient.BoardState.SetDefaultState();
         }
     }
 }

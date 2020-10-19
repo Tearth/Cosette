@@ -1,18 +1,15 @@
-﻿using System;
-using Cosette.Engine.Ai.Search;
+﻿using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
 
 namespace Cosette.Uci.Commands
 {
     public class SetOptionCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public SetOptionCommand(UciClient uciClient, UciGame uciGame)
+        public SetOptionCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)
@@ -21,8 +18,9 @@ namespace Cosette.Uci.Commands
             {
                 case "Hash":
                 {
-                    TranspositionTable.Init(ulong.Parse(parameters[3]) - SearchConstants.DefaultPawnHashTableSize);
-                    PawnHashTable.Init(SearchConstants.DefaultPawnHashTableSize);
+                    var hashTablesSize = int.Parse(parameters[3]);
+                    HashTableAllocator.Allocate(hashTablesSize);
+
                     break;
                 }
             }

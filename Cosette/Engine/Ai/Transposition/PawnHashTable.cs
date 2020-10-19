@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Cosette.Engine.Ai.Transposition
 {
@@ -8,11 +7,11 @@ namespace Cosette.Engine.Ai.Transposition
         private static PawnHashTableEntry[] _table;
         private static ulong _size;
 
-        public static unsafe void Init(ulong sizeMegabytes)
+        public static unsafe void Init(int sizeMegabytes)
         {
             var entrySize = sizeof(PawnHashTableEntry);
 
-            _size = sizeMegabytes * 1024ul * 1024ul / (ulong)entrySize;
+            _size = (ulong)sizeMegabytes * 1024ul * 1024ul / (ulong)entrySize;
             _table = new PawnHashTableEntry[_size];
         }
 
@@ -24,6 +23,20 @@ namespace Cosette.Engine.Ai.Transposition
         public static PawnHashTableEntry Get(ulong hash)
         {
             return _table[hash % _size];
+        }
+
+        public static float GetFillLevel()
+        {
+            var filledEntries = 0;
+            for (var i = 0; i < 1000; i++)
+            {
+                if (_table[i].Key != 0 || _table[i].Score != 0)
+                {
+                    filledEntries++;
+                }
+            }
+
+            return (float)filledEntries / 10;
         }
 
         public static void Clear()

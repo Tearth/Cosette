@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
@@ -21,7 +22,7 @@ namespace Cosette.Engine.Perft
 
         private static void Perft(BoardState boardState, int depth, AdvancedPerftResult result)
         {
-            Span<Move> moves = stackalloc Move[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             var movesCount = boardState.GetAvailableMoves(moves);
 
             if (depth <= 0)
@@ -56,17 +57,17 @@ namespace Cosette.Engine.Perft
 
                 if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    if ((moves[i].Flags & MoveFlags.Kill) != 0)
+                    if (((byte)moves[i].Flags & MoveFlagFields.Capture) != 0)
                     {
                         result.Captures++;
                     }
 
-                    if ((moves[i].Flags & MoveFlags.Castling) != 0)
+                    if (moves[i].Flags == MoveFlags.KingCastle || moves[i].Flags == MoveFlags.QueenCastle)
                     {
                         result.Castles++;
                     }
 
-                    if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
+                    if (moves[i].Flags == MoveFlags.EnPassant)
                     {
                         result.EnPassants++;
                         result.Captures++;

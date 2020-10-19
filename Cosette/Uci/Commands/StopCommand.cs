@@ -1,23 +1,18 @@
-﻿using System;
-using Cosette.Engine.Ai.Search;
-
-namespace Cosette.Uci.Commands
+﻿namespace Cosette.Uci.Commands
 {
     public class StopCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public StopCommand(UciClient uciClient, UciGame uciGame)
+        public StopCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)
         {
-            IterativeDeepening.AbortSearch = true;
-            IterativeDeepening.WaitForStopCommand = false;
+            _uciClient.SearchContext.AbortSearch = true;
+            _uciClient.SearchContext.WaitForStopCommand = false;
         }
     }
 }

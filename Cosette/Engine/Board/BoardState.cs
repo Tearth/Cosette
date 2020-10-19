@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
+using Cosette.Engine.Fen;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Board
@@ -17,88 +15,138 @@ namespace Cosette.Engine.Board
         public ulong OccupancySummary { get; set; }
         public ulong EnPassant { get; set; }
         public Castling Castling { get; set; }
-        public Color ColorToMove { get; set; }
+        public int ColorToMove { get; set; }
+        public int MovesCount { get; set; }
+        public int IrreversibleMovesCount { get; set; }
+        public int NullMoves { get; set; }
 
         public bool[] CastlingDone { get; set; }
         public int[] Material { get; set; }
         public int[][] Position { get; set; }
 
+        public int[] PieceTable { get; set; }
+
         public ulong Hash { get; set; }
         public ulong PawnHash { get; set; }
 
-        private readonly FastStack<Piece> _killedPieces;
+        private readonly FastStack<int> _killedPieces;
         private readonly FastStack<ulong> _enPassants;
         private readonly FastStack<Castling> _castlings;
-        private readonly FastStack<Piece> _promotedPieces;
+        private readonly FastStack<int> _promotedPieces;
         private readonly FastStack<ulong> _hashes;
         private readonly FastStack<ulong> _pawnHashes;
+        private readonly FastStack<int> _irreversibleMovesCounts;
 
-        private int _materialAtOpening;
+        private readonly int _materialAtOpening;
 
         public BoardState()
         {
             Pieces = new ulong[2][];
-            Pieces[(int)Color.White] = new ulong[6];
-            Pieces[(int)Color.Black] = new ulong[6];
+            Pieces[Color.White] = new ulong[6];
+            Pieces[Color.Black] = new ulong[6];
 
             Occupancy = new ulong[2];
             CastlingDone = new bool[2];
             Material = new int[2];
 
             Position = new int[2][];
-            Position[(int)Color.White] = new int[2];
-            Position[(int)Color.Black] = new int[2];
+            Position[Color.White] = new int[2];
+            Position[Color.Black] = new int[2];
 
-            _killedPieces = new FastStack<Piece>(512);
+            PieceTable = new int[64];
+
+            _killedPieces = new FastStack<int>(512);
             _enPassants = new FastStack<ulong>(512);
             _castlings = new FastStack<Castling>(512);
-            _promotedPieces = new FastStack<Piece>(512);
+            _promotedPieces = new FastStack<int>(512);
             _hashes = new FastStack<ulong>(512);
             _pawnHashes = new FastStack<ulong>(512);
+            _irreversibleMovesCounts = new FastStack<int>(512);
 
             _materialAtOpening =
-                EvaluationConstants.Pieces[(int) Piece.King] +
-                EvaluationConstants.Pieces[(int) Piece.Queen] +
-                EvaluationConstants.Pieces[(int) Piece.Rook] * 2 +
-                EvaluationConstants.Pieces[(int) Piece.Bishop] * 2+
-                EvaluationConstants.Pieces[(int) Piece.Knight] * 2+
-                EvaluationConstants.Pieces[(int) Piece.Pawn] * 8;
-            _materialAtOpening *= 2;
+                EvaluationConstants.Pieces[Piece.King] +
+                EvaluationConstants.Pieces[Piece.Queen] +
+                EvaluationConstants.Pieces[Piece.Rook] * 2 +
+                EvaluationConstants.Pieces[Piece.Bishop] * 2 +
+                EvaluationConstants.Pieces[Piece.Knight] * 2 +
+                EvaluationConstants.Pieces[Piece.Pawn] * 8;
         }
 
         public void SetDefaultState()
         {
-            Pieces[(int)Color.White][(int) Piece.Pawn] = 65280;
-            Pieces[(int)Color.White][(int) Piece.Rook] = 129;
-            Pieces[(int)Color.White][(int) Piece.Knight] = 66;
-            Pieces[(int)Color.White][(int) Piece.Bishop] = 36;
-            Pieces[(int)Color.White][(int) Piece.Queen] = 16;
-            Pieces[(int)Color.White][(int) Piece.King] = 8;
+            Pieces[Color.White][Piece.Pawn] = 65280;
+            Pieces[Color.White][Piece.Rook] = 129;
+            Pieces[Color.White][Piece.Knight] = 66;
+            Pieces[Color.White][Piece.Bishop] = 36;
+            Pieces[Color.White][Piece.Queen] = 16;
+            Pieces[Color.White][Piece.King] = 8;
 
-            Pieces[(int)Color.Black][(int) Piece.Pawn] = 71776119061217280;
-            Pieces[(int)Color.Black][(int) Piece.Rook] = 9295429630892703744;
-            Pieces[(int)Color.Black][(int) Piece.Knight] = 4755801206503243776;
-            Pieces[(int)Color.Black][(int) Piece.Bishop] = 2594073385365405696;
-            Pieces[(int)Color.Black][(int) Piece.Queen] = 1152921504606846976;
-            Pieces[(int)Color.Black][(int) Piece.King] = 576460752303423488;
+            Pieces[Color.Black][Piece.Pawn] = 71776119061217280;
+            Pieces[Color.Black][Piece.Rook] = 9295429630892703744;
+            Pieces[Color.Black][Piece.Knight] = 4755801206503243776;
+            Pieces[Color.Black][Piece.Bishop] = 2594073385365405696;
+            Pieces[Color.Black][Piece.Queen] = 1152921504606846976;
+            Pieces[Color.Black][Piece.King] = 576460752303423488;
 
-            Occupancy[(int)Color.White] = 65535;
-            Occupancy[(int)Color.Black] = 18446462598732840960;
-            OccupancySummary = Occupancy[(int)Color.White] | Occupancy[(int)Color.Black];
+            Occupancy[Color.White] = 65535;
+            Occupancy[Color.Black] = 18446462598732840960;
+            OccupancySummary = Occupancy[Color.White] | Occupancy[Color.Black];
 
+            EnPassant = 0;
             Castling = Castling.Everything;
             ColorToMove = Color.White;
+            MovesCount = 0;
+            IrreversibleMovesCount = 0;
+            NullMoves = 0;
 
-            CastlingDone[(int)Color.White] = false;
-            CastlingDone[(int)Color.Black] = false;
+            CastlingDone[Color.White] = false;
+            CastlingDone[Color.Black] = false;
 
-            Material[(int)Color.White] = CalculateMaterial(Color.White);
-            Material[(int)Color.Black] = CalculateMaterial(Color.Black);
+            Material[Color.White] = CalculateMaterial(Color.White);
+            Material[Color.Black] = CalculateMaterial(Color.Black);
 
-            Position[(int)Color.White][(int)GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
-            Position[(int)Color.White][(int)GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
-            Position[(int)Color.Black][(int)GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
-            Position[(int)Color.Black][(int)GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
+            Position[Color.White][GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
+            Position[Color.White][GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
+            Position[Color.Black][GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
+            Position[Color.Black][GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
+
+            Array.Fill(PieceTable, -1);
+
+            PieceTable[0] = Piece.Rook;
+            PieceTable[1] = Piece.Knight;
+            PieceTable[2] = Piece.Bishop;
+            PieceTable[3] = Piece.King;
+            PieceTable[4] = Piece.Queen;
+            PieceTable[5] = Piece.Bishop;
+            PieceTable[6] = Piece.Knight;
+            PieceTable[7] = Piece.Rook;
+
+            PieceTable[8] = Piece.Pawn;
+            PieceTable[9] = Piece.Pawn;
+            PieceTable[10] = Piece.Pawn;
+            PieceTable[11] = Piece.Pawn;
+            PieceTable[12] = Piece.Pawn;
+            PieceTable[13] = Piece.Pawn;
+            PieceTable[14] = Piece.Pawn;
+            PieceTable[15] = Piece.Pawn;
+
+            PieceTable[48] = Piece.Pawn;
+            PieceTable[49] = Piece.Pawn;
+            PieceTable[50] = Piece.Pawn;
+            PieceTable[51] = Piece.Pawn;
+            PieceTable[52] = Piece.Pawn;
+            PieceTable[53] = Piece.Pawn;
+            PieceTable[54] = Piece.Pawn;
+            PieceTable[55] = Piece.Pawn;
+
+            PieceTable[56] = Piece.Rook;
+            PieceTable[57] = Piece.Knight;
+            PieceTable[58] = Piece.Bishop;
+            PieceTable[59] = Piece.King;
+            PieceTable[60] = Piece.Queen;
+            PieceTable[61] = Piece.Bishop;
+            PieceTable[62] = Piece.Knight;
+            PieceTable[63] = Piece.Rook;
 
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
@@ -109,6 +157,7 @@ namespace Cosette.Engine.Board
             _promotedPieces.Clear();
             _hashes.Clear();
             _pawnHashes.Clear();
+            _irreversibleMovesCounts.Clear();
         }
 
         public int GetAvailableMoves(Span<Move> moves)
@@ -137,12 +186,28 @@ namespace Cosette.Engine.Board
 
         public void MakeMove(Move move)
         {
+            var pieceType = PieceTable[move.From];
             var enemyColor = ColorOperations.Invert(ColorToMove);
+
+            if (ColorToMove == Color.White)
+            {
+                MovesCount++;
+            }
 
             _castlings.Push(Castling);
             _hashes.Push(Hash);
             _pawnHashes.Push(PawnHash);
             _enPassants.Push(EnPassant);
+            _irreversibleMovesCounts.Push(IrreversibleMovesCount);
+
+            if (pieceType == Piece.Pawn || ((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            {
+                IrreversibleMovesCount = 0;
+            }
+            else
+            {
+                IrreversibleMovesCount++;
+            }
 
             if (EnPassant != 0)
             {
@@ -151,21 +216,21 @@ namespace Cosette.Engine.Board
                 EnPassant = 0;
             }
 
-            if (move.Flags == MoveFlags.None)
+            if (move.Flags == MoveFlags.Quiet)
             {
-                MovePiece(ColorToMove, move.Piece, move.From, move.To);
-                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
+                MovePiece(ColorToMove, pieceType, move.From, move.To);
+                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, pieceType, move.From, move.To);
 
-                if (move.Piece == Piece.Pawn)
+                if (pieceType == Piece.Pawn)
                 {
-                    PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
+                    PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, pieceType, move.From, move.To);
                 }
             }
-            else if ((move.Flags & MoveFlags.DoublePush) != 0)
+            else if (move.Flags == MoveFlags.DoublePush)
             {
-                MovePiece(ColorToMove, move.Piece, move.From, move.To);
-                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
-                PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
+                MovePiece(ColorToMove, pieceType, move.From, move.To);
+                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, pieceType, move.From, move.To);
+                PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, pieceType, move.From, move.To);
 
                 var enPassantField = ColorToMove == Color.White ? 1ul << move.To - 8 : 1ul << move.To + 8;
                 var enPassantFieldIndex = BitOperations.BitScan(enPassantField);
@@ -173,9 +238,24 @@ namespace Cosette.Engine.Board
                 EnPassant |= enPassantField;
                 Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantFieldIndex % 8);
             }
-            else if ((move.Flags & MoveFlags.Kill) != 0)
+            else if (move.Flags == MoveFlags.EnPassant)
             {
-                var killedPiece = GetPiece(enemyColor, move.To);
+                var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
+                var killedPiece = PieceTable[enemyPieceField];
+
+                RemovePiece(enemyColor, killedPiece, enemyPieceField);
+                Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, enemyPieceField);
+                PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, enemyColor, killedPiece, enemyPieceField);
+
+                MovePiece(ColorToMove, pieceType, move.From, move.To);
+                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, pieceType, move.From, move.To);
+                PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, pieceType, move.From, move.To);
+
+                _killedPieces.Push(killedPiece);
+            }
+            else if (((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            {
+                var killedPiece = PieceTable[move.To];
 
                 RemovePiece(enemyColor, killedPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, move.To);
@@ -216,13 +296,13 @@ namespace Cosette.Engine.Board
                 }
 
                 // Promotion
-                if ((byte)move.Flags >= 16)
+                if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
                 {
                     var promotionPiece = GetPromotionPiece(move.Flags);
 
-                    RemovePiece(ColorToMove, move.Piece, move.From);
-                    Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
-                    PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, ColorToMove, move.Piece, move.From);
+                    RemovePiece(ColorToMove, pieceType, move.From);
+                    Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, pieceType, move.From);
+                    PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, ColorToMove, pieceType, move.From);
 
                     AddPiece(ColorToMove, promotionPiece, move.To);
                     Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
@@ -231,21 +311,21 @@ namespace Cosette.Engine.Board
                 }
                 else
                 {
-                    MovePiece(ColorToMove, move.Piece, move.From, move.To);
-                    Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
+                    MovePiece(ColorToMove, pieceType, move.From, move.To);
+                    Hash = ZobristHashing.MovePiece(Hash, ColorToMove, pieceType, move.From, move.To);
 
-                    if (move.Piece == Piece.Pawn)
+                    if (pieceType == Piece.Pawn)
                     {
-                        PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
+                        PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, pieceType, move.From, move.To);
                     }
                 }
 
                 _killedPieces.Push(killedPiece);
             }
-            else if ((move.Flags & MoveFlags.Castling) != 0)
+            else if (move.Flags == MoveFlags.KingCastle || move.Flags == MoveFlags.QueenCastle)
             {
                 // Short castling
-                if (move.From > move.To)
+                if (move.Flags == MoveFlags.KingCastle)
                 {
                     if (ColorToMove == Color.White)
                     {
@@ -298,30 +378,15 @@ namespace Cosette.Engine.Board
                     Castling &= ~Castling.BlackCastling;
                 }
 
-                CastlingDone[(int)ColorToMove] = true;
+                CastlingDone[ColorToMove] = true;
             }
-            else if ((move.Flags & MoveFlags.EnPassant) != 0)
-            {
-                var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
-                var killedPiece = GetPiece(enemyColor, enemyPieceField);
-
-                RemovePiece(enemyColor, killedPiece, enemyPieceField);
-                Hash = ZobristHashing.AddOrRemovePiece(Hash, enemyColor, killedPiece, enemyPieceField);
-                PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, enemyColor, killedPiece, enemyPieceField);
-
-                MovePiece(ColorToMove, move.Piece, move.From, move.To);
-                Hash = ZobristHashing.MovePiece(Hash, ColorToMove, move.Piece, move.From, move.To);
-                PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, move.Piece, move.From, move.To);
-
-                _killedPieces.Push(killedPiece);
-            }
-            else if ((byte)move.Flags >= 16)
+            else if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
             {
                 var promotionPiece = GetPromotionPiece(move.Flags);
 
-                RemovePiece(ColorToMove, move.Piece, move.From);
-                Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, move.Piece, move.From);
-                PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, ColorToMove, move.Piece, move.From);
+                RemovePiece(ColorToMove, pieceType, move.From);
+                Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, pieceType, move.From);
+                PawnHash = ZobristHashing.AddOrRemovePiece(PawnHash, ColorToMove, pieceType, move.From);
 
                 AddPiece(ColorToMove, promotionPiece, move.To);
                 Hash = ZobristHashing.AddOrRemovePiece(Hash, ColorToMove, promotionPiece, move.To);
@@ -329,7 +394,7 @@ namespace Cosette.Engine.Board
                 _promotedPieces.Push(promotionPiece);
             }
 
-            if (move.Piece == Piece.King && move.Flags != MoveFlags.Castling)
+            if (pieceType == Piece.King && move.Flags != MoveFlags.KingCastle && move.Flags != MoveFlags.QueenCastle)
             {
                 if (ColorToMove == Color.White)
                 {
@@ -344,7 +409,7 @@ namespace Cosette.Engine.Board
                     Castling &= ~Castling.BlackCastling;
                 }
             }
-            else if (move.Piece == Piece.Rook && Castling != 0)
+            else if (pieceType == Piece.Rook && Castling != 0)
             {
                 if (move.From == 0)
                 {
@@ -374,35 +439,45 @@ namespace Cosette.Engine.Board
 
         public void UndoMove(Move move)
         {
+            var pieceType = PieceTable[move.To];
             ColorToMove = ColorOperations.Invert(ColorToMove);
 
-            if (move.Flags == MoveFlags.None || (move.Flags & MoveFlags.DoublePush) != 0)
+            if (move.Flags == MoveFlags.Quiet || move.Flags == MoveFlags.DoublePush)
             {
-                MovePiece(ColorToMove, move.Piece, move.To, move.From);
+                MovePiece(ColorToMove, pieceType, move.To, move.From);
             }
-            else if ((move.Flags & MoveFlags.Kill) != 0)
+            else if (move.Flags == MoveFlags.EnPassant)
+            {
+                var enemyColor = ColorOperations.Invert(ColorToMove);
+                var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
+                var killedPiece = _killedPieces.Pop();
+
+                MovePiece(ColorToMove, Piece.Pawn, move.To, move.From);
+                AddPiece(enemyColor, killedPiece, enemyPieceField);
+            }
+            else if (((byte)move.Flags & MoveFlagFields.Capture) != 0)
             {
                 var enemyColor = ColorOperations.Invert(ColorToMove);
                 var killedPiece = _killedPieces.Pop();
 
                 // Promotion
-                if ((byte)move.Flags >= 16)
+                if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
                 {
                     var promotionPiece = _promotedPieces.Pop();
                     RemovePiece(ColorToMove, promotionPiece, move.To);
-                    AddPiece(ColorToMove, move.Piece, move.From);
+                    AddPiece(ColorToMove, Piece.Pawn, move.From);
                 }
                 else
                 {
-                    MovePiece(ColorToMove, move.Piece, move.To, move.From);
+                    MovePiece(ColorToMove, pieceType, move.To, move.From);
                 }
 
                 AddPiece(enemyColor, killedPiece, move.To);
             }
-            else if ((move.Flags & MoveFlags.Castling) != 0)
+            else if (move.Flags == MoveFlags.KingCastle || move.Flags == MoveFlags.QueenCastle)
             {
                 // Short castling
-                if (move.From > move.To)
+                if (move.Flags == MoveFlags.KingCastle)
                 {
                     if (ColorToMove == Color.White)
                     {
@@ -430,32 +505,35 @@ namespace Cosette.Engine.Board
                     }
                 }
 
-                CastlingDone[(int)ColorToMove] = false;
+                CastlingDone[ColorToMove] = false;
             }
-            else if ((move.Flags & MoveFlags.EnPassant) != 0)
-            {
-                var enemyColor = ColorOperations.Invert(ColorToMove);
-                var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
-                var killedPiece = _killedPieces.Pop();
-
-                MovePiece(ColorToMove, move.Piece, move.To, move.From);
-                AddPiece(enemyColor, killedPiece, enemyPieceField);
-            }
-            else if ((byte)move.Flags >= 16)
+            else if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
             {
                 var promotionPiece = _promotedPieces.Pop();
                 RemovePiece(ColorToMove, promotionPiece, move.To);
-                AddPiece(ColorToMove, move.Piece, move.From);
+                AddPiece(ColorToMove, Piece.Pawn, move.From);
             }
 
+            IrreversibleMovesCount = _irreversibleMovesCounts.Pop();
             PawnHash = _pawnHashes.Pop();
             Hash = _hashes.Pop();
             Castling = _castlings.Pop();
             EnPassant = _enPassants.Pop();
+
+            if (ColorToMove == Color.White)
+            {
+                MovesCount--;
+            }
         }
 
         public void MakeNullMove()
         {
+            NullMoves++;
+            if (ColorToMove == Color.White)
+            {
+                MovesCount++;
+            }
+
             _enPassants.Push(EnPassant);
             _hashes.Push(Hash);
 
@@ -472,46 +550,52 @@ namespace Cosette.Engine.Board
 
         public void UndoNullMove()
         {
+            NullMoves--;
             ColorToMove = ColorOperations.Invert(ColorToMove);
 
             Hash = _hashes.Pop();
             EnPassant = _enPassants.Pop();
+
+            if (ColorToMove == Color.White)
+            {
+                MovesCount--;
+            }
         }
 
-        public bool IsFieldAttacked(Color color, byte fieldIndex)
+        public bool IsFieldAttacked(int color, int fieldIndex)
         {
             var enemyColor = ColorOperations.Invert(color);
 
-            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var attackingRooks = fileRankAttacks & (Pieces[(int)enemyColor][(int)Piece.Rook] | Pieces[(int)enemyColor][(int)Piece.Queen]);
+            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[enemyColor];
+            var attackingRooks = fileRankAttacks & (Pieces[enemyColor][Piece.Rook] | Pieces[enemyColor][Piece.Queen]);
             if (attackingRooks != 0)
             {
                 return true;
             }
 
-            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)enemyColor];
-            var attackingBishops = diagonalAttacks & (Pieces[(int)enemyColor][(int)Piece.Bishop] | Pieces[(int)enemyColor][(int)Piece.Queen]);
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[enemyColor];
+            var attackingBishops = diagonalAttacks & (Pieces[enemyColor][Piece.Bishop] | Pieces[enemyColor][Piece.Queen]);
             if (attackingBishops != 0)
             {
                 return true;
             }
 
             var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var attackingKnights = jumpAttacks & Pieces[(int)enemyColor][(int)Piece.Knight];
+            var attackingKnights = jumpAttacks & Pieces[enemyColor][Piece.Knight];
             if (attackingKnights != 0)
             {
                 return true;
             }
 
             var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
-            var attackingKings = boxAttacks & Pieces[(int)enemyColor][(int)Piece.King];
+            var attackingKings = boxAttacks & Pieces[enemyColor][Piece.King];
             if (attackingKings != 0)
             {
                 return true;
             }
 
             var field = 1ul << fieldIndex;
-            var potentialPawns = boxAttacks & Pieces[(int)enemyColor][(int)Piece.Pawn];
+            var potentialPawns = boxAttacks & Pieces[enemyColor][Piece.Pawn];
             var attackingPawns = color == Color.White ?
                 field & ((potentialPawns >> 7) | (potentialPawns >> 9)) :
                 field & ((potentialPawns << 7) | (potentialPawns << 9));
@@ -524,150 +608,146 @@ namespace Cosette.Engine.Board
             return false;
         }
 
-        public byte GetAttackingPiecesWithColor(Color color, byte fieldIndex)
+        public byte GetAttackingPiecesWithColor(int color, int fieldIndex)
         {
             byte result = 0;
 
-            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)color];
-            var attackingRooks = fileRankAttacks & Pieces[(int)color][(int)Piece.Rook];
+            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[color];
+            var attackingRooks = fileRankAttacks & Pieces[color][Piece.Rook];
             if (attackingRooks != 0)
             {
-                result |= 1 << (int) Piece.Rook;
+                result |= 1 << Piece.Rook;
             }
 
-            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[(int)color];
-            var attackingBishops = diagonalAttacks & Pieces[(int)color][(int)Piece.Bishop];
+            var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[color];
+            var attackingBishops = diagonalAttacks & Pieces[color][Piece.Bishop];
             if (attackingBishops != 0)
             {
-                result |= 1 << (int)Piece.Bishop;
+                result |= 1 << Piece.Bishop;
             }
 
-            var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[(int)color][(int)Piece.Queen];
+            var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[color][Piece.Queen];
             if (attackingQueens != 0)
             {
-                result |= 1 << (int)Piece.Queen;
+                result |= 1 << Piece.Queen;
             }
 
             var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var attackingKnights = jumpAttacks & Pieces[(int)color][(int)Piece.Knight];
+            var attackingKnights = jumpAttacks & Pieces[color][Piece.Knight];
             if (attackingKnights != 0)
             {
-                result |= 1 << (int)Piece.Knight;
+                result |= 1 << Piece.Knight;
             }
 
             var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
-            var attackingKings = boxAttacks & Pieces[(int)color][(int)Piece.King];
+            var attackingKings = boxAttacks & Pieces[color][Piece.King];
             if (attackingKings != 0)
             {
-                result |= 1 << (int)Piece.King;
+                result |= 1 << Piece.King;
             }
 
             var field = 1ul << fieldIndex;
-            var potentialPawns = boxAttacks & Pieces[(int)color][(int)Piece.Pawn];
+            var potentialPawns = boxAttacks & Pieces[color][Piece.Pawn];
             var attackingPawns = color == Color.White ?
                 field & ((potentialPawns << 7) | (potentialPawns << 9)) :
                 field & ((potentialPawns >> 7) | (potentialPawns >> 9));
 
             if (attackingPawns != 0)
             {
-                result |= 1 << (int)Piece.Pawn;
+                result |= 1 << Piece.Pawn;
             }
 
             return result;
         }
 
-        public bool IsKingChecked(Color color)
+        public bool IsKingChecked(int color)
         {
-            var king = Pieces[(int) color][(int) Piece.King];
-            var kingField = BitOperations.BitScan(king);
+            var king = Pieces[color][Piece.King];
+            if (king == 0)
+            {
+                return false;
+            }
 
+            var kingField = BitOperations.BitScan(king);
             return IsFieldAttacked(color, (byte)kingField);
         }
 
-        public void MovePiece(Color color, Piece piece, byte from, byte to)
+        public void MovePiece(int color, int piece, int from, int to)
         {
             var move = (1ul << from) | (1ul << to);
 
-            Pieces[(int) color][(int) piece] ^= move;
-            Occupancy[(int)color] ^= move;
+            Pieces[color][piece] ^= move;
+            Occupancy[color] ^= move;
             OccupancySummary ^= move;
             
-            Position[(int)color][(int)GamePhase.Opening] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][from];
-            Position[(int)color][(int)GamePhase.Opening] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][to];
+            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][from];
+            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][to];
 
-            Position[(int)color][(int)GamePhase.Ending] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][from];
-            Position[(int)color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][to];
+            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][from];
+            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][to];
+
+            PieceTable[from] = -1;
+            PieceTable[to] = piece;
         }
 
-        public Piece GetPiece(Color color, byte from)
+        public void AddPiece(int color, int piece, int fieldIndex)
         {
-            var field = 1ul << from;
+            var field = 1ul << fieldIndex;
 
-            for (var i = 0; i < 6; i++)
-            {
-                if ((Pieces[(int)color][i] & field) != 0)
-                {
-                    return (Piece) i;
-                }
-            }
-
-            throw new InvalidOperationException();
-        }
-
-        public void AddPiece(Color color, Piece piece, byte at)
-        {
-            var field = 1ul << at;
-
-            Pieces[(int)color][(int)piece] ^= field;
-            Occupancy[(int)color] ^= field;
+            Pieces[color][piece] ^= field;
+            Occupancy[color] ^= field;
             OccupancySummary ^= field;
 
-            Material[(int)color] += EvaluationConstants.Pieces[(int)piece];
+            Material[color] += EvaluationConstants.Pieces[piece];
 
-            Position[(int)color][(int)GamePhase.Opening] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][at];
-            Position[(int)color][(int)GamePhase.Ending] += PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][at];
+            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
+            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
+
+            PieceTable[fieldIndex] = piece;
         }
 
-        public void RemovePiece(Color color, Piece piece, byte at)
+        public void RemovePiece(int color, int piece, int fieldIndex)
         {
-            var field = 1ul << at;
+            var field = 1ul << fieldIndex;
 
-            Pieces[(int)color][(int)piece] ^= field;
-            Occupancy[(int)color] ^= field;
+            Pieces[color][piece] ^= field;
+            Occupancy[color] ^= field;
             OccupancySummary ^= field;
 
-            Material[(int)color] -= EvaluationConstants.Pieces[(int)piece];
+            Material[color] -= EvaluationConstants.Pieces[piece];
 
-            Position[(int)color][(int)GamePhase.Opening] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Opening][at];
-            Position[(int)color][(int)GamePhase.Ending] -= PieceSquareTablesData.Values[(int)piece][(int)color][(int)GamePhase.Ending][at];
+            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
+            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
+
+            PieceTable[fieldIndex] = -1;
         }
 
-        public int CalculateMaterial(Color color)
+        public int CalculateMaterial(int color)
         {
             var material = 0;
 
             for (var i = 0; i < 6; i++)
             {
-                material += (int)BitOperations.Count(Pieces[(int)color][i]) * EvaluationConstants.Pieces[i];
+                material += (int)BitOperations.Count(Pieces[color][i]) * EvaluationConstants.Pieces[i];
             }
 
             return material;
         }
 
-        public int CalculatePosition(Color color, GamePhase phase)
+        public int CalculatePosition(int color, int phase)
         {
             var result = 0;
 
             for (var pieceIndex = 0; pieceIndex < 6; pieceIndex++)
             {
-                var pieces = Pieces[(int)color][pieceIndex];
+                var pieces = Pieces[color][pieceIndex];
                 while (pieces != 0)
                 {
                     var lsb = BitOperations.GetLsb(pieces);
                     pieces = BitOperations.PopLsb(pieces);
                     var fieldIndex = BitOperations.BitScan(lsb);
 
-                    result += PieceSquareTablesData.Values[pieceIndex][(int)color][(int)phase][fieldIndex];
+                    result += PieceSquareTablesData.Values[pieceIndex][color][phase][fieldIndex];
                 }
             }
 
@@ -676,22 +756,24 @@ namespace Cosette.Engine.Board
 
         public float GetPhaseRatio()
         {
+            var materialOfWeakerSide = Math.Min(Material[Color.White], Material[Color.Black]);
+
             var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
-            var boardDelta = Material[(int) Color.White] + Material[(int) Color.Black] - EvaluationConstants.OpeningEndgameEdge;
+            var boardDelta = materialOfWeakerSide - EvaluationConstants.OpeningEndgameEdge;
             var ratio = (float) boardDelta / openingDelta;
 
             return Math.Max(0, ratio);
         }
 
-        public GamePhase GetGamePhase()
+        public int GetGamePhase()
         {
-            var totalMaterial = Material[(int) Color.White] + Material[(int) Color.Black];
-            return totalMaterial > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
+            var materialOfWeakerSide = Math.Min(Material[Color.White], Material[Color.Black]);
+            return materialOfWeakerSide > EvaluationConstants.OpeningEndgameEdge ? GamePhase.Opening : GamePhase.Ending;
         }
 
         public bool IsThreefoldRepetition()
         {
-            if (_hashes.Count() >= 8)
+            if (NullMoves == 0 && _hashes.Count() >= 8)
             {
                 var first = _hashes.Peek(3);
                 var second = _hashes.Peek(7);
@@ -705,26 +787,48 @@ namespace Cosette.Engine.Board
             return false;
         }
 
-        private Piece GetPromotionPiece(MoveFlags flags)
+        public bool IsFiftyMoveRuleDraw()
         {
-            if ((flags & MoveFlags.KnightPromotion) != 0)
+            if (NullMoves == 0 && IrreversibleMovesCount >= 100)
             {
-                return Piece.Knight;
+                return true;
             }
-            
-            if ((flags & MoveFlags.BishopPromotion) != 0)
+
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return BoardToFen.Parse(this);
+        }
+
+        private int GetPromotionPiece(MoveFlags flags)
+        {
+            switch (flags)
             {
-                return Piece.Bishop;
-            }
-            
-            if ((flags & MoveFlags.RookPromotion) != 0)
-            {
-                return Piece.Rook;
-            }
-            
-            if ((flags & MoveFlags.QueenPromotion) != 0)
-            {
-                return Piece.Queen;
+                case MoveFlags.QueenPromotion:
+                case MoveFlags.QueenPromotionCapture:
+                {
+                    return Piece.Queen;
+                }
+
+                case MoveFlags.RookPromotion:
+                case MoveFlags.RookPromotionCapture:
+                {
+                    return Piece.Rook;
+                }
+
+                case MoveFlags.BishopPromotion:
+                case MoveFlags.BishopPromotionCapture:
+                {
+                    return Piece.Bishop;
+                }
+
+                case MoveFlags.KnightPromotion:
+                case MoveFlags.KnightPromotionCapture:
+                {
+                    return Piece.Knight;
+                }
             }
 
             throw new InvalidOperationException();

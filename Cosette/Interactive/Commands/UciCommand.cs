@@ -1,19 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Cosette.Engine.Board;
-using Cosette.Engine.Common;
-using Cosette.Engine.Moves;
-using Cosette.Engine.Moves.Magic;
-using Cosette.Engine.Perft;
-using Cosette.Uci;
+﻿using Cosette.Uci;
 
 namespace Cosette.Interactive.Commands
 {
     public class UciCommand : ICommand
     {
         public string Description { get; }
-        private InteractiveConsole _interactiveConsole;
+        private readonly InteractiveConsole _interactiveConsole;
 
         public UciCommand(InteractiveConsole interactiveConsole)
         {

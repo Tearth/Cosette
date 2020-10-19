@@ -1,30 +1,31 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Ai.Score.Evaluators;
-using Cosette.Engine.Ai.Score.PieceSquareTables;
-using Cosette.Engine.Ai.Transposition;
+﻿using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Board;
-using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
-using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Ai.Score
 {
     public class Evaluation
     {
-        public static int Evaluate(BoardState board, Color color)
+        public static int Evaluate(BoardState board, EvaluationStatistics statistics)
         {
             var openingPhase = board.GetPhaseRatio();
-            var endingPhase = 1 - openingPhase;
+            var endingPhase = 1f - openingPhase;
 
-            var result = MaterialEvaluator.Evaluate(board, openingPhase, endingPhase);
+            var result = MaterialEvaluator.Evaluate(board);
             result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
-            result += PawnStructureEvaluator.Evaluate(board, openingPhase, endingPhase);
+            result += PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase);
             result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase);
+            result += PiecesEvaluator.Evaluate(board, openingPhase, endingPhase);
 
-            var sign = color == Color.White ? 1 : -1;
-            return sign * result;
+            return board.ColorToMove == Color.White ? result : -result;
+        }
+
+        public static int FastEvaluate(BoardState board)
+        {
+            var result = MaterialEvaluator.Evaluate(board);
+            return board.ColorToMove == Color.White ? result : -result;
         }
     }
 }

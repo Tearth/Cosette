@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Ai.Transposition;
+using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Interactive;
@@ -16,31 +17,34 @@ namespace Cosette.Uci
 {
     public class UciClient
     {
-        private UciGame _uciGame;
+        public BoardState BoardState;
+        public SearchContext SearchContext;
+
         private bool _debugMode;
 
-        private InteractiveConsole _interactiveConsole;
-        private Dictionary<string, IUciCommand> _commands;
+        private readonly InteractiveConsole _interactiveConsole;
+        private readonly Dictionary<string, IUciCommand> _commands;
 
         public UciClient(InteractiveConsole interactiveConsole)
         {
-            _interactiveConsole = interactiveConsole;
+            BoardState = new BoardState();
+            BoardState.SetDefaultState();
 
-            _uciGame = new UciGame();
+            _interactiveConsole = interactiveConsole;
 
 #if UCI_DEBUG_OUTPUT
             _debugMode = true;
 #endif
 
             _commands = new Dictionary<string, IUciCommand>();
-            _commands["quit"] = new QuitCommand(this, _uciGame);
-            _commands["setoption"] = new SetOptionCommand(this, _uciGame);
-            _commands["isready"] = new IsReadyCommand(this, _uciGame);
-            _commands["ucinewgame"] = new UciNewGameCommand(this, _uciGame);
-            _commands["position"] = new PositionCommand(this, _uciGame);
-            _commands["debug"] = new DebugCommand(this, _uciGame);
-            _commands["go"] = new GoCommand(this, _uciGame);
-            _commands["stop"] = new StopCommand(this, _uciGame);
+            _commands["quit"] = new QuitCommand(this);
+            _commands["setoption"] = new SetOptionCommand(this);
+            _commands["isready"] = new IsReadyCommand(this);
+            _commands["ucinewgame"] = new UciNewGameCommand(this);
+            _commands["position"] = new PositionCommand(this);
+            _commands["debug"] = new DebugCommand(this);
+            _commands["go"] = new GoCommand(this);
+            _commands["stop"] = new StopCommand(this);
 
             IterativeDeepening.OnSearchUpdate += OnSearchUpdate;
         }
@@ -61,13 +65,21 @@ namespace Cosette.Uci
 
         public (string Command, string[] parameters) Receive()
         {
-            var input = Console.ReadLine();
-            var splitInput = input.Split(' ');
-            var command = splitInput[0].ToLower();
-            var parameters = splitInput.Skip(1).ToArray();
+            while (true)
+            {
+                var input = Console.ReadLine();
+                if (input == null)
+                {
+                    Environment.Exit(0);
+                }
 
-            LogManager.LogInfo("[RECV] " + input);
-            return (command, parameters);
+                var splitInput = input.Split(' ');
+                var command = splitInput[0].ToLower();
+                var parameters = splitInput.Skip(1).ToArray();
+
+                LogManager.LogInfo("[RECV] " + input);
+                return (command, parameters);
+            }
         }
 
         public void SetDebugMode(bool state)
@@ -87,9 +99,7 @@ namespace Cosette.Uci
 
         private void SendOptions()
         {
-            var defaultHashTablesSize = SearchConstants.DefaultHashTableSize + SearchConstants.DefaultPawnHashTableSize;
-
-            Send($"option name Hash type spin default {defaultHashTablesSize} min 1 max 2048");
+            Send($"option name Hash type spin default {HashTableConstants.DefaultHashTablesSize} min 3 max 65536");
             Send("uciok");
         }
 
@@ -115,25 +125,30 @@ namespace Cosette.Uci
 
             if (_debugMode)
             {
+                var evaluationStatistics = new EvaluationStatistics();
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = 1 - openingPhase;
 
-                var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
                 var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + mobility + kingSafety;
+                var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+
+                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + 
+                            mobility + kingSafety + pieces;
 
                 Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
-                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety}");
+                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
+                     $"pieces {pieces} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 
         private string FormatScore(int score)
         {
-            if (IterativeDeepening.IsScoreCheckmate(score))
+            if (IterativeDeepening.IsScoreNearCheckmate(score))
             {
                 var movesToCheckmate = IterativeDeepening.GetMovesToCheckmate(score);
                 if (score < 0)

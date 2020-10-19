@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Cosette.Engine.Ai;
 using Cosette.Engine.Ai.Search;
+using Cosette.Engine.Ai.Time;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 using Cosette.Logs;
@@ -15,67 +13,77 @@ namespace Cosette.Uci.Commands
 {
     public class GoCommand : IUciCommand
     {
-        private UciClient _uciClient;
-        private UciGame _uciGame;
+        private readonly UciClient _uciClient;
 
-        public GoCommand(UciClient uciClient, UciGame uciGame)
+        public GoCommand(UciClient uciClient)
         {
             _uciClient = uciClient;
-            _uciGame = uciGame;
         }
 
         public void Run(params string[] parameters)
         {
             var whiteTime = GetParameter(parameters, "wtime", int.MaxValue);
             var blackTime = GetParameter(parameters, "btime", int.MaxValue);
-            var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth);
+            var colorTime = _uciClient.BoardState.ColorToMove == Color.White ? whiteTime : blackTime;
+
+            var whiteIncTime = GetParameter(parameters, "winc", 0);
+            var blackIncTime = GetParameter(parameters, "binc", 0);
+            var incTime = _uciClient.BoardState.ColorToMove == Color.White ? whiteIncTime : blackIncTime;
+
+            var maxColorTime = TimeScheduler.CalculateTimeForMove(colorTime, incTime, _uciClient.BoardState.MovesCount);
+
+            var depth = GetParameter(parameters, "depth", SearchConstants.MaxDepth - 1);
             var moveTime = GetParameter(parameters, "movetime", 0);
             var nodesCount = GetParameter(parameters, "nodes", ulong.MaxValue);
             var searchMoves = GetParameterWithMoves(parameters, "searchmoves");
             var infiniteFlag = GetFlag(parameters, "infinite");
 
+            _uciClient.SearchContext = new SearchContext(_uciClient.BoardState)
+            {
+                MaxDepth = depth + 1,
+                MaxNodesCount = nodesCount,
+                MoveRestrictions = searchMoves
+            };
+
             if (moveTime != 0)
             {
-                whiteTime = int.MaxValue;
-                blackTime = int.MaxValue;
-                IterativeDeepening.WaitForStopCommand = true;
+                maxColorTime = int.MaxValue;
+                _uciClient.SearchContext.WaitForStopCommand = true;
 
                 Task.Run(() =>
                 {
                     var stopwatch = Stopwatch.StartNew();
                     while (stopwatch.ElapsedMilliseconds < moveTime)
                     {
-                        Task.Delay(20).GetAwaiter().GetResult();
+                        Task.Delay(1).GetAwaiter().GetResult();
                     }
 
-                    IterativeDeepening.AbortSearch = true;
-                    IterativeDeepening.WaitForStopCommand = false;
+                    _uciClient.SearchContext.AbortSearch = true;
+                    _uciClient.SearchContext.WaitForStopCommand = false;
                 });
             }
 
             if (infiniteFlag)
             {
-                whiteTime = int.MaxValue;
-                blackTime = int.MaxValue;
-                IterativeDeepening.WaitForStopCommand = true;
+                maxColorTime = int.MaxValue;
+                _uciClient.SearchContext.WaitForStopCommand = true;
             }
 
-            IterativeDeepening.MoveRestrictions = searchMoves;
-            IterativeDeepening.MaxNodesCount = nodesCount;
-            Task.Run(() => SearchEntryPoint(whiteTime, blackTime, depth));
+            _uciClient.SearchContext.MaxTime = maxColorTime;
+            Task.Run(SearchEntryPoint);
         }
 
-        private void SearchEntryPoint(int whiteTime, int blackTime, int depth)
+        private void SearchEntryPoint()
         {
             try
             {
-                var bestMove = _uciGame.SearchBestMove(whiteTime, blackTime, depth);
+                var bestMove = IterativeDeepening.FindBestMove(_uciClient.SearchContext);
                 _uciClient.Send($"bestmove {bestMove}");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                LogManager.LogError(ex.ToString());
-                throw;
+                Program.OnUnhandledException(this, new UnhandledExceptionEventArgs(e, true));
+                Environment.Exit(-1);
             }
         }
 
@@ -85,7 +93,7 @@ namespace Cosette.Uci.Commands
             {
                 if (parameters[i] == name)
                 {
-                    return (T) Convert.ChangeType(parameters[i + 1], typeof(T));
+                    return (T)Convert.ChangeType(parameters[i + 1], typeof(T));
                 }
             }
 
@@ -102,7 +110,7 @@ namespace Cosette.Uci.Commands
                     for (var moveIndex = i + 1; moveIndex < parameters.Length; moveIndex++)
                     {
                         var moveTextNotation = parameters[moveIndex];
-                        var parsedMove = Move.FromTextNotation(_uciGame.BoardState, moveTextNotation);
+                        var parsedMove = Move.FromTextNotation(_uciClient.BoardState, moveTextNotation);
                         movesList.Add(parsedMove);
                     }
                 }

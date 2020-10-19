@@ -1,7 +1,7 @@
 ﻿using System;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Transposition;
-using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
@@ -9,26 +9,52 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class QuiescenceSearch
     {
-        public static int FindBestMove(BoardState board, int depth, int ply, int alpha, int beta, SearchStatistics statistics)
+        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta)
         {
-            statistics.QNodes++;
+            context.Statistics.QNodes++;
 
-            if (ply > statistics.SelectiveDepth)
+            if (ply > context.Statistics.SelectiveDepth)
             {
-                statistics.SelectiveDepth = ply;
+                context.Statistics.SelectiveDepth = ply;
             }
 
-            if (board.Pieces[(int)board.ColorToMove][(int)Piece.King] == 0)
+            if (context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King] == 0)
             {
-                statistics.QLeafs++;
+                context.Statistics.QLeafs++;
                 return -EvaluationConstants.Checkmate + ply;
             }
 
-            var standPat = Evaluation.Evaluate(board, board.ColorToMove);
+            var standPat = 0;
+
+            var evaluationEntry = EvaluationHashTable.Get(context.BoardState.Hash);
+            if (evaluationEntry.IsKeyValid(context.BoardState.Hash))
+            {
+                standPat = evaluationEntry.Score;
+
+#if DEBUG
+                context.Statistics.EvaluationStatistics.EHTHits++;
+#endif
+            }
+            else
+            {
+                standPat = Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
+                EvaluationHashTable.Add(context.BoardState.Hash, (short)standPat);
+
+#if DEBUG
+                context.Statistics.EvaluationStatistics.EHTNonHits++;
+                context.Statistics.EvaluationStatistics.EHTAddedEntries++;
+
+                if (evaluationEntry.Key != 0 || evaluationEntry.Score != 0)
+                {
+                    context.Statistics.EvaluationStatistics.EHTReplacements++;
+                }
+#endif
+            }    
+
             if (standPat >= beta)
             {
-                statistics.QLeafs++;
-                return beta;
+                context.Statistics.QLeafs++;
+                return standPat;
             }
 
             if (alpha < standPat)
@@ -36,40 +62,40 @@ namespace Cosette.Engine.Ai.Search
                 alpha = standPat;
             }
 
-            Span<Move> moves = stackalloc Move[128];
-            Span<int> moveValues = stackalloc int[128];
+            Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
+            Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
 
-            var movesCount = board.GetAvailableQMoves(moves);
-            MoveOrdering.AssignQValues(board, moves, moveValues, movesCount);
+            var movesCount = context.BoardState.GetAvailableQMoves(moves);
+            MoveOrdering.AssignQValues(context.BoardState, moves, moveValues, movesCount);
 
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
 
-                board.MakeMove(moves[moveIndex]);
-                var score = -FindBestMove(board, depth - 1, ply + 1, -beta, -alpha, statistics);
-                board.UndoMove(moves[moveIndex]);
-
-                if (score >= beta)
-                {
-#if DEBUG
-                    if (moveIndex == 0)
-                    {
-                        statistics.QBetaCutoffsAtFirstMove++;
-                    }
-                    else
-                    {
-                        statistics.QBetaCutoffsNotAtFirstMove++;
-                    }
-#endif
-
-                    statistics.QBetaCutoffs++;
-                    return beta;
-                }
+                context.BoardState.MakeMove(moves[moveIndex]);
+                var score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha);
+                context.BoardState.UndoMove(moves[moveIndex]);
 
                 if (score > alpha)
                 {
                     alpha = score;
+
+                    if (alpha >= beta)
+                    {
+#if DEBUG
+                        if (moveIndex == 0)
+                        {
+                            context.Statistics.QBetaCutoffsAtFirstMove++;
+                        }
+                        else
+                        {
+                            context.Statistics.QBetaCutoffsNotAtFirstMove++;
+                        }
+#endif
+
+                        context.Statistics.QBetaCutoffs++;
+                        break;
+                    }
                 }
             }
 

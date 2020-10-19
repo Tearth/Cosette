@@ -1,14 +1,16 @@
 # Cosette
-**Current version: v1.0 (Aqua), 19.09.2020**
+**Current version: v2.0 (Darkness), 19.10.2020**
 
-A brand new UCI-compliant chess engine written in C# for .NET Core platform. The project is still in the early stage of development and lacks a few major performance improvements like more advanced pruning, extensions, or better evaluation. The current strength is estimated at 1900 ELO and hopefully will significantly improve in the future.
+A brand new UCI-compliant chess engine written in C# for .NET Core platform. The project is still in the early stage of development and lacks a few major performance improvements like more advanced pruning, extensions, or better evaluation. The current strength is estimated at 1950 ELO and hopefully will significantly improve in the future.
 
-![asd](https://i.imgur.com/ck4GbbF.png)
+The engine has **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/engine_details.cgi?match_length=30&print=Details&each_game=1&eng=Cosette%201.0%2064-bit#Cosette_1_0_64-bit)** (Computer Chess Rating Lists) where you can check the best strength estimation. Also, feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
+
+![Cosette interactive console example](https://i.imgur.com/hIcaAmz.png)
 
 ## How to play?
-The simplest way is to download the newest version from the [Releases page](https://github.com/Tearth/Cosette/releases) and use it with a graphical interface like Arena or WinBoard. The engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
+The simplest way is to download the newest version from the **[Releases page](https://github.com/Tearth/Cosette/releases)** and use it with a graphical interface like Arena or WinBoard. The engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
 
-Cosette has an official account on [lichess.org](https://lichess.org/) platform, which allows everybody to challenge her - feel free to do it!
+Cosette has an official account on **[lichess.org](https://lichess.org/)** platform, which allows everybody to challenge her - feel free to do it!
 
 **https://lichess.org/@/CosetteBot**
 
@@ -26,6 +28,9 @@ Cosette has an official account on [lichess.org](https://lichess.org/) platform,
  - mobility
  - king safety
  - pawn structure (cached in pawn hash table)
+ - doubled rooks
+ - rooks on open files
+ - bishop pair
 
 **Search:**
  - negamax

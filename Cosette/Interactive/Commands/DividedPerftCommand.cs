@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Cosette.Engine.Board;
-using Cosette.Engine.Common;
-using Cosette.Engine.Moves;
-using Cosette.Engine.Moves.Magic;
+﻿using Cosette.Engine.Board;
 using Cosette.Engine.Perft;
 
 namespace Cosette.Interactive.Commands
@@ -12,7 +6,7 @@ namespace Cosette.Interactive.Commands
     public class DividedPerftCommand : ICommand
     {
         public string Description { get; }
-        private InteractiveConsole _interactiveConsole;
+        private readonly InteractiveConsole _interactiveConsole;
 
         public DividedPerftCommand(InteractiveConsole interactiveConsole)
         {

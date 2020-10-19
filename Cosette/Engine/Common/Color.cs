@@ -1,8 +1,8 @@
 ﻿namespace Cosette.Engine.Common
 {
-    public enum Color
+    public static class Color
     {
-        White,
-        Black
+        public const int White = 0;
+        public const int Black = 1;
     }
 }

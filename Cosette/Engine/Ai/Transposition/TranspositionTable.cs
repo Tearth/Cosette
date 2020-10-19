@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Moves;
 
 namespace Cosette.Engine.Ai.Transposition
@@ -9,17 +9,17 @@ namespace Cosette.Engine.Ai.Transposition
         private static TranspositionTableEntry[] _table;
         private static ulong _size;
 
-        public static unsafe void Init(ulong sizeMegabytes)
+        public static unsafe void Init(int sizeMegabytes)
         {
             var entrySize = sizeof(TranspositionTableEntry);
 
-            _size = sizeMegabytes * 1024ul * 1024ul / (ulong)entrySize;
+            _size = (ulong)sizeMegabytes * 1024ul * 1024ul / (ulong)entrySize;
             _table = new TranspositionTableEntry[_size];
         }
 
-        public static void Add(ulong hash, byte depth, short score, Move bestMove, TranspositionTableEntryType type)
+        public static void Add(ulong hash, byte depth, short score, byte age, Move bestMove, TranspositionTableEntryFlags flags)
         {
-            _table[hash % _size] = new TranspositionTableEntry(hash, depth, score, bestMove, type);
+            _table[hash % _size] = new TranspositionTableEntry(hash, depth, score, age, bestMove, flags);
         }
 
         public static TranspositionTableEntry Get(ulong hash)
@@ -27,9 +27,57 @@ namespace Cosette.Engine.Ai.Transposition
             return _table[hash % _size];
         }
 
+        public static float GetFillLevel()
+        {
+            var filledEntries = 0;
+            for (var i = 0; i < 1000; i++)
+            {
+                if (_table[i].Key != 0 || _table[i].Score != 0)
+                {
+                    filledEntries++;
+                }
+            }
+
+            return (float)filledEntries / 10;
+        }
+
         public static void Clear()
         {
-            Array.Clear(_table, 0, (int) _size);
+            Array.Clear(_table, 0, (int)_size);
+        }
+
+        public static int RegularToTTScore(int score, int ply)
+        {
+            if (IterativeDeepening.IsScoreNearCheckmate(score))
+            {
+                if (score > 0)
+                {
+                    return score + ply;
+                }
+                else
+                {
+                    return score - ply;
+                }
+            }
+
+            return score;
+        }
+
+        public static int TTToRegularScore(int score, int ply)
+        {
+            if (IterativeDeepening.IsScoreNearCheckmate(score))
+            {
+                if (score > 0)
+                {
+                    return score - ply;
+                }
+                else
+                {
+                    return score + ply;
+                }
+            }
+
+            return score;
         }
     }
 }

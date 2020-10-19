@@ -15,7 +15,11 @@
         public static int[] PassingPawns = { 10, 50 };
         public static int[] Mobility = { 4, 1 };
         public static int[] KingInDanger = { -20, -5 };
+        public static int[] PawnShield = { 20, 0 };
+        public static int[] DoubledRooks = { 40, 10 };
+        public static int[] RookOnOpenFile = { 20, 0 };
+        public static int[] PairOfBishops = { 30, 20 };
 
-        public const int OpeningEndgameEdge = 2 * 21000;
+        public const int OpeningEndgameEdge = 20500;
     }
 }

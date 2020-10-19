@@ -1,29 +1,25 @@
 ﻿using System;
-using Cosette.Engine.Ai.Ordering;
-using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
-namespace Cosette.Engine.Ai.Search
+namespace Cosette.Engine.Ai.Ordering
 {
     public static class MoveOrdering
     {
-        public static void AssignValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount, int depth, TranspositionTableEntry entry)
+        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
         {
-            var enemyColor = ColorOperations.Invert(board.ColorToMove);
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                if (entry.Type != TranspositionTableEntryType.Invalid && entry.BestMove == moves[moveIndex])
+                if (hashOrPvMove == moves[moveIndex])
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.HashMove;
                 }
                 else if (moves[moveIndex].IsQuiet())
                 {
-                    if (moves[moveIndex].Piece == Piece.Pawn &&
-                        (board.ColorToMove == Color.White && moves[moveIndex].To >= 40 || 
-                         board.ColorToMove == Color.Black && moves[moveIndex].To <= 23))
+                    var pieceType = board.PieceTable[moves[moveIndex].From];
+                    if (pieceType == Piece.Pawn && IsPawnNearPromotion(board.ColorToMove, moves[moveIndex].To))
                     {
                         moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
                     }
@@ -36,46 +32,60 @@ namespace Cosette.Engine.Ai.Search
                         moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
                     }
                 }
-                else if ((moves[moveIndex].Flags & MoveFlags.Kill) != 0)
+                else if (moves[moveIndex].Flags == MoveFlags.EnPassant)
                 {
-                    var attackingPiece = moves[moveIndex].Piece;
-                    var capturedPiece = board.GetPiece(enemyColor, moves[moveIndex].To);
+                    moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
+                }
+                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Capture) != 0)
+                {
+                    var enemyColor = ColorOperations.Invert(board.ColorToMove);
+
+                    var attackingPiece = board.PieceTable[moves[moveIndex].From];
+                    var capturedPiece = board.PieceTable[moves[moveIndex].To];
 
                     var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
                     var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[moveIndex].To);
-                    moveValues[moveIndex] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+                    var seeEvaluation = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+
+                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Capture + seeEvaluation);
                 }
-                else if ((int)moves[moveIndex].Flags >= 16)
+                else if (moves[moveIndex].Flags == MoveFlags.KingCastle || moves[moveIndex].Flags == MoveFlags.QueenCastle)
                 {
-                    moveValues[moveIndex] = MoveOrderingConstants.Promotion;
+                    moveValues[moveIndex] = MoveOrderingConstants.Castling;
+                }
+                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
+                {
+                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
                 }
             }
         }
 
-        public static void AssignQValues(BoardState board, Span<Move> moves, Span<int> moveValues, int movesCount)
+        public static void AssignQValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount)
         {
             var enemyColor = ColorOperations.Invert(board.ColorToMove);
-            for (var i = 0; i < movesCount; i++)
+            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                if ((moves[i].Flags & MoveFlags.EnPassant) != 0)
+                if (moves[moveIndex].Flags == MoveFlags.EnPassant)
                 {
-                    moveValues[i] = MoveOrderingConstants.Capture;
+                    moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
                 }
                 else
                 {
-                    var attackingPiece = moves[i].Piece;
-                    var capturedPiece = board.GetPiece(enemyColor, moves[i].To);
+                    var attackingPiece = board.PieceTable[moves[moveIndex].From];
+                    var capturedPiece = board.PieceTable[moves[moveIndex].To];
 
-                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[i].To);
-                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[i].To);
-                    moveValues[i] = MoveOrderingConstants.Capture + StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+                    var attackers = board.GetAttackingPiecesWithColor(board.ColorToMove, moves[moveIndex].To);
+                    var defenders = board.GetAttackingPiecesWithColor(enemyColor, moves[moveIndex].To);
+                    var seeEvaluation = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attackers, defenders);
+
+                    moveValues[moveIndex] = seeEvaluation;
                 }
             }
         }
 
-        public static void SortNextBestMove(Span<Move> moves, Span<int> moveValues, int movesCount, int currentIndex)
+        public static void SortNextBestMove(Span<Move> moves, Span<short> moveValues, int movesCount, int currentIndex)
         {
-            var max = int.MinValue;
+            var max = short.MinValue;
             var maxIndex = -1;
 
             for (var i = currentIndex; i < movesCount; i++)
@@ -87,13 +97,19 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            var tempMove = moves[maxIndex];
-            moves[maxIndex] = moves[currentIndex];
-            moves[currentIndex] = tempMove;
+            (moves[maxIndex], moves[currentIndex]) = (moves[currentIndex], moves[maxIndex]);
+            (moveValues[maxIndex], moveValues[currentIndex]) = (moveValues[currentIndex], moveValues[maxIndex]);
+        }
 
-            var tempMoveValue = moveValues[maxIndex];
-            moveValues[maxIndex] = moveValues[currentIndex];
-            moveValues[currentIndex] = tempMoveValue;
+
+        private static bool IsPawnNearPromotion(int color, byte to)
+        {
+            if (color == Color.White && to >= 40 || color == Color.Black && to <= 23)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

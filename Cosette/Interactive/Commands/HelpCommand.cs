@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Cosette.Interactive.Commands
 {
@@ -7,8 +6,8 @@ namespace Cosette.Interactive.Commands
     {
         public string Description { get; }
 
-        private InteractiveConsole _interactiveConsole;
-        private Dictionary<string, ICommand> _commands;
+        private readonly InteractiveConsole _interactiveConsole;
+        private readonly Dictionary<string, ICommand> _commands;
 
         public HelpCommand(InteractiveConsole interactiveConsole, Dictionary<string, ICommand> commands)
         {

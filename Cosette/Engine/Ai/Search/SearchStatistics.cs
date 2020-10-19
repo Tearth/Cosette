@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Board;
 using Cosette.Engine.Moves;
 
@@ -7,6 +8,7 @@ namespace Cosette.Engine.Ai.Search
     public class SearchStatistics
     {
         public BoardState Board { get; set; }
+        public EvaluationStatistics EvaluationStatistics { get; set; }
 
         public int Depth { get; set; }
         public int SelectiveDepth { get; set; }
@@ -32,11 +34,12 @@ namespace Cosette.Engine.Ai.Search
         public ulong QBetaCutoffs { get; set; }
         public ulong TotalBetaCutoffs => BetaCutoffs + QBetaCutoffs;
 
-        public ulong TTEntries { get; set; }
-        public ulong TTCollisions { get; set; }
+        public ulong TTAddedEntries { get; set; }
+        public ulong TTReplacements { get; set; }
         public ulong TTHits { get; set; }
         public ulong TTNonHits { get; set; }
         public float TTHitsPercent => (float) TTHits * 100 / (TTHits + TTNonHits);
+        public float TTReplacesPercent => (float) TTReplacements * 100 / TTAddedEntries;
 
         public int BetaCutoffsAtFirstMove { get; set; }
         public int QBetaCutoffsAtFirstMove { get; set; }
@@ -54,36 +57,8 @@ namespace Cosette.Engine.Ai.Search
 
         public SearchStatistics()
         {
+            EvaluationStatistics = new EvaluationStatistics();
             PrincipalVariation = new Move[SearchConstants.MaxDepth];
-        }
-
-        public void Clear()
-        {
-            Board = null;
-
-            Depth = 0;
-            SelectiveDepth = 0;
-            Score = 0;
-            SearchTime = 0;
-
-            Nodes = 0;
-            QNodes = 0;
-
-            Leafs = 0;
-            QLeafs = 0;
-
-            BetaCutoffs = 0;
-            QBetaCutoffs = 0;
-
-            TTEntries = 0;
-            TTCollisions = 0;
-            TTHits = 0;
-
-            BetaCutoffsAtFirstMove = 0;
-            QBetaCutoffsAtFirstMove = 0;
-
-            Array.Clear(PrincipalVariation, 0, PrincipalVariation.Length);
-            PrincipalVariationMovesCount = 0;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Cosette.Engine.Board;
+﻿using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 
 namespace Cosette.Engine.Ai.Score.Evaluators
@@ -8,13 +7,14 @@ namespace Cosette.Engine.Ai.Score.Evaluators
     {
         public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
         {
-            var whitePositionScore = board.Position[(int)Color.White][(int)GamePhase.Opening] * openingPhase +
-                                     board.Position[(int)Color.White][(int)GamePhase.Ending] * endingPhase;
+            return Evaluate(board, Color.White, openingPhase, endingPhase) -
+                   Evaluate(board, Color.Black, openingPhase, endingPhase);
+        }
 
-            var blackPositionScore = board.Position[(int)Color.Black][(int)GamePhase.Opening] * openingPhase +
-                                     board.Position[(int)Color.Black][(int)GamePhase.Ending] * endingPhase;
-
-            return (int)whitePositionScore - (int)blackPositionScore;
+        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
+        {
+            return (int)(board.Position[color][GamePhase.Opening] * openingPhase +
+                         board.Position[color][GamePhase.Ending] * endingPhase);
         }
     }
 }
