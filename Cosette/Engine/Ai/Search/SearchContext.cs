@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using Cosette.Engine.Board;
 using Cosette.Engine.Moves;
 
@@ -8,6 +9,7 @@ namespace Cosette.Engine.Ai.Search
     {
         public BoardState BoardState { get; set; }
         public SearchStatistics Statistics { get; set; }
+        public CancellationTokenSource HelperTasksCancellationTokenSource { get; set; }
 
         public int MaxDepth { get; set; }
         public int MaxTime { get; set; }

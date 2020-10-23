@@ -21,7 +21,7 @@ namespace Cosette.Engine.Ai.Search
             var expectedExecutionTime = 0;
             var alpha = SearchConstants.MinValue;
             var beta = SearchConstants.MaxValue;
-            var lastSearchTime = 10ul;
+            var lastSearchTime = 0ul;
             var bestMove = Move.Empty;
             var stopwatch = Stopwatch.StartNew();
 
@@ -44,8 +44,12 @@ namespace Cosette.Engine.Ai.Search
 
                 OnSearchUpdate?.Invoke(null, context.Statistics);
 
-                var ratio = (float)context.Statistics.SearchTime / lastSearchTime;
-                expectedExecutionTime = (int)(context.Statistics.SearchTime * ratio);
+                if (lastSearchTime != 0)
+                {
+                    var ratio = (float)context.Statistics.SearchTime / lastSearchTime;
+                    expectedExecutionTime = (int)(context.Statistics.SearchTime * ratio);
+                }
+
                 lastSearchTime = context.Statistics.SearchTime;
             }
 
@@ -55,13 +59,14 @@ namespace Cosette.Engine.Ai.Search
             }
 
             context.AbortSearch = false;
+            context.HelperTasksCancellationTokenSource.Cancel();
+
             return bestMove;
         }
 
         public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
-            return depth < context.MaxDepth &&
-                   expectedExecutionTime <= context.MaxTime;
+            return depth < context.MaxDepth && expectedExecutionTime <= context.MaxTime;
         }
 
         public static bool IsScoreNearCheckmate(int score)

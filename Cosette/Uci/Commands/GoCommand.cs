@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Time;
@@ -40,37 +41,52 @@ namespace Cosette.Uci.Commands
 
             _uciClient.SearchContext = new SearchContext(_uciClient.BoardState)
             {
+                HelperTasksCancellationTokenSource = new CancellationTokenSource(),
                 MaxDepth = depth + 1,
                 MaxNodesCount = nodesCount,
                 MoveRestrictions = searchMoves
             };
 
-            if (moveTime != 0)
+            if (moveTime == 0)
             {
-                maxColorTime = int.MaxValue;
+                RunAbortTask((int)(maxColorTime * SearchConstants.DeadlineFactor), _uciClient.SearchContext.HelperTasksCancellationTokenSource.Token);
+            }
+            else
+            {
                 _uciClient.SearchContext.WaitForStopCommand = true;
 
-                Task.Run(() =>
-                {
-                    var stopwatch = Stopwatch.StartNew();
-                    while (stopwatch.ElapsedMilliseconds < moveTime)
-                    {
-                        Task.Delay(1).GetAwaiter().GetResult();
-                    }
-
-                    _uciClient.SearchContext.AbortSearch = true;
-                    _uciClient.SearchContext.WaitForStopCommand = false;
-                });
+                maxColorTime = int.MaxValue;
+                RunAbortTask(moveTime, _uciClient.SearchContext.HelperTasksCancellationTokenSource.Token);
             }
 
             if (infiniteFlag)
             {
-                maxColorTime = int.MaxValue;
                 _uciClient.SearchContext.WaitForStopCommand = true;
+                maxColorTime = int.MaxValue;
             }
 
             _uciClient.SearchContext.MaxTime = maxColorTime;
             Task.Run(SearchEntryPoint);
+        }
+
+        private void RunAbortTask(int deadline, CancellationToken cancellationToken)
+        {
+            Task.Run(() =>
+            {
+                var stopwatch = Stopwatch.StartNew();
+                while (stopwatch.ElapsedMilliseconds < deadline)
+                {
+                    Task.Delay(1).GetAwaiter().GetResult();
+
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                }
+
+                _uciClient.SearchContext.AbortSearch = true;
+                _uciClient.SearchContext.WaitForStopCommand = false;
+            });
         }
 
         private void SearchEntryPoint()
