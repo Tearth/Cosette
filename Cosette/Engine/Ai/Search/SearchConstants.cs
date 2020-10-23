@@ -5,7 +5,7 @@
         public const int MinValue = short.MinValue;
         public const int MaxValue = short.MaxValue;
         public const int MaxDepth = 32;
-        public const int MaxMovesCount = 128;
+        public const int MaxMovesCount = 218;
 
         public const int NullWindowMinimalDepth = 5;
         public const int NullWindowDepthReduction = 3;
