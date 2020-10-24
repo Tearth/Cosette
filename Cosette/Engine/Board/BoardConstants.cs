@@ -27,5 +27,7 @@
         public const ulong BoardWithoutEdges = Full & ~Edges;
         public const ulong RightLeftEdge = AFile | HFile;
         public const ulong TopBottomEdge = ARank | HRank;
+
+        public const int PhaseResolution = 1024;
     }
 }

@@ -6,13 +6,13 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class KingSafetyEvaluator
     {
-        public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
         {
             return Evaluate(board, Color.White, openingPhase, endingPhase) - 
                    Evaluate(board, Color.Black, openingPhase, endingPhase);
         }
 
-        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
         {
             var king = board.Pieces[color][Piece.King];
             var kingField = BitOperations.BitScan(king);
@@ -38,13 +38,15 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
             pawnShield = (int)BitOperations.Count(pawnsNearKing);
 
-            var attackersCountScore = attackersCount * EvaluationConstants.KingInDanger[GamePhase.Opening] * openingPhase +
-                                      attackersCount * EvaluationConstants.KingInDanger[GamePhase.Ending] * endingPhase;
+            var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger[GamePhase.Opening];
+            var attackersCountEndingScore = attackersCount * EvaluationConstants.KingInDanger[GamePhase.Ending];
+            var attackersCountAdjusted = TaperedEvaluation.AdjustToPhase(attackersCountOpeningScore, attackersCountEndingScore, openingPhase, endingPhase);
 
-            var pawnShieldScore = pawnShield * EvaluationConstants.PawnShield[GamePhase.Opening] * openingPhase +
-                                  pawnShield * EvaluationConstants.PawnShield[GamePhase.Ending] * endingPhase;
+            var pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield[GamePhase.Opening];
+            var pawnShieldEndingScore = pawnShield * EvaluationConstants.PawnShield[GamePhase.Ending];
+            var pawnShieldAdjusted = TaperedEvaluation.AdjustToPhase(pawnShieldOpeningScore, pawnShieldEndingScore, openingPhase, endingPhase);
 
-            return (int)(attackersCountScore + pawnShieldScore);
+            return attackersCountAdjusted + pawnShieldAdjusted;
         }
     }
 }

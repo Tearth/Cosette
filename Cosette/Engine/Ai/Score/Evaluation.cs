@@ -9,7 +9,7 @@ namespace Cosette.Engine.Ai.Score
         public static int Evaluate(BoardState board, EvaluationStatistics statistics)
         {
             var openingPhase = board.GetPhaseRatio();
-            var endingPhase = 1f - openingPhase;
+            var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
             var result = MaterialEvaluator.Evaluate(board);
             result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);

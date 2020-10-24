@@ -127,7 +127,7 @@ namespace Cosette.Uci
             {
                 var evaluationStatistics = new EvaluationStatistics();
                 var openingPhase = stats.Board.GetPhaseRatio();
-                var endingPhase = 1 - openingPhase;
+                var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
                 var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
                 var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
@@ -140,7 +140,7 @@ namespace Cosette.Uci
                 var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + 
                             mobility + kingSafety + pieces;
 
-                Send($"info string evaluation {total} phase {openingPhase:F} material {materialEvaluation} castling {castlingEvaluation} " +
+                Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
                      $"pieces {pieces} irrmoves {stats.Board.IrreversibleMovesCount}");
             }

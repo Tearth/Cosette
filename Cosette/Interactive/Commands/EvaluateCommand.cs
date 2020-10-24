@@ -1,6 +1,7 @@
 ﻿using System;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
+using Cosette.Engine.Board;
 using Cosette.Engine.Fen;
 
 namespace Cosette.Interactive.Commands
@@ -23,7 +24,7 @@ namespace Cosette.Interactive.Commands
             var evaluationStatistics = new EvaluationStatistics();
 
             var openingPhase = boardState.GetPhaseRatio();
-            var endingPhase = 1 - openingPhase;
+            var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
             var castlingEvaluation = CastlingEvaluator.Evaluate(boardState, openingPhase, endingPhase);
@@ -36,7 +37,7 @@ namespace Cosette.Interactive.Commands
             var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation +
                         mobility + kingSafety + pieces;
 
-            _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase:F}, " +
+            _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");
 
             _interactiveConsole.WriteLine($" = Material: {materialEvaluation}");

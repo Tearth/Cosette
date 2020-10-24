@@ -6,13 +6,13 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class PiecesEvaluator
     {
-        public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
         {
             return Evaluate(board, Color.White, openingPhase, endingPhase) -
                    Evaluate(board, Color.Black, openingPhase, endingPhase);
         }
 
-        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
         {
             var doubledRooks = 0;
             var rooksOnOpenFile = 0;
@@ -49,16 +49,19 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 pairOfBishops = 1;
             }
 
-            var doubledRooksScore = doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Opening] * openingPhase +
-                                    doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Ending] * endingPhase;
+            var doubledRooksOpeningScore = doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Opening];
+            var doubledRooksEndingScore = doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Ending];
+            var doubledRooksAdjusted = TaperedEvaluation.AdjustToPhase(doubledRooksOpeningScore, doubledRooksEndingScore, openingPhase, endingPhase);
 
-            var rooksOnOpenFileScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Opening] * openingPhase +
-                                       rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Ending] * endingPhase;
+            var rooksOnOpenFileOpeningScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Opening];
+            var rooksOnOpenFileEndingScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Ending];
+            var rooksOnOpenFileAdjusted = TaperedEvaluation.AdjustToPhase(rooksOnOpenFileOpeningScore, rooksOnOpenFileEndingScore, openingPhase, endingPhase);
 
-            var pairOfBishopsScore = pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Opening] * openingPhase +
-                                     pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Ending] * endingPhase;
+            var pairOfBishopsOpeningScore = pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Opening];
+            var pairOfBishopsEndingScore = pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Ending];
+            var pairOfBishopsAdjusted = TaperedEvaluation.AdjustToPhase(pairOfBishopsOpeningScore, pairOfBishopsEndingScore, openingPhase, endingPhase);
 
-            return (int)(doubledRooksScore + rooksOnOpenFileScore + pairOfBishopsScore);
+            return doubledRooksAdjusted + rooksOnOpenFileAdjusted + pairOfBishopsAdjusted;
         }
     }
 }

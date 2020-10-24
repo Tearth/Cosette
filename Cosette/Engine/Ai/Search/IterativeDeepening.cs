@@ -59,7 +59,7 @@ namespace Cosette.Engine.Ai.Search
             }
 
             context.AbortSearch = false;
-            context.HelperTasksCancellationTokenSource.Cancel();
+            context.HelperTasksCancellationTokenSource?.Cancel();
 
             return bestMove;
         }

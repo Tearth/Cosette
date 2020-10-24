@@ -754,15 +754,14 @@ namespace Cosette.Engine.Board
             return result;
         }
 
-        public float GetPhaseRatio()
+        public int GetPhaseRatio()
         {
             var materialOfWeakerSide = Math.Min(Material[Color.White], Material[Color.Black]);
 
             var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
             var boardDelta = materialOfWeakerSide - EvaluationConstants.OpeningEndgameEdge;
-            var ratio = (float) boardDelta / openingDelta;
 
-            return Math.Max(0, ratio);
+            return boardDelta * BoardConstants.PhaseResolution / openingDelta;
         }
 
         public int GetGamePhase()
