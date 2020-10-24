@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves;
 
@@ -61,7 +62,10 @@ namespace Cosette.Engine.Board.Operators
 
         public static int GetMobility(BoardState boardState, int color)
         {
-            var mobility = 0;
+            var centerMobility = 0;
+            var extendedCenterMobility = 0;
+            var outsideMobility = 0;
+
             var rooks = boardState.Pieces[color][Piece.Rook];
 
             while (rooks != 0)
@@ -71,10 +75,15 @@ namespace Cosette.Engine.Board.Operators
 
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = RookMovesGenerator.GetMoves(boardState.OccupancySummary, from);
-                mobility += (int)BitOperations.Count(availableMoves);
+
+                centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Center);
+                extendedCenterMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
+                outsideMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Outside);
             }
 
-            return mobility;
+            return EvaluationConstants.CenterMobilityModifier * centerMobility +
+                   EvaluationConstants.ExtendedCenterMobilityModifier * extendedCenterMobility +
+                   EvaluationConstants.OutsideMobilityModifier * outsideMobility;
         }
     }
 }

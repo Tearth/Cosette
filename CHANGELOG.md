@@ -3,6 +3,7 @@
  - Fixed FEN parser when input didn't have halfmove clock and moves count
  - Added abort when search lasts too long
  - Improved time scheduler when incrementation time is present
+ - Improved mobility calculation by rewarding for center control
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
