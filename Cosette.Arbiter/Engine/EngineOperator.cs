@@ -53,7 +53,7 @@ namespace Cosette.Arbiter.Engine
                 Write($"position startpos moves {movesJoined}");
             }
 
-            Write($"go movetime {SettingsLoader.Data.MillisecondsPerMove}");
+            Write(SettingsLoader.Data.GoCommand);
 
             while (true)
             {

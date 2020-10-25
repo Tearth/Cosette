@@ -8,14 +8,14 @@ namespace Cosette.Arbiter.Settings
         public List<EngineData> Engines { get; set; }
         public List<string> Options { get; set; }
 
+        [JsonProperty("go_command")]
+        public string GoCommand { get; set; }
+
         [JsonProperty("polyglot_opening_book")]
         public string PolyglotOpeningBook { get; set; }
 
         [JsonProperty("polyglot_max_moves")]
         public int PolyglotMaxMoves { get; set; }
-
-        [JsonProperty("milliseconds_per_move")]
-        public int MillisecondsPerMove { get; set; }
 
         [JsonProperty("max_moves_count")]
         public int MaxMovesCount { get; set; }
