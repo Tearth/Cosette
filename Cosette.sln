@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Arbiter", "Cosette.Arbiter\Cosette.Arbiter.csproj", "{DAB140A1-17EB-4688-8107-8C2AEA737AD6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Polyglot.Tests", "Cosette.Arbiter.Tests\Cosette.Polyglot.Tests.csproj", "{446DB14C-F30C-4A0C-86AB-8CCF3CF7CB53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Polyglot.Tests", "Cosette.Polyglot.Tests\Cosette.Polyglot.Tests.csproj", "{446DB14C-F30C-4A0C-86AB-8CCF3CF7CB53}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosette.Polyglot", "Cosette.Polyglot\Cosette.Polyglot.csproj", "{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}"
 EndProject
