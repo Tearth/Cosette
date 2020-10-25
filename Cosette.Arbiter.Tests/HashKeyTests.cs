@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using Cosette.Arbiter.Book;
+using Cosette.Polyglot.Book;
 using Xunit;
 
-namespace Cosette.Arbiter.Tests
+namespace Cosette.Polyglot.Tests
 {
     public class HashKeyTests
     {

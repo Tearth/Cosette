@@ -3,26 +3,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Cosette.Arbiter.Settings;
+using Cosette.Polyglot.Book;
 
-namespace Cosette.Arbiter.Book
+namespace Cosette.Polyglot
 {
     public class PolyglotBook
     {
+        private string _bookFile;
         private Random _random;
 
-        public PolyglotBook()
+        public PolyglotBook(string bookFile)
         {
+            _bookFile = bookFile;
             _random = new Random();
         }
 
-        public List<string> GetRandomOpening()
+        public List<string> GetRandomOpening(int movesCount)
         {
             var movesList = new List<PolyglotBookEntry>();
             var polyglotBoard = new PolyglotBoard();
             polyglotBoard.InitDefaultState();
 
-            for (var moveIndex = 0; moveIndex < SettingsLoader.Data.PolyglotMaxMoves; moveIndex++)
+            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 var availableMoves = GetBookEntries(polyglotBoard.CalculateHash());
                 if (availableMoves.Count == 0)
@@ -59,12 +61,12 @@ namespace Cosette.Arbiter.Book
             var foundEntries = new List<PolyglotBookEntry>();
 
             var entrySize = sizeof(PolyglotBookEntry);
-            var bookInfo = new FileInfo(SettingsLoader.Data.PolyglotOpeningBook);
+            var bookInfo = new FileInfo(_bookFile);
             var entriesCount = bookInfo.Length / entrySize;
             long left = 0;
             long right = entriesCount - 1;
 
-            using (var binaryReader = new BinaryReader(new FileStream(SettingsLoader.Data.PolyglotOpeningBook, FileMode.Open)))
+            using (var binaryReader = new BinaryReader(new FileStream(_bookFile, FileMode.Open)))
             {
                 var buffer = new byte[16];
                 var bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);

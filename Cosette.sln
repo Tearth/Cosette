@@ -15,9 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosette.Arbiter", "Cosette.Arbiter\Cosette.Arbiter.csproj", "{DAB140A1-17EB-4688-8107-8C2AEA737AD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Arbiter", "Cosette.Arbiter\Cosette.Arbiter.csproj", "{DAB140A1-17EB-4688-8107-8C2AEA737AD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosette.Arbiter.Tests", "Cosette.Arbiter.Tests\Cosette.Arbiter.Tests.csproj", "{446DB14C-F30C-4A0C-86AB-8CCF3CF7CB53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Polyglot.Tests", "Cosette.Arbiter.Tests\Cosette.Polyglot.Tests.csproj", "{446DB14C-F30C-4A0C-86AB-8CCF3CF7CB53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosette.Polyglot", "Cosette.Polyglot\Cosette.Polyglot.csproj", "{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,22 @@ Global
 		{446DB14C-F30C-4A0C-86AB-8CCF3CF7CB53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{446DB14C-F30C-4A0C-86AB-8CCF3CF7CB53}.Release|x64.ActiveCfg = Release|Any CPU
 		{446DB14C-F30C-4A0C-86AB-8CCF3CF7CB53}.Release|x64.Build.0 = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.BMI|Any CPU.ActiveCfg = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.BMI|Any CPU.Build.0 = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.BMI|x64.ActiveCfg = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.BMI|x64.Build.0 = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.CCRL|Any CPU.ActiveCfg = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.CCRL|Any CPU.Build.0 = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.CCRL|x64.ActiveCfg = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.CCRL|x64.Build.0 = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Debug|x64.Build.0 = Debug|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

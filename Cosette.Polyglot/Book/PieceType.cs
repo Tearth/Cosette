@@ -1,4 +1,4 @@
-﻿namespace Cosette.Arbiter.Book
+﻿namespace Cosette.Polyglot.Book
 {
     public enum PieceType
     {

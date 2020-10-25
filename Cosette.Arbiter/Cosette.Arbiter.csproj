@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cosette.Polyglot\Cosette.Polyglot.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="book.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

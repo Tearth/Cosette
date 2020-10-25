@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cosette.Arbiter.Book
+namespace Cosette.Polyglot.Book
 {
     public class PolyglotBoard
     {

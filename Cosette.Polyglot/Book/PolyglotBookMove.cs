@@ -1,6 +1,6 @@
 ﻿#pragma warning disable 649
 
-namespace Cosette.Arbiter.Book
+namespace Cosette.Polyglot.Book
 {
     public struct PolyglotBookMove
     {

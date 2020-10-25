@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Cosette.Arbiter.Book;
 using Cosette.Arbiter.Engine;
 using Cosette.Arbiter.Settings;
+using Cosette.Polyglot;
 
 namespace Cosette.Arbiter.Tournament
 {
@@ -22,7 +22,7 @@ namespace Cosette.Arbiter.Tournament
             _participants = new List<TournamentParticipant>();
             _gamesDuration = new List<long>();
             _scheduler = new TournamentScheduler();
-            _polyglotBook = new PolyglotBook();
+            _polyglotBook = new PolyglotBook(SettingsLoader.Data.PolyglotOpeningBook);
             
             foreach (var engineData in SettingsLoader.Data.Engines)
             {
@@ -40,7 +40,7 @@ namespace Cosette.Arbiter.Tournament
             _participants.ForEach(p => p.EngineOperator.Init());
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount; gameIndex++)
             {
-                var gameData = new GameData(_polyglotBook.GetRandomOpening());
+                var gameData = new GameData(_polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves));
                 var (playerA, playerB) = _scheduler.GetPair(gameIndex);
 
                 if (playerA >= _participants.Count || playerB >= _participants.Count)
