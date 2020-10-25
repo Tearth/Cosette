@@ -85,7 +85,11 @@ namespace Cosette.Arbiter.Tournament
 
                     if (gameData.GameIsDone)
                     {
-                        if (gameData.Winner == Color.None)
+                        if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
+                        {
+                            _winsByTime++;
+                        }
+                        else if (gameData.Winner == Color.None)
                         {
                             playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
                             opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
@@ -94,11 +98,6 @@ namespace Cosette.Arbiter.Tournament
                         {
                             playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Win));
                             opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Loss));
-                        }
-
-                        if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
-                        {
-                            _winsByTime++;
                         }
 
                         break;

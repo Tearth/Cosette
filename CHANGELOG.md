@@ -4,6 +4,7 @@
  - Added abort when search lasts too long
  - Improved time scheduler when incrementation time is present
  - Improved mobility calculation by rewarding for center control
+ - Added better time control for Arbiter
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection

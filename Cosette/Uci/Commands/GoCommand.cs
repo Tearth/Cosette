@@ -74,7 +74,7 @@ namespace Cosette.Uci.Commands
             Task.Run(() =>
             {
                 var stopwatch = Stopwatch.StartNew();
-                while (stopwatch.ElapsedMilliseconds < deadline)
+                while (stopwatch.ElapsedMilliseconds < deadline || _uciClient.SearchContext.Statistics.Depth <= 1)
                 {
                     Task.Delay(1).GetAwaiter().GetResult();
 

@@ -36,11 +36,15 @@ namespace Cosette.Arbiter.Tournament
             if (clock <= 0)
             {
                 GameIsDone = true;
+                WhiteClock = _colorToMove == Color.White ? clock : WhiteClock;
+                BlackClock = _colorToMove == Color.Black ? clock : BlackClock;
+
                 Winner = _colorToMove == Color.White ? Color.Black : Color.White;
                 return;
             }
 
             clock += SettingsLoader.Data.IncTime;
+
             WhiteClock = _colorToMove == Color.White ? clock : WhiteClock;
             BlackClock = _colorToMove == Color.Black ? clock : BlackClock;
 
