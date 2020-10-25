@@ -99,7 +99,15 @@ namespace Cosette.Uci
 
         private void SendOptions()
         {
-            Send($"option name Hash type spin default {HashTableConstants.DefaultHashTablesSize} min 3 max 65536");
+            Send($"option name Hash type spin default {HashTableConstants.DefaultHashTablesSize} min 3 max 65535");
+
+            Send($"option name PawnValue type spin default {EvaluationConstants.Pieces[Piece.Pawn]} min 0 max 65535");
+            Send($"option name KnightValue type spin default {EvaluationConstants.Pieces[Piece.Knight]} min 0 max 65535");
+            Send($"option name BishopValue type spin default {EvaluationConstants.Pieces[Piece.Bishop]} min 0 max 65535");
+            Send($"option name RookValue type spin default {EvaluationConstants.Pieces[Piece.Rook]} min 0 max 65535");
+            Send($"option name QueenValue type spin default {EvaluationConstants.Pieces[Piece.Queen]} min 0 max 65535");
+            Send($"option name KingValue type spin default {EvaluationConstants.Pieces[Piece.King]} min 0 max 65535");
+
             Send("uciok");
         }
 
