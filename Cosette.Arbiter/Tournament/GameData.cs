@@ -10,12 +10,18 @@ namespace Cosette.Arbiter.Tournament
         public bool GameIsDone { get; private set; }
         public Color Winner { get; private set; }
 
+        public int WhiteClock { get; private set; }
+        public int BlackClock { get; private set; }
+
         private BestMoveData _lastBestMove;
         private Color _colorToMove;
 
         public GameData(List<string> opening)
         {
             HalfMovesDone = opening;
+            WhiteClock = SettingsLoader.Data.BaseTime;
+            BlackClock = SettingsLoader.Data.BaseTime;
+
             _colorToMove = Color.White;
         }
 
@@ -23,7 +29,21 @@ namespace Cosette.Arbiter.Tournament
         {
             HalfMovesDone.Add(bestMoveData.BestMove);
             _lastBestMove = bestMoveData;
-            
+
+            var clock = _colorToMove == Color.White ? WhiteClock : BlackClock;
+            clock -= bestMoveData.LastInfoData.Time;
+
+            if (clock <= 0)
+            {
+                GameIsDone = true;
+                Winner = _colorToMove == Color.White ? Color.Black : Color.White;
+                return;
+            }
+
+            clock += SettingsLoader.Data.IncTime;
+            WhiteClock = _colorToMove == Color.White ? clock : WhiteClock;
+            BlackClock = _colorToMove == Color.Black ? clock : BlackClock;
+
             if (IsCheckmate() || bestMoveData.LastInfoData.ScoreCp >= 2000)
             {
                 GameIsDone = true;

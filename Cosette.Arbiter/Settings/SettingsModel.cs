@@ -8,8 +8,11 @@ namespace Cosette.Arbiter.Settings
         public List<EngineData> Engines { get; set; }
         public List<string> Options { get; set; }
 
-        [JsonProperty("go_command")]
-        public string GoCommand { get; set; }
+        [JsonProperty("base_time")]
+        public int BaseTime { get; set; }
+
+        [JsonProperty("inc_time")]
+        public int IncTime { get; set; }
 
         [JsonProperty("polyglot_opening_book")]
         public string PolyglotOpeningBook { get; set; }

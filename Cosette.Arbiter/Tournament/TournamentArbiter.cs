@@ -15,6 +15,7 @@ namespace Cosette.Arbiter.Tournament
         private TournamentScheduler _scheduler;
         private PolyglotBook _polyglotBook;
         private int _errors;
+        private int _winsByTime;
 
         public TournamentArbiter()
         {
@@ -69,7 +70,7 @@ namespace Cosette.Arbiter.Tournament
                 var gameStopwatch = Stopwatch.StartNew();
                 while (true)
                 {
-                    var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone);
+                    var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
                     if (bestMoveData == null)
                     {
                         _errors++;
@@ -93,6 +94,11 @@ namespace Cosette.Arbiter.Tournament
                         {
                             playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Win));
                             opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Loss));
+                        }
+
+                        if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
+                        {
+                            _winsByTime++;
                         }
 
                         break;
@@ -129,7 +135,7 @@ namespace Cosette.Arbiter.Tournament
         {
             var averageGameTime = (_gamesDuration.Count != 0 ? _gamesDuration.Average() : 0.0) / 1000;
 
-            Console.WriteLine($"Tournament statistics: {averageGameTime:F} s per average game, {_errors} errors");
+            Console.WriteLine($"Tournament statistics: {averageGameTime:F} s per average game, {_winsByTime} wins by time, {_errors} errors");
             Console.WriteLine();
         }
     }

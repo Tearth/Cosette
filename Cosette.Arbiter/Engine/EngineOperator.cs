@@ -43,7 +43,7 @@ namespace Cosette.Arbiter.Engine
             WaitForMessage("readyok");
         }
 
-        public BestMoveData Go(List<string> moves)
+        public BestMoveData Go(List<string> moves, int whiteClock, int blackClock)
         {
             var bestMoveData = new BestMoveData();
             var movesJoined = string.Join(' ', moves);
@@ -53,7 +53,7 @@ namespace Cosette.Arbiter.Engine
                 Write($"position startpos moves {movesJoined}");
             }
 
-            Write(SettingsLoader.Data.GoCommand);
+            Write($"go wtime {whiteClock} btime {blackClock} winc {SettingsLoader.Data.IncTime} binc {SettingsLoader.Data.IncTime}");
 
             while (true)
             {
