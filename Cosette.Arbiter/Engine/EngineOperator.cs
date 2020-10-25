@@ -9,12 +9,14 @@ namespace Cosette.Arbiter.Engine
     {
         private string _name;
         private string _enginePath;
+        private string _engineArguments;
         private Process _engineProcess;
 
-        public EngineOperator(string name, string path)
+        public EngineOperator(string name, string path, string arguments)
         {
             _name = name;
             _enginePath = path;
+            _engineArguments = arguments;
         }
 
         public void Init()
@@ -22,6 +24,7 @@ namespace Cosette.Arbiter.Engine
             _engineProcess = Process.Start(new ProcessStartInfo
             {
                 FileName = _enginePath,
+                Arguments = _engineArguments,
                 CreateNoWindow = true,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true

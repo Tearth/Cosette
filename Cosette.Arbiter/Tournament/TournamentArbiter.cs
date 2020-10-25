@@ -26,7 +26,7 @@ namespace Cosette.Arbiter.Tournament
             
             foreach (var engineData in SettingsLoader.Data.Engines)
             {
-                var engineOperator = new EngineOperator(engineData.Name, engineData.Path);
+                var engineOperator = new EngineOperator(engineData.Name, engineData.Path, engineData.Arguments);
                 var tournamentParticipant = new TournamentParticipant(engineData, engineOperator);
 
                 _participants.Add(tournamentParticipant);
