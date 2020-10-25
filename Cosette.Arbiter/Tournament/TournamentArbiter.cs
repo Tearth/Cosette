@@ -103,6 +103,10 @@ namespace Cosette.Arbiter.Tournament
 
                 _gamesDuration.Add(gameStopwatch.ElapsedMilliseconds);
             }
+
+            Console.WriteLine();
+            Console.WriteLine("Test ended, press any key to close Arbiter");
+            Console.ReadLine();
         }
 
         private void WriteResults()
