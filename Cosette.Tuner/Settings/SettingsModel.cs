@@ -6,12 +6,13 @@ namespace Cosette.Tuner.Settings
     public class SettingsModel
     {
         public List<string> Options { get; set; }
+        public List<GeneInfo> Genes { get; set; }
 
         [JsonProperty("engine_path")]
-        public int EnginePath { get; set; }
+        public string EnginePath { get; set; }
 
         [JsonProperty("engine_arguments")]
-        public int EngineArguments { get; set; }
+        public string EngineArguments { get; set; }
 
         [JsonProperty("base_time")]
         public int BaseTime { get; set; }
