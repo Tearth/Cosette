@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Cosette.Arbiter.Book;
 using Cosette.Arbiter.Engine;
 using Cosette.Arbiter.Settings;
@@ -9,6 +11,7 @@ namespace Cosette.Arbiter.Tournament
     public class TournamentArbiter
     {
         private List<TournamentParticipant> _participants;
+        private List<long> _gamesDuration;
         private TournamentScheduler _scheduler;
         private PolyglotBook _polyglotBook;
         private int _errors;
@@ -16,6 +19,7 @@ namespace Cosette.Arbiter.Tournament
         public TournamentArbiter()
         {
             _participants = new List<TournamentParticipant>();
+            _gamesDuration = new List<long>();
             _scheduler = new TournamentScheduler();
             _polyglotBook = new PolyglotBook();
             
@@ -52,6 +56,7 @@ namespace Cosette.Arbiter.Tournament
 
                 Console.Clear();
                 WriteResults();
+                WriteTournamentStatistics();
 
                 Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name})");
                 Console.Write("Moves: ");
@@ -61,7 +66,7 @@ namespace Cosette.Arbiter.Tournament
                 participantA.EngineOperator.InitNewGame();
                 participantB.EngineOperator.InitNewGame();
 
-
+                var gameStopwatch = Stopwatch.StartNew();
                 while (true)
                 {
                     var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone);
@@ -95,6 +100,8 @@ namespace Cosette.Arbiter.Tournament
 
                     (playerToMove, opponent) = (opponent, playerToMove);
                 }
+
+                _gamesDuration.Add(gameStopwatch.ElapsedMilliseconds);
             }
         }
 
@@ -107,12 +114,19 @@ namespace Cosette.Arbiter.Tournament
                 var wonGamesPercent = participant.WonGamesPercent();
 
                 Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}, {wonGamesPercent}%): " +
-                                  $"{participant.Wins} wins, {participant.Losses} losses, " +
-                                  $"{participant.Draws} draws, {_errors} errors");
+                                  $"{participant.Wins} wins, {participant.Losses} losses, {participant.Draws} draws");
                 Console.WriteLine($" === {participant.AverageDepth:F1} average depth, {participant.AverageNodesCount} average nodes, " +
                                   $"{participant.AverageNps} average nodes per second");
                 Console.WriteLine();
             }
+        }
+
+        private void WriteTournamentStatistics()
+        {
+            var averageGameTime = (_gamesDuration.Count != 0 ? _gamesDuration.Average() : 0.0) / 1000;
+
+            Console.WriteLine($"Tournament statistics: {averageGameTime:F} s per average game, {_errors} errors");
+            Console.WriteLine();
         }
     }
 }
