@@ -21,7 +21,7 @@ namespace Cosette.Tuner
             var mutation = new ReverseSequenceMutation();
             var fitness = new EvaluationFitness();
             var chromosome = new EvaluationChromosome();
-            var population = new Population(50, 70, chromosome);
+            var population = new Population(5, 10, chromosome);
 
             var geneticAlgorithm = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
             geneticAlgorithm.Termination = new GenerationNumberTermination(100);

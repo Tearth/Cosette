@@ -19,5 +19,17 @@ namespace Cosette.Tuner.Settings
 
         [JsonProperty("inc_time")]
         public int IncTime { get; set; }
+
+        [JsonProperty("polyglot_opening_book")]
+        public string PolyglotOpeningBook { get; set; }
+
+        [JsonProperty("polyglot_max_moves")]
+        public int PolyglotMaxMoves { get; set; }
+
+        [JsonProperty("max_moves_count")]
+        public int MaxMovesCount { get; set; }
+
+        [JsonProperty("games_per_fitness_test")]
+        public int GamesPerFitnessTest { get; set; }
     }
 }

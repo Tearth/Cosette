@@ -44,6 +44,11 @@ namespace Cosette.Tuner.Engine
             WaitForMessage("readyok");
         }
 
+        public void SetOption(string name, string value)
+        {
+            Write($"setoption name {name} value {value}");
+        }
+
         public BestMoveData Go(List<string> moves, int whiteClock, int blackClock)
         {
             var bestMoveData = new BestMoveData();
