@@ -37,7 +37,7 @@ namespace Cosette.Engine.Board
         private readonly FastStack<ulong> _pawnHashes;
         private readonly FastStack<int> _irreversibleMovesCounts;
 
-        private readonly int _materialAtOpening;
+        private int _materialAtOpening;
 
         public BoardState()
         {
@@ -62,14 +62,6 @@ namespace Cosette.Engine.Board
             _hashes = new FastStack<ulong>(512);
             _pawnHashes = new FastStack<ulong>(512);
             _irreversibleMovesCounts = new FastStack<int>(512);
-
-            _materialAtOpening =
-                EvaluationConstants.Pieces[Piece.King] +
-                EvaluationConstants.Pieces[Piece.Queen] +
-                EvaluationConstants.Pieces[Piece.Rook] * 2 +
-                EvaluationConstants.Pieces[Piece.Bishop] * 2 +
-                EvaluationConstants.Pieces[Piece.Knight] * 2 +
-                EvaluationConstants.Pieces[Piece.Pawn] * 8;
         }
 
         public void SetDefaultState()
@@ -150,6 +142,14 @@ namespace Cosette.Engine.Board
 
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
+
+            _materialAtOpening =
+                EvaluationConstants.Pieces[Piece.King] +
+                EvaluationConstants.Pieces[Piece.Queen] +
+                EvaluationConstants.Pieces[Piece.Rook] * 2 +
+                EvaluationConstants.Pieces[Piece.Bishop] * 2 +
+                EvaluationConstants.Pieces[Piece.Knight] * 2 +
+                EvaluationConstants.Pieces[Piece.Pawn] * 8;
 
             _killedPieces.Clear();
             _enPassants.Clear();
