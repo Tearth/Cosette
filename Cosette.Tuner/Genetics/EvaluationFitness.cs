@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Cosette.Polyglot;
 using Cosette.Tuner.Engine;
@@ -37,6 +38,7 @@ namespace Cosette.Tuner.Genetics
                 _experimentalEngineOperator.SetOption(SettingsLoader.Data.Genes[geneIndex].Name, chromosome.GetGene(geneIndex).ToString());
             }
 
+            var stopwatch = Stopwatch.StartNew();
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesPerFitnessTest; gameIndex++)
             {
                 var gameData = new GameData(_polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves));
@@ -95,7 +97,25 @@ namespace Cosette.Tuner.Genetics
                 }
             }
 
-            return experimentalEngineWins - referenceEngineWins;
+            var runTime = stopwatch.ElapsedMilliseconds;
+            var averageTimePerGame = runTime / SettingsLoader.Data.GamesPerFitnessTest;
+            var fitness = experimentalEngineWins - referenceEngineWins;
+
+            var genesList = new List<string>();
+            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
+            {
+                var name = SettingsLoader.Data.Genes[geneIndex].Name;
+                var value = chromosome.GetGene(geneIndex).ToString();
+
+                genesList.Add($"{name}={value}");
+            }
+
+            Console.WriteLine($"[{DateTime.Now}] Run done!");
+            Console.WriteLine($" - reference wins: {referenceEngineWins}, experimental wins: {experimentalEngineWins}, draws: {draws}");
+            Console.WriteLine($" - fitness: {fitness}, {string.Join(", ", genesList)}");
+            Console.WriteLine($" - average time per game: {(double)averageTimePerGame / 1000} s");
+
+            return fitness;
         }
     }
 }
