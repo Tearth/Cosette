@@ -111,7 +111,7 @@ namespace Cosette.Tuner.Genetics
             }
 
             Console.WriteLine($"[{DateTime.Now}] Run done!");
-            Console.WriteLine($" - reference wins: {referenceEngineWins}, experimental wins: {experimentalEngineWins}, draws: {draws}");
+            Console.WriteLine($" - reference wins: {referenceEngineWins}, experimental wins: {experimentalEngineWins}, draws: {draws}, errors: {errors}");
             Console.WriteLine($" - fitness: {fitness}, {string.Join(", ", genesList)}");
             Console.WriteLine($" - average time per game: {(double)averageTimePerGame / 1000} s");
 
