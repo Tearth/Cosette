@@ -19,8 +19,8 @@ namespace Cosette.Tuner
             SettingsLoader.Init("settings.json");
 
             var selection = new EliteSelection();
-            var crossover = new OrderedCrossover();
-            var mutation = new ReverseSequenceMutation();
+            var crossover = new UniformCrossover(0.5f);
+            var mutation = new UniformMutation(true);
             var fitness = new EvaluationFitness();
             var chromosome = new EvaluationChromosome();
             var population = new Population(10, 10, chromosome);
