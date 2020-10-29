@@ -241,13 +241,15 @@ namespace Cosette.Engine.Ai.Search
                 return alpha;
             }
 
-            // Set alpha to zero if the stalemate has been detected
+            // Return draw score or checkmate score as leafs
             if (alpha == -EvaluationConstants.Checkmate + ply + 2)
             {
-                if (!context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+                if (context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
                 {
-                    alpha = 0;
+                    return alpha;
                 }
+                
+                return 0;
             }
 
             if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)
