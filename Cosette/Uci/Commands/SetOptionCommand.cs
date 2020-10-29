@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
@@ -36,6 +37,12 @@ namespace Cosette.Uci.Commands
             if (_optionExecutors.ContainsKey(key))
             {
                 _optionExecutors[key](value);
+
+                // Value of material has changed, SEE table needs to be recalculated
+                if (key.EndsWith("Value"))
+                {
+                    StaticExchangeEvaluation.Init();
+                }
             }
         }
     }
