@@ -11,10 +11,13 @@ namespace Cosette.Tuner.Engine
         private string _engineArguments;
         private Process _engineProcess;
 
+        private Dictionary<string, string> _options;
+
         public EngineOperator(string path, string arguments)
         {
             _enginePath = path;
             _engineArguments = arguments;
+            _options = new Dictionary<string, string>();
         }
 
         public void Init()
@@ -31,8 +34,6 @@ namespace Cosette.Tuner.Engine
             Write("uci");
             WaitForMessage("uciok");
 
-            SettingsLoader.Data.Options.ForEach(Write);
-
             Write("isready");
             WaitForMessage("readyok");
         }
@@ -46,7 +47,19 @@ namespace Cosette.Tuner.Engine
 
         public void SetOption(string name, string value)
         {
-            Write($"setoption name {name} value {value}");
+            _options[name] = value;
+        }
+
+        public void ApplyOptions()
+        {
+            SettingsLoader.Data.Options.ForEach(Write);
+            foreach (var option in _options)
+            {
+                Write($"setoption name {option.Key} value {option.Value}");
+            }
+
+            Write("isready");
+            WaitForMessage("readyok");
         }
 
         public BestMoveData Go(List<string> moves, int whiteClock, int blackClock)
@@ -63,18 +76,28 @@ namespace Cosette.Tuner.Engine
 
             while (true)
             {
-                var response = Read();
-                if (response.StartsWith("info depth"))
+                try
                 {
-                    bestMoveData.LastInfoData = InfoData.FromString(response);
+                    var response = Read();
+                    if (response.StartsWith("info depth"))
+                    {
+                        bestMoveData.LastInfoData = InfoData.FromString(response);
+                    }
+                    else if (response.StartsWith("bestmove"))
+                    {
+                        bestMoveData.BestMove = response.Split(' ')[1];
+                        break;
+                    }
+                    else if (response.StartsWith("error"))
+                    {
+                        return null;
+                    }
                 }
-                else if (response.StartsWith("bestmove"))
+                catch
                 {
-                    bestMoveData.BestMove = response.Split(' ')[1];
-                    break;
-                }
-                else if (response.StartsWith("error"))
-                {
+                    Init();
+                    ApplyOptions();
+
                     return null;
                 }
             }

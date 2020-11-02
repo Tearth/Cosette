@@ -38,6 +38,9 @@ namespace Cosette.Tuner.Genetics
                 _experimentalEngineOperator.SetOption(SettingsLoader.Data.Genes[geneIndex].Name, chromosome.GetGene(geneIndex).ToString());
             }
 
+            _referenceEngineOperator.ApplyOptions();
+            _experimentalEngineOperator.ApplyOptions();
+
             var stopwatch = Stopwatch.StartNew();
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesPerFitnessTest; gameIndex++)
             {
@@ -99,7 +102,7 @@ namespace Cosette.Tuner.Genetics
 
             var runTime = stopwatch.ElapsedMilliseconds;
             var averageTimePerGame = runTime / SettingsLoader.Data.GamesPerFitnessTest;
-            var fitness = experimentalEngineWins - referenceEngineWins;
+            var fitness = experimentalEngineWins - referenceEngineWins + draws / 2;
 
             var genesList = new List<string>();
             for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)

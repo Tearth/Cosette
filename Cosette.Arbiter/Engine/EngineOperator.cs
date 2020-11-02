@@ -7,14 +7,12 @@ namespace Cosette.Arbiter.Engine
 {
     public class EngineOperator
     {
-        private string _name;
         private string _enginePath;
         private string _engineArguments;
         private Process _engineProcess;
 
-        public EngineOperator(string name, string path, string arguments)
+        public EngineOperator(string path, string arguments)
         {
-            _name = name;
             _enginePath = path;
             _engineArguments = arguments;
         }
@@ -60,18 +58,26 @@ namespace Cosette.Arbiter.Engine
 
             while (true)
             {
-                var response = Read();
-                if (response.StartsWith("info depth"))
+                try
                 {
-                    bestMoveData.LastInfoData = InfoData.FromString(response);
+                    var response = Read();
+                    if (response.StartsWith("info depth"))
+                    {
+                        bestMoveData.LastInfoData = InfoData.FromString(response);
+                    }
+                    else if (response.StartsWith("bestmove"))
+                    {
+                        bestMoveData.BestMove = response.Split(' ')[1];
+                        break;
+                    }
+                    else if (response.StartsWith("error"))
+                    {
+                        return null;
+                    }
                 }
-                else if (response.StartsWith("bestmove"))
+                catch
                 {
-                    bestMoveData.BestMove = response.Split(' ')[1];
-                    break;
-                }
-                else if (response.StartsWith("error"))
-                {
+                    Init();
                     return null;
                 }
             }
