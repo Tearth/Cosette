@@ -104,41 +104,7 @@ namespace Cosette.Engine.Board
 
             Array.Fill(PieceTable, -1);
 
-            PieceTable[0] = Piece.Rook;
-            PieceTable[1] = Piece.Knight;
-            PieceTable[2] = Piece.Bishop;
-            PieceTable[3] = Piece.King;
-            PieceTable[4] = Piece.Queen;
-            PieceTable[5] = Piece.Bishop;
-            PieceTable[6] = Piece.Knight;
-            PieceTable[7] = Piece.Rook;
-
-            PieceTable[8] = Piece.Pawn;
-            PieceTable[9] = Piece.Pawn;
-            PieceTable[10] = Piece.Pawn;
-            PieceTable[11] = Piece.Pawn;
-            PieceTable[12] = Piece.Pawn;
-            PieceTable[13] = Piece.Pawn;
-            PieceTable[14] = Piece.Pawn;
-            PieceTable[15] = Piece.Pawn;
-
-            PieceTable[48] = Piece.Pawn;
-            PieceTable[49] = Piece.Pawn;
-            PieceTable[50] = Piece.Pawn;
-            PieceTable[51] = Piece.Pawn;
-            PieceTable[52] = Piece.Pawn;
-            PieceTable[53] = Piece.Pawn;
-            PieceTable[54] = Piece.Pawn;
-            PieceTable[55] = Piece.Pawn;
-
-            PieceTable[56] = Piece.Rook;
-            PieceTable[57] = Piece.Knight;
-            PieceTable[58] = Piece.Bishop;
-            PieceTable[59] = Piece.King;
-            PieceTable[60] = Piece.Queen;
-            PieceTable[61] = Piece.Bishop;
-            PieceTable[62] = Piece.Knight;
-            PieceTable[63] = Piece.Rook;
+            CalculatePieceTable(PieceTable);
 
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
@@ -269,29 +235,29 @@ namespace Cosette.Engine.Board
                     switch (move.To)
                     {
                         case 0:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
-                            Castling &= ~Castling.WhiteShort;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
+                                Castling &= ~Castling.WhiteShort;
+                                break;
+                            }
                         case 7:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
-                            Castling &= ~Castling.WhiteLong;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
+                                Castling &= ~Castling.WhiteLong;
+                                break;
+                            }
                         case 56:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
-                            Castling &= ~Castling.BlackShort;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
+                                Castling &= ~Castling.BlackShort;
+                                break;
+                            }
                         case 63:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
-                            Castling &= ~Castling.BlackLong;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
+                                Castling &= ~Castling.BlackLong;
+                                break;
+                            }
                     }
                 }
 
@@ -679,7 +645,7 @@ namespace Cosette.Engine.Board
             Pieces[color][piece] ^= move;
             Occupancy[color] ^= move;
             OccupancySummary ^= move;
-            
+
             Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][from];
             Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][to];
 
@@ -794,6 +760,24 @@ namespace Cosette.Engine.Board
             }
 
             return false;
+        }
+
+        public void CalculatePieceTable(int[] pieceTable)
+        {
+            for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
+            {
+                for (var pieceIndex = 0; pieceIndex < 6; pieceIndex++)
+                {
+                    var bitboard = Pieces[Color.White][pieceIndex] | Pieces[Color.Black][pieceIndex];
+                    pieceTable[fieldIndex] = -1;
+
+                    if ((bitboard & (1ul << fieldIndex)) != 0)
+                    {
+                        pieceTable[fieldIndex] = pieceIndex;
+                        break;
+                    }
+                }
+            }
         }
 
         public override string ToString()
