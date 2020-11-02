@@ -23,14 +23,15 @@ namespace Cosette.Tuner
             var mutation = new UniformMutation(true);
             var fitness = new EvaluationFitness();
             var chromosome = new EvaluationChromosome();
-            var population = new Population(10, 10, chromosome);
+            var population = new Population(SettingsLoader.Data.MinPopulation, SettingsLoader.Data.MaxPopulation, chromosome);
 
             var geneticAlgorithm = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
-            geneticAlgorithm.Termination = new GenerationNumberTermination(100);
+            geneticAlgorithm.Termination = new GenerationNumberTermination(SettingsLoader.Data.GenerationsCount);
             geneticAlgorithm.GenerationRan += GeneticAlgorithm_GenerationRan;
             geneticAlgorithm.Start();
 
             Console.WriteLine("Best solution found has {0} fitness.", geneticAlgorithm.BestChromosome.Fitness);
+            Console.ReadLine();
         }
 
         private static void GeneticAlgorithm_GenerationRan(object sender, EventArgs e)

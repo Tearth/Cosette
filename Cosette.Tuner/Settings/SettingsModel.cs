@@ -29,6 +29,15 @@ namespace Cosette.Tuner.Settings
         [JsonProperty("max_moves_count")]
         public int MaxMovesCount { get; set; }
 
+        [JsonProperty("min_population")]
+        public int MinPopulation { get; set; }
+
+        [JsonProperty("max_population")]
+        public int MaxPopulation { get; set; }
+
+        [JsonProperty("generations_count")]
+        public int GenerationsCount { get; set; }
+
         [JsonProperty("games_per_fitness_test")]
         public int GamesPerFitnessTest { get; set; }
     }
