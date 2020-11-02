@@ -26,6 +26,13 @@ namespace Cosette.Uci.Commands
                 { "RookValue", p => EvaluationConstants.Pieces[Piece.Rook] = int.Parse(p) },
                 { "QueenValue", p => EvaluationConstants.Pieces[Piece.Queen] = int.Parse(p) },
                 { "KingValue", p => EvaluationConstants.Pieces[Piece.King] = int.Parse(p) },
+
+                { "NullWindowMinimalDepth", p => SearchConstants.NullWindowMinimalDepth = int.Parse(p) },
+                { "NullWindowDepthReduction", p => SearchConstants.NullWindowDepthReduction = int.Parse(p) },
+                { "LMRMinimalDepth", p => SearchConstants.LMRMinimalDepth = int.Parse(p) },
+                { "LMRMovesWithoutReduction", p => SearchConstants.LMRMovesWithoutReduction = int.Parse(p) },
+                { "LMRPvNodeDepthReduction", p => SearchConstants.LMRPvNodeDepthReduction = int.Parse(p) },
+                { "LMRNonPvNodeDepthDivisor", p => SearchConstants.LMRNonPvNodeDepthDivisor = int.Parse(p) },
             };
         }
 
