@@ -9,7 +9,7 @@ namespace Cosette.Tuner.Web.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController(DatabaseContext context)
+        public HomeController()
         {
 
         }
