@@ -44,59 +44,68 @@ namespace Cosette.Tuner.Genetics
             var stopwatch = Stopwatch.StartNew();
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesPerFitnessTest; gameIndex++)
             {
-                var gameData = new GameData(_polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves));
-
-                var whitePlayer = DateTime.UtcNow.Ticks % 2 == 0 ? _referenceEngineOperator : _experimentalEngineOperator;
-                var blackPlayer = whitePlayer == _referenceEngineOperator ? _experimentalEngineOperator : _referenceEngineOperator;
-                var (playerToMove, opponent) = (whitePlayer, blackPlayer);
-
-                whitePlayer.InitNewGame();
-                blackPlayer.InitNewGame();
-
-                while (true)
+                try
                 {
-                    var bestMoveData = playerToMove.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
-                    if (bestMoveData == null)
-                    {
-                        errors++;
-                        break;
-                    }
+                    var gameData = new GameData(_polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves));
 
-                    gameData.MakeMove(bestMoveData);
+                    var whitePlayer = DateTime.UtcNow.Ticks % 2 == 0 ? _referenceEngineOperator : _experimentalEngineOperator;
+                    var blackPlayer = whitePlayer == _referenceEngineOperator ? _experimentalEngineOperator : _referenceEngineOperator;
+                    var (playerToMove, opponent) = (whitePlayer, blackPlayer);
 
-                    if (gameData.GameIsDone)
+                    whitePlayer.InitNewGame();
+                    blackPlayer.InitNewGame();
+
+                    while (true)
                     {
-                        if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
+                        var bestMoveData = playerToMove.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
+                        if (bestMoveData == null)
                         {
-                            if (playerToMove == _referenceEngineOperator)
+                            errors++;
+                            break;
+                        }
+
+                        gameData.MakeMove(bestMoveData);
+
+                        if (gameData.GameIsDone)
+                        {
+                            if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
                             {
-                                experimentalEngineWins++;
+                                if (playerToMove == _referenceEngineOperator)
+                                {
+                                    experimentalEngineWins++;
+                                }
+                                else
+                                {
+                                    referenceEngineWins++;
+                                }
+                            }
+                            else if (gameData.Winner == Color.None)
+                            {
+                                draws++;
                             }
                             else
                             {
-                                referenceEngineWins++;
+                                if (playerToMove == _referenceEngineOperator)
+                                {
+                                    referenceEngineWins++;
+                                }
+                                else
+                                {
+                                    experimentalEngineWins++;
+                                }
                             }
-                        }
-                        else if (gameData.Winner == Color.None)
-                        {
-                            draws++;
-                        }
-                        else
-                        {
-                            if (playerToMove == _referenceEngineOperator)
-                            {
-                                referenceEngineWins++;
-                            }
-                            else
-                            {
-                                experimentalEngineWins++;
-                            }
+
+                            break;
                         }
 
-                        break;
+                        (playerToMove, opponent) = (opponent, playerToMove);
                     }
-
-                    (playerToMove, opponent) = (opponent, playerToMove);
+                }
+                catch
+                {
+                    _referenceEngineOperator.Restart();
+                    _experimentalEngineOperator.Restart();
+                    gameIndex--;
                 }
             }
 

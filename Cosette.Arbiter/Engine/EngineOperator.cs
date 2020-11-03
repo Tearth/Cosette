@@ -31,10 +31,21 @@ namespace Cosette.Arbiter.Engine
             Write("uci");
             WaitForMessage("uciok");
 
-            SettingsLoader.Data.Options.ForEach(Write);
+            ApplyOptions();
 
             Write("isready");
             WaitForMessage("readyok");
+        }
+
+        public void Restart()
+        {
+            if (!_engineProcess.HasExited)
+            {
+                _engineProcess.Close();
+            }
+
+            Init();
+            ApplyOptions();
         }
 
         public void InitNewGame()
@@ -42,6 +53,11 @@ namespace Cosette.Arbiter.Engine
             Write("ucinewgame");
             Write("isready");
             WaitForMessage("readyok");
+        }
+
+        public void ApplyOptions()
+        {
+            SettingsLoader.Data.Options.ForEach(Write);
         }
 
         public BestMoveData Go(List<string> moves, int whiteClock, int blackClock)
@@ -58,26 +74,18 @@ namespace Cosette.Arbiter.Engine
 
             while (true)
             {
-                try
+                var response = Read();
+                if (response.StartsWith("info depth"))
                 {
-                    var response = Read();
-                    if (response.StartsWith("info depth"))
-                    {
-                        bestMoveData.LastInfoData = InfoData.FromString(response);
-                    }
-                    else if (response.StartsWith("bestmove"))
-                    {
-                        bestMoveData.BestMove = response.Split(' ')[1];
-                        break;
-                    }
-                    else if (response.StartsWith("error"))
-                    {
-                        return null;
-                    }
+                    bestMoveData.LastInfoData = InfoData.FromString(response);
                 }
-                catch
+                else if (response.StartsWith("bestmove"))
                 {
-                    Init();
+                    bestMoveData.BestMove = response.Split(' ')[1];
+                    break;
+                }
+                else if (response.StartsWith("error"))
+                {
                     return null;
                 }
             }

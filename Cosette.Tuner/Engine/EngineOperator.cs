@@ -10,7 +10,6 @@ namespace Cosette.Tuner.Engine
         private string _enginePath;
         private string _engineArguments;
         private Process _engineProcess;
-
         private Dictionary<string, string> _options;
 
         public EngineOperator(string path, string arguments)
@@ -36,6 +35,17 @@ namespace Cosette.Tuner.Engine
 
             Write("isready");
             WaitForMessage("readyok");
+        }
+
+        public void Restart()
+        {
+            if (!_engineProcess.HasExited)
+            {
+                _engineProcess.Close();
+            }
+
+            Init();
+            ApplyOptions();
         }
 
         public void InitNewGame()
@@ -76,28 +86,18 @@ namespace Cosette.Tuner.Engine
 
             while (true)
             {
-                try
+                var response = Read();
+                if (response.StartsWith("info depth"))
                 {
-                    var response = Read();
-                    if (response.StartsWith("info depth"))
-                    {
-                        bestMoveData.LastInfoData = InfoData.FromString(response);
-                    }
-                    else if (response.StartsWith("bestmove"))
-                    {
-                        bestMoveData.BestMove = response.Split(' ')[1];
-                        break;
-                    }
-                    else if (response.StartsWith("error"))
-                    {
-                        return null;
-                    }
+                    bestMoveData.LastInfoData = InfoData.FromString(response);
                 }
-                catch
+                else if (response.StartsWith("bestmove"))
                 {
-                    Init();
-                    ApplyOptions();
-
+                    bestMoveData.BestMove = response.Split(' ')[1];
+                    break;
+                }
+                else if (response.StartsWith("error"))
+                {
                     return null;
                 }
             }

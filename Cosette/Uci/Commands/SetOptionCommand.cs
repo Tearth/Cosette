@@ -51,6 +51,12 @@ namespace Cosette.Uci.Commands
                     StaticExchangeEvaluation.Init();
                 }
             }
+            /*
+            else
+            {
+                throw new Exception();
+            }
+            */
         }
     }
 }

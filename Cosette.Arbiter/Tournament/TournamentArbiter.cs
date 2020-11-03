@@ -70,40 +70,48 @@ namespace Cosette.Arbiter.Tournament
                 var gameStopwatch = Stopwatch.StartNew();
                 while (true)
                 {
-                    var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
-                    if (bestMoveData == null)
+                    try
                     {
-                        _errors++;
-                        break;
+                        var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
+                        if (bestMoveData == null)
+                        {
+                            _errors++;
+                            break;
+                        }
+
+                        playerToMove.Logs.Add(bestMoveData.LastInfoData);
+                        gameData.MakeMove(bestMoveData);
+
+                        Console.Write(bestMoveData.BestMove);
+                        Console.Write(" ");
+
+                        if (gameData.GameIsDone)
+                        {
+                            if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
+                            {
+                                _winsByTime++;
+                            }
+                            else if (gameData.Winner == Color.None)
+                            {
+                                playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
+                                opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
+                            }
+                            else
+                            {
+                                playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Win));
+                                opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Loss));
+                            }
+
+                            break;
+                        }
+
+                        (playerToMove, opponent) = (opponent, playerToMove);
                     }
-
-                    playerToMove.Logs.Add(bestMoveData.LastInfoData);
-                    gameData.MakeMove(bestMoveData);
-
-                    Console.Write(bestMoveData.BestMove);
-                    Console.Write(" ");
-
-                    if (gameData.GameIsDone)
+                    catch
                     {
-                        if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
-                        {
-                            _winsByTime++;
-                        }
-                        else if (gameData.Winner == Color.None)
-                        {
-                            playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
-                            opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
-                        }
-                        else
-                        {
-                            playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Win));
-                            opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Loss));
-                        }
-
-                        break;
+                        participantA.EngineOperator.Restart();
+                        participantB.EngineOperator.Restart();
                     }
-
-                    (playerToMove, opponent) = (opponent, playerToMove);
                 }
 
                 _gamesDuration.Add(gameStopwatch.ElapsedMilliseconds);
