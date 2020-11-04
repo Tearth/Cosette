@@ -31,7 +31,6 @@ namespace Cosette.Tuner.Genetics
             var referenceEngineWins = 0;
             var experimentalEngineWins = 0;
             var draws = 0;
-            var errors = 0;
 
             for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
             {
@@ -60,7 +59,7 @@ namespace Cosette.Tuner.Genetics
                         var bestMoveData = playerToMove.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
                         if (bestMoveData == null)
                         {
-                            errors++;
+                            draws++;
                             break;
                         }
 
@@ -123,7 +122,7 @@ namespace Cosette.Tuner.Genetics
             }
 
             Console.WriteLine($"[{DateTime.Now}] Run done!");
-            Console.WriteLine($" - reference wins: {referenceEngineWins}, experimental wins: {experimentalEngineWins}, draws: {draws}, errors: {errors}");
+            Console.WriteLine($" - reference wins: {referenceEngineWins}, experimental wins: {experimentalEngineWins}, draws: {draws}");
             Console.WriteLine($" - fitness: {fitness}, {string.Join(", ", genesList)}");
             Console.WriteLine($" - average time per game: {(double)averageTimePerGame / 1000} s");
 

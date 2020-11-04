@@ -11,7 +11,6 @@ namespace Cosette.Tuner.Common.Requests
         public int ReferenceEngineWins { get; set; }
         public int ExperimentalEngineWins { get; set; }
         public int Draws { get; set; }
-        public int Errors { get; set; }
 
         public EngineStatisticsDataRequest ReferenceEngineStatistics { get; set; }
         public EngineStatisticsDataRequest ExperimentalEngineStatistics { get; set; }

@@ -12,7 +12,6 @@ namespace Cosette.Tuner.Web.Database.Models
         public int ReferenceEngineWins { get; set; }
         public int ExperimentalEngineWins { get; set; }
         public int Draws { get; set; }
-        public int Errors { get; set; }
 
         public List<EngineStatisticsModel> EnginesStatistics { get; set; }
 
