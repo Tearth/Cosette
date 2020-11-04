@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cosette.Tuner.Common\Cosette.Tuner.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Database.sqlite">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

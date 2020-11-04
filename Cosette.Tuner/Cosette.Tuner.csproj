@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cosette.Polyglot\Cosette.Polyglot.csproj" />
+    <ProjectReference Include="..\Cosette.Tuner.Common\Cosette.Tuner.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

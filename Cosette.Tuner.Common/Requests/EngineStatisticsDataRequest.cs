@@ -1,4 +1,4 @@
-﻿namespace Cosette.Tuner.Web.Requests
+﻿namespace Cosette.Tuner.Common.Requests
 {
     public class EngineStatisticsDataRequest
     {

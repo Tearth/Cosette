@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Cosette.Tuner.Web.Requests
+namespace Cosette.Tuner.Common.Requests
 {
     public class GenerationDataRequest
     {
