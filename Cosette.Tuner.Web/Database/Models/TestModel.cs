@@ -7,6 +7,7 @@ namespace Cosette.Tuner.Web.Database.Models
     {
         public int Id { get; set; }
         public DateTime CreationTimeUtc { get; set; }
+
         public List<GenerationModel> Generation { get; set; }
     }
 }
