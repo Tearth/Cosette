@@ -46,11 +46,6 @@ namespace Cosette.Tuner.Web
             {
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}");
             });
-
-            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                scope.ServiceProvider.GetRequiredService<DatabaseContext>().Database.Migrate();
-            }
         }
     }
 }
