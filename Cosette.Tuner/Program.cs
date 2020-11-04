@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Genetics;
 using Cosette.Tuner.Settings;
 using Cosette.Tuner.Web;
@@ -54,12 +55,37 @@ namespace Cosette.Tuner
                 genesList.Add($"{name}={value}");
             }
 
+            var generationDataRequest = CreateGenerationDataRequest(geneticAlgorithm);
+            _webService.SendGenerationData(generationDataRequest).GetAwaiter().GetResult();
 
             Console.WriteLine("======================================");
             Console.WriteLine($"[{DateTime.Now}] Generation done!");
             Console.WriteLine($" - best chromosome: {string.Join(", ", genesList)}");
             Console.WriteLine($" - best fitness: {geneticAlgorithm.BestChromosome.Fitness}");
             Console.WriteLine("======================================");
+        }
+
+        private static GenerationDataRequest CreateGenerationDataRequest(GeneticAlgorithm geneticAlgorithm)
+        {
+            return new GenerationDataRequest
+            {
+                TestId = "asd",
+                BestFitness = 123,
+                ElapsedTime = 12.345,
+                BestChromosomeGenes = new List<GeneDataRequest>
+                {
+                    new GeneDataRequest
+                    {
+                        Name = "a",
+                        Value = 1
+                    },
+                    new GeneDataRequest
+                    {
+                        Name =  "b",
+                        Value = 2
+                    }
+                }
+            };
         }
     }
 }

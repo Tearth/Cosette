@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
+using Cosette.Tuner.Common.Requests;
+using Newtonsoft.Json;
 
 namespace Cosette.Tuner.Web
 {
@@ -29,12 +32,35 @@ namespace Cosette.Tuner.Web
                 }
                 else
                 {
-                    Console.WriteLine($"[{DateTime.Now}] Web client disabled");
+                    throw new HttpRequestException();
                 }
             }
             catch
             {
                 Console.WriteLine($"[{DateTime.Now}] Web client disabled");
+            }
+        }
+
+        public async Task SendGenerationData(GenerationDataRequest requestData)
+        {
+            if (!_enabled)
+            {
+                return;
+            }
+
+            try
+            {
+                var httpContent = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("generation", httpContent);
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException();
+                }
+            }
+            catch
+            {
+                Console.WriteLine($"[{DateTime.Now}] Request containing generation data failed!");
             }
         }
     }
