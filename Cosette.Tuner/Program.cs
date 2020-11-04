@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Cosette.Tuner.Genetics;
 using Cosette.Tuner.Settings;
+using Cosette.Tuner.Web;
 using GeneticSharp.Domain;
 using GeneticSharp.Domain.Crossovers;
 using GeneticSharp.Domain.Mutations;
@@ -13,15 +15,20 @@ namespace Cosette.Tuner
 {
     public class Program
     {
-        public static void Main(string[] args)
+        private static WebService _webService;
+
+        public static async Task Main(string[] args)
         {
             Console.WriteLine($"[{DateTime.Now}] Tuner start");
             SettingsLoader.Init("settings.json");
 
+            _webService = new WebService();
+            await _webService.EnableIfAvailable();
+
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
-            var fitness = new EvaluationFitness();
+            var fitness = new EvaluationFitness(_webService);
             var chromosome = new EvaluationChromosome();
             var population = new Population(SettingsLoader.Data.MinPopulation, SettingsLoader.Data.MaxPopulation, chromosome);
 

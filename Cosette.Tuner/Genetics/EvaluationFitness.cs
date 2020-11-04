@@ -5,6 +5,7 @@ using Cosette.Polyglot;
 using Cosette.Tuner.Engine;
 using Cosette.Tuner.Genetics.Game;
 using Cosette.Tuner.Settings;
+using Cosette.Tuner.Web;
 using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Fitnesses;
 
@@ -12,12 +13,14 @@ namespace Cosette.Tuner.Genetics
 {
     public class EvaluationFitness : IFitness
     {
+        private WebService _webService;
         private EngineOperator _referenceEngineOperator;
         private EngineOperator _experimentalEngineOperator;
         private PolyglotBook _polyglotBook;
 
-        public EvaluationFitness()
+        public EvaluationFitness(WebService webService)
         {
+            _webService = webService;
             _referenceEngineOperator = new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments);
             _experimentalEngineOperator = new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments);
             _polyglotBook = new PolyglotBook(SettingsLoader.Data.PolyglotOpeningBook);
