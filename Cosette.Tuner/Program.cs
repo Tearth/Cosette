@@ -16,6 +16,7 @@ namespace Cosette.Tuner
 {
     public class Program
     {
+        private static string _testName;
         private static WebService _webService;
 
         public static async Task Main(string[] args)
@@ -23,10 +24,10 @@ namespace Cosette.Tuner
             Console.WriteLine($"[{DateTime.Now}] Tuner start");
             SettingsLoader.Init("settings.json");
 
+            _testName = DateTime.Now.Ticks.ToString();
             _webService = new WebService();
             await _webService.EnableIfAvailable();
 
-            var testName = DateTime.Now.Ticks.ToString();
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
@@ -68,24 +69,22 @@ namespace Cosette.Tuner
 
         private static GenerationDataRequest CreateGenerationDataRequest(GeneticAlgorithm geneticAlgorithm)
         {
+            var genes = new List<GeneDataRequest>();
+            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
+            {
+                genes.Add(new GeneDataRequest
+                {
+                    Name = SettingsLoader.Data.Genes[geneIndex].Name,
+                    Value = (int)geneticAlgorithm.BestChromosome.GetGene(geneIndex).Value
+                });
+            }
+
             return new GenerationDataRequest
             {
-                TestName = "asd",
-                BestFitness = 123,
-                ElapsedTime = 12.345,
-                BestChromosomeGenes = new List<GeneDataRequest>
-                {
-                    new GeneDataRequest
-                    {
-                        Name = "a",
-                        Value = 1
-                    },
-                    new GeneDataRequest
-                    {
-                        Name =  "b",
-                        Value = 2
-                    }
-                }
+                TestName = _testName,
+                BestFitness = (int)geneticAlgorithm.BestChromosome.Fitness,
+                ElapsedTime = geneticAlgorithm.TimeEvolving.TotalSeconds,
+                BestChromosomeGenes = genes
             };
         }
     }
