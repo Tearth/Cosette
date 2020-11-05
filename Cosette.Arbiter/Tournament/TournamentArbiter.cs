@@ -91,7 +91,8 @@ namespace Cosette.Arbiter.Tournament
                             {
                                 _winsByTime++;
                             }
-                            else if (gameData.Winner == Color.None)
+                            
+                            if (gameData.Winner == Color.None)
                             {
                                 playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
                                 opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
