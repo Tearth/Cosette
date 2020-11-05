@@ -26,10 +26,11 @@ namespace Cosette.Tuner
             _webService = new WebService();
             await _webService.EnableIfAvailable();
 
+            var testName = DateTime.Now.Ticks.ToString();
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
-            var fitness = new EvaluationFitness(_webService);
+            var fitness = new EvaluationFitness(testName, _webService);
             var chromosome = new EvaluationChromosome();
             var population = new Population(SettingsLoader.Data.MinPopulation, SettingsLoader.Data.MaxPopulation, chromosome);
 
@@ -69,7 +70,7 @@ namespace Cosette.Tuner
         {
             return new GenerationDataRequest
             {
-                TestId = "asd",
+                TestName = "asd",
                 BestFitness = 123,
                 ElapsedTime = 12.345,
                 BestChromosomeGenes = new List<GeneDataRequest>

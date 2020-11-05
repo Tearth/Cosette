@@ -30,5 +30,12 @@ namespace Cosette.Tuner.Web.Controllers
         {
             return new OkResult();
         }
+
+        [HttpPost]
+        [Route("api/chromosome")]
+        public IActionResult Chromosome([FromBody] ChromosomeDataRequest requestData)
+        {
+            return new OkResult();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Cosette.Polyglot;
+using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Engine;
 using Cosette.Tuner.Genetics.Game;
 using Cosette.Tuner.Settings;
@@ -13,13 +14,15 @@ namespace Cosette.Tuner.Genetics
 {
     public class EvaluationFitness : IFitness
     {
+        private string _testName;
         private WebService _webService;
         private EvaluationParticipant _referenceParticipant;
         private EvaluationParticipant _experimentalParticipant;
         private PolyglotBook _polyglotBook;
 
-        public EvaluationFitness(WebService webService)
+        public EvaluationFitness(string testName, WebService webService)
         {
+            _testName = testName;
             _webService = webService;
             _referenceParticipant = new EvaluationParticipant(new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments));
             _experimentalParticipant = new EvaluationParticipant(new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments));
@@ -100,21 +103,55 @@ namespace Cosette.Tuner.Genetics
                 }
             }
 
-            var runTime = stopwatch.ElapsedMilliseconds;
-            var averageTimePerGame = runTime / SettingsLoader.Data.GamesPerFitnessTest;
+            var elapsedTime = (double)stopwatch.ElapsedMilliseconds / 1000;
             var fitness = _experimentalParticipant.Wins - _referenceParticipant.Wins + _referenceParticipant.Draws / 2;
 
-            var genesList = new List<string>();
-            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
-            {
-                var name = SettingsLoader.Data.Genes[geneIndex].Name;
-                var value = chromosome.GetGene(geneIndex).ToString();
-
-                genesList.Add($"{name}={value}");
-            }
+            var chromosomeRequest = GenerateChromosomeRequest(fitness, elapsedTime, chromosome, _referenceParticipant, _experimentalParticipant);
+            _webService.SendChromosomeData(chromosomeRequest).GetAwaiter().GetResult();
 
             Console.WriteLine($"[{DateTime.Now}] Run done! Fitness: {fitness}");
             return fitness;
+        }
+
+        private ChromosomeDataRequest GenerateChromosomeRequest(int fitness, double elapsedTime, IChromosome chromosome, EvaluationParticipant referenceParticipant, EvaluationParticipant experimentalParticipant)
+        {
+            var genes = new List<GeneDataRequest>();
+            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
+            {
+                genes.Add(new GeneDataRequest
+                {
+                    Name = SettingsLoader.Data.Genes[geneIndex].Name,
+                    Value = (int)chromosome.GetGene(geneIndex).Value
+                });
+            }
+
+            return new ChromosomeDataRequest
+            {
+                TestName = _testName,
+                ElapsedTime = elapsedTime,
+                Fitness = fitness,
+                ReferenceEngineWins = referenceParticipant.Wins,
+                ExperimentalEngineWins = experimentalParticipant.Wins,
+                Draws = referenceParticipant.Draws,
+
+                ReferenceEngineStatistics = new EngineStatisticsDataRequest
+                {
+                    AverageTimePerGame = elapsedTime / SettingsLoader.Data.GamesPerFitnessTest,
+                    AverageDepth = referenceParticipant.AverageDepth,
+                    AverageNodesCount = referenceParticipant.AverageNodesCount,
+                    AverageNodesPerSecond = referenceParticipant.AverageNps
+                },
+
+                ExperimentalEngineStatistics = new EngineStatisticsDataRequest
+                {
+                    AverageTimePerGame = elapsedTime / SettingsLoader.Data.GamesPerFitnessTest,
+                    AverageDepth = experimentalParticipant.AverageDepth,
+                    AverageNodesCount = experimentalParticipant.AverageNodesCount,
+                    AverageNodesPerSecond = experimentalParticipant.AverageNps
+                },
+
+                Genes = genes
+            };
         }
     }
 }

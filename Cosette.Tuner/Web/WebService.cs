@@ -63,5 +63,28 @@ namespace Cosette.Tuner.Web
                 Console.WriteLine($"[{DateTime.Now}] Request containing generation data failed!");
             }
         }
+
+        public async Task SendChromosomeData(ChromosomeDataRequest requestData)
+        {
+            if (!_enabled)
+            {
+                return;
+            }
+
+            try
+            {
+                var httpContent = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("chromosome", httpContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException();
+                }
+            }
+            catch
+            {
+                Console.WriteLine($"[{DateTime.Now}] Request containing chromosome data failed!");
+            }
+        }
     }
 }

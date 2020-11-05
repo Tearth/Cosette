@@ -4,7 +4,7 @@ namespace Cosette.Tuner.Common.Requests
 {
     public class ChromosomeDataRequest
     {
-        public string TestId { get; set; }
+        public string TestName { get; set; }
         public double ElapsedTime { get; set; }
         public int Fitness { get; set; }
         public int ReferenceEngineWins { get; set; }
