@@ -49,16 +49,9 @@ namespace Cosette.Tuner.Web.Controllers
         [Route("api/generation")]
         public async Task<IActionResult> Generation([FromBody] GenerationDataRequest requestData)
         {
-            try
-            {
-                var test = _mapper.Map<GenerationModel>(requestData);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            //await _generationService.Add();
+            var generationModel = _mapper.Map<GenerationModel>(requestData);
+            await _generationService.Add(generationModel);
+
             return new OkResult();
         }
 

@@ -18,21 +18,13 @@ namespace Cosette.Tuner.Web.Services
 
         public async Task<int> GenerateNewTest()
         {
-            try
+            var entityTracking = await _databaseContext.Tests.AddAsync(new TestModel
             {
-                var entityTracking = await _databaseContext.Tests.AddAsync(new TestModel
-                {
-                    CreationTimeUtc = DateTime.Now,
-                });
+                CreationTimeUtc = DateTime.Now,
+            });
 
-                await _databaseContext.SaveChangesAsync();
-                return entityTracking.Entity.Id;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            await _databaseContext.SaveChangesAsync();
+            return entityTracking.Entity.Id;
         }
     }
 }

@@ -25,10 +25,7 @@ namespace Cosette.Tuner.Web
                     var referenceEngineStatistics = context.Mapper.Map<EngineStatisticsModel>(src.ReferenceEngineStatistics);
                     var experimentalEngineStatistics = context.Mapper.Map<EngineStatisticsModel>(src.ExperimentalEngineStatistics);
 
-                    referenceEngineStatistics.Chromosome = dest;
                     referenceEngineStatistics.IsReferenceEngine = true;
-
-                    experimentalEngineStatistics.Chromosome = dest;
                     experimentalEngineStatistics.IsReferenceEngine = false;
 
                     var outputList = new List<EngineStatisticsModel>
@@ -38,7 +35,16 @@ namespace Cosette.Tuner.Web
                     };
 
                     return outputList;
-                }));
+                }))
+                .ForMember(p => p.Genes, p => p.MapFrom(q => q.Genes));
+
+            CreateMap<GeneDataRequest, GenerationGeneModel>()
+                .ForMember(p => p.Name, p => p.MapFrom(q => q.Name))
+                .ForMember(p => p.Value, p => p.MapFrom(q => q.Value));
+
+            CreateMap<GeneDataRequest, ChromosomeGeneModel>()
+                .ForMember(p => p.Name, p => p.MapFrom(q => q.Name))
+                .ForMember(p => p.Value, p => p.MapFrom(q => q.Value));
 
             CreateMap<EngineStatisticsDataRequest, EngineStatisticsModel>()
                 .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => DateTime.UtcNow))
@@ -46,6 +52,14 @@ namespace Cosette.Tuner.Web
                 .ForMember(p => p.AverageDepth, p => p.MapFrom(q => q.AverageDepth))
                 .ForMember(p => p.AverageNodesCount, p => p.MapFrom(q => q.AverageNodesCount))
                 .ForMember(p => p.AverageNodesPerSecond, p => p.MapFrom(q => q.AverageNodesPerSecond));
+
+            CreateMap<GenerationDataRequest, GenerationModel>()
+                .ForMember(p => p.TestId, p => p.MapFrom(q => q.TestId))
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => DateTime.UtcNow))
+                .ForMember(p => p.ElapsedTime, p => p.MapFrom(q => q.ElapsedTime))
+                .ForMember(p => p.BestFitness, p => p.MapFrom(q => q.BestFitness))
+                .ForMember(p => p.BestGenes, p => p.MapFrom(q => q.BestChromosomeGenes))
+                .ForMember(p => p.BestGenes, p => p.MapFrom(q => q.BestChromosomeGenes));
         }
     }
 }

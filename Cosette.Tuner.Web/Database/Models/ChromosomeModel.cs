@@ -18,5 +18,6 @@ namespace Cosette.Tuner.Web.Database.Models
         public int Draws { get; set; }
 
         public virtual List<EngineStatisticsModel> EnginesStatistics { get; set; }
+        public virtual List<ChromosomeGeneModel> Genes { get; set; }
     }
 }
