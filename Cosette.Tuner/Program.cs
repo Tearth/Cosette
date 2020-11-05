@@ -16,7 +16,7 @@ namespace Cosette.Tuner
 {
     public class Program
     {
-        private static string _testName;
+        private static int _testId;
         private static WebService _webService;
 
         public static async Task Main(string[] args)
@@ -24,14 +24,15 @@ namespace Cosette.Tuner
             Console.WriteLine($"[{DateTime.Now}] Tuner start");
             SettingsLoader.Init("settings.json");
 
-            _testName = DateTime.Now.Ticks.ToString();
             _webService = new WebService();
+
             await _webService.EnableIfAvailable();
+            _testId = await _webService.RegisterTest();
 
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
-            var fitness = new EvaluationFitness(testName, _webService);
+            var fitness = new EvaluationFitness(_testId, _webService);
             var chromosome = new EvaluationChromosome();
             var population = new Population(SettingsLoader.Data.MinPopulation, SettingsLoader.Data.MaxPopulation, chromosome);
 
@@ -81,7 +82,7 @@ namespace Cosette.Tuner
 
             return new GenerationDataRequest
             {
-                TestName = _testName,
+                TestId = _testId,
                 BestFitness = (int)geneticAlgorithm.BestChromosome.Fitness,
                 ElapsedTime = geneticAlgorithm.TimeEvolving.TotalSeconds,
                 BestChromosomeGenes = genes

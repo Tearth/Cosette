@@ -28,6 +28,9 @@ namespace Cosette.Tuner.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<GenerationService>();
+            services.AddScoped<ChromosomeService>();
+            services.AddScoped<TestService>();
+
             services.AddDbContext<DatabaseContext>(options =>
             {
                 options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));

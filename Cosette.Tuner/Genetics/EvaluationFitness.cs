@@ -14,15 +14,15 @@ namespace Cosette.Tuner.Genetics
 {
     public class EvaluationFitness : IFitness
     {
-        private string _testName;
+        private int _testId;
         private WebService _webService;
         private EvaluationParticipant _referenceParticipant;
         private EvaluationParticipant _experimentalParticipant;
         private PolyglotBook _polyglotBook;
 
-        public EvaluationFitness(string testName, WebService webService)
+        public EvaluationFitness(int testId, WebService webService)
         {
-            _testName = testName;
+            _testId = testId;
             _webService = webService;
             _referenceParticipant = new EvaluationParticipant(new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments));
             _experimentalParticipant = new EvaluationParticipant(new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments));
@@ -127,7 +127,7 @@ namespace Cosette.Tuner.Genetics
 
             return new ChromosomeDataRequest
             {
-                TestName = _testName,
+                TestId = _testId,
                 ElapsedTime = elapsedTime,
                 Fitness = fitness,
                 ReferenceEngineWins = referenceParticipant.Wins,

@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Cosette.Tuner.Common.Requests;
+using Cosette.Tuner.Common.Responses;
 using Newtonsoft.Json;
 
 namespace Cosette.Tuner.Web
@@ -39,6 +40,30 @@ namespace Cosette.Tuner.Web
             {
                 Console.WriteLine($"[{DateTime.Now}] Web client disabled");
             }
+        }
+
+        public async Task<int> RegisterTest()
+        {
+            try
+            {
+                var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "test/register"));
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return JsonConvert.DeserializeObject<TestDataResponse>(responseContent).Id;
+                }
+                else
+                {
+                    throw new HttpRequestException();
+                }
+            }
+            catch
+            {
+                Console.WriteLine($"[{DateTime.Now}] Can't register new test");
+            }
+
+            return -1;
         }
 
         public async Task SendGenerationData(GenerationDataRequest requestData)
