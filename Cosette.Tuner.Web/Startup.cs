@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Cosette.Tuner.Web.Database;
 using Cosette.Tuner.Web.Services;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,8 @@ namespace Cosette.Tuner.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddScoped<GenerationService>();
             services.AddScoped<ChromosomeService>();
             services.AddScoped<TestService>();

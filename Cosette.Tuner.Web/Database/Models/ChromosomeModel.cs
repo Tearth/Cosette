@@ -7,8 +7,8 @@ namespace Cosette.Tuner.Web.Database.Models
     {
         public int Id { get; set; }
 
-        public int ChromosomeId { get; set; }
-        public ChromosomeModel Chromosome { get; set; }
+        public int TestId { get; set; }
+        public virtual TestModel Test { get; set; }
 
         public DateTime CreationTimeUtc { get; set; }
         public double ElapsedTime { get; set; }
@@ -17,6 +17,6 @@ namespace Cosette.Tuner.Web.Database.Models
         public int ExperimentalEngineWins { get; set; }
         public int Draws { get; set; }
 
-        public List<EngineStatisticsModel> EnginesStatistics { get; set; }
+        public virtual List<EngineStatisticsModel> EnginesStatistics { get; set; }
     }
 }

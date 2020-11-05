@@ -3,6 +3,6 @@
     public class GenerationGeneModel : GeneModel
     {
         public int GenerationId { get; set; }
-        public GenerationModel Generation { get; set; }
+        public virtual GenerationModel Generation { get; set; }
     }
 }

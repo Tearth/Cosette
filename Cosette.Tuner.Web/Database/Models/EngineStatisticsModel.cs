@@ -7,7 +7,7 @@ namespace Cosette.Tuner.Web.Database.Models
         public int Id { get; set; }
 
         public int ChromosomeId { get; set; }
-        public ChromosomeModel Chromosome { get; set; }
+        public virtual ChromosomeModel Chromosome { get; set; }
 
         public DateTime CreationTimeUtc { get; set; }
         public bool IsReferenceEngine { get; set; }

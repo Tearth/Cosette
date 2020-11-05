@@ -5,12 +5,12 @@ namespace Cosette.Tuner.Web.Database
 {
     public class DatabaseContext : DbContext
     {
-        public DbSet<ChromosomeGeneModel> ChromosomeGenes { get; set; }
-        public DbSet<ChromosomeModel> Chromosomes { get; set; }
-        public DbSet<EngineStatisticsModel> EngineStatistics { get; set; }
-        public DbSet<GenerationGeneModel> GenerationGenes { get; set; }
-        public DbSet<GenerationModel> Generations { get; set; }
-        public DbSet<TestModel> Tests { get; set; }
+        public virtual DbSet<ChromosomeGeneModel> ChromosomeGenes { get; set; }
+        public virtual DbSet<ChromosomeModel> Chromosomes { get; set; }
+        public virtual DbSet<EngineStatisticsModel> EngineStatistics { get; set; }
+        public virtual DbSet<GenerationGeneModel> GenerationGenes { get; set; }
+        public virtual DbSet<GenerationModel> Generations { get; set; }
+        public virtual DbSet<TestModel> Tests { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {

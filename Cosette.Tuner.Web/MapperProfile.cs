@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Cosette.Tuner.Common.Requests;
+using Cosette.Tuner.Web.Database.Models;
+
+namespace Cosette.Tuner.Web
+{
+    public class MapperProfile : Profile
+    {
+        public MapperProfile()
+        {
+            CreateMap<ChromosomeDataRequest, ChromosomeModel>()
+                .ForMember(p => p.TestId, p => p.MapFrom(q => q.TestId))
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => DateTime.UtcNow))
+                .ForMember(p => p.ElapsedTime, p => p.MapFrom(q => q.ElapsedTime))
+                .ForMember(p => p.Fitness, p => p.MapFrom(q => q.Fitness))
+                .ForMember(p => p.ReferenceEngineWins, p => p.MapFrom(q => q.ReferenceEngineWins))
+                .ForMember(p => p.ExperimentalEngineWins, p => p.MapFrom(q => q.ExperimentalEngineWins))
+                .ForMember(p => p.Draws, p => p.MapFrom(q => q.Draws))
+                .ForMember(p => p.EnginesStatistics, p => p.MapFrom((src, dest, order, context) =>
+                {
+                    var referenceEngineStatistics = context.Mapper.Map<EngineStatisticsModel>(src.ReferenceEngineStatistics);
+                    var experimentalEngineStatistics = context.Mapper.Map<EngineStatisticsModel>(src.ExperimentalEngineStatistics);
+
+                    referenceEngineStatistics.Chromosome = dest;
+                    referenceEngineStatistics.IsReferenceEngine = true;
+
+                    experimentalEngineStatistics.Chromosome = dest;
+                    experimentalEngineStatistics.IsReferenceEngine = false;
+
+                    var outputList = new List<EngineStatisticsModel>
+                    {
+                        referenceEngineStatistics, 
+                        experimentalEngineStatistics
+                    };
+
+                    return outputList;
+                }));
+
+            CreateMap<EngineStatisticsDataRequest, EngineStatisticsModel>()
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => DateTime.UtcNow))
+                .ForMember(p => p.AverageTimePerGame, p => p.MapFrom(q => q.AverageTimePerGame))
+                .ForMember(p => p.AverageDepth, p => p.MapFrom(q => q.AverageDepth))
+                .ForMember(p => p.AverageNodesCount, p => p.MapFrom(q => q.AverageNodesCount))
+                .ForMember(p => p.AverageNodesPerSecond, p => p.MapFrom(q => q.AverageNodesPerSecond));
+        }
+    }
+}

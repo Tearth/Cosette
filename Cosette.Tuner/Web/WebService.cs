@@ -18,7 +18,7 @@ namespace Cosette.Tuner.Web
         {
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri("http://localhost:42000/api/");
-            _httpClient.Timeout = new TimeSpan(0, 0, 0, 1);
+            _httpClient.Timeout = new TimeSpan(0, 0, 0, 5);
         }
 
         public async Task EnableIfAvailable()

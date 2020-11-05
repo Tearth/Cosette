@@ -3,6 +3,6 @@
     public class ChromosomeGeneModel : GeneModel
     {
         public int ChromosomeId { get; set; }
-        public GenerationModel Chromosome { get; set; }
+        public virtual GenerationModel Chromosome { get; set; }
     }
 }
