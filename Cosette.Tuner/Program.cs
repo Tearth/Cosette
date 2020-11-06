@@ -58,7 +58,7 @@ namespace Cosette.Tuner
                 genesList.Add($"{name}={value}");
             }
 
-            var generationDataRequest = CreateGenerationDataRequest(geneticAlgorithm);
+            var generationDataRequest = RequestsFactory.CreateGenerationRequest(_testId, geneticAlgorithm.TimeEvolving.TotalSeconds, geneticAlgorithm.BestChromosome);
             _webService.SendGenerationData(generationDataRequest).GetAwaiter().GetResult();
 
             Console.WriteLine("======================================");
@@ -66,27 +66,6 @@ namespace Cosette.Tuner
             Console.WriteLine($" - best chromosome: {string.Join(", ", genesList)}");
             Console.WriteLine($" - best fitness: {geneticAlgorithm.BestChromosome.Fitness}");
             Console.WriteLine("======================================");
-        }
-
-        private static GenerationDataRequest CreateGenerationDataRequest(GeneticAlgorithm geneticAlgorithm)
-        {
-            var genes = new List<GeneDataRequest>();
-            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
-            {
-                genes.Add(new GeneDataRequest
-                {
-                    Name = SettingsLoader.Data.Genes[geneIndex].Name,
-                    Value = (int)geneticAlgorithm.BestChromosome.GetGene(geneIndex).Value
-                });
-            }
-
-            return new GenerationDataRequest
-            {
-                TestId = _testId,
-                BestFitness = (int)geneticAlgorithm.BestChromosome.Fitness,
-                ElapsedTime = geneticAlgorithm.TimeEvolving.TotalSeconds,
-                BestChromosomeGenes = genes
-            };
         }
     }
 }

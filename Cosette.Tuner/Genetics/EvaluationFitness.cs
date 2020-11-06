@@ -106,52 +106,11 @@ namespace Cosette.Tuner.Genetics
             var elapsedTime = (double)stopwatch.ElapsedMilliseconds / 1000;
             var fitness = _experimentalParticipant.Wins - _referenceParticipant.Wins + _referenceParticipant.Draws / 2;
 
-            var chromosomeRequest = GenerateChromosomeRequest(fitness, elapsedTime, chromosome, _referenceParticipant, _experimentalParticipant);
+            var chromosomeRequest = RequestsFactory.CreateChromosomeRequest(_testId, fitness, elapsedTime, chromosome, _referenceParticipant, _experimentalParticipant);
             _webService.SendChromosomeData(chromosomeRequest).GetAwaiter().GetResult();
 
             Console.WriteLine($"[{DateTime.Now}] Run done! Fitness: {fitness}");
             return fitness;
-        }
-
-        private ChromosomeDataRequest GenerateChromosomeRequest(int fitness, double elapsedTime, IChromosome chromosome, EvaluationParticipant referenceParticipant, EvaluationParticipant experimentalParticipant)
-        {
-            var genes = new List<GeneDataRequest>();
-            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
-            {
-                genes.Add(new GeneDataRequest
-                {
-                    Name = SettingsLoader.Data.Genes[geneIndex].Name,
-                    Value = (int)chromosome.GetGene(geneIndex).Value
-                });
-            }
-
-            return new ChromosomeDataRequest
-            {
-                TestId = _testId,
-                ElapsedTime = elapsedTime,
-                Fitness = fitness,
-                ReferenceEngineWins = referenceParticipant.Wins,
-                ExperimentalEngineWins = experimentalParticipant.Wins,
-                Draws = referenceParticipant.Draws,
-
-                ReferenceEngineStatistics = new EngineStatisticsDataRequest
-                {
-                    AverageTimePerGame = elapsedTime / SettingsLoader.Data.GamesPerFitnessTest,
-                    AverageDepth = referenceParticipant.AverageDepth,
-                    AverageNodesCount = referenceParticipant.AverageNodesCount,
-                    AverageNodesPerSecond = referenceParticipant.AverageNps
-                },
-
-                ExperimentalEngineStatistics = new EngineStatisticsDataRequest
-                {
-                    AverageTimePerGame = elapsedTime / SettingsLoader.Data.GamesPerFitnessTest,
-                    AverageDepth = experimentalParticipant.AverageDepth,
-                    AverageNodesCount = experimentalParticipant.AverageNodesCount,
-                    AverageNodesPerSecond = experimentalParticipant.AverageNps
-                },
-
-                Genes = genes
-            };
         }
     }
 }
