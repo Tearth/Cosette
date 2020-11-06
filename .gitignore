@@ -355,3 +355,4 @@ MigrationBackup/
 /Cosette.Arbiter/book.bin
 /Cosette.Tuner/settings.json
 /Cosette.Tuner/book.bin
+/Cosette.Tuner.Web/Database.sqlite
