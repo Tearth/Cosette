@@ -16,34 +16,37 @@ namespace Cosette.Tuner.Genetics
     {
         private int _testId;
         private WebService _webService;
-        private EvaluationParticipant _referenceParticipant;
-        private EvaluationParticipant _experimentalParticipant;
+        private EngineOperator _referenceEngineOperator;
+        private EngineOperator _experimentalEngineOperator;
         private PolyglotBook _polyglotBook;
 
         public EvaluationFitness(int testId, WebService webService)
         {
             _testId = testId;
             _webService = webService;
-            _referenceParticipant = new EvaluationParticipant(new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments));
-            _experimentalParticipant = new EvaluationParticipant(new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments));
+            _referenceEngineOperator = new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments);
+            _experimentalEngineOperator = new EngineOperator(SettingsLoader.Data.EnginePath, SettingsLoader.Data.EngineArguments);
             _polyglotBook = new PolyglotBook(SettingsLoader.Data.PolyglotOpeningBook);
 
-            _referenceParticipant.EngineOperator.Init();
-            _experimentalParticipant.EngineOperator.Init();
+            _referenceEngineOperator.Init();
+            _experimentalEngineOperator.Init();
         }
 
         public double Evaluate(IChromosome chromosome)
         {
+            var referenceParticipant = new EvaluationParticipant(_referenceEngineOperator);
+            var experimentalParticipant = new EvaluationParticipant(_experimentalEngineOperator);
+            
             for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
             {
-                _experimentalParticipant.EngineOperator.SetOption(SettingsLoader.Data.Genes[geneIndex].Name, chromosome.GetGene(geneIndex).ToString());
+                experimentalParticipant.EngineOperator.SetOption(SettingsLoader.Data.Genes[geneIndex].Name, chromosome.GetGene(geneIndex).ToString());
             }
 
-            _referenceParticipant.EngineOperator.ApplyOptions();
-            _experimentalParticipant.EngineOperator.ApplyOptions();
+            referenceParticipant.EngineOperator.ApplyOptions();
+            experimentalParticipant.EngineOperator.ApplyOptions();
 
             var stopwatch = Stopwatch.StartNew();
-            var (whitePlayer, blackPlayer) = (_referenceParticipant, _experimentalParticipant);
+            var (whitePlayer, blackPlayer) = (referenceParticipant, experimentalParticipant);
             var winsByTime = 0;
 
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesPerFitnessTest; gameIndex++)
@@ -97,16 +100,16 @@ namespace Cosette.Tuner.Genetics
                 }
                 catch
                 {
-                    _referenceParticipant.EngineOperator.Restart();
-                    _experimentalParticipant.EngineOperator.Restart();
+                    referenceParticipant.EngineOperator.Restart();
+                    experimentalParticipant.EngineOperator.Restart();
                     gameIndex--;
                 }
             }
 
             var elapsedTime = (double)stopwatch.ElapsedMilliseconds / 1000;
-            var fitness = _experimentalParticipant.Wins - _referenceParticipant.Wins + _referenceParticipant.Draws / 2;
+            var fitness = experimentalParticipant.Wins - referenceParticipant.Wins + referenceParticipant.Draws / 2;
 
-            var chromosomeRequest = RequestsFactory.CreateChromosomeRequest(_testId, fitness, elapsedTime, chromosome, _referenceParticipant, _experimentalParticipant);
+            var chromosomeRequest = RequestsFactory.CreateChromosomeRequest(_testId, fitness, elapsedTime, chromosome, referenceParticipant, experimentalParticipant);
             _webService.SendChromosomeData(chromosomeRequest).GetAwaiter().GetResult();
 
             Console.WriteLine($"[{DateTime.Now}] Run done! Fitness: {fitness}");
