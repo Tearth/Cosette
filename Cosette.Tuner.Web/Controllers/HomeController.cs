@@ -31,6 +31,7 @@ namespace Cosette.Tuner.Web.Controllers
         {
             var test = id.HasValue ? await _testService.GetTestById(id.Value) : await _testService.GetLastTest();
             var allTests = await _testService.GetAll(true);
+            var allGenerations = await _generationService.GetAll(test.Id);
             var bestGenerations = await _generationService.GetBest(test.Id, 5);
             var bestChromosomes = await _chromosomeService.GetBest(test.Id, 5);
 
@@ -38,6 +39,7 @@ namespace Cosette.Tuner.Web.Controllers
             {
                 LastTest = _mapper.Map<TestViewModel>(test),
                 Tests = _mapper.Map<List<TestViewModel>>(allTests),
+                AllGenerations = _mapper.Map<List<GenerationViewModel>>(allGenerations),
                 BestGenerations = _mapper.Map<List<GenerationViewModel>>(bestGenerations),
                 BestChromosomes = _mapper.Map<List<ChromosomeViewModel>>(bestChromosomes),
             });

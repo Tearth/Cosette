@@ -22,6 +22,14 @@ namespace Cosette.Tuner.Web.Services
             await _databaseContext.SaveChangesAsync();
         }
 
+        public async Task<List<GenerationModel>> GetAll(int testId)
+        {
+            return await _databaseContext.Generations
+                .Where(p => p.TestId == testId)
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
+        }
+
         public async Task<List<GenerationModel>> GetBest(int testId, int count)
         {
             return await _databaseContext.Generations

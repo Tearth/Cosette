@@ -26,14 +26,42 @@
         
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="best-generations-tab" data-toggle="tab" href="#best-generations" role="tab" aria-controls="best-generations" aria-selected="true">Best generations</a>
+                <a class="nav-link active" id="all-generations-tab" data-toggle="tab" href="#all-generations" role="tab" aria-controls="all-generations" aria-selected="true">All generations</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="best-generations-tab" data-toggle="tab" href="#best-generations" role="tab" aria-controls="best-generations" aria-selected="false">Best generations</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#best-chromosomes" role="tab" aria-controls="best-chromosomes" aria-selected="false">Best chromosomes</a>
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="best-generations" role="tabpanel" aria-labelledby="best-generations-tab">
+            <div class="tab-pane fade show active" id="all-generations" role="tabpanel" aria-labelledby="all-generations-tab">
+                <div class="container-fluid">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th style="min-width: 170px">Creation time UTC</th>
+                            <th style="min-width: 130px">Elapsed time</th>
+                            <th style="min-width: 80px">Fitness</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var generation in Model.AllGenerations)
+                        {
+                            <tr>
+                                <th>@generation.Id</th>
+                                <td>@generation.CreationTimeUtc</td>
+                                <td>@generation.ElapsedTime.ToString("F1")</td>
+                                <td>@generation.BestFitness</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="best-generations" role="tabpanel" aria-labelledby="best-generations-tab">
                 <div class="container-fluid">
                     <table class="table table-striped">
                         <thead>
@@ -66,27 +94,27 @@
                 <div class="container-fluid">
                     <table class="table table-striped">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th style="min-width: 170px">Creation time UTC</th>
-                                <th style="min-width: 130px">Elapsed time</th>
-                                <th style="min-width: 80px">Fitness</th>
-                                <th>Genes</th>
-                            </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th style="min-width: 170px">Creation time UTC</th>
+                            <th style="min-width: 130px">Elapsed time</th>
+                            <th style="min-width: 80px">Fitness</th>
+                            <th>Genes</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach (var bestChromosome in Model.BestChromosomes)
-                            {
-                                <tr>
-                                    <th>@bestChromosome.Id</th>
-                                    <td>@bestChromosome.CreationTimeUtc</td>
-                                    <td>@bestChromosome.ElapsedTime.ToString("F1")</td>
-                                    <td>@bestChromosome.Fitness</td>
-                                    <td>
-                                        @string.Join(", ", bestChromosome.Genes.Select(p => $"{p.Name}={p.Value}"))
-                                    </td>
-                                </tr>
-                            }
+                        @foreach (var bestChromosome in Model.BestChromosomes)
+                        {
+                            <tr>
+                                <th>@bestChromosome.Id</th>
+                                <td>@bestChromosome.CreationTimeUtc</td>
+                                <td>@bestChromosome.ElapsedTime.ToString("F1")</td>
+                                <td>@bestChromosome.Fitness</td>
+                                <td>
+                                    @string.Join(", ", bestChromosome.Genes.Select(p => $"{p.Name}={p.Value}"))
+                                </td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
                 </div>
