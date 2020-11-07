@@ -77,6 +77,31 @@ namespace Cosette.Tuner.Web
                 .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
                 .ForMember(p => p.Name, p => p.MapFrom(q => q.Name))
                 .ForMember(p => p.Value, p => p.MapFrom(q => q.Value));
+
+            CreateMap<ChromosomeGeneModel, GeneViewModel>()
+                .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
+                .ForMember(p => p.Name, p => p.MapFrom(q => q.Name))
+                .ForMember(p => p.Value, p => p.MapFrom(q => q.Value));
+
+            CreateMap<ChromosomeModel, ChromosomeViewModel>()
+                .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => q.CreationTimeUtc))
+                .ForMember(p => p.ElapsedTime, p => p.MapFrom(q => q.ElapsedTime))
+                .ForMember(p => p.Fitness, p => p.MapFrom(q => q.Fitness))
+                .ForMember(p => p.ReferenceEngineWins, p => p.MapFrom(q => q.ReferenceEngineWins))
+                .ForMember(p => p.ExperimentalEngineWins, p => p.MapFrom(q => q.ExperimentalEngineWins))
+                .ForMember(p => p.Draws, p => p.MapFrom(q => q.Draws))
+                .ForMember(p => p.EnginesStatistics, p => p.MapFrom(q => q.EnginesStatistics))
+                .ForMember(p => p.Genes, p => p.MapFrom(q => q.Genes));
+
+            CreateMap<EngineStatisticsModel, EngineStatisticsViewModel>()
+                .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => q.CreationTimeUtc))
+                .ForMember(p => p.IsReferenceEngine, p => p.MapFrom(q => q.IsReferenceEngine))
+                .ForMember(p => p.AverageTimePerGame, p => p.MapFrom(q => q.AverageTimePerGame))
+                .ForMember(p => p.AverageDepth, p => p.MapFrom(q => q.AverageDepth))
+                .ForMember(p => p.AverageNodesCount, p => p.MapFrom(q => q.AverageNodesCount))
+                .ForMember(p => p.AverageNodesPerSecond, p => p.MapFrom(q => q.AverageNodesPerSecond));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Genetics;
@@ -18,6 +19,7 @@ namespace Cosette.Tuner
     {
         private static int _testId;
         private static WebService _webService;
+        private static Stopwatch _generationStopwatch;
 
         public static async Task Main(string[] args)
         {
@@ -25,6 +27,7 @@ namespace Cosette.Tuner
             SettingsLoader.Init("settings.json");
 
             _webService = new WebService();
+            _generationStopwatch = new Stopwatch();
 
             await _webService.EnableIfAvailable();
             _testId = await _webService.RegisterTest();
@@ -39,6 +42,8 @@ namespace Cosette.Tuner
             var geneticAlgorithm = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
             geneticAlgorithm.Termination = new GenerationNumberTermination(SettingsLoader.Data.GenerationsCount);
             geneticAlgorithm.GenerationRan += GeneticAlgorithm_GenerationRan;
+
+            _generationStopwatch.Start();
             geneticAlgorithm.Start();
 
             Console.WriteLine("Best solution found has {0} fitness.", geneticAlgorithm.BestChromosome.Fitness);
@@ -58,7 +63,7 @@ namespace Cosette.Tuner
                 genesList.Add($"{name}={value}");
             }
 
-            var generationDataRequest = RequestsFactory.CreateGenerationRequest(_testId, geneticAlgorithm.TimeEvolving.TotalSeconds, geneticAlgorithm.BestChromosome);
+            var generationDataRequest = RequestsFactory.CreateGenerationRequest(_testId, _generationStopwatch.Elapsed.TotalSeconds, geneticAlgorithm.BestChromosome);
             _webService.SendGenerationData(generationDataRequest).GetAwaiter().GetResult();
 
             Console.WriteLine("======================================");
@@ -66,6 +71,8 @@ namespace Cosette.Tuner
             Console.WriteLine($" - best chromosome: {string.Join(", ", genesList)}");
             Console.WriteLine($" - best fitness: {geneticAlgorithm.BestChromosome.Fitness}");
             Console.WriteLine("======================================");
+
+            _generationStopwatch.Restart();
         }
     }
 }
