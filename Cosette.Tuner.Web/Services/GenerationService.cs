@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Cosette.Tuner.Web.Database;
 using Cosette.Tuner.Web.Database.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cosette.Tuner.Web.Services
 {
@@ -17,6 +20,16 @@ namespace Cosette.Tuner.Web.Services
         {
             await _databaseContext.Generations.AddAsync(generationModel);
             await _databaseContext.SaveChangesAsync();
+        }
+
+        public async Task<List<GenerationModel>> GetBest(int testId, int count)
+        {
+            return await _databaseContext.Generations
+                .Where(p => p.TestId == testId)
+                .OrderByDescending(p => p.BestFitness)
+                .Include(p => p.BestGenes)
+                .Take(count)
+                .ToListAsync();
         }
     }
 }

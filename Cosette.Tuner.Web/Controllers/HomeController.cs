@@ -30,11 +30,14 @@ namespace Cosette.Tuner.Web.Controllers
         public async Task<IActionResult> Index(int? id)
         {
             var test = id.HasValue ? await _testService.GetTestById(id.Value) : await _testService.GetLastTest();
-            
+            var allTests = await _testService.GetAll(true);
+            var bestGenerations = await _generationService.GetBest(test.Id, 5);
+
             return View(new MainViewModel
             {
                 LastTest = _mapper.Map<TestViewModel>(test),
-                Tests = _mapper.Map<List<TestViewModel>>(await _testService.GetAll(true))
+                Tests = _mapper.Map<List<TestViewModel>>(allTests),
+                BestGenerations = _mapper.Map<List<GenerationViewModel>>(bestGenerations),
             });
         }
     }

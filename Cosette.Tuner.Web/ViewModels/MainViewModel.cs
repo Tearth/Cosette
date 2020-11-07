@@ -6,5 +6,6 @@ namespace Cosette.Tuner.Web.ViewModels
     {
         public TestViewModel LastTest { get; set; }
         public List<TestViewModel> Tests { get; set; }
+        public List<GenerationViewModel> BestGenerations { get; set; }
     }
 }

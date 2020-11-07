@@ -16,15 +16,55 @@
     </div>
 
     <div id="page-content-wrapper">
-
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
-        </nav>
 
-        <div class="container-fluid">
-            <h1 class="mt-4">@Model.LastTest?.Id. @Model.LastTest?.CreationTimeUtc</h1>
-            <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-            <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <h4 class="navbar-nav ml-auto mt-2 mt-lg-0">Test @Model.LastTest?.Id (@Model.LastTest?.CreationTimeUtc)</h4>
+            </div>
+        </nav>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="best-generations-tab" data-toggle="tab" href="#best-generations" role="tab" aria-controls="best-generations" aria-selected="true">Best generations</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#best-chromosomes" role="tab" aria-controls="best-chromosomes" aria-selected="false">Best chromosomes</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="best-generations" role="tabpanel" aria-labelledby="best-generations-tab">
+                <div class="container-fluid">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th style="min-width: 170px">Creation time UTC</th>
+                            <th style="min-width: 130px">Elapsed time</th>
+                            <th style="min-width: 80px">Fitness</th>
+                            <th>Genes</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var bestGeneration in Model.BestGenerations)
+                        {
+                            <tr>
+                                <th>@bestGeneration.Id</th>
+                                <td>@bestGeneration.CreationTimeUtc</td>
+                                <td>@((bestGeneration.ElapsedTime / 1000).ToString("F1"))</td>
+                                <td>@bestGeneration.BestFitness</td>
+                                <td>
+                                    @string.Join(", ", bestGeneration.BestGenes.Select(p => $"{p.Name}={p.Value}"))
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="best-chromosomes" role="tabpanel" aria-labelledby="best-chromosomes-tab">
+                Best chromosomes
+            </div>
         </div>
     </div>
 </div>

@@ -65,6 +65,18 @@ namespace Cosette.Tuner.Web
             CreateMap<TestModel, TestViewModel>()
                 .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
                 .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => q.CreationTimeUtc));
+
+            CreateMap<GenerationModel, GenerationViewModel>()
+                .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => q.CreationTimeUtc))
+                .ForMember(p => p.ElapsedTime, p => p.MapFrom(q => q.ElapsedTime))
+                .ForMember(p => p.BestFitness, p => p.MapFrom(q => q.BestFitness))
+                .ForMember(p => p.BestGenes, p => p.MapFrom(q => q.BestGenes));
+
+            CreateMap<GenerationGeneModel, GeneViewModel>()
+                .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
+                .ForMember(p => p.Name, p => p.MapFrom(q => q.Name))
+                .ForMember(p => p.Value, p => p.MapFrom(q => q.Value));
         }
     }
 }
