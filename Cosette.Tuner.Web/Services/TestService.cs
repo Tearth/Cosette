@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Cosette.Tuner.Web.Database;
 using Cosette.Tuner.Web.Database.Models;
@@ -25,6 +27,17 @@ namespace Cosette.Tuner.Web.Services
 
             await _databaseContext.SaveChangesAsync();
             return entityTracking.Entity.Id;
+        }
+
+        public async Task<List<TestModel>> GetAll(bool descending)
+        {
+            var tests = _databaseContext.Tests.AsQueryable();
+            if (descending)
+            {
+                tests = tests.OrderByDescending(p => p.Id);
+            }
+
+            return await tests.ToListAsync();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Web.Database.Models;
+using Cosette.Tuner.Web.ViewModels;
 
 namespace Cosette.Tuner.Web
 {
@@ -60,6 +61,10 @@ namespace Cosette.Tuner.Web
                 .ForMember(p => p.BestFitness, p => p.MapFrom(q => q.BestFitness))
                 .ForMember(p => p.BestGenes, p => p.MapFrom(q => q.BestChromosomeGenes))
                 .ForMember(p => p.BestGenes, p => p.MapFrom(q => q.BestChromosomeGenes));
+
+            CreateMap<TestModel, TestViewModel>()
+                .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => q.CreationTimeUtc));
         }
     }
 }
