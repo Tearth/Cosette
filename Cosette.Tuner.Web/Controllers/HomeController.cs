@@ -25,14 +25,17 @@ namespace Cosette.Tuner.Web.Controllers
             _generationService = generationService;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [Route("{id?}")]
+        public async Task<IActionResult> Index(int? id)
         {
-            var viewModel = new MainViewModel
+            var test = id.HasValue ? await _testService.GetTestById(id.Value) : await _testService.GetLastTest();
+            
+            return View(new MainViewModel
             {
+                LastTest = _mapper.Map<TestViewModel>(test),
                 Tests = _mapper.Map<List<TestViewModel>>(await _testService.GetAll(true))
-            };
-
-            return View(viewModel);
+            });
         }
     }
 }

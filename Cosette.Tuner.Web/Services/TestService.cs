@@ -39,5 +39,15 @@ namespace Cosette.Tuner.Web.Services
 
             return await tests.ToListAsync();
         }
+
+        public async Task<TestModel> GetLastTest()
+        {
+            return await _databaseContext.Tests.OrderByDescending(p => p.Id).FirstOrDefaultAsync();
+        }
+
+        public async Task<TestModel> GetTestById(int testId)
+        {
+            return await _databaseContext.Tests.FirstOrDefaultAsync(p => p.Id == testId);
+        }
     }
 }
