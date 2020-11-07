@@ -1,5 +1,7 @@
-﻿using Cosette.Tuner.Web.Database.Models;
+﻿using System;
+using Cosette.Tuner.Web.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Cosette.Tuner.Web.Database
 {
@@ -12,9 +14,16 @@ namespace Cosette.Tuner.Web.Database
         public virtual DbSet<GenerationModel> Generations { get; set; }
         public virtual DbSet<TestModel> Tests { get; set; }
 
+        public static readonly ILoggerFactory DatabaseLoggerFactory = LoggerFactory.Create(builder => { builder.AddDebug(); });
+
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
 
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLoggerFactory(DatabaseLoggerFactory);
         }
     }
 }
