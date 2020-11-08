@@ -9,13 +9,16 @@ namespace Cosette.Tuner.Web.Services
 {
     public class ChartJsService
     {
+        private const string ReferenceColor = "#4dc9f6";
+        private const string ExperimentalColor = "#ff0000";
+
         public ChartJsData<int> GenerateGenerationFitnessData(List<GenerationModel> generations)
         {
             var labels = Enumerable.Range(0, generations.Count).Select(p => p.ToString()).ToList();
             var values = generations.Select(p => p.BestFitness).ToList();
             var datasets = new List<ChartJsDataset<int>>
             {
-                GenerateDataset("Generation fitness", values, "#4dc9f6", "#4dc9f6")
+                GenerateDataset("Fitness", values, ReferenceColor)
             };
             
             return GenerateData(labels, datasets);
@@ -27,7 +30,7 @@ namespace Cosette.Tuner.Web.Services
             var values = chromosomes.Select(p => p.Fitness).ToList();
             var datasets = new List<ChartJsDataset<int>>
             {
-                GenerateDataset("Chromosome fitness", values, "#4dc9f6", "#4dc9f6")
+                GenerateDataset("Fitness", values, ReferenceColor)
             };
 
             return GenerateData(labels, datasets);
@@ -39,7 +42,7 @@ namespace Cosette.Tuner.Web.Services
             var values = generations.Select(p => p.ElapsedTime).ToList();
             var datasets = new List<ChartJsDataset<double>>
             {
-                GenerateDataset("Average elapsed time", values, "#4dc9f6", "#4dc9f6")
+                GenerateDataset("Time", values, ReferenceColor)
             };
 
             return GenerateData(labels, datasets);
@@ -61,8 +64,8 @@ namespace Cosette.Tuner.Web.Services
 
             var datasets = new List<ChartJsDataset<double>>
             {
-                GenerateDataset("Ref average depth", referenceValues, "#ff0000", " #ff0000"),
-                GenerateDataset("Exp average depth", experimentalValues, "#4dc9f6", "#4dc9f6"),
+                GenerateDataset("Reference", referenceValues, ReferenceColor),
+                GenerateDataset("Experimental", experimentalValues, ExperimentalColor),
             };
 
             return GenerateData(labels, datasets);
@@ -84,8 +87,8 @@ namespace Cosette.Tuner.Web.Services
 
             var datasets = new List<ChartJsDataset<double>>
             {
-                GenerateDataset("Ref average nodes", referenceValues, "#ff0000", " #ff0000"),
-                GenerateDataset("Exp average nodes", experimentalValues, "#4dc9f6", "#4dc9f6"),
+                GenerateDataset("Reference", referenceValues, ReferenceColor),
+                GenerateDataset("Experimental", experimentalValues, ExperimentalColor),
             };
 
             return GenerateData(labels, datasets);
@@ -102,7 +105,7 @@ namespace Cosette.Tuner.Web.Services
 
             var datasets = new List<ChartJsDataset<double>>
             {
-                GenerateDataset("Ref tpg", values, "#4dc9f6", "#4dc9f6")
+                GenerateDataset("Time", values, ReferenceColor)
             };
 
             return GenerateData(labels, datasets);
@@ -117,14 +120,14 @@ namespace Cosette.Tuner.Web.Services
             };
         }
 
-        private ChartJsDataset<T> GenerateDataset<T>(string label, List<T> values, string backgroundColor, string borderColor)
+        private ChartJsDataset<T> GenerateDataset<T>(string label, List<T> values, string color)
         {
             return new ChartJsDataset<T>
             {
                 Label = label,
                 Data = values,
-                BackgroundColor = backgroundColor,
-                BorderColor = borderColor,
+                BorderColor = color,
+                BackgroundColor = color,
                 Fill = "false"
             };
         }

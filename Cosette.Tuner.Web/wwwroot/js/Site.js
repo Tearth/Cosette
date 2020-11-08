@@ -4,14 +4,14 @@
         $("#wrapper").toggleClass("toggled");
     });
 
-    createChart('generation-fitness-canvas', window.generationFitnessChartData);
-    createChart('chromosome-fitness-canvas', window.chromosomeFitnessChartData);
-    createChart('average-elapsed-time-canvas', window.averageElapsedTimeChartData);
-    createChart('average-depth-canvas', window.averageDepthChartData);
-    createChart('average-nodes-count-canvas', window.averageNodesChartData);
-    createChart('average-time-per-game-canvas', window.averageTimePerGameChartData);
+    createChart('generation-fitness-canvas', 'Generation fitness', window.generationFitnessChartData);
+    createChart('chromosome-fitness-canvas', 'Chromosome fitness', window.chromosomeFitnessChartData);
+    createChart('average-elapsed-time-canvas', 'Average elapsed time', window.averageElapsedTimeChartData);
+    createChart('average-depth-canvas', 'Average depth', window.averageDepthChartData);
+    createChart('average-nodes-count-canvas', 'Average nodes count', window.averageNodesChartData);
+    createChart('average-time-per-game-canvas', 'Average time per game', window.averageTimePerGameChartData);
 
-    function createChart(name, data) {
+    function createChart(canvasId, title, data) {
         var config = {
             type: 'line',
             data: data,
@@ -20,7 +20,8 @@
                 maintainAspectRatio: false,
                 title: {
                     display: true,
-                    text: 'Chart.js Line Chart'
+                    text: title,
+                    padding: 0
                 },
                 tooltips: {
                     mode: 'index',
@@ -32,24 +33,16 @@
                 },
                 scales: {
                     xAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Month'
-                        }
+                        display: true
                     }],
                     yAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Value'
-                        }
+                        display: true
                     }]
                 }
             }
         };
 
-        var ctx = document.getElementById(name).getContext('2d');
+        var ctx = document.getElementById(canvasId).getContext('2d');
         window.myLine = new Chart(ctx, config);
     }
 });
