@@ -33,6 +33,7 @@ namespace Cosette.Tuner.Web.Services
         {
             return await _databaseContext.Generations
                 .Where(p => p.TestId == testId)
+                .OrderByDescending(p => p.BestFitness)
                 .Include(p => p.BestGenes)
                 .Take(count)
                 .ToListAsync();

@@ -113,7 +113,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @for (var i = Model.BestGenerations.Count - 1; i >= 0; i--)
+                                        @for (var i = 0; i < Model.BestGenerations.Count; i++)
                                         {
                                             <tr>
                                                 <th>@Model.BestGenerations[i].Id</th>
@@ -142,7 +142,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @for (var i = Model.BestChromosomes.Count - 1; i >= 0; i--)
+                                        @for (var i = 0; i < Model.BestChromosomes.Count; i++)
                                         {
                                             <tr>
                                                 <th>@Model.BestChromosomes[i].Id</th>
