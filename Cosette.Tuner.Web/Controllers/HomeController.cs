@@ -40,13 +40,8 @@ namespace Cosette.Tuner.Web.Controllers
             var allChromosomes = await _chromosomeService.GetAll(test.Id);
             var bestChromosomes = await _chromosomeService.GetBest(test.Id, 5);
 
-            var generationFitnessLabels = Enumerable.Range(0, allGenerations.Count).Select(p => p.ToString()).ToList();
-            var generationFitnessValues = allGenerations.Select(p => p.BestFitness).ToList();
-            var generationFitnessDatasets = new List<ChartJsDataset<int>>
-            {
-                _chartJsService.GenerateDataset("Generation fitness", generationFitnessValues, "#4dc9f6", "#4dc9f6")
-            };
-            var generationFitnessData = _chartJsService.GenerateData(generationFitnessLabels, generationFitnessDatasets);
+            var generationFitnessData = _chartJsService.GenerateGenerationFitnessData(allGenerations);
+            var chromosomeFitnessData = _chartJsService.GenerateChromosomeFitnessData(allChromosomes);
 
             return View(new MainViewModel
             {
@@ -57,7 +52,8 @@ namespace Cosette.Tuner.Web.Controllers
                 AllChromosomes = _mapper.Map<List<ChromosomeViewModel>>(allChromosomes),
                 BestChromosomes = _mapper.Map<List<ChromosomeViewModel>>(bestChromosomes),
 
-                GenerationFitnessChartJson = JsonConvert.SerializeObject(generationFitnessData)
+                GenerationFitnessChartJson = JsonConvert.SerializeObject(generationFitnessData),
+                ChromosomeFitnessChartJson = JsonConvert.SerializeObject(chromosomeFitnessData)
             });
         }
     }

@@ -5,7 +5,7 @@
     });
 
     createChart('generation-fitness-canvas', window.generationFitnessChartData);
-    createChart('chromosome-fitness-canvas', window.generationFitnessChartData);
+    createChart('chromosome-fitness-canvas', window.chromosomeFitnessChartData);
     createChart('average-elapsed-time-canvas', window.generationFitnessChartData);
     createChart('average-depth-canvas', window.generationFitnessChartData);
     createChart('average-nodes-count-canvas', window.generationFitnessChartData);
