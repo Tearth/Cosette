@@ -42,6 +42,7 @@ namespace Cosette.Tuner.Web.Controllers
 
             var generationFitnessData = _chartJsService.GenerateGenerationFitnessData(allGenerations);
             var chromosomeFitnessData = _chartJsService.GenerateChromosomeFitnessData(allChromosomes);
+            var averageElapsedTimeData = _chartJsService.GenerateAverageElapsedTimeData(allGenerations);
 
             return View(new MainViewModel
             {
@@ -53,7 +54,8 @@ namespace Cosette.Tuner.Web.Controllers
                 BestChromosomes = _mapper.Map<List<ChromosomeViewModel>>(bestChromosomes),
 
                 GenerationFitnessChartJson = JsonConvert.SerializeObject(generationFitnessData),
-                ChromosomeFitnessChartJson = JsonConvert.SerializeObject(chromosomeFitnessData)
+                ChromosomeFitnessChartJson = JsonConvert.SerializeObject(chromosomeFitnessData),
+                AverageElapsedTimeChartJson = JsonConvert.SerializeObject(averageElapsedTimeData)
             });
         }
     }

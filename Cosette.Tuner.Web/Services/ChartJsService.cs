@@ -11,26 +11,38 @@ namespace Cosette.Tuner.Web.Services
     {
         public ChartJsData<int> GenerateGenerationFitnessData(List<GenerationModel> generations)
         {
-            var fitnessLabels = Enumerable.Range(0, generations.Count).Select(p => p.ToString()).ToList();
-            var fitnessValues = generations.Select(p => p.BestFitness).ToList();
-            var fitnessDatasets = new List<ChartJsDataset<int>>
+            var labels = Enumerable.Range(0, generations.Count).Select(p => p.ToString()).ToList();
+            var values = generations.Select(p => p.BestFitness).ToList();
+            var datasets = new List<ChartJsDataset<int>>
             {
-                GenerateDataset("Generation fitness", fitnessValues, "#4dc9f6", "#4dc9f6")
+                GenerateDataset("Generation fitness", values, "#4dc9f6", "#4dc9f6")
             };
             
-            return GenerateData(fitnessLabels, fitnessDatasets);
+            return GenerateData(labels, datasets);
         }
 
         public ChartJsData<int> GenerateChromosomeFitnessData(List<ChromosomeModel> chromosomes)
         {
-            var fitnessLabels = Enumerable.Range(0, chromosomes.Count).Select(p => p.ToString()).ToList();
-            var fitnessValues = chromosomes.Select(p => p.Fitness).ToList();
-            var fitnessDatasets = new List<ChartJsDataset<int>>
+            var labels = Enumerable.Range(0, chromosomes.Count).Select(p => p.ToString()).ToList();
+            var values = chromosomes.Select(p => p.Fitness).ToList();
+            var datasets = new List<ChartJsDataset<int>>
             {
-                GenerateDataset("Chromosome fitness", fitnessValues, "#4dc9f6", "#4dc9f6")
+                GenerateDataset("Chromosome fitness", values, "#4dc9f6", "#4dc9f6")
             };
 
-            return GenerateData(fitnessLabels, fitnessDatasets);
+            return GenerateData(labels, datasets);
+        }
+
+        public ChartJsData<double> GenerateAverageElapsedTimeData(List<GenerationModel> generations)
+        {
+            var labels = Enumerable.Range(0, generations.Count).Select(p => p.ToString()).ToList();
+            var values = generations.Select(p => p.ElapsedTime).ToList();
+            var datasets = new List<ChartJsDataset<double>>
+            {
+                GenerateDataset("Average elapsed time", values, "#4dc9f6", "#4dc9f6")
+            };
+
+            return GenerateData(labels, datasets);
         }
 
         private ChartJsData<T> GenerateData<T>(List<string> labels, List<ChartJsDataset<T>> datasets)
