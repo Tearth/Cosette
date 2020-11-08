@@ -40,7 +40,7 @@ namespace Cosette.Tuner.Web.Controllers
             var allChromosomes = await _chromosomeService.GetAll(test.Id);
             var bestChromosomes = await _chromosomeService.GetBest(test.Id, 5);
 
-            var generationFitnessLabels = Enumerable.Range(0, allChromosomes.Count).Select(p => p.ToString()).ToList();
+            var generationFitnessLabels = Enumerable.Range(0, allGenerations.Count).Select(p => p.ToString()).ToList();
             var generationFitnessValues = allGenerations.Select(p => p.BestFitness).ToList();
             var generationFitnessDatasets = new List<ChartJsDataset<int>>
             {

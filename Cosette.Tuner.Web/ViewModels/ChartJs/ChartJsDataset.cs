@@ -8,7 +8,7 @@ namespace Cosette.Tuner.Web.ViewModels.ChartJs
 {
     public class ChartJsDataset<T>
     {
-        [JsonProperty("labels")]
+        [JsonProperty("label")]
         public string Label { get; set; }
 
         [JsonProperty("backgroundColor")]
