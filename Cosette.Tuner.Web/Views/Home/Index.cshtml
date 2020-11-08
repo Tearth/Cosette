@@ -55,7 +55,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="chart-container">
-                        <canvas id="average-nps-canvas"></canvas>
+                        <canvas id="average-time-per-game-canvas"></canvas>
                     </div>
                 </div>
             </div>
@@ -196,4 +196,5 @@
     window.averageElapsedTimeChartData = @Html.Raw(Model.AverageElapsedTimeChartJson);
     window.averageDepthChartData = @Html.Raw(Model.AverageDepthChartJson);
     window.averageNodesChartData = @Html.Raw(Model.AverageNodesChartJson);
+    window.averageTimePerGameChartData = @Html.Raw(Model.AverageTimePerGameChartJson);
 </script>

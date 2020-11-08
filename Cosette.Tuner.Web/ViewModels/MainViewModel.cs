@@ -16,5 +16,6 @@ namespace Cosette.Tuner.Web.ViewModels
         public string AverageElapsedTimeChartJson { get; set; }
         public string AverageDepthChartJson { get; set; }
         public string AverageNodesChartJson { get; set; }
+        public string AverageTimePerGameChartJson { get; set; }
     }
 }

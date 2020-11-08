@@ -9,7 +9,7 @@
     createChart('average-elapsed-time-canvas', window.averageElapsedTimeChartData);
     createChart('average-depth-canvas', window.averageDepthChartData);
     createChart('average-nodes-count-canvas', window.averageNodesChartData);
-    createChart('average-nps-canvas', window.generationFitnessChartData);
+    createChart('average-time-per-game-canvas', window.averageTimePerGameChartData);
 
     function createChart(name, data) {
         var config = {
