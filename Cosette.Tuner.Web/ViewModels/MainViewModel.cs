@@ -14,5 +14,6 @@ namespace Cosette.Tuner.Web.ViewModels
         public string GenerationFitnessChartJson { get; set; }
         public string ChromosomeFitnessChartJson { get; set; }
         public string AverageElapsedTimeChartJson { get; set; }
+        public string AverageDepthChartJson { get; set; }
     }
 }

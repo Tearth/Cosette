@@ -17,6 +17,9 @@ namespace Cosette.Tuner.Web.ViewModels.ChartJs
         [JsonProperty("borderColor")]
         public string BorderColor { get; set; }
 
+        [JsonProperty("fill")]
+        public string Fill { get; set; }
+
         [JsonProperty("data")]
         public List<T> Data { get; set; }
     }

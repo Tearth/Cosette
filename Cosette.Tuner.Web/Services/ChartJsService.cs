@@ -45,6 +45,29 @@ namespace Cosette.Tuner.Web.Services
             return GenerateData(labels, datasets);
         }
 
+        public ChartJsData<double> GenerateAverageDepthData(List<ChromosomeModel> chromosomes)
+        {
+            var labels = Enumerable.Range(0, chromosomes.Count).Select(p => p.ToString()).ToList();
+            var referenceValues = chromosomes
+                .SelectMany(p => p.EnginesStatistics)
+                .Where(p => p.IsReferenceEngine)
+                .Select(p => p.AverageDepth)
+                .ToList();
+            var experimentalValues = chromosomes
+                .SelectMany(p => p.EnginesStatistics)
+                .Where(p => !p.IsReferenceEngine)
+                .Select(p => p.AverageDepth)
+                .ToList();
+
+            var datasets = new List<ChartJsDataset<double>>
+            {
+                GenerateDataset("Ref average depth", referenceValues, " #ff0000", " #ff0000"),
+                GenerateDataset("Exp average depth", experimentalValues, "#4dc9f6", "#4dc9f6"),
+            };
+
+            return GenerateData(labels, datasets);
+        }
+
         private ChartJsData<T> GenerateData<T>(List<string> labels, List<ChartJsDataset<T>> datasets)
         {
             return new ChartJsData<T>
@@ -61,7 +84,8 @@ namespace Cosette.Tuner.Web.Services
                 Label = label,
                 Data = values,
                 BackgroundColor = backgroundColor,
-                BorderColor = borderColor
+                BorderColor = borderColor,
+                Fill = "false"
             };
         }
     }
