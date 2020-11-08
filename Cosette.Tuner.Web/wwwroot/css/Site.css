@@ -48,3 +48,7 @@
         margin-left: -15rem;
     }
 }
+
+.chart-container {
+    min-height: 250px;
+}
