@@ -10,5 +10,7 @@ namespace Cosette.Tuner.Web.ViewModels
         public List<GenerationViewModel> BestGenerations { get; set; }
         public List<ChromosomeViewModel> AllChromosomes { get; set; }
         public List<ChromosomeViewModel> BestChromosomes { get; set; }
+
+        public string GenerationFitnessChartJson { get; set; }
     }
 }

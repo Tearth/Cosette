@@ -80,24 +80,23 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th style="min-width: 170px">Creation time UTC</th>
-                                            <th style="min-width: 130px">Elapsed time</th>
-                                            <th style="min-width: 80px">Fitness</th>
-                                        </tr>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th style="min-width: 170px">Creation time UTC</th>
+                                        <th style="min-width: 130px">Elapsed time</th>
+                                        <th style="min-width: 80px">Fitness</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var generation in Model.AllGenerations)
+                                        @for (var i = Model.AllGenerations.Count - 1; i >= 0; i--)
                                         {
                                             <tr>
-                                                <th>@generation.Id</th>
-                                                <td>@generation.CreationTimeUtc</td>
-                                                <td>@generation.ElapsedTime.ToString("F1")</td>
-                                                <td>@generation.BestFitness</td>
+                                                <th>@Model.AllGenerations[i].Id</th>
+                                                <td>@Model.AllGenerations[i].CreationTimeUtc</td>
+                                                <td>@Model.AllGenerations[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.AllGenerations[i].BestFitness</td>
                                             </tr>
                                         }
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -105,24 +104,24 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th style="min-width: 170px">Creation time UTC</th>
-                                            <th style="min-width: 130px">Elapsed time</th>
-                                            <th style="min-width: 80px">Fitness</th>
-                                            <th>Genes</th>
-                                        </tr>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th style="min-width: 170px">Creation time UTC</th>
+                                        <th style="min-width: 130px">Elapsed time</th>
+                                        <th style="min-width: 80px">Fitness</th>
+                                        <th>Genes</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var bestGeneration in Model.BestGenerations)
+                                        @for (var i = Model.BestGenerations.Count - 1; i >= 0; i--)
                                         {
                                             <tr>
-                                                <th>@bestGeneration.Id</th>
-                                                <td>@bestGeneration.CreationTimeUtc</td>
-                                                <td>@bestGeneration.ElapsedTime.ToString("F1")</td>
-                                                <td>@bestGeneration.BestFitness</td>
+                                                <th>@Model.BestGenerations[i].Id</th>
+                                                <td>@Model.BestGenerations[i].CreationTimeUtc</td>
+                                                <td>@Model.BestGenerations[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.BestGenerations[i].BestFitness</td>
                                                 <td>
-                                                    @string.Join(", ", bestGeneration.BestGenes.Select(p => $"{p.Name}={p.Value}"))
+                                                    @string.Join(", ", Model.BestGenerations[i].BestGenes.Select(p => $"{p.Name}={p.Value}"))
                                                 </td>
                                             </tr>
                                         }
@@ -134,24 +133,24 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th style="min-width: 170px">Creation time UTC</th>
-                                            <th style="min-width: 130px">Elapsed time</th>
-                                            <th style="min-width: 80px">Fitness</th>
-                                            <th>Genes</th>
-                                        </tr>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th style="min-width: 170px">Creation time UTC</th>
+                                        <th style="min-width: 130px">Elapsed time</th>
+                                        <th style="min-width: 80px">Fitness</th>
+                                        <th>Genes</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var bestChromosome in Model.BestChromosomes)
+                                        @for (var i = Model.BestChromosomes.Count - 1; i >= 0; i--)
                                         {
                                             <tr>
-                                                <th>@bestChromosome.Id</th>
-                                                <td>@bestChromosome.CreationTimeUtc</td>
-                                                <td>@bestChromosome.ElapsedTime.ToString("F1")</td>
-                                                <td>@bestChromosome.Fitness</td>
+                                                <th>@Model.BestChromosomes[i].Id</th>
+                                                <td>@Model.BestChromosomes[i].CreationTimeUtc</td>
+                                                <td>@Model.BestChromosomes[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.BestChromosomes[i].Fitness</td>
                                                 <td>
-                                                    @string.Join(", ", bestChromosome.Genes.Select(p => $"{p.Name}={p.Value}"))
+                                                    @string.Join(", ", Model.BestChromosomes[i].Genes.Select(p => $"{p.Name}={p.Value}"))
                                                 </td>
                                             </tr>
                                         }
@@ -163,21 +162,21 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th style="min-width: 170px">Creation time UTC</th>
-                                            <th style="min-width: 130px">Elapsed time</th>
-                                            <th style="min-width: 80px">Fitness</th>
-                                        </tr>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th style="min-width: 170px">Creation time UTC</th>
+                                        <th style="min-width: 130px">Elapsed time</th>
+                                        <th style="min-width: 80px">Fitness</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var chromosome in Model.AllChromosomes)
+                                        @for (var i = Model.AllChromosomes.Count - 1; i >= 0; i--)
                                         {
                                             <tr>
-                                                <th>@chromosome.Id</th>
-                                                <td>@chromosome.CreationTimeUtc</td>
-                                                <td>@chromosome.ElapsedTime.ToString("F1")</td>
-                                                <td>@chromosome.Fitness</td>
+                                                <th>@Model.AllChromosomes[i].Id</th>
+                                                <td>@Model.AllChromosomes[i].CreationTimeUtc</td>
+                                                <td>@Model.AllChromosomes[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.AllChromosomes[i].Fitness</td>
                                             </tr>
                                         }
                                     </tbody>
@@ -190,3 +189,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.generationFitnessChartData = @Html.Raw(Model.GenerationFitnessChartJson);
+</script>

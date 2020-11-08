@@ -33,6 +33,7 @@ namespace Cosette.Tuner.Web
             services.AddScoped<GenerationService>();
             services.AddScoped<ChromosomeService>();
             services.AddScoped<TestService>();
+            services.AddScoped<ChartJsService>();
 
             services.AddDbContext<DatabaseContext>(options =>
             {

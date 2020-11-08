@@ -29,15 +29,9 @@ namespace Cosette.Tuner.Web.Services
             return entityTracking.Entity.Id;
         }
 
-        public async Task<List<TestModel>> GetAll(bool descending)
+        public async Task<List<TestModel>> GetAll()
         {
-            var tests = _databaseContext.Tests.AsQueryable();
-            if (descending)
-            {
-                tests = tests.OrderByDescending(p => p.Id);
-            }
-
-            return await tests.ToListAsync();
+            return await _databaseContext.Tests.ToListAsync();
         }
 
         public async Task<TestModel> GetLastTest()

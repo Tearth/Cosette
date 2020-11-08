@@ -27,7 +27,6 @@ namespace Cosette.Tuner.Web.Services
         {
             return await _databaseContext.Chromosomes
                 .Where(p => p.TestId == testId)
-                .OrderByDescending(p => p.Id)
                 .ToListAsync();
         }
 
@@ -35,7 +34,6 @@ namespace Cosette.Tuner.Web.Services
         {
             return await _databaseContext.Chromosomes
                 .Where(p => p.TestId == testId)
-                .OrderByDescending(p => p.Fitness)
                 .Include(p => p.Genes)
                 .Take(count)
                 .ToListAsync();
