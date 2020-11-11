@@ -38,6 +38,12 @@ namespace Cosette.Engine.Ai.Search
                 return EvaluationConstants.ThreefoldRepetition;
             }
 
+            if (context.BoardState.IsInsufficientMaterial())
+            {
+                context.Statistics.Leafs++;
+                return EvaluationConstants.InsufficientMaterial;
+            }
+
             if (context.BoardState.IsFiftyMoveRuleDraw())
             {
                 context.Statistics.Leafs++;

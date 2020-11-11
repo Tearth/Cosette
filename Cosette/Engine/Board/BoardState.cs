@@ -762,6 +762,20 @@ namespace Cosette.Engine.Board
             return false;
         }
 
+        public bool IsInsufficientMaterial()
+        {
+            var drawEdge = EvaluationConstants.Pieces[Piece.King] + 4 * EvaluationConstants.Pieces[Piece.Pawn];
+            if (Material[Color.White] < drawEdge && Material[Color.Black] < drawEdge)
+            {
+                if (Pieces[Color.White][Piece.Pawn] == 0 && Pieces[Color.Black][Piece.Pawn] == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void CalculatePieceTable(int[] pieceTable)
         {
             for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
