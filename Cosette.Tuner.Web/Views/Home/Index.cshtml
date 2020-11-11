@@ -80,12 +80,13 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th style="min-width: 170px">Creation time UTC</th>
-                                        <th style="min-width: 130px">Elapsed time</th>
-                                        <th style="min-width: 80px">Fitness</th>
-                                    </tr>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Creation time UTC</th>
+                                            <th>Elapsed time</th>
+                                            <th>Fitness</th>
+                                            <th>Genes</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         @for (var i = Model.AllGenerations.Count - 1; i >= 0; i--)
@@ -95,6 +96,9 @@
                                                 <td>@Model.AllGenerations[i].CreationTimeUtc</td>
                                                 <td>@Model.AllGenerations[i].ElapsedTime.ToString("F1")</td>
                                                 <td>@Model.AllGenerations[i].BestFitness</td>
+                                                <td>
+                                                    @string.Join(", ", Model.AllGenerations[i].BestGenes.Select(p => $"{p.Name}={p.Value}"))
+                                                </td>
                                             </tr>
                                         }
                                 </table>
@@ -106,9 +110,9 @@
                                     <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th style="min-width: 170px">Creation time UTC</th>
-                                        <th style="min-width: 130px">Elapsed time</th>
-                                        <th style="min-width: 80px">Fitness</th>
+                                        <th>Creation time UTC</th>
+                                        <th>Elapsed time</th>
+                                        <th>Fitness</th>
                                         <th>Genes</th>
                                     </tr>
                                     </thead>
@@ -133,13 +137,16 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th style="min-width: 170px">Creation time UTC</th>
-                                        <th style="min-width: 130px">Elapsed time</th>
-                                        <th style="min-width: 80px">Fitness</th>
-                                        <th>Genes</th>
-                                    </tr>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Creation time UTC</th>
+                                            <th>Elapsed time</th>
+                                            <th>Fitness</th>
+                                            <th>EE wins</th>
+                                            <th>EE losses</th>
+                                            <th>EE draws</th>
+                                            <th>Genes</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         @for (var i = 0; i < Model.BestChromosomes.Count; i++)
@@ -149,6 +156,9 @@
                                                 <td>@Model.BestChromosomes[i].CreationTimeUtc</td>
                                                 <td>@Model.BestChromosomes[i].ElapsedTime.ToString("F1")</td>
                                                 <td>@Model.BestChromosomes[i].Fitness</td>
+                                                <td>@Model.BestChromosomes[i].ExperimentalEngineWins</td>
+                                                <td>@Model.BestChromosomes[i].ReferenceEngineWins</td>
+                                                <td>@Model.BestChromosomes[i].Draws</td>
                                                 <td>
                                                     @string.Join(", ", Model.BestChromosomes[i].Genes.Select(p => $"{p.Name}={p.Value}"))
                                                 </td>
@@ -164,9 +174,13 @@
                                     <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th style="min-width: 170px">Creation time UTC</th>
-                                        <th style="min-width: 130px">Elapsed time</th>
-                                        <th style="min-width: 80px">Fitness</th>
+                                        <th>Creation time UTC</th>
+                                        <th>Elapsed time</th>
+                                        <th>Fitness</th>
+                                        <th>EE wins</th>
+                                        <th>EE losses</th>
+                                        <th>EE draws</th>
+                                        <th>Genes</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -177,6 +191,12 @@
                                                 <td>@Model.AllChromosomes[i].CreationTimeUtc</td>
                                                 <td>@Model.AllChromosomes[i].ElapsedTime.ToString("F1")</td>
                                                 <td>@Model.AllChromosomes[i].Fitness</td>
+                                                <td>@Model.AllChromosomes[i].ExperimentalEngineWins</td>
+                                                <td>@Model.AllChromosomes[i].ReferenceEngineWins</td>
+                                                <td>@Model.AllChromosomes[i].Draws</td>
+                                                <td>
+                                                    @string.Join(", ", Model.AllChromosomes[i].Genes.Select(p => $"{p.Name}={p.Value}"))
+                                                </td>
                                             </tr>
                                         }
                                     </tbody>

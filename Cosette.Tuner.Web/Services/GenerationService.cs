@@ -26,6 +26,7 @@ namespace Cosette.Tuner.Web.Services
         {
             return await _databaseContext.Generations
                 .Where(p => p.TestId == testId)
+                .Include(p => p.BestGenes)
                 .ToListAsync();
         }
 

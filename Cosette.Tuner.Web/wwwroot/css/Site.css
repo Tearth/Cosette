@@ -56,3 +56,7 @@
 .chart-container {
     min-height: 250px;
 }
+
+th {
+    white-space: nowrap;
+}
