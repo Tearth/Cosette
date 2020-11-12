@@ -8,6 +8,7 @@
  - Added more UCI options
  - Added Tuner project
  - Fixed crash when engine was receiving invalid position in UCI mode
+ - Added insufficient material detection
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection

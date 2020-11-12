@@ -31,6 +31,7 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - doubled rooks
  - rooks on open files
  - bishop pair
+ - tapering
 
 **Search:**
  - negamax
