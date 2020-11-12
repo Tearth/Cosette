@@ -14,7 +14,6 @@ namespace Cosette.Arbiter.Tournament
         private List<long> _gamesDuration;
         private TournamentScheduler _scheduler;
         private PolyglotBook _polyglotBook;
-        private int _winsByTime;
 
         public TournamentArbiter()
         {
@@ -89,10 +88,10 @@ namespace Cosette.Arbiter.Tournament
                         {
                             if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
                             {
-                                _winsByTime++;
+                                playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Loss, true));
+                                opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Win, true));
                             }
-                            
-                            if (gameData.Winner == Color.None)
+                            else if (gameData.Winner == Color.None)
                             {
                                 playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
                                 opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
@@ -130,9 +129,12 @@ namespace Cosette.Arbiter.Tournament
                 var originalRating = participant.EngineData.Rating;
                 var performance = participant.CalculatePerformanceRating() - originalRating;
                 var wonGamesPercent = participant.WonGamesPercent();
+                var winsByTime = participant.History.Count(p => p.Result == GameResult.Win && p.TimeFlag);
+                var lossesByTime = participant.History.Count(p => p.Result == GameResult.Loss && p.TimeFlag);
 
                 Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}, {wonGamesPercent}%): " +
-                                  $"{participant.Wins} wins, {participant.Losses} losses, {participant.Draws} draws");
+                                  $"{participant.Wins} wins ({winsByTime} by time), {participant.Losses} losses ({lossesByTime} by time), " +
+                                  $"{participant.Draws} draws");
                 Console.WriteLine($" === {participant.AverageDepth:F1} average depth, {participant.AverageNodesCount} average nodes, " +
                                   $"{participant.AverageNps} average nodes per second");
                 Console.WriteLine();
@@ -143,7 +145,7 @@ namespace Cosette.Arbiter.Tournament
         {
             var averageGameTime = (_gamesDuration.Count != 0 ? _gamesDuration.Average() : 0.0) / 1000;
 
-            Console.WriteLine($"Tournament statistics: {averageGameTime:F} s per average game, {_winsByTime} wins by time");
+            Console.WriteLine($"Tournament statistics: {averageGameTime:F} s per average game");
             Console.WriteLine();
         }
     }

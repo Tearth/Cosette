@@ -47,7 +47,6 @@ namespace Cosette.Tuner.Genetics
 
             var stopwatch = Stopwatch.StartNew();
             var (whitePlayer, blackPlayer) = (referenceParticipant, experimentalParticipant);
-            var winsByTime = 0;
 
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesPerFitnessTest; gameIndex++)
             {
@@ -76,10 +75,10 @@ namespace Cosette.Tuner.Genetics
                         {
                             if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
                             {
-                                winsByTime++;
+                                playerToMove.History.Add(new ArchivedGame(gameData, GameResult.Loss));
+                                opponent.History.Add(new ArchivedGame(gameData, GameResult.Win));
                             }
-                            
-                            if (gameData.Winner == Color.None)
+                            else if (gameData.Winner == Color.None)
                             {
                                 playerToMove.History.Add(new ArchivedGame(gameData, GameResult.Draw));
                                 opponent.History.Add(new ArchivedGame(gameData, GameResult.Draw));
