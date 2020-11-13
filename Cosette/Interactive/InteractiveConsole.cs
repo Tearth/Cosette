@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -129,7 +130,7 @@ namespace Cosette.Interactive
         private string GetExecutableHash()
         {
             var md5 = new MD5CryptoServiceProvider();
-            using (var streamReader = new StreamReader(Process.GetCurrentProcess().MainModule.FileName))
+            using (var streamReader = new StreamReader(Assembly.GetExecutingAssembly().Location))
             {
                 md5.ComputeHash(streamReader.BaseStream);
             }
