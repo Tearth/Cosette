@@ -137,7 +137,7 @@ namespace Cosette.Arbiter.Tournament
                                   $"{participant.Draws} draws");
                 Console.WriteLine($" === {participant.AverageDepth:F1} average depth, {participant.AverageNodesCount} average nodes, " +
                                   $"{participant.AverageNps} average nodes per second");
-                Console.WriteLine($"Executable hash: {participant.EngineOperator.GetExecutableHash()}");
+                Console.WriteLine($"Executable hash: {participant.EngineOperator.ExecutableHash.Value}");
                 Console.WriteLine();
             }
         }

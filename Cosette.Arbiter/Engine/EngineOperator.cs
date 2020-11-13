@@ -10,6 +10,8 @@ namespace Cosette.Arbiter.Engine
 {
     public class EngineOperator
     {
+        public Lazy<string> ExecutableHash;
+
         private string _enginePath;
         private string _engineArguments;
         private Process _engineProcess;
@@ -18,6 +20,8 @@ namespace Cosette.Arbiter.Engine
         {
             _enginePath = path;
             _engineArguments = arguments;
+
+            ExecutableHash = new Lazy<string>(GetExecutableHash);
         }
 
         public void Init()
@@ -111,7 +115,7 @@ namespace Cosette.Arbiter.Engine
             while (Read() != message) ;
         }
 
-        public string GetExecutableHash()
+        private string GetExecutableHash()
         {
             var md5 = new MD5CryptoServiceProvider();
             var path = _enginePath == "dotnet" ? _engineArguments : _enginePath;
