@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using Cosette.Interactive.Commands;
 
@@ -111,13 +115,32 @@ namespace Cosette.Interactive
         private void DisplayIntro()
         {
             var runtimeVersion = $"{Environment.Version.Major}.{Environment.Version.Minor}.{Environment.Version.Build}";
+            var executableHash = GetExecutableHash();
 
             Console.WriteLine($"Cosette v2.0 (Darkness), 19.10.2020 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
             Console.WriteLine("Distributed under AGPL license, homepage and source code: https://github.com/Tearth/Cosette");
+            Console.WriteLine($"Executable hash: {executableHash}");
             Console.WriteLine();
             Console.WriteLine("\"The blunders are all there on the board, waiting to be made.\" ~ Savielly Tartakower");
             Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
+        }
+
+        private string GetExecutableHash()
+        {
+            var md5 = new MD5CryptoServiceProvider();
+            using (var streamReader = new StreamReader(Process.GetCurrentProcess().MainModule.FileName))
+            {
+                md5.ComputeHash(streamReader.BaseStream);
+            }
+
+            var hashBuilder = new StringBuilder();
+            foreach (var b in md5.Hash)
+            {
+                hashBuilder.Append(b.ToString("x2"));
+            }
+
+            return hashBuilder.ToString();
         }
     }
 }

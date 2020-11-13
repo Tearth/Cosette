@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using Cosette.Arbiter.Settings;
 
 namespace Cosette.Arbiter.Engine
@@ -106,6 +109,25 @@ namespace Cosette.Arbiter.Engine
         public void WaitForMessage(string message)
         {
             while (Read() != message) ;
+        }
+
+        public string GetExecutableHash()
+        {
+            var md5 = new MD5CryptoServiceProvider();
+            var path = _enginePath == "dotnet" ? _engineArguments : _enginePath;
+
+            using (var streamReader = new StreamReader(path))
+            {
+                md5.ComputeHash(streamReader.BaseStream);
+            }
+
+            var hashBuilder = new StringBuilder();
+            foreach (var b in md5.Hash)
+            {
+                hashBuilder.Append(b.ToString("x2"));
+            }
+
+            return hashBuilder.ToString();
         }
     }
 }
