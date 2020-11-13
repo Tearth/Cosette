@@ -127,7 +127,8 @@ namespace Cosette.Engine.Ai.Search
             }
 #endif
 
-            if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode))
+            var friendlyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+            if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
                 var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false);
@@ -181,9 +182,9 @@ namespace Cosette.Engine.Ai.Search
                 else
                 {
                     var reducedDepth = depth;
-                    var kingCheckedAfterMove = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+                    var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
 
-                    if (LMRCanBeApplied(depth, kingCheckedAfterMove, moveIndex, moves))
+                    if (LMRCanBeApplied(depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
                     {
                         reducedDepth = LMRGetReducedDepth(depth, pvNode);
                     }
@@ -286,17 +287,16 @@ namespace Cosette.Engine.Ai.Search
             return alpha;
         }
 
-        private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode)
+        private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
         {
             return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
-                   board.GetGamePhase() == GamePhase.Opening &&
-                   !board.IsKingChecked(board.ColorToMove);
+                   board.GetGamePhase() == GamePhase.Opening && !friendlyKingInCheck;
         }
 
-        private static bool LMRCanBeApplied(int depth, bool kingChecked, int moveIndex, Span<Move> moves)
+        private static bool LMRCanBeApplied(int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
         {
             return depth >= SearchConstants.LMRMinimalDepth && moveIndex > SearchConstants.LMRMovesWithoutReduction &&
-                   moves[moveIndex].IsQuiet() && !kingChecked;
+                   moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck;
         }
 
         private static int LMRGetReducedDepth(int depth, bool pvNode)
