@@ -85,5 +85,24 @@ namespace Cosette.Engine.Board.Operators
                    EvaluationConstants.ExtendedCenterMobilityModifier * extendedCenterMobility +
                    EvaluationConstants.OutsideMobilityModifier * outsideMobility;
         }
+
+        public static bool IsMoveLegal(BoardState boardState, Move move)
+        {
+            var enemyColor = ColorOperations.Invert(boardState.ColorToMove);
+            var availableMoves = KnightMovesGenerator.GetMoves(move.From);
+            var toField = 1ul << move.To;
+
+            if (move.Flags == MoveFlags.Quiet && (availableMoves & toField) != 0 && (boardState.OccupancySummary & toField) == 0)
+            {
+                return true;
+            }
+
+            if (move.Flags == MoveFlags.Capture && (availableMoves & toField) != 0 && (boardState.Occupancy[enemyColor] & toField) != 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

@@ -24,6 +24,47 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
+        public static bool IsMoveLegal(BoardState boardState, Move move)
+        {
+            var enemyColor = ColorOperations.Invert(boardState.ColorToMove);
+            var toField = 1ul << move.To;
+
+            if (move.Flags == MoveFlags.Quiet || ((int)move.Flags & MoveFlagFields.Promotion) != 0 && ((int)move.Flags & MoveFlagFields.Capture) == 0)
+            {
+                if ((boardState.OccupancySummary & toField) == 0)
+                {
+                    return true;
+                }
+            }
+
+            if (move.Flags == MoveFlags.DoublePush)
+            {
+                var middleField = 1ul << ((move.From + move.To) / 2);
+                if ((boardState.OccupancySummary & middleField) == 0 && (boardState.OccupancySummary & toField) == 0)
+                {
+                    return true;
+                }
+            }
+
+            if (move.Flags == MoveFlags.EnPassant)
+            {
+                if ((boardState.EnPassant & toField) != 0)
+                {
+                    return true;
+                }
+            }
+
+            if (((int)move.Flags & MoveFlagFields.Capture) != 0)
+            {
+                if ((boardState.Occupancy[enemyColor] & toField) != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static int GetSinglePush(BoardState boardState, int color, Span<Move> moves, int offset)
         {
             int shift;

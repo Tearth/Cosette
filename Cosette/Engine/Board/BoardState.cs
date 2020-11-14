@@ -150,6 +150,27 @@ namespace Cosette.Engine.Board
             return movesCount;
         }
 
+        public bool IsMoveLegal(Move move)
+        {
+            if (((1ul << move.From) & Occupancy[ColorToMove]) == 0)
+            {
+                return false;
+            }
+
+            var fromPiece = PieceTable[move.From];
+            switch (fromPiece)
+            {
+                case Piece.Pawn: return PawnOperator.IsMoveLegal(this, move);
+                case Piece.Knight: return KnightOperator.IsMoveLegal(this, move);
+                case Piece.Bishop: return BishopOperator.IsMoveLegal(this, move);
+                case Piece.Rook: return RookOperator.IsMoveLegal(this, move);
+                case Piece.Queen: return QueenOperator.IsMoveLegal(this, move);
+                case Piece.King: return KingOperator.IsMoveLegal(this, move);
+            }
+
+            return false;
+        }
+
         public void MakeMove(Move move)
         {
             var pieceType = PieceTable[move.From];
