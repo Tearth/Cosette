@@ -11,6 +11,11 @@ namespace Cosette.Engine.Board.Operators
             var enemyColor = ColorOperations.Invert(color);
             var piece = boardState.Pieces[color][Piece.King];
 
+            if (piece == 0)
+            {
+                return offset;
+            }
+
             var from = BitOperations.BitScan(piece);
             var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.Occupancy[color];
 
@@ -68,6 +73,11 @@ namespace Cosette.Engine.Board.Operators
         {
             var enemyColor = ColorOperations.Invert(color);
             var piece = boardState.Pieces[color][Piece.King];
+
+            if (piece == 0)
+            {
+                return offset;
+            }
 
             var from = BitOperations.BitScan(piece);
             var availableMoves = KingMovesGenerator.GetMoves(from) & boardState.Occupancy[enemyColor];
