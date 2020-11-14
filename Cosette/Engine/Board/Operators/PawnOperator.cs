@@ -56,7 +56,10 @@ namespace Cosette.Engine.Board.Operators
 
             if (((int)move.Flags & MoveFlagFields.Capture) != 0)
             {
-                if ((boardState.Occupancy[enemyColor] & toField) != 0)
+                var difference = move.To - move.From;
+                var colorDifference = -(boardState.ColorToMove * 2 - 1) * difference;
+
+                if ((boardState.Occupancy[enemyColor] & toField) != 0 && (colorDifference == 7 || colorDifference == 9))
                 {
                     return true;
                 }
