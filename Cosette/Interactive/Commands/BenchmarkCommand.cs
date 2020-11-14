@@ -120,6 +120,8 @@ namespace Cosette.Interactive.Commands
                                           $"Hits: {statistics.EvaluationStatistics.EHTHits} ({statistics.EvaluationStatistics.EHTHitsPercent:F} %), " +
                                           $"Missed: {statistics.EvaluationStatistics.EHTNonHits}, " +
                                           $"Filled: {EvaluationHashTable.GetFillLevel():F} %");
+
+            _interactiveConsole.WriteLine($"   Invalid TT moves: {statistics.TTInvalidMoves}");
 #endif
 
 

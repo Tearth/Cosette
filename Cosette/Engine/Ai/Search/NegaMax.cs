@@ -67,14 +67,24 @@ namespace Cosette.Engine.Ai.Search
             var pvNode = beta - alpha > 1;
 
             var entry = TranspositionTable.Get(context.BoardState.Hash);
-            if (entry.IsKeyValid(context.BoardState.Hash))
+            if (entry.Flags != TranspositionTableEntryFlags.Invalid && entry.IsKeyValid(context.BoardState.Hash))
             {
 #if DEBUG
                 context.Statistics.TTHits++;
 #endif
                 if (entry.Flags != TranspositionTableEntryFlags.AlphaScore)
                 {
-                    bestMove = entry.BestMove;
+                    var isMoveLegal = context.BoardState.IsMoveLegal(entry.BestMove);
+                    if (isMoveLegal)
+                    {
+                        bestMove = entry.BestMove;
+                    }
+#if DEBUG
+                    else
+                    {
+                        context.Statistics.TTInvalidMoves++;
+                    }
+#endif
                 }
 
                 if (entry.Depth >= depth)

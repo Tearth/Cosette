@@ -11,6 +11,8 @@
  - Added insufficient material detection
  - Added executable hash generator
  - Improved late move reduction conditions
+ - Added legality checking of the hash table moves
+ - Reduced size of transposition table entry (from 12 bytes to 10 bytes)
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
