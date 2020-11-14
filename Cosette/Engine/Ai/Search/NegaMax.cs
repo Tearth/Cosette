@@ -78,6 +78,9 @@ namespace Cosette.Engine.Ai.Search
                     if (isMoveLegal)
                     {
                         bestMove = entry.BestMove;
+#if DEBUG
+                        context.Statistics.TTValidMoves++;
+#endif
                     }
 #if DEBUG
                     else

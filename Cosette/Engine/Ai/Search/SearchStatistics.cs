@@ -39,6 +39,7 @@ namespace Cosette.Engine.Ai.Search
         public ulong TTHits { get; set; }
         public ulong TTNonHits { get; set; }
         public ulong TTInvalidMoves { get; set; }
+        public ulong TTValidMoves { get; set; }
         public float TTHitsPercent => (float) TTHits * 100 / (TTHits + TTNonHits);
         public float TTReplacesPercent => (float) TTReplacements * 100 / TTAddedEntries;
 

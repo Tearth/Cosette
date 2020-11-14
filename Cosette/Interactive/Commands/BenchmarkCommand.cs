@@ -121,7 +121,7 @@ namespace Cosette.Interactive.Commands
                                           $"Missed: {statistics.EvaluationStatistics.EHTNonHits}, " +
                                           $"Filled: {EvaluationHashTable.GetFillLevel():F} %");
 
-            _interactiveConsole.WriteLine($"   Invalid TT moves: {statistics.TTInvalidMoves}");
+            _interactiveConsole.WriteLine($"   Valid TT moves: {statistics.TTValidMoves}, Invalid TT moves: {statistics.TTInvalidMoves}");
 #endif
 
 
