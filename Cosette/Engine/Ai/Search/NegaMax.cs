@@ -187,9 +187,11 @@ namespace Cosette.Engine.Ai.Search
                 context.BoardState.MakeMove(moves[moveIndex]);
 
                 var score = 0;
+                var extension = CalculateExtension(depth, friendlyKingInCheck);
+
                 if (pvs)
                 {
-                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove);
+                    score = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove);
                     pvs = false;
                 }
                 else
@@ -202,10 +204,10 @@ namespace Cosette.Engine.Ai.Search
                         reducedDepth = LMRGetReducedDepth(depth, pvNode);
                     }
 
-                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove);
+                    score = -FindBestMove(context, reducedDepth - 1 + extension, ply + 1, -alpha - 1, -alpha, allowNullMove);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove);
+                        score = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove);
                     }
                 }
 
@@ -317,6 +319,19 @@ namespace Cosette.Engine.Ai.Search
             return pvNode ? 
                 depth - SearchConstants.LMRPvNodeDepthReduction : 
                 depth - depth / SearchConstants.LMRNonPvNodeDepthDivisor;
+        }
+
+        private static int CalculateExtension(int depth, bool friendlyKingInCheck)
+        {
+            if (depth <= SearchConstants.ExtensionMaxDepth)
+            {
+                if (friendlyKingInCheck)
+                {
+                    return SearchConstants.CheckExtension;
+                }
+            }
+
+            return 0;
         }
     }
 }
