@@ -71,7 +71,7 @@ namespace Cosette.Arbiter.Tournament
                     try
                     {
                         var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
-                        if (bestMoveData == null)
+                        if (bestMoveData == null || bestMoveData.LastInfoData == null)
                         {
                             playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
                             opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));

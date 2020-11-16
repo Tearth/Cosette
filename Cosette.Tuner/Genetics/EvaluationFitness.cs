@@ -61,7 +61,7 @@ namespace Cosette.Tuner.Genetics
                     while (true)
                     {
                         var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
-                        if (bestMoveData == null)
+                        if (bestMoveData == null || bestMoveData.LastInfoData == null)
                         {
                             playerToMove.History.Add(new ArchivedGame(gameData, GameResult.Draw));
                             opponent.History.Add(new ArchivedGame(gameData, GameResult.Draw));
