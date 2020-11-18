@@ -15,8 +15,5 @@
         public static int LMRMovesWithoutReduction = 2;
         public static int LMRPvNodeDepthReduction = 1;
         public static int LMRNonPvNodeDepthDivisor = 3;
-
-        public static int ExtensionMaxDepth = 3;
-        public static int CheckExtension = 1;
     }
 }
