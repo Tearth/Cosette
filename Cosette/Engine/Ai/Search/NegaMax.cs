@@ -11,7 +11,7 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove)
+        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool friendlyKingInCheck, bool friendlyKingInCheckGenerated)
         {
             if (context.Statistics.Nodes >= context.MaxNodesCount)
             {
@@ -140,11 +140,15 @@ namespace Cosette.Engine.Ai.Search
             }
 #endif
 
-            var friendlyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+            if (!friendlyKingInCheckGenerated)
+            {
+                friendlyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+            }
+
             if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
-                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false);
+                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false, false, true);
                 context.BoardState.UndoNullMove();
 
                 if (score >= beta)
@@ -187,25 +191,26 @@ namespace Cosette.Engine.Ai.Search
                 context.BoardState.MakeMove(moves[moveIndex]);
 
                 var score = 0;
+                var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+
                 if (pvs)
                 {
-                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove);
+                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, true);
                     pvs = false;
                 }
                 else
                 {
                     var reducedDepth = depth;
-                    var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
 
                     if (LMRCanBeApplied(depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
                     {
                         reducedDepth = LMRGetReducedDepth(depth, pvNode);
                     }
 
-                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove);
+                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck, true);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove);
+                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, true);
                     }
                 }
 

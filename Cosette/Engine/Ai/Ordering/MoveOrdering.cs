@@ -85,6 +85,11 @@ namespace Cosette.Engine.Ai.Ordering
 
         public static void SortNextBestMove(Span<Move> moves, Span<short> moveValues, int movesCount, int currentIndex)
         {
+            if (movesCount <= 1)
+            {
+                return;
+            }
+
             var max = short.MinValue;
             var maxIndex = -1;
 
