@@ -12,7 +12,7 @@
         public static int NullWindowDepthReduction = 3;
 
         public static int LMRMinimalDepth = 2;
-        public static int LMRMovesWithoutReduction = 2;
+        public static int LMRMovesWithoutReduction = 3;
         public static int LMRPvNodeDepthReduction = 1;
         public static int LMRNonPvNodeDepthDivisor = 3;
     }

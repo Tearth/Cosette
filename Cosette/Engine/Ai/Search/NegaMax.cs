@@ -313,7 +313,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool LMRCanBeApplied(int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
         {
-            return depth >= SearchConstants.LMRMinimalDepth && moveIndex > SearchConstants.LMRMovesWithoutReduction &&
+            return depth >= SearchConstants.LMRMinimalDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
                    moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck;
         }
 
