@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Board.Operators;
@@ -599,38 +600,41 @@ namespace Cosette.Engine.Board
         {
             byte result = 0;
 
-            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[color];
-            var attackingRooks = fileRankAttacks & Pieces[color][Piece.Rook];
-            if (attackingRooks != 0)
+            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+            var attackingKnights = jumpAttacks & Pieces[color][Piece.Knight];
+            var attackingKnightsCount = BitOperations.Count(attackingKnights);
+            if (attackingKnightsCount != 0)
             {
-                result |= 1 << Piece.Rook;
+                result |= (byte)((attackingKnightsCount == 1 ? 1 : 3) << SeePiece.Knight1);
             }
 
             var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[color];
             var attackingBishops = diagonalAttacks & Pieces[color][Piece.Bishop];
             if (attackingBishops != 0)
             {
-                result |= 1 << Piece.Bishop;
+                result |= 1 << SeePiece.Bishop;
+            }
+
+            var occupancyWithoutFileRantPieces = OccupancySummary & ~Pieces[color][Piece.Rook] & ~Pieces[color][Piece.Queen];
+            var fileRankAttacks = RookMovesGenerator.GetMoves(occupancyWithoutFileRantPieces, fieldIndex) & Occupancy[color];
+            var attackingRooks = fileRankAttacks & Pieces[color][Piece.Rook];
+            var attackingRooksCount = BitOperations.Count(attackingRooks);
+            if (attackingRooksCount != 0)
+            {
+                result |= (byte)((attackingRooksCount == 1 ? 1 : 3) << SeePiece.Rook1);
             }
 
             var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[color][Piece.Queen];
             if (attackingQueens != 0)
             {
-                result |= 1 << Piece.Queen;
-            }
-
-            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var attackingKnights = jumpAttacks & Pieces[color][Piece.Knight];
-            if (attackingKnights != 0)
-            {
-                result |= 1 << Piece.Knight;
+                result |= 1 << SeePiece.Queen;
             }
 
             var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
             var attackingKings = boxAttacks & Pieces[color][Piece.King];
             if (attackingKings != 0)
             {
-                result |= 1 << Piece.King;
+                result |= 1 << SeePiece.King;
             }
 
             var field = 1ul << fieldIndex;
@@ -641,7 +645,7 @@ namespace Cosette.Engine.Board
 
             if (attackingPawns != 0)
             {
-                result |= 1 << Piece.Pawn;
+                result |= 1 << SeePiece.Pawn;
             }
 
             return result;

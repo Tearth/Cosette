@@ -27,10 +27,10 @@ namespace Cosette.Engine.Ai.Ordering
                 _table[attackingPiece] = new short[6][][];
                 for (var capturedPiece = 0; capturedPiece < 6; capturedPiece++)
                 {
-                    _table[attackingPiece][capturedPiece] = new short[64][];
-                    for (var attackerIndex = 0; attackerIndex < 64; attackerIndex++)
+                    _table[attackingPiece][capturedPiece] = new short[256][];
+                    for (var attackerIndex = 0; attackerIndex < 256; attackerIndex++)
                     {
-                        _table[attackingPiece][capturedPiece][attackerIndex] = new short[64];
+                        _table[attackingPiece][capturedPiece][attackerIndex] = new short[256];
                     }
                 }
             }
@@ -43,11 +43,12 @@ namespace Cosette.Engine.Ai.Ordering
             {
                 for (var capturedPiece = 0; capturedPiece < 6; capturedPiece++)
                 {
-                    for (ulong attackerIndex = 0; attackerIndex < 64; attackerIndex++)
+                    for (ulong attackerIndex = 0; attackerIndex < 256; attackerIndex++)
                     {
-                        for (ulong defenderIndex = 0; defenderIndex < 64; defenderIndex++)
+                        for (ulong defenderIndex = 0; defenderIndex < 256; defenderIndex++)
                         {
-                            var attackers = attackerIndex & ~(1ul << attackingPiece);
+                            var attackingPieceSeeIndex = GetSeeIndexByPiece(attackingPiece);
+                            var attackers = attackerIndex & ~(1ul << attackingPieceSeeIndex);
                             var defenders = defenderIndex;
 
                             var currentPieceOnField = attackingPiece;
@@ -57,8 +58,7 @@ namespace Cosette.Engine.Ai.Ordering
 
                             if (defenders != 0)
                             {
-                                var leastValuableDefenderField = BitOperations.GetLsb(defenders);
-                                var leastValuableDefenderPiece = BitOperations.BitScan(leastValuableDefenderField);
+                                var leastValuableDefenderPiece = GetLeastValuablePiece(defenders);
                                 defenders = BitOperations.PopLsb(defenders);
 
                                 result -= EvaluationConstants.Pieces[currentPieceOnField];
@@ -68,8 +68,7 @@ namespace Cosette.Engine.Ai.Ordering
 
                                 while (attackers != 0)
                                 {
-                                    var leastValuableAttackerField = BitOperations.GetLsb(attackers);
-                                    var leastValuableAttackerPiece = BitOperations.BitScan(leastValuableAttackerField);
+                                    var leastValuableAttackerPiece = GetLeastValuablePiece(attackers);
                                     attackers = BitOperations.PopLsb(attackers);
 
                                     result += EvaluationConstants.Pieces[currentPieceOnField];
@@ -85,8 +84,7 @@ namespace Cosette.Engine.Ai.Ordering
 
                                     if (defenders != 0)
                                     {
-                                        leastValuableDefenderField = BitOperations.GetLsb(defenders);
-                                        leastValuableDefenderPiece = BitOperations.BitScan(leastValuableDefenderField);
+                                        leastValuableDefenderPiece = GetLeastValuablePiece(defenders);
                                         defenders = BitOperations.PopLsb(defenders);
 
                                         result -= EvaluationConstants.Pieces[currentPieceOnField];
@@ -113,6 +111,44 @@ namespace Cosette.Engine.Ai.Ordering
                     }
                 }
             }
+        }
+
+        private static int GetPieceBySeeIndex(int index)
+        {
+            switch (index)
+            {
+                case SeePiece.Pawn: return Piece.Pawn;
+                case SeePiece.Knight1: case SeePiece.Knight2: return Piece.Knight;
+                case SeePiece.Bishop: return Piece.Bishop;
+                case SeePiece.Rook1: case SeePiece.Rook2: return Piece.Rook;
+                case SeePiece.Queen: return Piece.Queen;
+                case SeePiece.King: return Piece.King;
+            }
+
+            return -1;
+        }
+
+        private static int GetSeeIndexByPiece(int piece)
+        {
+            switch (piece)
+            {
+                case Piece.Pawn: return SeePiece.Pawn;
+                case Piece.Knight: return SeePiece.Knight1;
+                case Piece.Bishop: return SeePiece.Bishop;
+                case Piece.Rook: return SeePiece.Rook1;
+                case Piece.Queen: return SeePiece.Queen;
+                case Piece.King: return SeePiece.King;
+            }
+
+            return -1;
+        }
+
+        private static int GetLeastValuablePiece(ulong data)
+        {
+            var leastValuableDefenderField = BitOperations.GetLsb(data);
+            var leastValuableDefenderPiece = BitOperations.BitScan(leastValuableDefenderField);
+
+            return GetPieceBySeeIndex(leastValuableDefenderPiece);
         }
     }
 }
