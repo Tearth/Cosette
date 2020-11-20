@@ -26,6 +26,7 @@ namespace Cosette.Engine.Board
         public int[][] Position { get; set; }
 
         public int[] PieceTable { get; set; }
+        public int MaterialAtOpening;
 
         public ulong Hash { get; set; }
         public ulong PawnHash { get; set; }
@@ -38,7 +39,6 @@ namespace Cosette.Engine.Board
         private readonly FastStack<ulong> _pawnHashes;
         private readonly FastStack<int> _irreversibleMovesCounts;
 
-        private int _materialAtOpening;
 
         public BoardState()
         {
@@ -110,13 +110,7 @@ namespace Cosette.Engine.Board
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
 
-            _materialAtOpening =
-                EvaluationConstants.Pieces[Piece.King] +
-                EvaluationConstants.Pieces[Piece.Queen] +
-                EvaluationConstants.Pieces[Piece.Rook] * 2 +
-                EvaluationConstants.Pieces[Piece.Bishop] * 2 +
-                EvaluationConstants.Pieces[Piece.Knight] * 2 +
-                EvaluationConstants.Pieces[Piece.Pawn] * 8;
+            MaterialAtOpening = CalculateMaterialAtOpening();
 
             _killedPieces.Clear();
             _enPassants.Clear();
@@ -749,10 +743,10 @@ namespace Cosette.Engine.Board
         {
             var materialOfWeakerSide = Math.Min(Material[Color.White], Material[Color.Black]);
 
-            var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
+            var openingDelta = MaterialAtOpening - EvaluationConstants.OpeningEndgameEdge;
             var boardDelta = materialOfWeakerSide - EvaluationConstants.OpeningEndgameEdge;
 
-            return boardDelta * BoardConstants.PhaseResolution / openingDelta;
+            return Math.Max(boardDelta, 0) * BoardConstants.PhaseResolution / openingDelta;
         }
 
         public int GetGamePhase()
@@ -817,6 +811,16 @@ namespace Cosette.Engine.Board
                     }
                 }
             }
+        }
+
+        public int CalculateMaterialAtOpening()
+        {
+            return EvaluationConstants.Pieces[Piece.King] +
+                   EvaluationConstants.Pieces[Piece.Queen] +
+                   EvaluationConstants.Pieces[Piece.Rook] * 2 +
+                   EvaluationConstants.Pieces[Piece.Bishop] * 2 +
+                   EvaluationConstants.Pieces[Piece.Knight] * 2 +
+                   EvaluationConstants.Pieces[Piece.Pawn] * 8;
         }
 
         public override string ToString()

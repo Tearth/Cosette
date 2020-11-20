@@ -32,6 +32,7 @@ namespace Cosette.Engine.Fen
             result.Position[Color.Black][GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
 
             result.CalculatePieceTable(result.PieceTable);
+            result.MaterialAtOpening = result.CalculateMaterialAtOpening();
 
             result.MovesCount = movesCount;
             result.IrreversibleMovesCount = halfmoveClock;
