@@ -38,7 +38,8 @@ namespace Cosette.Arbiter.Tournament
             _participants.ForEach(p => p.EngineOperator.Init());
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount; gameIndex++)
             {
-                var gameData = new GameData(_polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves));
+                var openingBookMoves = _polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves);
+                var gameData = new GameData(openingBookMoves);
                 var (playerA, playerB) = _scheduler.GetPair(gameIndex);
 
                 if (playerA >= _participants.Count || playerB >= _participants.Count)
@@ -57,7 +58,7 @@ namespace Cosette.Arbiter.Tournament
                 WriteResults();
                 WriteTournamentStatistics();
 
-                Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name})");
+                Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name}), {openingBookMoves.Count} opening book moves:");
                 Console.Write("Moves: ");
                 Console.Write(string.Join(' ', gameData.HalfMovesDone));
                 Console.Write(" ");
