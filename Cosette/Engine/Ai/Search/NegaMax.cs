@@ -38,7 +38,7 @@ namespace Cosette.Engine.Ai.Search
                 return EvaluationConstants.ThreefoldRepetition;
             }
 
-            if (context.BoardState.IsInsufficientMaterial())
+            if (context.BoardState.IsInsufficientMaterial() && friendlyKingInCheckGenerated && !friendlyKingInCheck)
             {
                 context.Statistics.Leafs++;
                 return EvaluationConstants.InsufficientMaterial;
