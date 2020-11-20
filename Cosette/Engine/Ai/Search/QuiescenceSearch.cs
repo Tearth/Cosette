@@ -72,6 +72,11 @@ namespace Cosette.Engine.Ai.Search
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
 
+                if (moveValues[moveIndex] < -50)
+                {
+                    break;
+                }
+
                 context.BoardState.MakeMove(moves[moveIndex]);
                 var score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha);
                 context.BoardState.UndoMove(moves[moveIndex]);
