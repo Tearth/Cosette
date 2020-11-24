@@ -53,6 +53,11 @@ namespace Cosette.Polyglot
                 }
             }
 
+            if (movesList.Count % 2 != 0)
+            {
+                movesList.Remove(movesList.Last());
+            }
+
             return movesList.Select(p => p.Move.ToString()).ToList();
         }
 
