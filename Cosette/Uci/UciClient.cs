@@ -152,13 +152,14 @@ namespace Cosette.Uci
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + 
                             mobility + kingSafety + pieces;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"pieces {pieces} irrmoves {stats.Board.IrreversibleMovesCount}");
+                     $"pieces {pieces} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 

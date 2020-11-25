@@ -26,6 +26,9 @@
         public static int[] RookOnOpenFile = { 20, 0 };
         public static int[] PairOfBishops = { 30, 20 };
 
+        public static int[] Fianchetto = { 20, 0 };
+        public static int[] FianchettoWithoutBishop = { -20, 0 };
+
         public const int OpeningEndgameEdge = 20500;
 
         public const ulong Center = 0x1818000000;
