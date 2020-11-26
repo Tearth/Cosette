@@ -15,6 +15,8 @@
  - Reduced size of transposition table entry (from 12 bytes to 10 bytes)
  - Improved SEE accuracy (now includes x-ray attacks)
  - Added SEE pruning in the quiescence search
+ - Add fianchetto evaluation
+ - Disable most of the evaluations functions when the game is near to end
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
