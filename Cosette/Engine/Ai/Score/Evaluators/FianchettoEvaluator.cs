@@ -32,30 +32,27 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var pawns = board.Pieces[color][Piece.Pawn];
             var bishops = board.Pieces[color][Piece.Bishop];
 
-            var fianchettoOpeningScore = EvaluationConstants.Fianchetto[GamePhase.Opening];
-            var fianchettoEndingScore = EvaluationConstants.Fianchetto[GamePhase.Ending];
-
-            var fianchettoPenaltyOpeningScore = EvaluationConstants.FianchettoWithoutBishop[GamePhase.Opening];
-            var fianchettoPenaltyEndingScore = EvaluationConstants.FianchettoWithoutBishop[GamePhase.Ending];
+            var fianchettoOpeningScore = EvaluationConstants.Fianchetto;
+            var fianchettoPenaltyOpeningScore = EvaluationConstants.FianchettoWithoutBishop;
 
             if ((pawns & kingSidePawnsPattern) == kingSidePawnsPattern)
             {
                 if ((bishops & kingSideBishopPattern) == kingSideBishopPattern)
                 {
-                    return TaperedEvaluation.AdjustToPhase(fianchettoOpeningScore, fianchettoEndingScore, openingPhase, endingPhase);
+                    return TaperedEvaluation.AdjustToPhase(fianchettoOpeningScore, 0, openingPhase, endingPhase);
                 }
 
-                return TaperedEvaluation.AdjustToPhase(fianchettoPenaltyOpeningScore, fianchettoPenaltyEndingScore, openingPhase, endingPhase);
+                return TaperedEvaluation.AdjustToPhase(fianchettoPenaltyOpeningScore, 0, openingPhase, endingPhase);
             }
 
             if ((pawns & queenSidePawnsPattern) == queenSidePawnsPattern)
             {
                 if ((bishops & queenSideBishopPattern) == queenSideBishopPattern)
                 {
-                    return TaperedEvaluation.AdjustToPhase(fianchettoOpeningScore, fianchettoEndingScore, openingPhase, endingPhase);
+                    return TaperedEvaluation.AdjustToPhase(fianchettoOpeningScore, 0, openingPhase, endingPhase);
                 }
 
-                return TaperedEvaluation.AdjustToPhase(fianchettoPenaltyOpeningScore, fianchettoPenaltyEndingScore, openingPhase, endingPhase);
+                return TaperedEvaluation.AdjustToPhase(fianchettoPenaltyOpeningScore, 0, openingPhase, endingPhase);
             }
 
             return 0;

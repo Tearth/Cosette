@@ -49,17 +49,14 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 pairOfBishops = 1;
             }
 
-            var doubledRooksOpeningScore = doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Opening];
-            var doubledRooksEndingScore = doubledRooks * EvaluationConstants.DoubledRooks[GamePhase.Ending];
-            var doubledRooksAdjusted = TaperedEvaluation.AdjustToPhase(doubledRooksOpeningScore, doubledRooksEndingScore, openingPhase, endingPhase);
+            var doubledRooksOpeningScore = doubledRooks * EvaluationConstants.DoubledRooks;
+            var doubledRooksAdjusted = TaperedEvaluation.AdjustToPhase(doubledRooksOpeningScore, 0, openingPhase, endingPhase);
 
-            var rooksOnOpenFileOpeningScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Opening];
-            var rooksOnOpenFileEndingScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile[GamePhase.Ending];
-            var rooksOnOpenFileAdjusted = TaperedEvaluation.AdjustToPhase(rooksOnOpenFileOpeningScore, rooksOnOpenFileEndingScore, openingPhase, endingPhase);
+            var rooksOnOpenFileOpeningScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile;
+            var rooksOnOpenFileAdjusted = TaperedEvaluation.AdjustToPhase(rooksOnOpenFileOpeningScore, 0, openingPhase, endingPhase);
 
-            var pairOfBishopsOpeningScore = pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Opening];
-            var pairOfBishopsEndingScore = pairOfBishops * EvaluationConstants.PairOfBishops[GamePhase.Ending];
-            var pairOfBishopsAdjusted = TaperedEvaluation.AdjustToPhase(pairOfBishopsOpeningScore, pairOfBishopsEndingScore, openingPhase, endingPhase);
+            var pairOfBishopsOpeningScore = pairOfBishops * EvaluationConstants.PairOfBishops;
+            var pairOfBishopsAdjusted = TaperedEvaluation.AdjustToPhase(pairOfBishopsOpeningScore, 0, openingPhase, endingPhase);
 
             return doubledRooksAdjusted + rooksOnOpenFileAdjusted + pairOfBishopsAdjusted;
         }

@@ -38,13 +38,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
             pawnShield = (int)BitOperations.Count(pawnsNearKing);
 
-            var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger[GamePhase.Opening];
-            var attackersCountEndingScore = attackersCount * EvaluationConstants.KingInDanger[GamePhase.Ending];
-            var attackersCountAdjusted = TaperedEvaluation.AdjustToPhase(attackersCountOpeningScore, attackersCountEndingScore, openingPhase, endingPhase);
+            var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger;
+            var attackersCountAdjusted = TaperedEvaluation.AdjustToPhase(attackersCountOpeningScore, 0, openingPhase, endingPhase);
 
-            var pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield[GamePhase.Opening];
-            var pawnShieldEndingScore = pawnShield * EvaluationConstants.PawnShield[GamePhase.Ending];
-            var pawnShieldAdjusted = TaperedEvaluation.AdjustToPhase(pawnShieldOpeningScore, pawnShieldEndingScore, openingPhase, endingPhase);
+            var pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield;
+            var pawnShieldAdjusted = TaperedEvaluation.AdjustToPhase(pawnShieldOpeningScore, 0, openingPhase, endingPhase);
 
             return attackersCountAdjusted + pawnShieldAdjusted;
         }

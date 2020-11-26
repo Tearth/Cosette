@@ -19,9 +19,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                            RookOperator.GetMobility(board, color) + 
                            QueenOperator.GetMobility(board, color);
 
-            var mobilityOpeningScore = mobility * EvaluationConstants.Mobility[GamePhase.Opening];
-            var mobilityEndingScore = mobility * EvaluationConstants.Mobility[GamePhase.Ending];
-            return TaperedEvaluation.AdjustToPhase(mobilityOpeningScore, mobilityEndingScore, openingPhase, endingPhase);
+            var mobilityOpeningScore = mobility * EvaluationConstants.Mobility;
+            return TaperedEvaluation.AdjustToPhase(mobilityOpeningScore, 0, openingPhase, endingPhase);
         }
     }
 }
