@@ -15,17 +15,15 @@ namespace Cosette.Engine.Ai.Score.Evaluators
         {
             if (board.CastlingDone[color])
             {
-                var openingScore = EvaluationConstants.CastlingDone[GamePhase.Opening];
-                var endingScore = EvaluationConstants.CastlingDone[GamePhase.Ending];
-                return TaperedEvaluation.AdjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
+                var openingScore = EvaluationConstants.CastlingDone;
+                return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
             }
 
             if (color == Color.White && (board.Castling & Castling.WhiteCastling) == 0 || 
                 color == Color.Black && (board.Castling & Castling.BlackCastling) == 0)
             {
-                var openingScore = EvaluationConstants.CastlingFailed[GamePhase.Opening];
-                var endingScore = EvaluationConstants.CastlingFailed[GamePhase.Ending];
-                return TaperedEvaluation.AdjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
+                var openingScore = EvaluationConstants.CastlingFailed;
+                return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
             }
 
             return 0;

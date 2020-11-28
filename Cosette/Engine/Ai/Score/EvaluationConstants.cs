@@ -8,8 +8,9 @@
         public const int ThreefoldRepetition = 0;
         public const int InsufficientMaterial = 0;
 
-        public static int[] CastlingDone = { 50, 0 };
-        public static int[] CastlingFailed = { -50, 0 };
+        public static int CastlingDone = 50;
+        public static int CastlingFailed = -50;
+
         public static int[] DoubledPawns = { -20, -10 };
         public static int[] IsolatedPawns = { -20, -10 };
         public static int[] ChainedPawns = { 5, 5 };
