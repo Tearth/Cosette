@@ -86,6 +86,11 @@ namespace Cosette.Engine.Ai.Search
             var entry = TranspositionTable.Get(board.Hash);
             if (entry.Flags == TranspositionTableEntryFlags.ExactScore && entry.IsKeyValid(board.Hash) && movesCount < SearchConstants.MaxDepth)
             {
+                if (!board.IsMoveLegal(entry.BestMove))
+                {
+                    return movesCount;
+                }
+
                 moves[movesCount] = entry.BestMove;
                 board.MakeMove(entry.BestMove);
 
