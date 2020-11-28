@@ -60,7 +60,7 @@ namespace Cosette.Uci.Commands
                 var parsedMove = Move.FromTextNotation(_uciClient.BoardState, move);
                 if (parsedMove == Move.Empty)
                 {
-                    _uciClient.Send("error invalidmove");
+                    _uciClient.SendError("invalidmove");
                     return;
                 }
 

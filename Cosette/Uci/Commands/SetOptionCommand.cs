@@ -51,12 +51,10 @@ namespace Cosette.Uci.Commands
                     StaticExchangeEvaluation.Init();
                 }
             }
-            /*
             else
             {
-                throw new Exception();
+                _uciClient.SendError("badoption");
             }
-            */
         }
     }
 }

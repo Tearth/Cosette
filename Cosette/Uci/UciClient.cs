@@ -63,6 +63,11 @@ namespace Cosette.Uci
             LogManager.LogInfo("[SEND] " + command);
         }
 
+        public void SendError(string errorMessage)
+        {
+            Send($"error {errorMessage}");
+        }
+
         public (string Command, string[] parameters) Receive()
         {
             while (true)
