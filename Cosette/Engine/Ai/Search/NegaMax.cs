@@ -158,6 +158,21 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
             
+            if (IIDCanBeApplied(depth, entry.Flags, bestMove))
+            {
+                FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck, true);
+                
+                var iidEntry = TranspositionTable.Get(context.BoardState.Hash);
+                if (iidEntry.IsKeyValid(context.BoardState.Hash))
+                {
+                    bestMove = iidEntry.BestMove;
+
+#if DEBUG
+                    context.Statistics.IIDHits++;
+#endif
+                }
+            }
+            
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
             var movesCount = 0;
@@ -277,7 +292,7 @@ namespace Cosette.Engine.Ai.Search
                 return 0;
             }
 
-            if (entry.Age < context.TranspositionTableEntryAge || entry.Depth < depth)
+            if (entry.Age != context.TranspositionTableEntryAge || entry.Depth <= depth)
             {
                 var valueToSave = alpha;
                 var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
@@ -309,6 +324,11 @@ namespace Cosette.Engine.Ai.Search
         {
             return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
                    board.GetGamePhase() == GamePhase.Opening && !friendlyKingInCheck;
+        }
+
+        private static bool IIDCanBeApplied(int depth, TranspositionTableEntryFlags ttEntryType, Move bestMove)
+        {
+            return ttEntryType == TranspositionTableEntryFlags.Invalid && depth >= SearchConstants.IIDMinimalDepth && bestMove == Move.Empty;
         }
 
         private static bool LMRCanBeApplied(int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)

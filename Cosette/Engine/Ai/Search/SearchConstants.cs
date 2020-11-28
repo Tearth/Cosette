@@ -8,6 +8,9 @@
         public const int MaxMovesCount = 218;
         public const float DeadlineFactor = 1.5f;
 
+        public static int IIDMinimalDepth = 4;
+        public static int IIDDepthReduction = 2;
+
         public static int NullWindowMinimalDepth = 5;
         public static int NullWindowDepthReduction = 3;
 

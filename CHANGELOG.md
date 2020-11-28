@@ -17,6 +17,7 @@
  - Added SEE pruning in the quiescence search
  - Added fianchetto evaluation
  - Disabled most of the evaluations functions when the game is near to end
+ - Added internal iterative deepening
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection

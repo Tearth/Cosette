@@ -54,6 +54,8 @@ namespace Cosette.Engine.Ai.Search
         public float BetaCutoffsAtFirstMovePercent => (float) BetaCutoffsAtFirstMove * 100 / (BetaCutoffsAtFirstMove + BetaCutoffsNotAtFirstMove);
         public float QBetaCutoffsAtFirstMovePercent => (float) QBetaCutoffsAtFirstMove * 100 / (QBetaCutoffsAtFirstMove + QBetaCutoffsNotAtFirstMove);
 
+        public int IIDHits { get; set; }
+
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }
 
