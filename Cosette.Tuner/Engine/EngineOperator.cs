@@ -69,7 +69,11 @@ namespace Cosette.Tuner.Engine
             }
 
             Write("isready");
-            WaitForMessage("readyok");
+
+            if (!WaitForMessage("readyok"))
+            {
+                throw new Exception("Invalid option passed to the engine");
+            }
         }
 
         public BestMoveData Go(List<string> moves, int whiteClock, int blackClock)
@@ -115,9 +119,21 @@ namespace Cosette.Tuner.Engine
             return _engineProcess.StandardOutput.ReadLine();
         }
 
-        public void WaitForMessage(string message)
+        public bool WaitForMessage(string message)
         {
-            while (Read() != message) ;
+            while (true)
+            {
+                var response = Read();
+                if (response.StartsWith("error"))
+                {
+                    return false;
+                }
+                
+                if (response == message)
+                {
+                    return true;
+                }
+            }
         }
     }
 }

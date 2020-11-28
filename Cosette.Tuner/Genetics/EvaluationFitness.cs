@@ -39,7 +39,10 @@ namespace Cosette.Tuner.Genetics
             
             for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
             {
-                experimentalParticipant.EngineOperator.SetOption(SettingsLoader.Data.Genes[geneIndex].Name, chromosome.GetGene(geneIndex).ToString());
+                var geneName = SettingsLoader.Data.Genes[geneIndex].Name;
+                var geneValue = chromosome.GetGene(geneIndex).ToString();
+
+                experimentalParticipant.EngineOperator.SetOption(geneName, geneValue);
             }
 
             referenceParticipant.EngineOperator.ApplyOptions();
