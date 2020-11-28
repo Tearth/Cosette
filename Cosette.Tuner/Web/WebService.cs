@@ -44,6 +44,11 @@ namespace Cosette.Tuner.Web
 
         public async Task<int> RegisterTest()
         {
+            if (!_enabled)
+            {
+                return -1;
+            }
+
             try
             {
                 var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "test/register"));
