@@ -113,13 +113,37 @@ namespace Cosette.Uci
             Send($"option name QueenValue type spin default {EvaluationConstants.Pieces[Piece.Queen]} min 0 max 65535");
             Send($"option name KingValue type spin default {EvaluationConstants.Pieces[Piece.King]} min 0 max 65535");
 
+            Send($"option name DoubledPawnsOpening type spin default {EvaluationConstants.DoubledPawns[GamePhase.Opening]} min -100 max 100");
+            Send($"option name DoubledPawnsEnding type spin default {EvaluationConstants.DoubledPawns[GamePhase.Ending]} min -100 max 100");
+            Send($"option name IsolatedPawnsOpening type spin default {EvaluationConstants.IsolatedPawns[GamePhase.Opening]} min -100 max 100");
+            Send($"option name IsolatedPawnsEnding type spin default {EvaluationConstants.IsolatedPawns[GamePhase.Ending]} min -100 max 100");
+            Send($"option name ChainedPawnsOpening type spin default {EvaluationConstants.ChainedPawns[GamePhase.Opening]} min -100 max 100");
+            Send($"option name ChainedPawnsEnding type spin default {EvaluationConstants.ChainedPawns[GamePhase.Ending]} min -100 max 100");
+            Send($"option name PassingPawnsOpening type spin default {EvaluationConstants.PassingPawns[GamePhase.Opening]} min -100 max 100");
+            Send($"option name PassingPawnsEnding type spin default {EvaluationConstants.PassingPawns[GamePhase.Ending]} min -100 max 100");
+
+            Send($"option name CastlingDone type spin default {EvaluationConstants.CastlingDone} min -100 max 100");
+            Send($"option name CastlingFailed type spin default {EvaluationConstants.CastlingFailed} min -100 max 100");
+            Send($"option name Mobility type spin default {EvaluationConstants.Mobility} min -100 max 100");
+            Send($"option name CenterMobilityModifier type spin default {EvaluationConstants.CenterMobilityModifier} min -100 max 100");
+            Send($"option name ExtendedCenterMobilityModifier type spin default {EvaluationConstants.ExtendedCenterMobilityModifier} min -100 max 100");
+            Send($"option name OutsideMobilityModifier type spin default {EvaluationConstants.OutsideMobilityModifier} min -100 max 100");
+            Send($"option name KingInDanger type spin default {EvaluationConstants.KingInDanger} min -100 max 100");
+            Send($"option name PawnShield type spin default {EvaluationConstants.PawnShield} min -100 max 100");
+            Send($"option name DoubledRooks type spin default {EvaluationConstants.DoubledRooks} min -100 max 100");
+            Send($"option name RookOnOpenFile type spin default {EvaluationConstants.RookOnOpenFile} min -100 max 100");
+            Send($"option name PairOfBishops type spin default {EvaluationConstants.PairOfBishops} min -100 max 100");
+            Send($"option name Fianchetto type spin default {EvaluationConstants.Fianchetto} min -100 max 100");
+            Send($"option name FianchettoWithoutBishop type spin default {EvaluationConstants.FianchettoWithoutBishop} min -100 max 100");
+
+            Send($"option name IIDMinimalDepth type spin default {SearchConstants.IIDMinimalDepth} min 0 max 32");
+            Send($"option name IIDDepthReduction type spin default {SearchConstants.IIDDepthReduction} min 0 max 32");
             Send($"option name NullWindowMinimalDepth type spin default {SearchConstants.NullWindowMinimalDepth} min 0 max 32");
             Send($"option name NullWindowDepthReduction type spin default {SearchConstants.NullWindowDepthReduction} min 0 max 32");
             Send($"option name LMRMinimalDepth type spin default {SearchConstants.LMRMinimalDepth} min 0 max 32");
             Send($"option name LMRMovesWithoutReduction type spin default {SearchConstants.LMRMovesWithoutReduction} min 0 max 32");
             Send($"option name LMRPvNodeDepthReduction type spin default {SearchConstants.LMRPvNodeDepthReduction} min 0 max 32");
             Send($"option name LMRNonPvNodeDepthDivisor type spin default {SearchConstants.LMRNonPvNodeDepthDivisor} min 0 max 32");
-
 
             Send("uciok");
         }
