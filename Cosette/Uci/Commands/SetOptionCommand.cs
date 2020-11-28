@@ -50,6 +50,16 @@ namespace Cosette.Uci.Commands
                 { "Fianchetto", p => EvaluationConstants.Fianchetto = int.Parse(p) },
                 { "FianchettoWithoutBishop", p => EvaluationConstants.FianchettoWithoutBishop = int.Parse(p) },
 
+                { "HashMove", p => MoveOrderingConstants.HashMove = short.Parse(p) },
+                { "Promotion", p => MoveOrderingConstants.Promotion = short.Parse(p) },
+                { "Castling", p => MoveOrderingConstants.Castling = short.Parse(p) },
+                { "PawnNearPromotion", p => MoveOrderingConstants.PawnNearPromotion = short.Parse(p) },
+                { "Capture", p => MoveOrderingConstants.Capture = short.Parse(p) },
+                { "EnPassant", p => MoveOrderingConstants.EnPassant = short.Parse(p) },
+                { "KillerMove", p => MoveOrderingConstants.KillerMove = short.Parse(p) },
+                { "HistoryHeuristicMaxScore", p => MoveOrderingConstants.HistoryHeuristicMaxScore = uint.Parse(p) },
+                { "KillerSlots", p => MoveOrderingConstants.KillerSlots = int.Parse(p) },
+
                 { "IIDMinimalDepth", p => SearchConstants.IIDMinimalDepth = int.Parse(p) },
                 { "IIDDepthReduction", p => SearchConstants.IIDDepthReduction = int.Parse(p) },
                 { "NullWindowMinimalDepth", p => SearchConstants.NullWindowMinimalDepth = int.Parse(p) },

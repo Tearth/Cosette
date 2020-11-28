@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Search;
@@ -135,6 +136,16 @@ namespace Cosette.Uci
             Send($"option name PairOfBishops type spin default {EvaluationConstants.PairOfBishops} min -100 max 100");
             Send($"option name Fianchetto type spin default {EvaluationConstants.Fianchetto} min -100 max 100");
             Send($"option name FianchettoWithoutBishop type spin default {EvaluationConstants.FianchettoWithoutBishop} min -100 max 100");
+
+            Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
+            Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");
+            Send($"option name Castling type spin default {MoveOrderingConstants.Castling} min -10000 max 10000");
+            Send($"option name PawnNearPromotion type spin default {MoveOrderingConstants.PawnNearPromotion} min -10000 max 10000");
+            Send($"option name Capture type spin default {MoveOrderingConstants.Capture} min -10000 max 10000");
+            Send($"option name EnPassant type spin default {MoveOrderingConstants.EnPassant} min -10000 max 10000");
+            Send($"option name KillerMove type spin default {MoveOrderingConstants.KillerMove} min -10000 max 10000");
+            Send($"option name HistoryHeuristicMaxScore type spin default {MoveOrderingConstants.HistoryHeuristicMaxScore} min -10000 max 10000");
+            Send($"option name KillerSlots type spin default {MoveOrderingConstants.KillerSlots} min -10000 max 10000");
 
             Send($"option name IIDMinimalDepth type spin default {SearchConstants.IIDMinimalDepth} min 0 max 32");
             Send($"option name IIDDepthReduction type spin default {SearchConstants.IIDDepthReduction} min 0 max 32");
