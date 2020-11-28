@@ -6,20 +6,24 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class PawnOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, int color, Span<Move> moves, int offset)
+        public static int GetAvailableMoves(BoardState boardState, Span<Move> moves, int offset)
         {
-            offset = GetSinglePush(boardState, color, moves, offset);
-            offset = GetDoublePush(boardState, color, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
+            var color = boardState.ColorToMove;
+
+            offset = GetSinglePush(boardState, moves, offset);
+            offset = GetDoublePush(boardState, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
 
             return offset;
         }
 
-        public static int GetAvailableQMoves(BoardState boardState, int color, Span<Move> moves, int offset)
+        public static int GetAvailableCaptureMoves(BoardState boardState, Span<Move> moves, int offset)
         {
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
+            var color = boardState.ColorToMove;
+
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
 
             return offset;
         }
@@ -68,10 +72,11 @@ namespace Cosette.Engine.Board.Operators
             return false;
         }
 
-        private static int GetSinglePush(BoardState boardState, int color, Span<Move> moves, int offset)
+        private static int GetSinglePush(BoardState boardState, Span<Move> moves, int offset)
         {
             int shift;
             ulong promotionRank, pawns;
+            var color = boardState.ColorToMove;
 
             if (color == Color.White)
             {
@@ -112,10 +117,11 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        private static int GetDoublePush(BoardState boardState, int color, Span<Move> moves, int offset)
+        private static int GetDoublePush(BoardState boardState, Span<Move> moves, int offset)
         {
             int shift;
             ulong startRank, pawns;
+            var color = boardState.ColorToMove;
 
             if (color == Color.White)
             {
@@ -148,10 +154,11 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        private static int GetDiagonalAttacks(BoardState boardState, int color, int dir, ulong prohibitedFile, Span<Move> moves, int offset)
+        private static int GetDiagonalAttacks(BoardState boardState, int dir, ulong prohibitedFile, Span<Move> moves, int offset)
         {
             int shift;
             ulong promotionRank, enemyOccupancy, pawns;
+            var color = boardState.ColorToMove;
 
             if (color == Color.White)
             {

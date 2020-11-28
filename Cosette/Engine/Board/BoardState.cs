@@ -123,24 +123,24 @@ namespace Cosette.Engine.Board
 
         public int GetAvailableMoves(Span<Move> moves)
         {
-            var movesCount = PawnOperator.GetAvailableMoves(this, ColorToMove, moves, 0);
-            movesCount = KnightOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = BishopOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = RookOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = QueenOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = KingOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
+            var movesCount = PawnOperator.GetAvailableMoves(this, moves, 0);
+            movesCount = KnightOperator.GetAvailableMoves(this, moves, movesCount);
+            movesCount = BishopOperator.GetAvailableMoves(this, moves, movesCount);
+            movesCount = RookOperator.GetAvailableMoves(this, moves, movesCount);
+            movesCount = QueenOperator.GetAvailableMoves(this, moves, movesCount);
+            movesCount = KingOperator.GetAvailableMoves(this, moves, movesCount);
 
             return movesCount;
         }
 
-        public int GetAvailableQMoves(Span<Move> moves)
+        public int GetAvailableCaptureMoves(Span<Move> moves)
         {
-            var movesCount = PawnOperator.GetAvailableQMoves(this, ColorToMove, moves, 0);
-            movesCount = KnightOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = BishopOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = RookOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = QueenOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = KingOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
+            var movesCount = PawnOperator.GetAvailableCaptureMoves(this, moves, 0);
+            movesCount = KnightOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = BishopOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = RookOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = QueenOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = KingOperator.GetAvailableCaptureMoves(this, moves, movesCount);
 
             return movesCount;
         }

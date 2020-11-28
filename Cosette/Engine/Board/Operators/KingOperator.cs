@@ -6,8 +6,9 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class KingOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, int color, Span<Move> moves, int offset)
+        public static int GetAvailableMoves(BoardState boardState, Span<Move> moves, int offset)
         {
+            var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
             var piece = boardState.Pieces[color][Piece.King];
 
@@ -57,8 +58,9 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetAvailableQMoves(BoardState boardState, int color, Span<Move> moves, int offset)
+        public static int GetAvailableCaptureMoves(BoardState boardState, Span<Move> moves, int offset)
         {
+            var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
             var piece = boardState.Pieces[color][Piece.King];
 

@@ -65,7 +65,7 @@ namespace Cosette.Engine.Ai.Search
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
 
-            var movesCount = context.BoardState.GetAvailableQMoves(moves);
+            var movesCount = context.BoardState.GetAvailableCaptureMoves(moves);
             MoveOrdering.AssignQValues(context.BoardState, moves, moveValues, movesCount);
 
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
