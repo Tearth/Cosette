@@ -29,5 +29,6 @@
         public const ulong TopBottomEdge = ARank | HRank;
 
         public const int PhaseResolution = 1024;
+        public const int PromotionRanks = 3;
     }
 }

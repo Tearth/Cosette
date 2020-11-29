@@ -19,7 +19,7 @@ namespace Cosette.Engine.Ai.Ordering
                 else if (moves[moveIndex].IsQuiet())
                 {
                     var pieceType = board.PieceTable[moves[moveIndex].From];
-                    if (pieceType == Piece.Pawn && IsPawnNearPromotion(board.ColorToMove, moves[moveIndex].To))
+                    if (pieceType == Piece.Pawn && moves[moveIndex].IsPawnNearPromotion())
                     {
                         moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
                     }
@@ -104,17 +104,6 @@ namespace Cosette.Engine.Ai.Ordering
 
             (moves[maxIndex], moves[currentIndex]) = (moves[currentIndex], moves[maxIndex]);
             (moveValues[maxIndex], moveValues[currentIndex]) = (moveValues[currentIndex], moveValues[maxIndex]);
-        }
-
-
-        private static bool IsPawnNearPromotion(int color, byte to)
-        {
-            if (color == Color.White && to >= 40 || color == Color.Black && to <= 23)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }
