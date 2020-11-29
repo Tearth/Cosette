@@ -38,10 +38,13 @@ namespace Cosette.Engine.Ai.Search
                 return EvaluationConstants.ThreefoldRepetition;
             }
 
-            if (context.BoardState.IsInsufficientMaterial() && friendlyKingInCheckGenerated && !friendlyKingInCheck)
+            if (context.BoardState.IsInsufficientMaterial())
             {
-                context.Statistics.Leafs++;
-                return EvaluationConstants.InsufficientMaterial;
+                if (friendlyKingInCheckGenerated && !friendlyKingInCheck && !context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+                {
+                    context.Statistics.Leafs++;
+                    return EvaluationConstants.InsufficientMaterial;
+                }
             }
 
             if (context.BoardState.IsFiftyMoveRuleDraw())
