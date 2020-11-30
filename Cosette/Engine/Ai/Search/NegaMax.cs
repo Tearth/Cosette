@@ -1,7 +1,6 @@
 ﻿using System;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
-using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
@@ -11,7 +10,13 @@ namespace Cosette.Engine.Ai.Search
 {
     public static class NegaMax
     {
-        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool friendlyKingInCheck, bool friendlyKingInCheckGenerated)
+        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta)
+        {
+            var friendlyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+            return FindBestMove(context, depth, ply, alpha, beta, true, friendlyKingInCheck);
+        }
+
+        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool friendlyKingInCheck)
         {
             if (context.Statistics.Nodes >= context.MaxNodesCount)
             {
@@ -40,7 +45,7 @@ namespace Cosette.Engine.Ai.Search
 
             if (context.BoardState.IsInsufficientMaterial())
             {
-                if (friendlyKingInCheckGenerated && !friendlyKingInCheck && !context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+                if (!friendlyKingInCheck && !context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
                 {
                     context.Statistics.Leafs++;
                     return EvaluationConstants.InsufficientMaterial;
@@ -142,16 +147,11 @@ namespace Cosette.Engine.Ai.Search
                 context.Statistics.TTNonHits++;
             }
 #endif
-
-            if (!friendlyKingInCheckGenerated)
-            {
-                friendlyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
-            }
-
+            
             if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
-                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false, false, true);
+                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false, false);
                 context.BoardState.UndoNullMove();
 
                 if (score >= beta)
@@ -163,7 +163,7 @@ namespace Cosette.Engine.Ai.Search
             
             if (IIDCanBeApplied(depth, entry.Flags, bestMove))
             {
-                FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck, true);
+                FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck);
                 
                 var iidEntry = TranspositionTable.Get(context.BoardState.Hash);
                 if (iidEntry.IsKeyValid(context.BoardState.Hash))
@@ -213,7 +213,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (pvs)
                 {
-                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, true);
+                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
                     pvs = false;
                 }
                 else
@@ -225,10 +225,10 @@ namespace Cosette.Engine.Ai.Search
                         reducedDepth = LMRGetReducedDepth(depth, pvNode);
                     }
 
-                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck, true);
+                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, true);
+                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
                     }
                 }
 
