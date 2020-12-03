@@ -6,18 +6,18 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class MobilityEvaluator
     {
-        public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
+        public static int Evaluate(BoardState board, int openingPhase, int endingPhase, ref ulong fieldsAttackedByWhite, ref ulong fieldsAttackedByBlack)
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase) - 
-                   Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return Evaluate(board, Color.White, openingPhase, endingPhase, ref fieldsAttackedByWhite) - 
+                   Evaluate(board, Color.Black, openingPhase, endingPhase, ref fieldsAttackedByBlack);
         }
 
-        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
+        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase, ref ulong fieldsAttackedByColor)
         {
-            var mobility = KnightOperator.GetMobility(board, color) + 
-                           BishopOperator.GetMobility(board, color) +
-                           RookOperator.GetMobility(board, color) + 
-                           QueenOperator.GetMobility(board, color);
+            var mobility = KnightOperator.GetMobility(board, color, ref fieldsAttackedByColor) + 
+                           BishopOperator.GetMobility(board, color, ref fieldsAttackedByColor) +
+                           RookOperator.GetMobility(board, color, ref fieldsAttackedByColor) + 
+                           QueenOperator.GetMobility(board, color, ref fieldsAttackedByColor);
 
             var mobilityOpeningScore = mobility * EvaluationConstants.Mobility;
             return TaperedEvaluation.AdjustToPhase(mobilityOpeningScore, 0, openingPhase, endingPhase);

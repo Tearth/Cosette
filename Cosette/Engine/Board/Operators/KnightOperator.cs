@@ -62,7 +62,7 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetMobility(BoardState boardState, int color)
+        public static int GetMobility(BoardState boardState, int color, ref ulong fieldsAttackedByColor)
         {
             var centerMobility = 0;
             var extendedCenterMobility = 0;
@@ -81,6 +81,8 @@ namespace Cosette.Engine.Board.Operators
                 centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Center);
                 extendedCenterMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
                 outsideMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Outside);
+
+                fieldsAttackedByColor |= availableMoves;
             }
 
             return EvaluationConstants.CenterMobilityModifier * centerMobility +

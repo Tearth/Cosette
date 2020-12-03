@@ -185,12 +185,15 @@ namespace Cosette.Uci
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
+                var fieldsAttackedByWhite = 0ul;
+                var fieldsAttackedByBlack = 0ul;
+
                 var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
                 var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
-                var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
+                var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
                 var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 

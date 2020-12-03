@@ -18,10 +18,13 @@ namespace Cosette.Engine.Ai.Score
 
             if (endingPhase != BoardConstants.PhaseResolution)
             {
-                result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase);
+                var fieldsAttackedByWhite = 0ul;
+                var fieldsAttackedByBlack = 0ul;
+
+                result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
+                result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
                 result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += FianchettoEvaluator.Evaluate(board, openingPhase, endingPhase);
-                result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += PiecesEvaluator.Evaluate(board, openingPhase, endingPhase);
             }
 

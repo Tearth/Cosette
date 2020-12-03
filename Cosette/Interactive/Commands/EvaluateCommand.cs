@@ -26,12 +26,15 @@ namespace Cosette.Interactive.Commands
             var openingPhase = boardState.GetPhaseRatio();
             var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
+            var fieldsAttackedByWhite = 0ul;
+            var fieldsAttackedByBlack = 0ul;
+
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
             var castlingEvaluation = CastlingEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var positionEvaluation = PositionEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(boardState, evaluationStatistics, openingPhase, endingPhase);
-            var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
+            var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
             var pieces = PiecesEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 

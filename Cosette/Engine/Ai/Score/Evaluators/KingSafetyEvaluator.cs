@@ -6,37 +6,35 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class KingSafetyEvaluator
     {
-        public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
+        public static int Evaluate(BoardState board, int openingPhase, int endingPhase, ulong fieldsAttackedByWhite, ulong fieldsAttackedByBlack)
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase) - 
-                   Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return Evaluate(board, Color.White, openingPhase, endingPhase, fieldsAttackedByBlack) - 
+                   Evaluate(board, Color.Black, openingPhase, endingPhase, fieldsAttackedByWhite);
         }
 
-        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
+        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase, ulong fieldsAttackedByEnemy)
         {
             var king = board.Pieces[color][Piece.King];
             var kingField = BitOperations.BitScan(king);
             var fieldsAroundKing = BoxPatternGenerator.GetPattern(kingField);
 
             var attackersCount = 0;
-            var pawnShield = 0;
-
             var attackedFieldsToCheck = fieldsAroundKing;
+
             while (attackedFieldsToCheck != 0)
             {
                 var lsb = BitOperations.GetLsb(attackedFieldsToCheck);
                 var field = BitOperations.BitScan(lsb);
                 attackedFieldsToCheck = BitOperations.PopLsb(attackedFieldsToCheck);
 
-                var attackingPieces = board.IsFieldAttacked(color, (byte)field);
-                if (attackingPieces)
+                if (((1ul << field) & fieldsAttackedByEnemy) != 0)
                 {
                     attackersCount++;
                 }
             }
 
             var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
-            pawnShield = (int)BitOperations.Count(pawnsNearKing);
+            var pawnShield = (int)BitOperations.Count(pawnsNearKing);
 
             var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger;
             var attackersCountAdjusted = TaperedEvaluation.AdjustToPhase(attackersCountOpeningScore, 0, openingPhase, endingPhase);

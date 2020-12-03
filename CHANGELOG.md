@@ -20,6 +20,7 @@
  - Added internal iterative deepening
  - Added a lot of UCI options, allowing for full engine customization
  - Adjusted evaluation scores
+ - Optimized king safety evaluation
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
