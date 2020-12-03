@@ -18,20 +18,8 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var kingField = BitOperations.BitScan(king);
             var fieldsAroundKing = BoxPatternGenerator.GetPattern(kingField);
 
-            var attackersCount = 0;
-            var attackedFieldsToCheck = fieldsAroundKing;
-
-            while (attackedFieldsToCheck != 0)
-            {
-                var lsb = BitOperations.GetLsb(attackedFieldsToCheck);
-                var field = BitOperations.BitScan(lsb);
-                attackedFieldsToCheck = BitOperations.PopLsb(attackedFieldsToCheck);
-
-                if (((1ul << field) & fieldsAttackedByEnemy) != 0)
-                {
-                    attackersCount++;
-                }
-            }
+            var attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
+            var attackersCount = (int)BitOperations.Count(attackedFieldsAroundKing);
 
             var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
             var pawnShield = (int)BitOperations.Count(pawnsNearKing);
