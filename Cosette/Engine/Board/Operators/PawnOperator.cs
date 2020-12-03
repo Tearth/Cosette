@@ -33,39 +33,42 @@ namespace Cosette.Engine.Board.Operators
             var enemyColor = ColorOperations.Invert(boardState.ColorToMove);
             var toField = 1ul << move.To;
 
-            if (move.Flags == MoveFlags.Quiet || ((int)move.Flags & MoveFlagFields.Promotion) != 0 && ((int)move.Flags & MoveFlagFields.Capture) == 0)
+            if (((int)move.Flags & MoveFlagFields.Capture) == 0)
             {
-                if ((boardState.OccupancySummary & toField) == 0)
+                if (move.Flags == MoveFlags.Quiet || ((int)move.Flags & MoveFlagFields.Promotion) != 0)
                 {
-                    return true;
+                    if ((boardState.OccupancySummary & toField) == 0)
+                    {
+                        return true;
+                    }
+                }
+                else if (move.Flags == MoveFlags.DoublePush)
+                {
+                    var middleField = 1ul << ((move.From + move.To) / 2);
+                    if ((boardState.OccupancySummary & middleField) == 0 && (boardState.OccupancySummary & toField) == 0)
+                    {
+                        return true;
+                    }
                 }
             }
-
-            if (move.Flags == MoveFlags.DoublePush)
+            else
             {
-                var middleField = 1ul << ((move.From + move.To) / 2);
-                if ((boardState.OccupancySummary & middleField) == 0 && (boardState.OccupancySummary & toField) == 0)
+                if (move.Flags == MoveFlags.EnPassant)
                 {
-                    return true;
+                    if ((boardState.EnPassant & toField) != 0)
+                    {
+                        return true;
+                    }
                 }
-            }
-
-            if (move.Flags == MoveFlags.EnPassant)
-            {
-                if ((boardState.EnPassant & toField) != 0)
+                else
                 {
-                    return true;
-                }
-            }
+                    var difference = move.To - move.From;
+                    var colorDifference = -(boardState.ColorToMove * 2 - 1) * difference;
 
-            if (((int)move.Flags & MoveFlagFields.Capture) != 0)
-            {
-                var difference = move.To - move.From;
-                var colorDifference = -(boardState.ColorToMove * 2 - 1) * difference;
-
-                if ((boardState.Occupancy[enemyColor] & toField) != 0 && (colorDifference == 7 || colorDifference == 9))
-                {
-                    return true;
+                    if ((boardState.Occupancy[enemyColor] & toField) != 0 && (colorDifference == 7 || colorDifference == 9))
+                    {
+                        return true;
+                    }
                 }
             }
 
