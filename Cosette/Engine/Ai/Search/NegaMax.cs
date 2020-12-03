@@ -184,7 +184,7 @@ namespace Cosette.Engine.Ai.Search
             if (bestMove == Move.Empty)
             {
                 movesCount = context.BoardState.GetAvailableMoves(moves);
-                MoveOrdering.AssignValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
+                MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
                 movesGenerated = true;
             }
             else
@@ -194,9 +194,18 @@ namespace Cosette.Engine.Ai.Search
             }
 
             var pvs = true;
+            var quietValuesGenerated = false;
+
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
+
+                if (movesGenerated && !quietValuesGenerated && moveValues[moveIndex] < 100)
+                {
+                    MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
+                    MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
+                    quietValuesGenerated = true;
+                }
 
                 if (context.MoveRestrictions != null && ply == 0)
                 {
@@ -266,7 +275,7 @@ namespace Cosette.Engine.Ai.Search
                 if (!movesGenerated)
                 {
                     movesCount = context.BoardState.GetAvailableMoves(moves);
-                    MoveOrdering.AssignValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
+                    MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
                     MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, 0);
                     movesGenerated = true;
                 }

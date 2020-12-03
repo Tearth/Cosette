@@ -8,29 +8,15 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class MoveOrdering
     {
-        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
+        public static void AssignLoudValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
         {
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
+                var pieceType = board.PieceTable[moves[moveIndex].From];
+
                 if (hashOrPvMove == moves[moveIndex])
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.HashMove;
-                }
-                else if (moves[moveIndex].IsQuiet())
-                {
-                    var pieceType = board.PieceTable[moves[moveIndex].From];
-                    if (pieceType == Piece.Pawn && moves[moveIndex].IsPawnNearPromotion())
-                    {
-                        moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
-                    }
-                    else if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
-                    {
-                        moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
-                    }
-                    else
-                    {
-                        moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
-                    }
                 }
                 else if (moves[moveIndex].Flags == MoveFlags.EnPassant)
                 {
@@ -56,6 +42,32 @@ namespace Cosette.Engine.Ai.Ordering
                 else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
                 {
                     moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
+                }
+                else if (pieceType == Piece.Pawn && moves[moveIndex].IsPawnNearPromotion())
+                {
+                    moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
+                }
+                else
+                {
+                    moveValues[moveIndex] = 0;
+                }
+            }
+        }
+
+        public static void AssignQuietValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
+        {
+            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
+            {
+                if (moves[moveIndex].IsQuiet() && moveValues[moveIndex] == 0)
+                {
+                    if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
+                    {
+                        moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
+                    }
+                    else
+                    {
+                        moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
+                    }
                 }
             }
         }

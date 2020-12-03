@@ -21,6 +21,7 @@
  - Added a lot of UCI options, allowing for full engine customization
  - Adjusted evaluation scores
  - Optimized king safety evaluation
+ - Added multi-stage move ordering
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
