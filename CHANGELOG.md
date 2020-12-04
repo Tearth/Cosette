@@ -12,7 +12,7 @@
  - Added executable hash generator
  - Improved late move reduction conditions
  - Added legality checking of the hash table moves
- - Reduced size of transposition table entry (from 12 bytes to 10 bytes)
+ - Reduced size of transposition table entry (from 12 bytes to 8 bytes)
  - Improved SEE accuracy (now includes x-ray attacks)
  - Added SEE pruning in the quiescence search
  - Added fianchetto evaluation

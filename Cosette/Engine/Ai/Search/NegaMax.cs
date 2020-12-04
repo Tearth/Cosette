@@ -316,8 +316,12 @@ namespace Cosette.Engine.Ai.Search
                     valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
                 }
 
-                TranspositionTable.Add(context.BoardState.Hash, (byte)depth, (short)valueToSave, 
-                    (byte)context.TranspositionTableEntryAge, bestMove, entryType);
+                TranspositionTable.Add(context.BoardState.Hash, new TranspositionTableEntry(
+                    context.BoardState.Hash, 
+                    (short)valueToSave, bestMove, 
+                    (byte)depth, entryType, 
+                    (byte)context.TranspositionTableEntryAge)
+                );
 
 #if DEBUG
                 if (entry.Flags != TranspositionTableEntryFlags.Invalid)

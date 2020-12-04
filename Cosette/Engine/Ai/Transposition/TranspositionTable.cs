@@ -17,9 +17,9 @@ namespace Cosette.Engine.Ai.Transposition
             _table = new TranspositionTableEntry[_size];
         }
 
-        public static void Add(ulong hash, byte depth, short score, byte age, Move bestMove, TranspositionTableEntryFlags flags)
+        public static void Add(ulong hash, TranspositionTableEntry entry)
         {
-            _table[hash % _size] = new TranspositionTableEntry(hash, depth, score, age, bestMove, flags);
+            _table[hash % _size] = entry;
         }
 
         public static TranspositionTableEntry Get(ulong hash)
