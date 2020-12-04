@@ -25,10 +25,10 @@ namespace Cosette.Engine.Ai.Search
             var bestMove = Move.Empty;
             var stopwatch = Stopwatch.StartNew();
 
+            context.Statistics = new SearchStatistics();
+
             for (var depth = 1; ShouldContinueDeepening(context, depth, expectedExecutionTime); depth++)
             {
-                context.Statistics = new SearchStatistics();
-
                 context.Statistics.Board = context.BoardState;
                 context.Statistics.Depth = depth;
                 context.Statistics.Score = NegaMax.FindBestMove(context, depth, 0, alpha, beta);
