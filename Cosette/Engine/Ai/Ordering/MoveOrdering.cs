@@ -54,9 +54,9 @@ namespace Cosette.Engine.Ai.Ordering
             }
         }
 
-        public static void AssignQuietValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
+        public static void AssignQuietValues(BoardState board, Span<Move> moves, Span<short> moveValues, int startIndex, int movesCount, int depth)
         {
-            for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
+            for (var moveIndex = startIndex; moveIndex < movesCount; moveIndex++)
             {
                 if (moves[moveIndex].IsQuiet() && moveValues[moveIndex] == 0)
                 {

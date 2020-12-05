@@ -202,7 +202,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (movesGenerated && !quietValuesGenerated && moveValues[moveIndex] < 100)
                 {
-                    MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
+                    MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, moveIndex, movesCount, depth);
                     MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
                     quietValuesGenerated = true;
                 }
