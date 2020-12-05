@@ -22,6 +22,7 @@
  - Adjusted evaluation scores
  - Optimized king safety evaluation
  - Added multi-stage move ordering
+ - Improved king safety evaluation
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection

@@ -21,8 +21,8 @@
         public static int ExtendedCenterMobilityModifier = 2;
         public static int OutsideMobilityModifier = 1;
 
-        public static int KingInDanger = -20;
-        public static int PawnShield = 20;
+        public static int KingInDanger = -10;
+        public static int PawnShield = 15;
 
         public static int DoubledRooks = 40;
         public static int RookOnOpenFile = 20;
