@@ -182,7 +182,7 @@ namespace Cosette.Engine.Board
             _enPassants.Push(EnPassant);
             _irreversibleMovesCounts.Push(IrreversibleMovesCount);
 
-            if (pieceType == Piece.Pawn || ((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            if (pieceType == Piece.Pawn || move.IsCapture())
             {
                 IrreversibleMovesCount = 0;
             }
@@ -235,7 +235,7 @@ namespace Cosette.Engine.Board
 
                 _killedPieces.Push(killedPiece);
             }
-            else if (((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            else if (move.IsCapture())
             {
                 var killedPiece = PieceTable[move.To];
 
@@ -437,7 +437,7 @@ namespace Cosette.Engine.Board
                 MovePiece(ColorToMove, Piece.Pawn, move.To, move.From);
                 AddPiece(enemyColor, killedPiece, enemyPieceField);
             }
-            else if (((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            else if (move.IsCapture())
             {
                 var enemyColor = ColorOperations.Invert(ColorToMove);
                 var killedPiece = _killedPieces.Pop();

@@ -79,6 +79,11 @@ namespace Cosette.Engine.Moves
             return Flags == MoveFlags.Quiet || Flags == MoveFlags.DoublePush;
         }
 
+        public bool IsCapture()
+        {
+            return ((int)Flags & MoveFlagFields.Capture) != 0;
+        }
+
         public bool IsPawnNearPromotion()
         {
             var color = To - From > 0 ? Color.White : Color.Black;

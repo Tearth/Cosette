@@ -57,7 +57,7 @@ namespace Cosette.Engine.Perft
 
                 if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    if (((byte)moves[i].Flags & MoveFlagFields.Capture) != 0)
+                    if (moves[i].IsCapture())
                     {
                         result.Captures++;
                     }

@@ -22,7 +22,7 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
                 }
-                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Capture) != 0)
+                else if (moves[moveIndex].IsCapture())
                 {
                     var enemyColor = ColorOperations.Invert(board.ColorToMove);
 

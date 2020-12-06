@@ -33,7 +33,7 @@ namespace Cosette.Engine.Board.Operators
             var enemyColor = ColorOperations.Invert(boardState.ColorToMove);
             var toField = 1ul << move.To;
 
-            if (((int)move.Flags & MoveFlagFields.Capture) == 0)
+            if (!move.IsCapture())
             {
                 if (move.Flags == MoveFlags.Quiet || ((int)move.Flags & MoveFlagFields.Promotion) != 0)
                 {
