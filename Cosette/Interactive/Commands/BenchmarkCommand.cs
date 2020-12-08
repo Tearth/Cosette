@@ -122,7 +122,8 @@ namespace Cosette.Interactive.Commands
                                           $"Filled: {EvaluationHashTable.GetFillLevel():F} %");
 
             _interactiveConsole.WriteLine($"   Valid TT moves: {statistics.TTValidMoves}, Invalid TT moves: {statistics.TTInvalidMoves}, " +
-                                          $"IID hits: {statistics.IIDHits}");
+                                          $"IID hits: {statistics.IIDHits}, Loud generations: {statistics.LoudMovesGenerated}, " +
+                                          $"Quiet generations: {statistics.QuietMovesGenerated}");
 #endif
 
 
