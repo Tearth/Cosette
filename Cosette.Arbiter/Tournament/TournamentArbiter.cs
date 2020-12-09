@@ -36,10 +36,9 @@ namespace Cosette.Arbiter.Tournament
         public void Run()
         {
             _participants.ForEach(p => p.EngineOperator.Init());
-            for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount; gameIndex++)
+            for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount;)
             {
                 var openingBookMoves = _polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves);
-                var gameData = new GameData(openingBookMoves);
                 var (playerA, playerB) = _scheduler.GetPair(gameIndex);
 
                 if (playerA >= _participants.Count || playerB >= _participants.Count)
@@ -47,75 +46,79 @@ namespace Cosette.Arbiter.Tournament
                     continue;
                 }
 
-                var participantA = _participants[playerA];
-                var participantB = _participants[playerB];
+                var whitePlayer = _participants[playerA];
+                var blackPlayer = _participants[playerB];
 
-                var whitePlayer = DateTime.UtcNow.Ticks % 2 == 0 ? participantA : participantB;
-                var blackPlayer = whitePlayer == participantA ? participantB : participantA;
-                var (playerToMove, opponent) = (whitePlayer, blackPlayer);
-
-                Console.Clear();
-                WriteResults();
-                WriteTournamentStatistics();
-
-                Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name}), {openingBookMoves.Count} opening book moves:");
-                Console.Write("Moves: ");
-                Console.Write(string.Join(' ', gameData.HalfMovesDone));
-                Console.Write(" ");
-
-                participantA.EngineOperator.InitNewGame();
-                participantB.EngineOperator.InitNewGame();
-
-                var gameStopwatch = Stopwatch.StartNew();
-                while (true)
+                for (var i = 0; i < 2; i++)
                 {
-                    try
+                    var gameData = new GameData(openingBookMoves);
+                    var (playerToMove, opponent) = (whitePlayer, blackPlayer);
+
+                    Console.Clear();
+                    WriteResults();
+                    WriteTournamentStatistics();
+
+                    Console.WriteLine($"Game {gameIndex} ({whitePlayer.EngineData.Name} vs. {blackPlayer.EngineData.Name}), {openingBookMoves.Count} opening book moves:");
+                    Console.Write("Moves: ");
+                    Console.Write(string.Join(' ', gameData.HalfMovesDone));
+                    Console.Write(" ");
+
+                    whitePlayer.EngineOperator.InitNewGame();
+                    blackPlayer.EngineOperator.InitNewGame();
+
+                    var gameStopwatch = Stopwatch.StartNew();
+                    while (true)
                     {
-                        var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
-                        if (bestMoveData == null || bestMoveData.LastInfoData == null || bestMoveData.BestMove == "h1h1")
+                        try
                         {
-                            playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
-                            opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
-                            break;
-                        }
-
-                        playerToMove.Logs.Add(bestMoveData.LastInfoData);
-                        gameData.MakeMove(bestMoveData);
-
-                        Console.Write(bestMoveData.BestMove);
-                        Console.Write(" ");
-
-                        if (gameData.GameIsDone)
-                        {
-                            if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
-                            {
-                                playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Loss, true));
-                                opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Win, true));
-                            }
-                            else if (gameData.Winner == Color.None)
+                            var bestMoveData = playerToMove.EngineOperator.Go(gameData.HalfMovesDone, gameData.WhiteClock, gameData.BlackClock);
+                            if (bestMoveData == null || bestMoveData.LastInfoData == null || bestMoveData.BestMove == "h1h1")
                             {
                                 playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
                                 opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
+                                break;
                             }
-                            else
+
+                            playerToMove.Logs.Add(bestMoveData.LastInfoData);
+                            gameData.MakeMove(bestMoveData);
+
+                            Console.Write(bestMoveData.BestMove);
+                            Console.Write(" ");
+
+                            if (gameData.GameIsDone)
                             {
-                                playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Win));
-                                opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Loss));
+                                if (gameData.WhiteClock <= 0 || gameData.BlackClock <= 0)
+                                {
+                                    playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Loss, true));
+                                    opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Win, true));
+                                }
+                                else if (gameData.Winner == Color.None)
+                                {
+                                    playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Draw));
+                                    opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Draw));
+                                }
+                                else
+                                {
+                                    playerToMove.History.Add(new ArchivedGame(gameData, opponent, GameResult.Win));
+                                    opponent.History.Add(new ArchivedGame(gameData, playerToMove, GameResult.Loss));
+                                }
+
+                                break;
                             }
 
-                            break;
+                            (playerToMove, opponent) = (opponent, playerToMove);
                         }
+                        catch
+                        {
+                            whitePlayer.EngineOperator.Restart();
+                            blackPlayer.EngineOperator.Restart();
+                        }
+                    }
 
-                        (playerToMove, opponent) = (opponent, playerToMove);
-                    }
-                    catch
-                    {
-                        participantA.EngineOperator.Restart();
-                        participantB.EngineOperator.Restart();
-                    }
+                    _gamesDuration.Add(gameStopwatch.ElapsedMilliseconds);
+                    (whitePlayer, blackPlayer) = (blackPlayer, whitePlayer);
+                    gameIndex++;
                 }
-
-                _gamesDuration.Add(gameStopwatch.ElapsedMilliseconds);
             }
 
             Console.WriteLine();

@@ -18,7 +18,7 @@ namespace Cosette.Arbiter.Tournament
 
         public GameData(List<string> opening)
         {
-            HalfMovesDone = opening;
+            HalfMovesDone = new List<string>(opening);
             WhiteClock = SettingsLoader.Data.BaseTime;
             BlackClock = SettingsLoader.Data.BaseTime;
 
