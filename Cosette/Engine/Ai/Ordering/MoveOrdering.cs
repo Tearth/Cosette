@@ -22,6 +22,10 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
                 }
+                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
+                {
+                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
+                }
                 else if (moves[moveIndex].IsCapture())
                 {
                     var enemyColor = ColorOperations.Invert(board.ColorToMove);
@@ -38,10 +42,6 @@ namespace Cosette.Engine.Ai.Ordering
                 else if (moves[moveIndex].Flags == MoveFlags.KingCastle || moves[moveIndex].Flags == MoveFlags.QueenCastle)
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.Castling;
-                }
-                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
-                {
-                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
                 }
                 else if (pieceType == Piece.Pawn && moves[moveIndex].IsPawnNearPromotion())
                 {
