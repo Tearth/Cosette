@@ -58,7 +58,7 @@ namespace Cosette.Engine.Moves
             var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.Quiet;
 
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = board.GetAvailableMoves(moves);
+            var movesCount = board.GetAllMoves(moves);
 
             for (var i = 0; i < movesCount; i++)
             {
@@ -91,6 +91,20 @@ namespace Cosette.Engine.Moves
             var blackPromotionFields = 8 * BoardConstants.PromotionRanks - 1;
 
             if (color == Color.White && To >= whitePromotionFields || color == Color.Black && To <= blackPromotionFields)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsPawnNearPromotion(byte from, byte to)
+        {
+            var color = to - from > 0 ? Color.White : Color.Black;
+            var whitePromotionFields = 64 - 8 * BoardConstants.PromotionRanks;
+            var blackPromotionFields = 8 * BoardConstants.PromotionRanks - 1;
+
+            if (color == Color.White && to >= whitePromotionFields || color == Color.Black && to <= blackPromotionFields)
             {
                 return true;
             }

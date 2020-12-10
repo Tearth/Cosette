@@ -35,7 +35,7 @@ namespace Cosette.Engine.Perft
             }
 
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAllMoves(moves);
 
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)

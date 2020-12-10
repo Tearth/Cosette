@@ -71,10 +71,11 @@ namespace Cosette.Engine.Ai.Search
             }
 
             var originalAlpha = alpha;
-            var bestMove = Move.Empty;
             var pvNode = beta - alpha > 1;
 
             var entry = TranspositionTable.Get(context.BoardState.Hash);
+            var hashMove = Move.Empty;
+
             if (entry.Flags != TranspositionTableEntryFlags.Invalid && entry.IsKeyValid(context.BoardState.Hash))
             {
 #if DEBUG
@@ -85,7 +86,7 @@ namespace Cosette.Engine.Ai.Search
                     var isMoveLegal = context.BoardState.IsMoveLegal(entry.BestMove);
                     if (isMoveLegal)
                     {
-                        bestMove = entry.BestMove;
+                        hashMove = entry.BestMove;
 #if DEBUG
                         context.Statistics.TTValidMoves++;
 #endif
@@ -161,14 +162,14 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
             
-            if (IIDCanBeApplied(depth, entry.Flags, bestMove))
+            if (IIDCanBeApplied(depth, entry.Flags, hashMove))
             {
                 FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck);
                 
                 var iidEntry = TranspositionTable.Get(context.BoardState.Hash);
                 if (iidEntry.IsKeyValid(context.BoardState.Hash))
                 {
-                    bestMove = iidEntry.BestMove;
+                    hashMove = iidEntry.BestMove;
 
 #if DEBUG
                     context.Statistics.IIDHits++;
@@ -178,37 +179,61 @@ namespace Cosette.Engine.Ai.Search
             
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
+            var bestMove = Move.Empty;
             var movesCount = 0;
-            var movesGenerated = false;
 
-            if (bestMove == Move.Empty)
+            var loudMovesGenerated = false;
+            var quietMovesGenerated = false;
+
+            if (hashMove == Move.Empty)
             {
-                movesCount = context.BoardState.GetAvailableMoves(moves);
+                movesCount = context.BoardState.GetLoudMoves(moves, 0);
                 MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
-                movesGenerated = true;
+                loudMovesGenerated = true;
 
                 context.Statistics.LoudMovesGenerated++;
+
+                if (movesCount == 0)
+                {
+                    movesCount = context.BoardState.GetQuietMoves(moves, 0);
+                    MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, depth);
+                    quietMovesGenerated = true;
+
+                    context.Statistics.QuietMovesGenerated++;
+                }
             }
             else
             {
-                moves[0] = bestMove;
+                moves[0] = hashMove;
+                moveValues[0] = MoveOrderingConstants.HashMove;
                 movesCount = 1;
             }
 
             var pvs = true;
-            var quietValuesGenerated = false;
-
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
 
-                if (movesGenerated && !quietValuesGenerated && moveValues[moveIndex] < 100)
+                if (loudMovesGenerated && moves[moveIndex] == hashMove)
                 {
-                    MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, moveIndex, movesCount, depth);
+                    goto postLoopOperations;
+                }
+
+                if (loudMovesGenerated && !quietMovesGenerated && moveValues[moveIndex] < 100)
+                {
+                    var loudMovesCount = movesCount;
+
+                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount);
+                    MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, loudMovesCount, movesCount, depth);
                     MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
-                    quietValuesGenerated = true;
+                    quietMovesGenerated = true;
 
                     context.Statistics.QuietMovesGenerated++;
+
+                    if (moves[moveIndex] == hashMove)
+                    {
+                        goto postLoopOperations;
+                    }
                 }
 
                 if (context.MoveRestrictions != null && ply == 0)
@@ -220,7 +245,7 @@ namespace Cosette.Engine.Ai.Search
                 }
 
                 context.BoardState.MakeMove(moves[moveIndex]);
-
+                
                 var score = 0;
                 var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
 
@@ -276,14 +301,35 @@ namespace Cosette.Engine.Ai.Search
                     }
                 }
 
-                if (!movesGenerated)
+                postLoopOperations:
+                if (!loudMovesGenerated)
                 {
-                    movesCount = context.BoardState.GetAvailableMoves(moves);
+                    movesCount = context.BoardState.GetLoudMoves(moves, 0);
                     MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
-                    MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, 0);
-                    movesGenerated = true;
+                    moveIndex = -1;
+                    loudMovesGenerated = true;
 
                     context.Statistics.LoudMovesGenerated++;
+
+                    if (movesCount == 0)
+                    {
+                        movesCount = context.BoardState.GetQuietMoves(moves, 0);
+                        MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, depth);
+                        quietMovesGenerated = true;
+
+                        context.Statistics.QuietMovesGenerated++;
+                    }
+                }
+
+                if (!quietMovesGenerated && moveIndex == movesCount - 1)
+                {
+                    var loudMovesCount = movesCount;
+
+                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount);
+                    MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, loudMovesCount, movesCount, depth);
+                    quietMovesGenerated = true;
+
+                    context.Statistics.QuietMovesGenerated++;
                 }
             }
 

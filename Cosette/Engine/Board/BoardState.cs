@@ -121,16 +121,34 @@ namespace Cosette.Engine.Board
             _irreversibleMovesCounts.Clear();
         }
 
-        public int GetAvailableMoves(Span<Move> moves)
+        public int GetLoudMoves(Span<Move> moves, int offset)
         {
-            var movesCount = PawnOperator.GetAvailableMoves(this, moves, 0);
-            movesCount = KnightOperator.GetAvailableMoves(this, moves, movesCount);
-            movesCount = BishopOperator.GetAvailableMoves(this, moves, movesCount);
-            movesCount = RookOperator.GetAvailableMoves(this, moves, movesCount);
-            movesCount = QueenOperator.GetAvailableMoves(this, moves, movesCount);
-            movesCount = KingOperator.GetAvailableMoves(this, moves, movesCount);
+            var movesCount = PawnOperator.GetLoudMoves(this, moves, offset);
+            movesCount = KnightOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = BishopOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = RookOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = QueenOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = KingOperator.GetLoudMoves(this, moves, movesCount);
 
             return movesCount;
+        }
+
+        public int GetQuietMoves(Span<Move> moves, int offset)
+        {
+            var movesCount = PawnOperator.GetQuietMoves(this, moves, offset);
+            movesCount = KnightOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = BishopOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = RookOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = QueenOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = KingOperator.GetQuietMoves(this, moves, movesCount);
+
+            return movesCount;
+        }
+
+        public int GetAllMoves(Span<Move> moves)
+        {
+            var movesCount = GetLoudMoves(moves, 0);
+            return GetQuietMoves(moves, movesCount);
         }
 
         public int GetAvailableCaptureMoves(Span<Move> moves)

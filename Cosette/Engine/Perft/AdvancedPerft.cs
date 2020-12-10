@@ -23,7 +23,7 @@ namespace Cosette.Engine.Perft
         private static void Perft(BoardState boardState, int depth, AdvancedPerftResult result)
         {
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAllMoves(moves);
 
             if (depth <= 0)
             {

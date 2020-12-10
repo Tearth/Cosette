@@ -47,10 +47,6 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
                 }
-                else
-                {
-                    moveValues[moveIndex] = 0;
-                }
             }
         }
 
@@ -58,16 +54,13 @@ namespace Cosette.Engine.Ai.Ordering
         {
             for (var moveIndex = startIndex; moveIndex < movesCount; moveIndex++)
             {
-                if (moves[moveIndex].IsQuiet() && moveValues[moveIndex] == 0)
+                if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
                 {
-                    if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
-                    {
-                        moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
-                    }
-                    else
-                    {
-                        moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
-                    }
+                    moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
+                }
+                else
+                {
+                    moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
                 }
             }
         }

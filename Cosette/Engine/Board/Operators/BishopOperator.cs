@@ -7,7 +7,7 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class BishopOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
         {
             var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
@@ -19,7 +19,7 @@ namespace Cosette.Engine.Board.Operators
                 bishops = BitOperations.PopLsb(bishops);
 
                 var from = BitOperations.BitScan(piece);
-                var availableMoves = BishopMovesGenerator.GetMoves(boardState.OccupancySummary, from) & ~boardState.Occupancy[color];
+                var availableMoves = BishopMovesGenerator.GetMoves(boardState.OccupancySummary, from) & boardState.Occupancy[enemyColor];
 
                 while (availableMoves != 0)
                 {
@@ -27,8 +27,34 @@ namespace Cosette.Engine.Board.Operators
                     var fieldIndex = BitOperations.BitScan(field);
                     availableMoves = BitOperations.PopLsb(availableMoves);
 
-                    var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Capture : MoveFlags.Quiet;
-                    moves[offset++] = new Move(from, fieldIndex, flags);
+                    moves[offset++] = new Move(from, fieldIndex, MoveFlags.Capture);
+                }
+            }
+
+            return offset;
+        }
+
+        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset)
+        {
+            var color = boardState.ColorToMove;
+            var enemyColor = ColorOperations.Invert(color);
+            var bishops = boardState.Pieces[color][Piece.Bishop];
+
+            while (bishops != 0)
+            {
+                var piece = BitOperations.GetLsb(bishops);
+                bishops = BitOperations.PopLsb(bishops);
+
+                var from = BitOperations.BitScan(piece);
+                var availableMoves = BishopMovesGenerator.GetMoves(boardState.OccupancySummary, from) & ~boardState.OccupancySummary;
+
+                while (availableMoves != 0)
+                {
+                    var field = BitOperations.GetLsb(availableMoves);
+                    var fieldIndex = BitOperations.BitScan(field);
+                    availableMoves = BitOperations.PopLsb(availableMoves);
+
+                    moves[offset++] = new Move(from, fieldIndex, MoveFlags.Quiet);
                 }
             }
 

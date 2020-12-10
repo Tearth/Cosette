@@ -6,7 +6,7 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class KingOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
         {
             var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
@@ -18,7 +18,7 @@ namespace Cosette.Engine.Board.Operators
             }
 
             var from = BitOperations.BitScan(piece);
-            var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.Occupancy[color];
+            var availableMoves = KingMovesGenerator.GetMoves(from) & boardState.Occupancy[enemyColor];
 
             while (availableMoves != 0)
             {
@@ -26,8 +26,7 @@ namespace Cosette.Engine.Board.Operators
                 var fieldIndex = BitOperations.BitScan(field);
                 availableMoves = BitOperations.PopLsb(availableMoves);
 
-                var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Capture : MoveFlags.Quiet;
-                moves[offset++] = new Move(from, fieldIndex, flags);
+                moves[offset++] = new Move(from, fieldIndex, MoveFlags.Capture);
             }
 
             if (color == Color.White)
@@ -53,6 +52,32 @@ namespace Cosette.Engine.Board.Operators
                 {
                     moves[offset++] = new Move(59, 61, MoveFlags.QueenCastle);
                 }
+            }
+
+            return offset;
+        }
+
+        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset)
+        {
+            var color = boardState.ColorToMove;
+            var enemyColor = ColorOperations.Invert(color);
+            var piece = boardState.Pieces[color][Piece.King];
+
+            if (piece == 0)
+            {
+                return offset;
+            }
+
+            var from = BitOperations.BitScan(piece);
+            var availableMoves = KingMovesGenerator.GetMoves(from) & ~boardState.OccupancySummary;
+
+            while (availableMoves != 0)
+            {
+                var field = BitOperations.GetLsb(availableMoves);
+                var fieldIndex = BitOperations.BitScan(field);
+                availableMoves = BitOperations.PopLsb(availableMoves);
+
+                moves[offset++] = new Move(from, fieldIndex, MoveFlags.Quiet);
             }
 
             return offset;

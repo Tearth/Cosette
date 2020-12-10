@@ -6,14 +6,21 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class PawnOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
         {
             var color = boardState.ColorToMove;
 
-            offset = GetSinglePush(boardState, moves, offset);
-            offset = GetDoublePush(boardState, moves, offset);
+            offset = GetSinglePush(boardState, moves, offset, true);
             offset = GetDiagonalAttacks(boardState, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
             offset = GetDiagonalAttacks(boardState, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
+
+            return offset;
+        }
+
+        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset)
+        {
+            offset = GetSinglePush(boardState, moves, offset, false);
+            offset = GetDoublePush(boardState, moves, offset);
 
             return offset;
         }
@@ -75,7 +82,7 @@ namespace Cosette.Engine.Board.Operators
             return false;
         }
 
-        private static int GetSinglePush(BoardState boardState, Span<Move> moves, int offset)
+        private static int GetSinglePush(BoardState boardState, Span<Move> moves, int offset, bool promotionsMode)
         {
             int shift;
             ulong promotionRank, pawns;
@@ -104,16 +111,29 @@ namespace Cosette.Engine.Board.Operators
                 var from = BitOperations.BitScan(piece) - shift;
                 var to = BitOperations.BitScan(piece);
 
-                if ((piece & promotionRank) != 0)
+                if (promotionsMode)
                 {
-                    moves[offset++] = new Move(from, to, MoveFlags.QueenPromotion);
-                    moves[offset++] = new Move(from, to, MoveFlags.RookPromotion);
-                    moves[offset++] = new Move(from, to, MoveFlags.KnightPromotion);
-                    moves[offset++] = new Move(from, to, MoveFlags.BishopPromotion);
+                    if ((piece & promotionRank) != 0)
+                    {
+                        moves[offset++] = new Move(from, to, MoveFlags.QueenPromotion);
+                        moves[offset++] = new Move(from, to, MoveFlags.RookPromotion);
+                        moves[offset++] = new Move(from, to, MoveFlags.KnightPromotion);
+                        moves[offset++] = new Move(from, to, MoveFlags.BishopPromotion);
+                    }
+                    else
+                    {
+                        if (Move.IsPawnNearPromotion((byte)from, (byte)to))
+                        {
+                            moves[offset++] = new Move(from, to, 0);
+                        }
+                    }
                 }
                 else
                 {
-                    moves[offset++] = new Move(from, to, 0);
+                    if ((piece & promotionRank) == 0 && !Move.IsPawnNearPromotion((byte)from, (byte)to))
+                    {
+                        moves[offset++] = new Move(from, to, 0);
+                    }
                 }
             }
 

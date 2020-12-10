@@ -7,7 +7,7 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class KnightOperator
     {
-        public static int GetAvailableMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
         {
             var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
@@ -19,7 +19,7 @@ namespace Cosette.Engine.Board.Operators
                 knights = BitOperations.PopLsb(knights);
 
                 var from = BitOperations.BitScan(piece);
-                var availableMoves = KnightMovesGenerator.GetMoves(from) & ~boardState.Occupancy[color];
+                var availableMoves = KnightMovesGenerator.GetMoves(from) & boardState.Occupancy[enemyColor];
 
                 while (availableMoves != 0)
                 {
@@ -27,8 +27,34 @@ namespace Cosette.Engine.Board.Operators
                     var fieldIndex = BitOperations.BitScan(field);
                     availableMoves = BitOperations.PopLsb(availableMoves);
 
-                    var flags = (field & boardState.Occupancy[enemyColor]) != 0 ? MoveFlags.Capture : MoveFlags.Quiet;
-                    moves[offset++] = new Move(from, fieldIndex, flags);
+                    moves[offset++] = new Move(from, fieldIndex, MoveFlags.Capture);
+                }
+            }
+
+            return offset;
+        }
+
+        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset)
+        {
+            var color = boardState.ColorToMove;
+            var enemyColor = ColorOperations.Invert(color);
+            var knights = boardState.Pieces[color][Piece.Knight];
+
+            while (knights != 0)
+            {
+                var piece = BitOperations.GetLsb(knights);
+                knights = BitOperations.PopLsb(knights);
+
+                var from = BitOperations.BitScan(piece);
+                var availableMoves = KnightMovesGenerator.GetMoves(from) & ~boardState.OccupancySummary;
+
+                while (availableMoves != 0)
+                {
+                    var field = BitOperations.GetLsb(availableMoves);
+                    var fieldIndex = BitOperations.BitScan(field);
+                    availableMoves = BitOperations.PopLsb(availableMoves);
+
+                    moves[offset++] = new Move(from, fieldIndex, MoveFlags.Quiet);
                 }
             }
 
