@@ -12,8 +12,6 @@ namespace Cosette.Engine.Ai.Ordering
         {
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
-                var pieceType = board.PieceTable[moves[moveIndex].From];
-
                 if (hashOrPvMove == moves[moveIndex])
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.HashMove;
@@ -43,7 +41,7 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.Castling;
                 }
-                else if (pieceType == Piece.Pawn && moves[moveIndex].IsPawnNearPromotion())
+                else
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
                 }

@@ -93,6 +93,16 @@ namespace Cosette.Engine.Board.Operators
                 shift = 8;
                 promotionRank = BoardConstants.HRank;
                 pawns = boardState.Pieces[Color.White][Piece.Pawn];
+
+                if (promotionsMode)
+                {
+                    pawns &= BoardConstants.NearPromotionAreaWhite;
+                }
+                else
+                {
+                    pawns &= ~BoardConstants.NearPromotionAreaWhite;
+                }
+
                 pawns = (pawns << 8) & ~boardState.OccupancySummary;
             }
             else
@@ -100,6 +110,16 @@ namespace Cosette.Engine.Board.Operators
                 shift = -8;
                 promotionRank = BoardConstants.ARank;
                 pawns = boardState.Pieces[Color.Black][Piece.Pawn];
+
+                if (promotionsMode)
+                {
+                    pawns &= BoardConstants.NearPromotionAreaBlack;
+                }
+                else
+                {
+                    pawns &= ~BoardConstants.NearPromotionAreaBlack;
+                }
+
                 pawns = (pawns >> 8) & ~boardState.OccupancySummary;
             }
 
@@ -122,18 +142,12 @@ namespace Cosette.Engine.Board.Operators
                     }
                     else
                     {
-                        if (Move.IsPawnNearPromotion((byte)from, (byte)to))
-                        {
-                            moves[offset++] = new Move(from, to, 0);
-                        }
+                        moves[offset++] = new Move(from, to, 0);
                     }
                 }
                 else
                 {
-                    if ((piece & promotionRank) == 0 && !Move.IsPawnNearPromotion((byte)from, (byte)to))
-                    {
-                        moves[offset++] = new Move(from, to, 0);
-                    }
+                    moves[offset++] = new Move(from, to, 0);
                 }
             }
 
