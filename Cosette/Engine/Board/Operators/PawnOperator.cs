@@ -131,19 +131,13 @@ namespace Cosette.Engine.Board.Operators
                 var from = BitOperations.BitScan(piece) - shift;
                 var to = BitOperations.BitScan(piece);
 
-                if (promotionsMode)
+                if (promotionsMode && (piece & promotionRank) != 0)
                 {
-                    if ((piece & promotionRank) != 0)
-                    {
-                        moves[offset++] = new Move(from, to, MoveFlags.QueenPromotion);
-                        moves[offset++] = new Move(from, to, MoveFlags.RookPromotion);
-                        moves[offset++] = new Move(from, to, MoveFlags.KnightPromotion);
-                        moves[offset++] = new Move(from, to, MoveFlags.BishopPromotion);
-                    }
-                    else
-                    {
-                        moves[offset++] = new Move(from, to, 0);
-                    }
+                    moves[offset++] = new Move(from, to, MoveFlags.QueenPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.RookPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.KnightPromotion);
+                    moves[offset++] = new Move(from, to, MoveFlags.BishopPromotion);
+                    
                 }
                 else
                 {
