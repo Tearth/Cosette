@@ -39,10 +39,11 @@ namespace Cosette.Arbiter.Tournament
             for (var gameIndex = 0; gameIndex < SettingsLoader.Data.GamesCount;)
             {
                 var openingBookMoves = _polyglotBook.GetRandomOpening(SettingsLoader.Data.PolyglotMaxMoves);
-                var (playerA, playerB) = _scheduler.GetPair(gameIndex);
+                var (playerA, playerB) = _scheduler.GetPair(gameIndex / 2);
 
                 if (playerA >= _participants.Count || playerB >= _participants.Count)
                 {
+                    gameIndex++;
                     continue;
                 }
 
