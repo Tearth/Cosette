@@ -1,9 +1,7 @@
 # Cosette
-**Current version: v2.0 (Darkness), 19.10.2020**
+**Current version: v3.0 (Darkness), 12.12.2020**
 
-A brand new UCI-compliant chess engine written in C# for .NET Core platform. The project is still in the early stage of development and lacks a few major performance improvements like more advanced pruning, extensions, or better evaluation. The current strength is estimated at 1950 ELO and hopefully will significantly improve in the future.
-
-The engine has **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/compare_engines.cgi?family=Cosette&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)** (Computer Chess Rating Lists) where you can check the best strength estimation. Also, feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
+An UCI-compliant chess engine written in C# for .NET Core platform, with **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/compare_engines.cgi?family=Cosette&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)** (Computer Chess Rating Lists) where you can check the best strength estimation. Feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
 
 ![Cosette interactive console example](https://i.imgur.com/hIcaAmz.png)
 
@@ -31,6 +29,7 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - doubled rooks
  - rooks on open files
  - bishop pair
+ - fianchetto
  - tapering
 
 **Search:**
@@ -38,12 +37,16 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - alpha-beta pruning
  - transposition table
  - quiescence search
+ - quiescence SEE pruning
  - iterative deepening
+ - internal iterative deepening
+ - staged move generating
  - null-move pruning
  - principal variation search
  - late move reduction
 
 **Move ordering:**
+ - staged move ordering
  - static exchange evaluation
  - killer heuristic
  - history heuristic

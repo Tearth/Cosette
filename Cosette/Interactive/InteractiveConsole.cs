@@ -118,11 +118,11 @@ namespace Cosette.Interactive
             var runtimeVersion = $"{Environment.Version.Major}.{Environment.Version.Minor}.{Environment.Version.Build}";
             var executableHash = GetExecutableHash();
 
-            Console.WriteLine($"Cosette v2.0 (Darkness), 19.10.2020 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
+            Console.WriteLine($"Cosette v3.0 (Luna), 12.12.2020 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
             Console.WriteLine("Distributed under AGPL license, homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine($"Executable hash: {executableHash}");
             Console.WriteLine();
-            Console.WriteLine("\"The blunders are all there on the board, waiting to be made.\" ~ Savielly Tartakower");
+            Console.WriteLine("\"When you see a good move, look for a better one.\" ~ Emanuel Lasker");
             Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
         }
