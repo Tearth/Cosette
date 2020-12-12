@@ -1,0 +1,220 @@
+﻿@model Cosette.Tuner.Web.ViewModels.MainViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex" id="wrapper">
+    <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="sidebar-heading">Cosette Tuner Web</div>
+        <div class="list-group list-group-flush">
+            @for (var i = Model.Tests.Count - 1; i >= 0; i--)
+            {
+                @Html.ActionLink($"[{Model.Tests[i].Id}] { Model.Tests[i].CreationTimeUtc }", "Index", "Home", 
+                    new { id = Model.Tests[i].Id }, new { @class = "list-group-item list-group-item-action bg-light" })
+            }
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <h4 class="navbar-nav ml-auto mt-2 mt-lg-0">Test @Model.LastTest?.Id (@Model.LastTest?.CreationTimeUtc)</h4>
+            </div>
+        </nav>
+        
+        <div>
+            <div class="row container-fluid">
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <canvas id="generation-fitness-canvas"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <canvas id="chromosome-fitness-canvas"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <canvas id="average-elapsed-time-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="row container-fluid">
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <canvas id="average-depth-canvas"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <canvas id="average-nodes-count-canvas"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <canvas id="average-time-per-game-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="all-generations-tab" data-toggle="tab" href="#all-generations" role="tab" aria-controls="all-generations" aria-selected="true">All generations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="best-generations-tab" data-toggle="tab" href="#best-generations" role="tab" aria-controls="best-generations" aria-selected="false">Best generations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="all-chromosomes-tab" data-toggle="tab" href="#all-chromosomes" role="tab" aria-controls="all-chromosomes" aria-selected="false">All chromosomes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="best-chromosomes-tab" data-toggle="tab" href="#best-chromosomes" role="tab" aria-controls="best-chromosomes" aria-selected="false">Best chromosomes</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="all-generations" role="tabpanel" aria-labelledby="all-generations-tab">
+                            <div class="container-fluid">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Creation time UTC</th>
+                                            <th>Elapsed time</th>
+                                            <th>Fitness</th>
+                                            <th>Genes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var i = Model.AllGenerations.Count - 1; i >= 0; i--)
+                                        {
+                                            <tr>
+                                                <th>@Model.AllGenerations[i].Id</th>
+                                                <td>@Model.AllGenerations[i].CreationTimeUtc</td>
+                                                <td>@Model.AllGenerations[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.AllGenerations[i].BestFitness</td>
+                                                <td>
+                                                    @string.Join(", ", Model.AllGenerations[i].BestGenes.Select(p => $"{p.Name}={p.Value}"))
+                                                </td>
+                                            </tr>
+                                        }
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="best-generations" role="tabpanel" aria-labelledby="best-generations-tab">
+                            <div class="container-fluid">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Creation time UTC</th>
+                                        <th>Elapsed time</th>
+                                        <th>Fitness</th>
+                                        <th>Genes</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var i = 0; i < Model.BestGenerations.Count; i++)
+                                        {
+                                            <tr>
+                                                <th>@Model.BestGenerations[i].Id</th>
+                                                <td>@Model.BestGenerations[i].CreationTimeUtc</td>
+                                                <td>@Model.BestGenerations[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.BestGenerations[i].BestFitness</td>
+                                                <td>
+                                                    @string.Join(", ", Model.BestGenerations[i].BestGenes.Select(p => $"{p.Name}={p.Value}"))
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="best-chromosomes" role="tabpanel" aria-labelledby="best-chromosomes-tab">
+                            <div class="container-fluid">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Creation time UTC</th>
+                                            <th>Elapsed time</th>
+                                            <th>Fitness</th>
+                                            <th>EE wins</th>
+                                            <th>EE losses</th>
+                                            <th>EE draws</th>
+                                            <th>Genes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var i = 0; i < Model.BestChromosomes.Count; i++)
+                                        {
+                                            <tr>
+                                                <th>@Model.BestChromosomes[i].Id</th>
+                                                <td>@Model.BestChromosomes[i].CreationTimeUtc</td>
+                                                <td>@Model.BestChromosomes[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.BestChromosomes[i].Fitness</td>
+                                                <td>@Model.BestChromosomes[i].ExperimentalEngineWins</td>
+                                                <td>@Model.BestChromosomes[i].ReferenceEngineWins</td>
+                                                <td>@Model.BestChromosomes[i].Draws</td>
+                                                <td>
+                                                    @string.Join(", ", Model.BestChromosomes[i].Genes.Select(p => $"{p.Name}={p.Value}"))
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="all-chromosomes" role="tabpanel" aria-labelledby="all-chromosomes-tab">
+                            <div class="container-fluid">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Creation time UTC</th>
+                                        <th>Elapsed time</th>
+                                        <th>Fitness</th>
+                                        <th>EE wins</th>
+                                        <th>EE losses</th>
+                                        <th>EE draws</th>
+                                        <th>Genes</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var i = Model.AllChromosomes.Count - 1; i >= 0; i--)
+                                        {
+                                            <tr>
+                                                <th>@Model.AllChromosomes[i].Id</th>
+                                                <td>@Model.AllChromosomes[i].CreationTimeUtc</td>
+                                                <td>@Model.AllChromosomes[i].ElapsedTime.ToString("F1")</td>
+                                                <td>@Model.AllChromosomes[i].Fitness</td>
+                                                <td>@Model.AllChromosomes[i].ExperimentalEngineWins</td>
+                                                <td>@Model.AllChromosomes[i].ReferenceEngineWins</td>
+                                                <td>@Model.AllChromosomes[i].Draws</td>
+                                                <td>
+                                                    @string.Join(", ", Model.AllChromosomes[i].Genes.Select(p => $"{p.Name}={p.Value}"))
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.generationFitnessChartData = @Html.Raw(Model.GenerationFitnessChartJson);
+    window.chromosomeFitnessChartData = @Html.Raw(Model.ChromosomeFitnessChartJson);
+    window.averageElapsedTimeChartData = @Html.Raw(Model.AverageElapsedTimeChartJson);
+    window.averageDepthChartData = @Html.Raw(Model.AverageDepthChartJson);
+    window.averageNodesChartData = @Html.Raw(Model.AverageNodesChartJson);
+    window.averageTimePerGameChartData = @Html.Raw(Model.AverageTimePerGameChartJson);
+</script>

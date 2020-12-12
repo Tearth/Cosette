@@ -13,8 +13,8 @@ namespace Cosette.Engine.Fen
             var colorState = split[1];
             var castlingState = split[2];
             var enPassantState = split[3];
-            var halfmoveClock = int.Parse(split[4]);
-            var movesCount = int.Parse(split[5]);
+            var halfmoveClock = split.Length > 4 ? int.Parse(split[4]) : 0;
+            var movesCount = split.Length > 5 ? int.Parse(split[5]) : 0;
 
             var result = new BoardState();
             var currentColor = ParseCurrentColor(colorState);
@@ -30,6 +30,9 @@ namespace Cosette.Engine.Fen
             result.Position[Color.White][GamePhase.Ending] = result.CalculatePosition(Color.White, GamePhase.Ending);
             result.Position[Color.Black][GamePhase.Opening] = result.CalculatePosition(Color.Black, GamePhase.Opening);
             result.Position[Color.Black][GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
+
+            result.CalculatePieceTable(result.PieceTable);
+            result.MaterialAtOpening = result.CalculateMaterialAtOpening();
 
             result.MovesCount = movesCount;
             result.IrreversibleMovesCount = halfmoveClock;

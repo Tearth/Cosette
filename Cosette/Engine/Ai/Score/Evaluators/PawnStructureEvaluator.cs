@@ -38,7 +38,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
         }
 
-        public static int Evaluate(BoardState board, EvaluationStatistics statistics, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, EvaluationStatistics statistics, int openingPhase, int endingPhase)
         {
             var entry = PawnHashTable.Get(board.PawnHash);
             if (entry.IsKeyValid(board.PawnHash))
@@ -71,7 +71,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             return result;
         }
 
-        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
         {
             var doubledPawns = 0;
             var isolatedPawns = 0;
@@ -120,19 +120,23 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
-            var doubledPawnsScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening] * openingPhase +
-                                    doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Ending] * endingPhase;
+            var doubledPawnsOpeningScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening];
+            var doubledPawnsEndingScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Ending];
+            var doubledPawnsAdjusted = TaperedEvaluation.AdjustToPhase(doubledPawnsOpeningScore, doubledPawnsEndingScore, openingPhase, endingPhase);
 
-            var isolatedPawnsScore = isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Opening] * openingPhase +
-                                     isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Ending] * endingPhase;
+            var isolatedPawnsOpeningScore = isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Opening];
+            var isolatedPawnsEndingScore = isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Ending];
+            var isolatedPawnsAdjusted = TaperedEvaluation.AdjustToPhase(isolatedPawnsOpeningScore, isolatedPawnsEndingScore, openingPhase, endingPhase);
 
-            var chainedPawnsScore = chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Opening] * openingPhase +
-                                    chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Ending] * endingPhase;
+            var chainedPawnsOpeningScore = chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Opening];
+            var chainedPawnsEndingScore = chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Ending];
+            var chainedPawnsAdjusted = TaperedEvaluation.AdjustToPhase(chainedPawnsOpeningScore, chainedPawnsEndingScore, openingPhase, endingPhase);
 
-            var passingPawnsScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Opening] * openingPhase +
-                                    passingPawns * EvaluationConstants.PassingPawns[GamePhase.Ending] * endingPhase;
+            var passingPawnsOpeningScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Opening];
+            var passingPawnsEndingScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Ending];
+            var passingPawnsAdjusted = TaperedEvaluation.AdjustToPhase(passingPawnsOpeningScore, passingPawnsEndingScore, openingPhase, endingPhase);
 
-            return (int)(doubledPawnsScore + isolatedPawnsScore + chainedPawnsScore + passingPawnsScore);
+            return doubledPawnsAdjusted + isolatedPawnsAdjusted + chainedPawnsAdjusted + passingPawnsAdjusted;
         }
     }
 }

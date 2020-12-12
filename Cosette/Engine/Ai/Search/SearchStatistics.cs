@@ -38,6 +38,8 @@ namespace Cosette.Engine.Ai.Search
         public ulong TTReplacements { get; set; }
         public ulong TTHits { get; set; }
         public ulong TTNonHits { get; set; }
+        public ulong TTInvalidMoves { get; set; }
+        public ulong TTValidMoves { get; set; }
         public float TTHitsPercent => (float) TTHits * 100 / (TTHits + TTNonHits);
         public float TTReplacesPercent => (float) TTReplacements * 100 / TTAddedEntries;
 
@@ -51,6 +53,10 @@ namespace Cosette.Engine.Ai.Search
 
         public float BetaCutoffsAtFirstMovePercent => (float) BetaCutoffsAtFirstMove * 100 / (BetaCutoffsAtFirstMove + BetaCutoffsNotAtFirstMove);
         public float QBetaCutoffsAtFirstMovePercent => (float) QBetaCutoffsAtFirstMove * 100 / (QBetaCutoffsAtFirstMove + QBetaCutoffsNotAtFirstMove);
+
+        public int IIDHits { get; set; }
+        public int LoudMovesGenerated { get; set; }
+        public int QuietMovesGenerated { get; set; }
 
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }

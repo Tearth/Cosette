@@ -120,6 +120,10 @@ namespace Cosette.Interactive.Commands
                                           $"Hits: {statistics.EvaluationStatistics.EHTHits} ({statistics.EvaluationStatistics.EHTHitsPercent:F} %), " +
                                           $"Missed: {statistics.EvaluationStatistics.EHTNonHits}, " +
                                           $"Filled: {EvaluationHashTable.GetFillLevel():F} %");
+
+            _interactiveConsole.WriteLine($"   Valid TT moves: {statistics.TTValidMoves}, Invalid TT moves: {statistics.TTInvalidMoves}, " +
+                                          $"IID hits: {statistics.IIDHits}, Loud generations: {statistics.LoudMovesGenerated}, " +
+                                          $"Quiet generations: {statistics.QuietMovesGenerated}");
 #endif
 
 

@@ -12,7 +12,7 @@ namespace Cosette.Engine.Perft
         public static DividedPerftResult Run(BoardState boardState, int depth)
         {
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAllMoves(moves);
 
             var result = new DividedPerftResult();
             if (depth <= 0)
@@ -44,7 +44,7 @@ namespace Cosette.Engine.Perft
             }
 
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAllMoves(moves);
 
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)

@@ -65,12 +65,17 @@ namespace Cosette.Engine.Ai.Search
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
 
-            var movesCount = context.BoardState.GetAvailableQMoves(moves);
+            var movesCount = context.BoardState.GetAvailableCaptureMoves(moves);
             MoveOrdering.AssignQValues(context.BoardState, moves, moveValues, movesCount);
 
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
+
+                if (moveValues[moveIndex] < -50)
+                {
+                    break;
+                }
 
                 context.BoardState.MakeMove(moves[moveIndex]);
                 var score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha);

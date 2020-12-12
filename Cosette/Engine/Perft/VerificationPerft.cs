@@ -26,6 +26,7 @@ namespace Cosette.Engine.Perft
             if (!VerifyBoard(boardState))
             {
                 verificationSuccess = false;
+                return 0;
             }
 
             if (depth <= 0)
@@ -34,7 +35,7 @@ namespace Cosette.Engine.Perft
             }
 
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAllMoves(moves);
 
             ulong nodes = 0;
             for (var i = 0; i < movesCount; i++)
@@ -77,6 +78,17 @@ namespace Cosette.Engine.Perft
                 board.Position[Color.Black][GamePhase.Ending] != board.CalculatePosition(Color.Black, GamePhase.Ending))
             {
                 return false;
+            }
+
+            var pieceTable = new int[64];
+            board.CalculatePieceTable(pieceTable);
+
+            for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
+            {
+                if (board.PieceTable[fieldIndex] != pieceTable[fieldIndex])
+                {
+                    return false;
+                }
             }
 
             return true;

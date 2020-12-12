@@ -8,7 +8,7 @@ namespace Cosette.Engine.Ai.Ordering
 {
     public static class MoveOrdering
     {
-        public static void AssignValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
+        public static void AssignLoudValues(BoardState board, Span<Move> moves, Span<short> moveValues, int movesCount, int depth, Move hashOrPvMove)
         {
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
@@ -16,27 +16,15 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.HashMove;
                 }
-                else if (moves[moveIndex].IsQuiet())
-                {
-                    var pieceType = board.PieceTable[moves[moveIndex].From];
-                    if (pieceType == Piece.Pawn && IsPawnNearPromotion(board.ColorToMove, moves[moveIndex].To))
-                    {
-                        moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
-                    }
-                    else if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
-                    {
-                        moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
-                    }
-                    else
-                    {
-                        moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
-                    }
-                }
                 else if (moves[moveIndex].Flags == MoveFlags.EnPassant)
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.EnPassant;
                 }
-                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Capture) != 0)
+                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
+                {
+                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
+                }
+                else if (moves[moveIndex].IsCapture())
                 {
                     var enemyColor = ColorOperations.Invert(board.ColorToMove);
 
@@ -53,9 +41,24 @@ namespace Cosette.Engine.Ai.Ordering
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.Castling;
                 }
-                else if (((byte)moves[moveIndex].Flags & MoveFlagFields.Promotion) != 0)
+                else
                 {
-                    moveValues[moveIndex] = (short)(MoveOrderingConstants.Promotion + (int)moves[moveIndex].Flags);
+                    moveValues[moveIndex] = MoveOrderingConstants.PawnNearPromotion;
+                }
+            }
+        }
+
+        public static void AssignQuietValues(BoardState board, Span<Move> moves, Span<short> moveValues, int startIndex, int movesCount, int depth)
+        {
+            for (var moveIndex = startIndex; moveIndex < movesCount; moveIndex++)
+            {
+                if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
+                {
+                    moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
+                }
+                else
+                {
+                    moveValues[moveIndex] = HistoryHeuristic.GetHistoryMoveValue(board.ColorToMove, moves[moveIndex].From, moves[moveIndex].To);
                 }
             }
         }
@@ -85,6 +88,11 @@ namespace Cosette.Engine.Ai.Ordering
 
         public static void SortNextBestMove(Span<Move> moves, Span<short> moveValues, int movesCount, int currentIndex)
         {
+            if (movesCount <= 1)
+            {
+                return;
+            }
+
             var max = short.MinValue;
             var maxIndex = -1;
 
@@ -99,17 +107,6 @@ namespace Cosette.Engine.Ai.Ordering
 
             (moves[maxIndex], moves[currentIndex]) = (moves[currentIndex], moves[maxIndex]);
             (moveValues[maxIndex], moveValues[currentIndex]) = (moveValues[currentIndex], moveValues[maxIndex]);
-        }
-
-
-        private static bool IsPawnNearPromotion(int color, byte to)
-        {
-            if (color == Color.White && to >= 40 || color == Color.Black && to <= 23)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

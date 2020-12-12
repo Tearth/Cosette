@@ -12,14 +12,17 @@ namespace Cosette.Tests
         }
 
         [Theory]
-        [InlineData(Piece.Pawn, Piece.Pawn, (1 << Piece.Pawn), 0, 100)] // 8/8/8/3p4/4P3/8/8/8 w - - 0 1
-        [InlineData(Piece.Pawn, Piece.Pawn, (1 << Piece.Pawn) | (1 << Piece.Knight), (1 << Piece.Pawn) | (1 << Piece.Knight), 0)] // 8/2n5/4p3/3p4/4P3/4N3/8/8 w - - 0 1
-        [InlineData(Piece.Knight, Piece.Pawn, (1 << Piece.Pawn) | (1 << Piece.Knight), (1 << Piece.Pawn) | (1 << Piece.Knight), -220)] // 8/2n5/4p3/3p4/4P3/4N3/8/8 w - - 0 1
-        [InlineData(Piece.Knight, Piece.Pawn, (1 << Piece.Pawn) | (1 << Piece.Knight) | (1 << Piece.Queen), (1 << Piece.Pawn) | (1 << Piece.Knight), -120)] // 8/2n5/4p3/3p4/4P3/4N3/Q7/8 w - - 0 1
-        [InlineData(Piece.Pawn, Piece.Pawn, (1 << Piece.Knight) | (1 << Piece.Bishop), (1 << Piece.Queen), 100)] // 3q4/8/8/3p4/8/2N2B2/8/8 w - - 0 1
-        [InlineData(Piece.Knight, Piece.Pawn, (1 << Piece.Knight) | (1 << Piece.Bishop), (1 << Piece.Queen), 100)] // 3q4/8/8/3p4/8/2N2B2/8/8 w - - 0 1
-        [InlineData(Piece.Queen, Piece.Pawn, (1 << Piece.Knight) | (1 << Piece.Bishop) | (1 << Piece.Queen), (1 << Piece.Rook), -500)] // 3r4/8/8/3p4/8/2N2B2/8/3Q4 w - - 0 1
-        [InlineData(Piece.Knight, Piece.Pawn, (1 << Piece.Knight) | (1 << Piece.Rook) | (1 << Piece.Queen), (1 << Piece.Knight) | (1 << Piece.Bishop) | (1 << Piece.Queen), -220)] // 7q/3n4/5b2/4p3/8/3N4/4R3/4Q3 w - - 0 1
+        [InlineData(Piece.Pawn, Piece.Pawn, (1 << SeePiece.Pawn), 0, 100)] // 8/8/8/3p4/4P3/8/8/8 w - - 0 1
+        [InlineData(Piece.Pawn, Piece.Pawn, (1 << SeePiece.Pawn) | (1 << SeePiece.Knight1), (1 << SeePiece.Pawn) | (1 << SeePiece.Knight1), 0)] // 8/2n5/4p3/3p4/4P3/4N3/8/8 w - - 0 1
+        [InlineData(Piece.Knight, Piece.Pawn, (1 << SeePiece.Pawn) | (1 << SeePiece.Knight1), (1 << SeePiece.Pawn) | (1 << SeePiece.Knight1), -220)] // 8/2n5/4p3/3p4/4P3/4N3/8/8 w - - 0 1
+        [InlineData(Piece.Knight, Piece.Pawn, (1 << SeePiece.Pawn) | (1 << SeePiece.Knight1) | (1 << SeePiece.Queen), (1 << SeePiece.Pawn) | (1 << Piece.Knight), -120)] // 8/2n5/4p3/3p4/4P3/4N3/Q7/8 w - - 0 1
+        [InlineData(Piece.Pawn, Piece.Pawn, (1 << SeePiece.Pawn) | (1 << SeePiece.Knight1) | (1 << SeePiece.Bishop), (1 << SeePiece.Queen), 100)] // 3q4/8/8/3p4/8/2N2B2/8/8 w - - 0 1
+        [InlineData(Piece.Knight, Piece.Pawn, (1 << SeePiece.Knight1) | (1 << SeePiece.Bishop), (1 << SeePiece.Queen), 100)] // 3q4/8/8/3p4/8/2N2B2/8/8 w - - 0 1
+        [InlineData(Piece.Queen, Piece.Pawn, (1 << SeePiece.Knight1) | (1 << SeePiece.Bishop) | (1 << SeePiece.Queen), (1 << SeePiece.Rook1), -500)] // 3r4/8/8/3p4/8/2N2B2/8/3Q4 w - - 0 1
+        [InlineData(Piece.Knight, Piece.Pawn, (1 << SeePiece.Knight1) | (1 << SeePiece.Rook1) | (1 << SeePiece.Queen), (1 << SeePiece.Knight1) | (1 << SeePiece.Bishop) | (1 << SeePiece.Queen), -220)] // 7q/3n4/5b2/4p3/8/3N4/4R3/4Q3 w - - 0 1
+        [InlineData(Piece.Rook, Piece.Pawn, (1 << SeePiece.Rook1) | (1 << SeePiece.Rook2) | (1 << SeePiece.Queen), (1 << SeePiece.Rook1) | (1 << SeePiece.Rook2), 100)] // 8/4r3/4r3/4p3/8/4R3/4R3/4Q3 w - - 0 1
+        [InlineData(Piece.Rook, Piece.Pawn, (1 << SeePiece.Rook1) | (1 << SeePiece.Rook2) | (1 << SeePiece.Queen), (1 << SeePiece.Rook1) | (1 << SeePiece.Rook2) | (1 << SeePiece.Queen), -400)] // 4q3/4r3/4r3/4p3/8/4R3/4R3/4Q3 w - - 0 1
+        [InlineData(Piece.Knight, Piece.Knight, (1 << SeePiece.Knight1) | (1 << SeePiece.Knight2), (1 << SeePiece.Pawn), 100)] // 8/8/2n5/5n2/3N4/2P5/8/8 w - - 0 1
         public void StaticExchangeEvaluation_NormalValues(int attackingPiece, int capturedPiece, int attacker, int defender, int expectedScore)
         {
             var score = StaticExchangeEvaluation.Evaluate(attackingPiece, capturedPiece, attacker, defender);

@@ -23,7 +23,7 @@ namespace Cosette.Engine.Perft
         private static void Perft(BoardState boardState, int depth, AdvancedPerftResult result)
         {
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = boardState.GetAvailableMoves(moves);
+            var movesCount = boardState.GetAllMoves(moves);
 
             if (depth <= 0)
             {
@@ -57,7 +57,7 @@ namespace Cosette.Engine.Perft
 
                 if (!boardState.IsKingChecked(ColorOperations.Invert(boardState.ColorToMove)))
                 {
-                    if (((byte)moves[i].Flags & MoveFlagFields.Capture) != 0)
+                    if (moves[i].IsCapture())
                     {
                         result.Captures++;
                     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Board.Operators;
@@ -25,6 +26,7 @@ namespace Cosette.Engine.Board
         public int[][] Position { get; set; }
 
         public int[] PieceTable { get; set; }
+        public int MaterialAtOpening;
 
         public ulong Hash { get; set; }
         public ulong PawnHash { get; set; }
@@ -37,7 +39,6 @@ namespace Cosette.Engine.Board
         private readonly FastStack<ulong> _pawnHashes;
         private readonly FastStack<int> _irreversibleMovesCounts;
 
-        private readonly int _materialAtOpening;
 
         public BoardState()
         {
@@ -62,14 +63,6 @@ namespace Cosette.Engine.Board
             _hashes = new FastStack<ulong>(512);
             _pawnHashes = new FastStack<ulong>(512);
             _irreversibleMovesCounts = new FastStack<int>(512);
-
-            _materialAtOpening =
-                EvaluationConstants.Pieces[Piece.King] +
-                EvaluationConstants.Pieces[Piece.Queen] +
-                EvaluationConstants.Pieces[Piece.Rook] * 2 +
-                EvaluationConstants.Pieces[Piece.Bishop] * 2 +
-                EvaluationConstants.Pieces[Piece.Knight] * 2 +
-                EvaluationConstants.Pieces[Piece.Pawn] * 8;
         }
 
         public void SetDefaultState()
@@ -112,44 +105,12 @@ namespace Cosette.Engine.Board
 
             Array.Fill(PieceTable, -1);
 
-            PieceTable[0] = Piece.Rook;
-            PieceTable[1] = Piece.Knight;
-            PieceTable[2] = Piece.Bishop;
-            PieceTable[3] = Piece.King;
-            PieceTable[4] = Piece.Queen;
-            PieceTable[5] = Piece.Bishop;
-            PieceTable[6] = Piece.Knight;
-            PieceTable[7] = Piece.Rook;
-
-            PieceTable[8] = Piece.Pawn;
-            PieceTable[9] = Piece.Pawn;
-            PieceTable[10] = Piece.Pawn;
-            PieceTable[11] = Piece.Pawn;
-            PieceTable[12] = Piece.Pawn;
-            PieceTable[13] = Piece.Pawn;
-            PieceTable[14] = Piece.Pawn;
-            PieceTable[15] = Piece.Pawn;
-
-            PieceTable[48] = Piece.Pawn;
-            PieceTable[49] = Piece.Pawn;
-            PieceTable[50] = Piece.Pawn;
-            PieceTable[51] = Piece.Pawn;
-            PieceTable[52] = Piece.Pawn;
-            PieceTable[53] = Piece.Pawn;
-            PieceTable[54] = Piece.Pawn;
-            PieceTable[55] = Piece.Pawn;
-
-            PieceTable[56] = Piece.Rook;
-            PieceTable[57] = Piece.Knight;
-            PieceTable[58] = Piece.Bishop;
-            PieceTable[59] = Piece.King;
-            PieceTable[60] = Piece.Queen;
-            PieceTable[61] = Piece.Bishop;
-            PieceTable[62] = Piece.Knight;
-            PieceTable[63] = Piece.Rook;
+            CalculatePieceTable(PieceTable);
 
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
+
+            MaterialAtOpening = CalculateMaterialAtOpening();
 
             _killedPieces.Clear();
             _enPassants.Clear();
@@ -160,28 +121,67 @@ namespace Cosette.Engine.Board
             _irreversibleMovesCounts.Clear();
         }
 
-        public int GetAvailableMoves(Span<Move> moves)
+        public int GetLoudMoves(Span<Move> moves, int offset)
         {
-            var movesCount = PawnOperator.GetAvailableMoves(this, ColorToMove, moves, 0);
-            movesCount = KnightOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = BishopOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = RookOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = QueenOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
-            movesCount = KingOperator.GetAvailableMoves(this, ColorToMove, moves, movesCount);
+            var movesCount = PawnOperator.GetLoudMoves(this, moves, offset);
+            movesCount = KnightOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = BishopOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = RookOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = QueenOperator.GetLoudMoves(this, moves, movesCount);
+            movesCount = KingOperator.GetLoudMoves(this, moves, movesCount);
 
             return movesCount;
         }
 
-        public int GetAvailableQMoves(Span<Move> moves)
+        public int GetQuietMoves(Span<Move> moves, int offset)
         {
-            var movesCount = PawnOperator.GetAvailableQMoves(this, ColorToMove, moves, 0);
-            movesCount = KnightOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = BishopOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = RookOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = QueenOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
-            movesCount = KingOperator.GetAvailableQMoves(this, ColorToMove, moves, movesCount);
+            var movesCount = PawnOperator.GetQuietMoves(this, moves, offset);
+            movesCount = KnightOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = BishopOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = RookOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = QueenOperator.GetQuietMoves(this, moves, movesCount);
+            movesCount = KingOperator.GetQuietMoves(this, moves, movesCount);
 
             return movesCount;
+        }
+
+        public int GetAllMoves(Span<Move> moves)
+        {
+            var movesCount = GetLoudMoves(moves, 0);
+            return GetQuietMoves(moves, movesCount);
+        }
+
+        public int GetAvailableCaptureMoves(Span<Move> moves)
+        {
+            var movesCount = PawnOperator.GetAvailableCaptureMoves(this, moves, 0);
+            movesCount = KnightOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = BishopOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = RookOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = QueenOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+            movesCount = KingOperator.GetAvailableCaptureMoves(this, moves, movesCount);
+
+            return movesCount;
+        }
+
+        public bool IsMoveLegal(Move move)
+        {
+            if (((1ul << move.From) & Occupancy[ColorToMove]) == 0)
+            {
+                return false;
+            }
+
+            var fromPiece = PieceTable[move.From];
+            switch (fromPiece)
+            {
+                case Piece.Pawn: return PawnOperator.IsMoveLegal(this, move);
+                case Piece.Knight: return KnightOperator.IsMoveLegal(this, move);
+                case Piece.Bishop: return BishopOperator.IsMoveLegal(this, move);
+                case Piece.Rook: return RookOperator.IsMoveLegal(this, move);
+                case Piece.Queen: return QueenOperator.IsMoveLegal(this, move);
+                case Piece.King: return KingOperator.IsMoveLegal(this, move);
+            }
+
+            return false;
         }
 
         public void MakeMove(Move move)
@@ -200,7 +200,7 @@ namespace Cosette.Engine.Board
             _enPassants.Push(EnPassant);
             _irreversibleMovesCounts.Push(IrreversibleMovesCount);
 
-            if (pieceType == Piece.Pawn || ((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            if (pieceType == Piece.Pawn || move.IsCapture())
             {
                 IrreversibleMovesCount = 0;
             }
@@ -253,7 +253,7 @@ namespace Cosette.Engine.Board
 
                 _killedPieces.Push(killedPiece);
             }
-            else if (((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            else if (move.IsCapture())
             {
                 var killedPiece = PieceTable[move.To];
 
@@ -269,29 +269,29 @@ namespace Cosette.Engine.Board
                     switch (move.To)
                     {
                         case 0:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
-                            Castling &= ~Castling.WhiteShort;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteShort);
+                                Castling &= ~Castling.WhiteShort;
+                                break;
+                            }
                         case 7:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
-                            Castling &= ~Castling.WhiteLong;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.WhiteLong);
+                                Castling &= ~Castling.WhiteLong;
+                                break;
+                            }
                         case 56:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
-                            Castling &= ~Castling.BlackShort;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackShort);
+                                Castling &= ~Castling.BlackShort;
+                                break;
+                            }
                         case 63:
-                        {
-                            Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
-                            Castling &= ~Castling.BlackLong;
-                            break;
-                        }
+                            {
+                                Hash = ZobristHashing.RemoveCastlingFlag(Hash, Castling, Castling.BlackLong);
+                                Castling &= ~Castling.BlackLong;
+                                break;
+                            }
                     }
                 }
 
@@ -455,7 +455,7 @@ namespace Cosette.Engine.Board
                 MovePiece(ColorToMove, Piece.Pawn, move.To, move.From);
                 AddPiece(enemyColor, killedPiece, enemyPieceField);
             }
-            else if (((byte)move.Flags & MoveFlagFields.Capture) != 0)
+            else if (move.IsCapture())
             {
                 var enemyColor = ColorOperations.Invert(ColorToMove);
                 var killedPiece = _killedPieces.Pop();
@@ -612,38 +612,41 @@ namespace Cosette.Engine.Board
         {
             byte result = 0;
 
-            var fileRankAttacks = RookMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[color];
-            var attackingRooks = fileRankAttacks & Pieces[color][Piece.Rook];
-            if (attackingRooks != 0)
+            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
+            var attackingKnights = jumpAttacks & Pieces[color][Piece.Knight];
+            var attackingKnightsCount = BitOperations.Count(attackingKnights);
+            if (attackingKnightsCount != 0)
             {
-                result |= 1 << Piece.Rook;
+                result |= (byte)((attackingKnightsCount == 1 ? 1 : 3) << SeePiece.Knight1);
             }
 
             var diagonalAttacks = BishopMovesGenerator.GetMoves(OccupancySummary, fieldIndex) & Occupancy[color];
             var attackingBishops = diagonalAttacks & Pieces[color][Piece.Bishop];
             if (attackingBishops != 0)
             {
-                result |= 1 << Piece.Bishop;
+                result |= 1 << SeePiece.Bishop;
+            }
+
+            var occupancyWithoutFileRantPieces = OccupancySummary & ~Pieces[color][Piece.Rook] & ~Pieces[color][Piece.Queen];
+            var fileRankAttacks = RookMovesGenerator.GetMoves(occupancyWithoutFileRantPieces, fieldIndex) & Occupancy[color];
+            var attackingRooks = fileRankAttacks & Pieces[color][Piece.Rook];
+            var attackingRooksCount = BitOperations.Count(attackingRooks);
+            if (attackingRooksCount != 0)
+            {
+                result |= (byte)((attackingRooksCount == 1 ? 1 : 3) << SeePiece.Rook1);
             }
 
             var attackingQueens = (fileRankAttacks | diagonalAttacks) & Pieces[color][Piece.Queen];
             if (attackingQueens != 0)
             {
-                result |= 1 << Piece.Queen;
-            }
-
-            var jumpAttacks = KnightMovesGenerator.GetMoves(fieldIndex);
-            var attackingKnights = jumpAttacks & Pieces[color][Piece.Knight];
-            if (attackingKnights != 0)
-            {
-                result |= 1 << Piece.Knight;
+                result |= 1 << SeePiece.Queen;
             }
 
             var boxAttacks = KingMovesGenerator.GetMoves(fieldIndex);
             var attackingKings = boxAttacks & Pieces[color][Piece.King];
             if (attackingKings != 0)
             {
-                result |= 1 << Piece.King;
+                result |= 1 << SeePiece.King;
             }
 
             var field = 1ul << fieldIndex;
@@ -654,7 +657,7 @@ namespace Cosette.Engine.Board
 
             if (attackingPawns != 0)
             {
-                result |= 1 << Piece.Pawn;
+                result |= 1 << SeePiece.Pawn;
             }
 
             return result;
@@ -679,7 +682,7 @@ namespace Cosette.Engine.Board
             Pieces[color][piece] ^= move;
             Occupancy[color] ^= move;
             OccupancySummary ^= move;
-            
+
             Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][from];
             Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][to];
 
@@ -754,15 +757,14 @@ namespace Cosette.Engine.Board
             return result;
         }
 
-        public float GetPhaseRatio()
+        public int GetPhaseRatio()
         {
             var materialOfWeakerSide = Math.Min(Material[Color.White], Material[Color.Black]);
 
-            var openingDelta = _materialAtOpening - EvaluationConstants.OpeningEndgameEdge;
+            var openingDelta = MaterialAtOpening - EvaluationConstants.OpeningEndgameEdge;
             var boardDelta = materialOfWeakerSide - EvaluationConstants.OpeningEndgameEdge;
-            var ratio = (float) boardDelta / openingDelta;
 
-            return Math.Max(0, ratio);
+            return Math.Max(boardDelta, 0) * BoardConstants.PhaseResolution / openingDelta;
         }
 
         public int GetGamePhase()
@@ -795,6 +797,48 @@ namespace Cosette.Engine.Board
             }
 
             return false;
+        }
+
+        public bool IsInsufficientMaterial()
+        {
+            var drawEdge = EvaluationConstants.Pieces[Piece.King] + 4 * EvaluationConstants.Pieces[Piece.Pawn];
+            if (Material[Color.White] < drawEdge && Material[Color.Black] < drawEdge)
+            {
+                if (Pieces[Color.White][Piece.Pawn] == 0 && Pieces[Color.Black][Piece.Pawn] == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void CalculatePieceTable(int[] pieceTable)
+        {
+            for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
+            {
+                for (var pieceIndex = 0; pieceIndex < 6; pieceIndex++)
+                {
+                    var bitboard = Pieces[Color.White][pieceIndex] | Pieces[Color.Black][pieceIndex];
+                    pieceTable[fieldIndex] = -1;
+
+                    if ((bitboard & (1ul << fieldIndex)) != 0)
+                    {
+                        pieceTable[fieldIndex] = pieceIndex;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public int CalculateMaterialAtOpening()
+        {
+            return EvaluationConstants.Pieces[Piece.King] +
+                   EvaluationConstants.Pieces[Piece.Queen] +
+                   EvaluationConstants.Pieces[Piece.Rook] * 2 +
+                   EvaluationConstants.Pieces[Piece.Bishop] * 2 +
+                   EvaluationConstants.Pieces[Piece.Knight] * 2 +
+                   EvaluationConstants.Pieces[Piece.Pawn] * 8;
         }
 
         public override string ToString()

@@ -1,6 +1,7 @@
 ﻿using System;
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
+using Cosette.Engine.Board;
 using Cosette.Engine.Fen;
 
 namespace Cosette.Interactive.Commands
@@ -23,20 +24,24 @@ namespace Cosette.Interactive.Commands
             var evaluationStatistics = new EvaluationStatistics();
 
             var openingPhase = boardState.GetPhaseRatio();
-            var endingPhase = 1 - openingPhase;
+            var endingPhase = BoardConstants.PhaseResolution - openingPhase;
+
+            var fieldsAttackedByWhite = 0ul;
+            var fieldsAttackedByBlack = 0ul;
 
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
             var castlingEvaluation = CastlingEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var positionEvaluation = PositionEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(boardState, evaluationStatistics, openingPhase, endingPhase);
-            var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
+            var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
             var pieces = PiecesEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 
             var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation +
-                        mobility + kingSafety + pieces;
+                        mobility + kingSafety + pieces + fianchetto;
 
-            _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase:F}, " +
+            _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");
 
             _interactiveConsole.WriteLine($" = Material: {materialEvaluation}");
@@ -46,6 +51,7 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine($" = Mobility: {mobility}");
             _interactiveConsole.WriteLine($" = King safety: {kingSafety}");
             _interactiveConsole.WriteLine($" = Pieces evaluation: {pieces}");
+            _interactiveConsole.WriteLine($" = Fianchetto evaluation: {fianchetto}");
             _interactiveConsole.WriteLine();
             _interactiveConsole.WriteLine($" = Total: {total}");
         }

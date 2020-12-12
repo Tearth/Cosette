@@ -1,4 +1,5 @@
 ﻿using Cosette.Engine.Ai.Score.Evaluators;
+using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 
@@ -9,15 +10,23 @@ namespace Cosette.Engine.Ai.Score
         public static int Evaluate(BoardState board, EvaluationStatistics statistics)
         {
             var openingPhase = board.GetPhaseRatio();
-            var endingPhase = 1f - openingPhase;
+            var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
             var result = MaterialEvaluator.Evaluate(board);
-            result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase);
-            result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase);
-            result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase);
-            result += PiecesEvaluator.Evaluate(board, openingPhase, endingPhase);
+
+            if (endingPhase != BoardConstants.PhaseResolution)
+            {
+                var fieldsAttackedByWhite = 0ul;
+                var fieldsAttackedByBlack = 0ul;
+
+                result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
+                result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
+                result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
+                result += FianchettoEvaluator.Evaluate(board, openingPhase, endingPhase);
+                result += PiecesEvaluator.Evaluate(board, openingPhase, endingPhase);
+            }
 
             return board.ColorToMove == Color.White ? result : -result;
         }

@@ -347,6 +347,13 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Custom
 /cloc.exe
 /cloc.bat
 /Cosette.Arbiter/settings.json
+/Cosette.Arbiter/book.bin
+/Cosette.Tuner/settings.json
+/Cosette.Tuner/book.bin
+/Cosette.Tuner.Web/Database.sqlite
+/Cosette.Tuner.Web/wwwroot/lib/

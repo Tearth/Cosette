@@ -58,7 +58,7 @@ namespace Cosette.Engine.Moves
             var flags = textNotation.Length == 5 ? GetMoveFlags(textNotation[4]) : MoveFlags.Quiet;
 
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
-            var movesCount = board.GetAvailableMoves(moves);
+            var movesCount = board.GetAllMoves(moves);
 
             for (var i = 0; i < movesCount; i++)
             {
@@ -77,6 +77,11 @@ namespace Cosette.Engine.Moves
         public bool IsQuiet()
         {
             return Flags == MoveFlags.Quiet || Flags == MoveFlags.DoublePush;
+        }
+
+        public bool IsCapture()
+        {
+            return ((int)Flags & MoveFlagFields.Capture) != 0;
         }
 
         public override string ToString()

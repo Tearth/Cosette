@@ -1,3 +1,35 @@
+# Version 3.0 (Luna), 12.12.2020
+ - Added better time control for Arbiter
+ - Added more UCI options
+ - Added Tuner project
+ - Added insufficient material detection
+ - Added executable hash generator
+ - Added abort when search lasts too long
+ - Added legality checking of the hash table moves
+ - Added SEE pruning in the quiescence search
+ - Added fianchetto evaluation
+ - Added internal iterative deepening
+ - Added a lot of UCI options, allowing for full engine customization
+ - Added multi-stage move ordering
+ - Added multi-stage move generating
+ - Fixed FEN parser when input didn't have halfmove clock and moves count
+ - Fixed crash when the engine was receiving invalid position in UCI mode
+ - Fixed UCI statistics
+ - Improved time scheduler when incrementation time is present
+ - Improved mobility calculation by rewarding for center control
+ - Improved late move reduction conditions
+ - Improved SEE accuracy (now includes x-ray attacks)
+ - Improved king safety evaluation
+ - Changed maximal moves count from 128 to 218 (according to Internet sources)
+ - Reduced size of transposition table entry (from 12 bytes to 8 bytes)
+ - Disabled most of the evaluation functions when the game is near to end
+ - Disabled returning of exact transposition table entries in the PV nodes
+ - Adjusted evaluation scores
+ - Optimized king safety evaluation
+ - Updated .NET Core runtime version to 5.0.100
+
+Estimated strength: 2000 ELO
+
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
  - Added new evaluation functions: pawn shield, bishop pair, doubled rooks, a rook on open file

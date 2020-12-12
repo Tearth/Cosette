@@ -6,45 +6,58 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class KingSafetyEvaluator
     {
-        public static int Evaluate(BoardState board, float openingPhase, float endingPhase)
+        private static ulong[][] _kingSafetyMask;
+
+        static KingSafetyEvaluator()
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase) - 
-                   Evaluate(board, Color.Black, openingPhase, endingPhase);
+            _kingSafetyMask = new ulong[2][];
+
+            for (var color = 0; color < 2; color++)
+            {
+                var offset = color == Color.White ? 8 : -8;
+                _kingSafetyMask[color] = new ulong[64];
+
+                for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
+                {
+                    var mask = BoxPatternGenerator.GetPattern(fieldIndex);
+                    var fieldIndexWithOffset = fieldIndex + offset;
+
+                    if (fieldIndexWithOffset >= 0 && fieldIndexWithOffset < 64)
+                    {
+                        mask |= BoxPatternGenerator.GetPattern(fieldIndexWithOffset);
+                        mask &= ~(1ul << fieldIndex);
+                    }
+
+                    _kingSafetyMask[color][fieldIndex] = mask;
+                }
+            }
         }
 
-        public static int Evaluate(BoardState board, int color, float openingPhase, float endingPhase)
+        public static int Evaluate(BoardState board, int openingPhase, int endingPhase, ulong fieldsAttackedByWhite, ulong fieldsAttackedByBlack)
+        {
+            return Evaluate(board, Color.White, openingPhase, endingPhase, fieldsAttackedByBlack) - 
+                   Evaluate(board, Color.Black, openingPhase, endingPhase, fieldsAttackedByWhite);
+        }
+
+        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase, ulong fieldsAttackedByEnemy)
         {
             var king = board.Pieces[color][Piece.King];
             var kingField = BitOperations.BitScan(king);
-            var fieldsAroundKing = BoxPatternGenerator.GetPattern(kingField);
+            var fieldsAroundKing = _kingSafetyMask[color][kingField];
 
-            var attackersCount = 0;
-            var pawnShield = 0;
-
-            var attackedFieldsToCheck = fieldsAroundKing;
-            while (attackedFieldsToCheck != 0)
-            {
-                var lsb = BitOperations.GetLsb(attackedFieldsToCheck);
-                var field = BitOperations.BitScan(lsb);
-                attackedFieldsToCheck = BitOperations.PopLsb(attackedFieldsToCheck);
-
-                var attackingPieces = board.IsFieldAttacked(color, (byte)field);
-                if (attackingPieces)
-                {
-                    attackersCount++;
-                }
-            }
+            var attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
+            var attackersCount = (int)BitOperations.Count(attackedFieldsAroundKing);
 
             var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
-            pawnShield = (int)BitOperations.Count(pawnsNearKing);
+            var pawnShield = (int)BitOperations.Count(pawnsNearKing);
 
-            var attackersCountScore = attackersCount * EvaluationConstants.KingInDanger[GamePhase.Opening] * openingPhase +
-                                      attackersCount * EvaluationConstants.KingInDanger[GamePhase.Ending] * endingPhase;
+            var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger;
+            var attackersCountAdjusted = TaperedEvaluation.AdjustToPhase(attackersCountOpeningScore, 0, openingPhase, endingPhase);
 
-            var pawnShieldScore = pawnShield * EvaluationConstants.PawnShield[GamePhase.Opening] * openingPhase +
-                                  pawnShield * EvaluationConstants.PawnShield[GamePhase.Ending] * endingPhase;
+            var pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield;
+            var pawnShieldAdjusted = TaperedEvaluation.AdjustToPhase(pawnShieldOpeningScore, 0, openingPhase, endingPhase);
 
-            return (int)(attackersCountScore + pawnShieldScore);
+            return attackersCountAdjusted + pawnShieldAdjusted;
         }
     }
 }

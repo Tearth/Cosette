@@ -1,20 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using Cosette.Arbiter.Settings;
 
 namespace Cosette.Arbiter.Engine
 {
     public class EngineOperator
     {
-        private string _name;
+        public Lazy<string> ExecutableHash;
+
         private string _enginePath;
+        private string _engineArguments;
         private Process _engineProcess;
 
-        public EngineOperator(string name, string path)
+        public EngineOperator(string path, string arguments)
         {
-            _name = name;
             _enginePath = path;
+            _engineArguments = arguments;
+
+            ExecutableHash = new Lazy<string>(GetExecutableHash);
         }
 
         public void Init()
@@ -22,6 +29,7 @@ namespace Cosette.Arbiter.Engine
             _engineProcess = Process.Start(new ProcessStartInfo
             {
                 FileName = _enginePath,
+                Arguments = _engineArguments,
                 CreateNoWindow = true,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true
@@ -30,10 +38,21 @@ namespace Cosette.Arbiter.Engine
             Write("uci");
             WaitForMessage("uciok");
 
-            SettingsLoader.Data.Options.ForEach(Write);
+            ApplyOptions();
 
             Write("isready");
             WaitForMessage("readyok");
+        }
+
+        public void Restart()
+        {
+            if (!_engineProcess.HasExited)
+            {
+                _engineProcess.Close();
+            }
+
+            Init();
+            ApplyOptions();
         }
 
         public void InitNewGame()
@@ -43,7 +62,12 @@ namespace Cosette.Arbiter.Engine
             WaitForMessage("readyok");
         }
 
-        public BestMoveData Go(List<string> moves)
+        public void ApplyOptions()
+        {
+            SettingsLoader.Data.Options.ForEach(Write);
+        }
+
+        public BestMoveData Go(List<string> moves, int whiteClock, int blackClock)
         {
             var bestMoveData = new BestMoveData();
             var movesJoined = string.Join(' ', moves);
@@ -53,26 +77,22 @@ namespace Cosette.Arbiter.Engine
                 Write($"position startpos moves {movesJoined}");
             }
 
-            Write($"go movetime {SettingsLoader.Data.MillisecondsPerMove}");
+            Write($"go wtime {whiteClock} btime {blackClock} winc {SettingsLoader.Data.IncTime} binc {SettingsLoader.Data.IncTime}");
 
             while (true)
             {
-                try
+                var response = Read();
+                if (response.StartsWith("info depth"))
                 {
-                    var response = Read();
-                    if (response.StartsWith("info depth"))
-                    {
-                        bestMoveData.LastInfoData = InfoData.FromString(response);
-                    }
-                    else if (response.StartsWith("bestmove"))
-                    {
-                        bestMoveData.BestMove = response.Split(' ')[1];
-                        break;
-                    }
+                    bestMoveData.LastInfoData = InfoData.FromString(response);
                 }
-                catch
+                else if (response.StartsWith("bestmove"))
                 {
-                    Init();
+                    bestMoveData.BestMove = response.Split(' ')[1];
+                    break;
+                }
+                else if (response.StartsWith("error"))
+                {
                     return null;
                 }
             }
@@ -93,6 +113,25 @@ namespace Cosette.Arbiter.Engine
         public void WaitForMessage(string message)
         {
             while (Read() != message) ;
+        }
+
+        private string GetExecutableHash()
+        {
+            var md5 = new MD5CryptoServiceProvider();
+            var path = _enginePath == "dotnet" ? _engineArguments : _enginePath;
+
+            using (var streamReader = new StreamReader(path))
+            {
+                md5.ComputeHash(streamReader.BaseStream);
+            }
+
+            var hashBuilder = new StringBuilder();
+            foreach (var b in md5.Hash)
+            {
+                hashBuilder.Append(b.ToString("x2"));
+            }
+
+            return hashBuilder.ToString();
         }
     }
 }
