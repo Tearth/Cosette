@@ -25,6 +25,7 @@
  - Disabled most of the evaluations functions when the game is near to end
  - Adjusted evaluation scores
  - Optimized king safety evaluation
+ - Updated .NET Core runtime version to 5.0.100
 
 Estimated strength: 2000 ELO
 
