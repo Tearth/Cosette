@@ -65,6 +65,10 @@ The console application + web interface, which allows adjusting engine parameter
 
 ![Cosette Tuner](https://i.imgur.com/uxXeYW9.png)
 
+### Polyglot
+
+The small library which allows using opening books saved in the Polyglot format. Feel free to use it if you need this in your own project.
+
 ## Why Cosette?
 
 https://www.youtube.com/watch?v=XuYF-EnpLpc
