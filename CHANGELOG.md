@@ -13,7 +13,7 @@
  - Added multi-stage move ordering
  - Added multi-stage move generating
  - Fixed FEN parser when input didn't have halfmove clock and moves count
- - Fixed crash when engine was receiving invalid position in UCI mode
+ - Fixed crash when the engine was receiving invalid position in UCI mode
  - Fixed UCI statistics
  - Improved time scheduler when incrementation time is present
  - Improved mobility calculation by rewarding for center control
