@@ -55,7 +55,7 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
 
 ### Arbiter
 
-The simple console application which allows to do tests chess engines using super-fast time control (like 2s+20"). It has been designed to support Cosette development, but should be also usable with other UCI-compliant engines.
+The simple console application which allows testing chess engines using super-fast time control (like 2s+20"). It has been designed to support Cosette development, but should be also usable with other UCI-compliant engines.
 
 ![Cosette Arbiter](https://i.imgur.com/m7rYtuf.png)
 
