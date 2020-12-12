@@ -129,19 +129,32 @@ namespace Cosette.Interactive
 
         private string GetExecutableHash()
         {
-            var md5 = new MD5CryptoServiceProvider();
-            using (var streamReader = new StreamReader(Assembly.GetExecutingAssembly().Location))
+            try
             {
-                md5.ComputeHash(streamReader.BaseStream);
-            }
+                var md5 = new MD5CryptoServiceProvider();
+                var path = Assembly.GetExecutingAssembly().Location;
 
-            var hashBuilder = new StringBuilder();
-            foreach (var b in md5.Hash)
+                path = string.IsNullOrEmpty(path) ? 
+                    Process.GetCurrentProcess().MainModule.FileName : 
+                    Path.Combine(AppContext.BaseDirectory, path);
+
+                using (var streamReader = new StreamReader(path))
+                {
+                    md5.ComputeHash(streamReader.BaseStream);
+                }
+
+                var hashBuilder = new StringBuilder();
+                foreach (var b in md5.Hash)
+                {
+                    hashBuilder.Append(b.ToString("x2"));
+                }
+
+                return hashBuilder.ToString();
+            }
+            catch
             {
-                hashBuilder.Append(b.ToString("x2"));
+                return "GET_EXECUTABLE_HASH_ERROR";
             }
-
-            return hashBuilder.ToString();
         }
     }
 }
