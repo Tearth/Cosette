@@ -51,6 +51,20 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - killer heuristic
  - history heuristic
 
+## Additional tools
+
+### Arbiter
+
+The simple console application which allows to do tests chess engines using super-fast time control (like 2s+20"). It has been designed to support Cosette development, but should be also usable with other UCI-compliant engines.
+
+![Cosette Arbiter](https://i.imgur.com/m7rYtuf.png)
+
+### Tuner
+
+The console application + web interface, which allows adjusting engine parameters using standard UCI command setoption. Results are displayed on the local website using a set of tables and charts.
+
+![Cosette Tuner](https://i.imgur.com/uxXeYW9.png)
+
 ## Why Cosette?
 
 https://www.youtube.com/watch?v=XuYF-EnpLpc
