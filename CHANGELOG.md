@@ -22,7 +22,8 @@
  - Improved king safety evaluation
  - Changed maximal moves count from 128 to 218 (according to Internet sources)
  - Reduced size of transposition table entry (from 12 bytes to 8 bytes)
- - Disabled most of the evaluations functions when the game is near to end
+ - Disabled most of the evaluation functions when the game is near to end
+ - Disabled returning of exact transposition table entries in the PV nodes
  - Adjusted evaluation scores
  - Optimized king safety evaluation
  - Updated .NET Core runtime version to 5.0.100
