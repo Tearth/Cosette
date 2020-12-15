@@ -125,9 +125,7 @@ namespace Cosette.Uci
 
             Send($"option name CastlingDone type spin default {EvaluationConstants.CastlingDone} min -100 max 100");
             Send($"option name CastlingFailed type spin default {EvaluationConstants.CastlingFailed} min -100 max 100");
-            Send($"option name Mobility type spin default {EvaluationConstants.Mobility} min -100 max 100");
             Send($"option name CenterMobilityModifier type spin default {EvaluationConstants.CenterMobilityModifier} min -100 max 100");
-            Send($"option name ExtendedCenterMobilityModifier type spin default {EvaluationConstants.ExtendedCenterMobilityModifier} min -100 max 100");
             Send($"option name OutsideMobilityModifier type spin default {EvaluationConstants.OutsideMobilityModifier} min -100 max 100");
             Send($"option name KingInDanger type spin default {EvaluationConstants.KingInDanger} min -100 max 100");
             Send($"option name PawnShield type spin default {EvaluationConstants.PawnShield} min -100 max 100");

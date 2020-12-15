@@ -88,10 +88,9 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetMobility(BoardState boardState, int color, ref ulong fieldsAttackedByColor)
+        public static (int, int) GetMobility(BoardState boardState, int color, ref ulong fieldsAttackedByColor)
         {
             var centerMobility = 0;
-            var extendedCenterMobility = 0;
             var outsideMobility = 0;
 
             var bishops = boardState.Pieces[color][Piece.Bishop];
@@ -105,15 +104,12 @@ namespace Cosette.Engine.Board.Operators
                 var availableMoves = BishopMovesGenerator.GetMoves(boardState.OccupancySummary, from);
 
                 centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Center);
-                extendedCenterMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
                 outsideMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Outside);
 
                 fieldsAttackedByColor |= availableMoves;
             }
 
-            return EvaluationConstants.CenterMobilityModifier * centerMobility +
-                   EvaluationConstants.ExtendedCenterMobilityModifier * extendedCenterMobility +
-                   EvaluationConstants.OutsideMobilityModifier * outsideMobility;
+            return (centerMobility, outsideMobility);
         }
 
         public static bool IsMoveLegal(BoardState boardState, Move move)

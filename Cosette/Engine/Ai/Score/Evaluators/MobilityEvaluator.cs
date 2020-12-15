@@ -14,13 +14,20 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
         public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase, ref ulong fieldsAttackedByColor)
         {
-            var mobility = KnightOperator.GetMobility(board, color, ref fieldsAttackedByColor) + 
-                           BishopOperator.GetMobility(board, color, ref fieldsAttackedByColor) +
-                           RookOperator.GetMobility(board, color, ref fieldsAttackedByColor) + 
-                           QueenOperator.GetMobility(board, color, ref fieldsAttackedByColor);
+            var (knightCenter, knightOutside) = KnightOperator.GetMobility(board, color, ref fieldsAttackedByColor);
+            var (bishopCenter, bishopOutside) = BishopOperator.GetMobility(board, color, ref fieldsAttackedByColor);
+            var (rookCenter, rookOutside) = RookOperator.GetMobility(board, color, ref fieldsAttackedByColor);
+            var (queenCenter, queenOutside) = QueenOperator.GetMobility(board, color, ref fieldsAttackedByColor);
 
-            var mobilityOpeningScore = mobility * EvaluationConstants.Mobility;
-            return TaperedEvaluation.AdjustToPhase(mobilityOpeningScore, 0, openingPhase, endingPhase);
+            var centerMobility = knightCenter + bishopCenter + rookCenter + queenCenter;
+            var centerMobilityScore = centerMobility * EvaluationConstants.CenterMobilityModifier;
+            var centerMobilityScoreAdjusted = TaperedEvaluation.AdjustToPhase(centerMobilityScore, 0, openingPhase, endingPhase);
+
+            var outsideMobility = knightOutside + bishopOutside + rookOutside + queenOutside;
+            var outsideMobilityScore = outsideMobility * EvaluationConstants.OutsideMobilityModifier;
+            var outsideMobilityScoreAdjusted = TaperedEvaluation.AdjustToPhase(outsideMobilityScore, 0, openingPhase, endingPhase);
+
+            return centerMobilityScoreAdjusted + outsideMobilityScoreAdjusted;
         }
     }
 }

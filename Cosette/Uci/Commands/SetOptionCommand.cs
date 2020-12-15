@@ -38,9 +38,7 @@ namespace Cosette.Uci.Commands
 
                 { "CastlingDone", p => EvaluationConstants.CastlingDone = int.Parse(p) },
                 { "CastlingFailed", p => EvaluationConstants.CastlingFailed = int.Parse(p) },
-                { "Mobility", p => EvaluationConstants.Mobility = int.Parse(p) },
                 { "CenterMobilityModifier", p => EvaluationConstants.CenterMobilityModifier = int.Parse(p) },
-                { "ExtendedCenterMobilityModifier", p => EvaluationConstants.ExtendedCenterMobilityModifier = int.Parse(p) },
                 { "OutsideMobilityModifier", p => EvaluationConstants.OutsideMobilityModifier = int.Parse(p) },
                 { "KingInDanger", p => EvaluationConstants.KingInDanger = int.Parse(p) },
                 { "PawnShield", p => EvaluationConstants.PawnShield = int.Parse(p) },
