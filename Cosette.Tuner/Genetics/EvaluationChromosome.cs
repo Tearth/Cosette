@@ -14,7 +14,7 @@ namespace Cosette.Tuner.Genetics
         public override Gene GenerateGene(int geneIndex)
         {
             var gene = SettingsLoader.Data.Genes[geneIndex];
-            var value = RandomizationProvider.Current.GetInt(gene.MinValue, gene.MaxValue);
+            var value = RandomizationProvider.Current.GetInt(gene.MinValue, gene.MaxValue + 1);
 
             return new Gene(value);
         }
