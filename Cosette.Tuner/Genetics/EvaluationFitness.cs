@@ -115,13 +115,18 @@ namespace Cosette.Tuner.Genetics
             }
 
             var elapsedTime = (double)stopwatch.ElapsedMilliseconds / 1000;
-            var fitness = experimentalParticipant.Wins - referenceParticipant.Wins + referenceParticipant.Draws / 2;
+            var fitness = CalculateEloPerformance(experimentalParticipant.Wins, experimentalParticipant.Losses, experimentalParticipant.Draws);
 
             var chromosomeRequest = RequestsFactory.CreateChromosomeRequest(_testId, fitness, elapsedTime, chromosome, referenceParticipant, experimentalParticipant);
             _webService.SendChromosomeData(chromosomeRequest).GetAwaiter().GetResult();
 
             Console.WriteLine($"[{DateTime.Now}] Run done! Fitness: {fitness}");
             return fitness;
+        }
+
+        private int CalculateEloPerformance(int wins, int losses, int draws)
+        {
+            return 400 * (wins - losses) / (wins + losses + draws);
         }
     }
 }
