@@ -348,7 +348,7 @@ namespace Cosette.Engine.Ai.Search
             // Return draw score or checkmate score as leafs
             if (alpha == -EvaluationConstants.Checkmate + ply + 2)
             {
-                if (context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+                if (friendlyKingInCheck)
                 {
                     return alpha;
                 }
