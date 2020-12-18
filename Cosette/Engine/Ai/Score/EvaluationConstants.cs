@@ -16,8 +16,8 @@
         public static int[] ChainedPawns = { 5, 5 };
         public static int[] PassingPawns = { 10, 50 };
 
-        public static int CenterMobilityModifier = 3;
-        public static int OutsideMobilityModifier = 1;
+        public static int CenterMobilityModifier = 10;
+        public static int OutsideMobilityModifier = 5;
 
         public static int KingInDanger = -10;
         public static int PawnShield = 15;
