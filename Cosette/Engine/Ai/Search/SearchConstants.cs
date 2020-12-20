@@ -12,7 +12,8 @@
         public static int IIDDepthReduction = 2;
 
         public static int NullWindowMinimalDepth = 4;
-        public static int NullWindowDepthReduction = 3;
+        public static int NullWindowBaseDepthReduction = 2;
+        public static int NullWindowDepthDivider = 4;
 
         public static int LMRMinimalDepth = 2;
         public static int LMRMovesWithoutReduction = 4;

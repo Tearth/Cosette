@@ -148,7 +148,8 @@ namespace Cosette.Uci
             Send($"option name IIDMinimalDepth type spin default {SearchConstants.IIDMinimalDepth} min 0 max 32");
             Send($"option name IIDDepthReduction type spin default {SearchConstants.IIDDepthReduction} min 0 max 32");
             Send($"option name NullWindowMinimalDepth type spin default {SearchConstants.NullWindowMinimalDepth} min 0 max 32");
-            Send($"option name NullWindowDepthReduction type spin default {SearchConstants.NullWindowDepthReduction} min 0 max 32");
+            Send($"option name NullWindowBaseDepthReduction type spin default {SearchConstants.NullWindowBaseDepthReduction} min 0 max 32");
+            Send($"option name NullWindowDepthDivider type spin default {SearchConstants.NullWindowDepthDivider} min 0 max 32");
             Send($"option name LMRMinimalDepth type spin default {SearchConstants.LMRMinimalDepth} min 0 max 32");
             Send($"option name LMRMovesWithoutReduction type spin default {SearchConstants.LMRMovesWithoutReduction} min 0 max 32");
             Send($"option name LMRPvNodeMaxReduction type spin default {SearchConstants.LMRPvNodeMaxReduction} min 0 max 32");

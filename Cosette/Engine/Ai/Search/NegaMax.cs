@@ -152,7 +152,7 @@ namespace Cosette.Engine.Ai.Search
             if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
-                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false, false);
+                var score = -FindBestMove(context, depth - 1 - NullWindowGetReduction(depth), ply + 1, -beta, -beta + 1, false, false);
                 context.BoardState.UndoNullMove();
 
                 if (score >= beta)
@@ -391,6 +391,11 @@ namespace Cosette.Engine.Ai.Search
         {
             return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
                    board.GetGamePhase() == GamePhase.Opening && !friendlyKingInCheck;
+        }
+
+        private static int NullWindowGetReduction(int depth)
+        {
+            return SearchConstants.NullWindowBaseDepthReduction + depth / SearchConstants.NullWindowDepthDivider;
         }
 
         private static bool IIDCanBeApplied(int depth, TranspositionTableEntryFlags ttEntryType, Move bestMove)
