@@ -210,6 +210,8 @@ namespace Cosette.Engine.Ai.Search
             }
 
             var pvs = true;
+            var bestScore = 0;
+
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
@@ -246,12 +248,11 @@ namespace Cosette.Engine.Ai.Search
 
                 context.BoardState.MakeMove(moves[moveIndex]);
                 
-                var score = 0;
                 var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
 
                 if (pvs)
                 {
-                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                    bestScore = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
                     pvs = false;
                 }
                 else
@@ -262,8 +263,7 @@ namespace Cosette.Engine.Ai.Search
                         lmrReduction = LMRGetReduction(pvNode, moveIndex);
                     }
 
-                    score = -FindBestMove(context, depth - lmrReduction - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
-
+                    var score = -FindBestMove(context, depth - lmrReduction - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
                     if (score > alpha)
                     {
                         if (pvNode)
@@ -278,13 +278,18 @@ namespace Cosette.Engine.Ai.Search
                             }
                         }
                     }
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                    }
                 }
 
                 context.BoardState.UndoMove(moves[moveIndex]);
 
-                if (score > alpha)
+                if (bestScore > alpha)
                 {
-                    alpha = score;
+                    alpha = bestScore;
                     bestMove = moves[moveIndex];
 
                     if (alpha >= beta)
@@ -350,52 +355,55 @@ namespace Cosette.Engine.Ai.Search
             }
 
             // Don't add invalid move (done after checkmate) to prevent strange behaviors
-            if (alpha == -(-EvaluationConstants.Checkmate + ply + 1))
+            if (bestScore == -(-EvaluationConstants.Checkmate + ply + 1))
             {
-                return alpha;
+                return bestScore;
             }
 
             // Return draw score or checkmate score as leafs
-            if (alpha == -EvaluationConstants.Checkmate + ply + 2)
+            if (bestScore == -EvaluationConstants.Checkmate + ply + 2)
             {
                 if (friendlyKingInCheck)
                 {
-                    return alpha;
+                    return bestScore;
                 }
                 
                 return 0;
             }
 
-            if (entry.Age != context.TranspositionTableEntryAge || entry.Depth <= depth)
+            if (entry.Flags == TranspositionTableEntryFlags.Invalid || alpha != originalAlpha)
             {
-                var valueToSave = alpha;
-                var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
-                    alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
-                    TranspositionTableEntryFlags.ExactScore;
-
-                if (entryType == TranspositionTableEntryFlags.ExactScore)
+                if (entry.Age != context.TranspositionTableEntryAge || entry.Depth <= depth)
                 {
-                    valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
-                }
+                    var valueToSave = alpha;
+                    var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
+                        alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
+                        TranspositionTableEntryFlags.ExactScore;
 
-                TranspositionTable.Add(context.BoardState.Hash, new TranspositionTableEntry(
-                    context.BoardState.Hash, 
-                    (short)valueToSave, bestMove, 
-                    (byte)depth, entryType, 
-                    (byte)context.TranspositionTableEntryAge)
-                );
+                    if (entryType == TranspositionTableEntryFlags.ExactScore)
+                    {
+                        valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
+                    }
+
+                    TranspositionTable.Add(context.BoardState.Hash, new TranspositionTableEntry(
+                        context.BoardState.Hash,
+                        (short)valueToSave, bestMove,
+                        (byte)depth, entryType,
+                        (byte)context.TranspositionTableEntryAge)
+                    );
 
 #if DEBUG
-                if (entry.Flags != TranspositionTableEntryFlags.Invalid)
-                {
-                    context.Statistics.TTReplacements++;
-                }
+                    if (entry.Flags != TranspositionTableEntryFlags.Invalid)
+                    {
+                        context.Statistics.TTReplacements++;
+                    }
 
-                context.Statistics.TTAddedEntries++;
+                    context.Statistics.TTAddedEntries++;
 #endif
+                }
             }
 
-            return alpha;
+            return bestScore;
         }
 
         private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
