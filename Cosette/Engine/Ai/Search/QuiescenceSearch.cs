@@ -57,7 +57,7 @@ namespace Cosette.Engine.Ai.Search
                 return standPat;
             }
 
-            if (alpha < standPat)
+            if (standPat > alpha)
             {
                 alpha = standPat;
             }
