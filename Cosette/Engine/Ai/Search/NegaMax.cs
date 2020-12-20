@@ -256,14 +256,13 @@ namespace Cosette.Engine.Ai.Search
                 }
                 else
                 {
-                    var reducedDepth = depth;
-
+                    var lmrReduction = 0;
                     if (LMRCanBeApplied(context, depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
                     {
-                        reducedDepth = LMRGetReducedDepth(depth, pvNode);
+                        lmrReduction = LMRGetReduction(pvNode, moveIndex);
                     }
 
-                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
+                    score = -FindBestMove(context, depth - lmrReduction - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
                     if (score > alpha)
                     {
                         score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
@@ -418,11 +417,10 @@ namespace Cosette.Engine.Ai.Search
             return false;
         }
 
-        private static int LMRGetReducedDepth(int depth, bool pvNode)
+        private static int LMRGetReduction(bool pvNode, int moveIndex)
         {
-            return pvNode ? 
-                depth - SearchConstants.LMRPvNodeDepthReduction : 
-                depth - depth / SearchConstants.LMRNonPvNodeDepthDivisor;
+            var r = moveIndex / SearchConstants.LMRMovesWithoutReduction;
+            return Math.Min(pvNode ? SearchConstants.LMRPvNodeMaxReduction : SearchConstants.LMRNonPvNodeMaxReduction, r);
         }
     }
 }
