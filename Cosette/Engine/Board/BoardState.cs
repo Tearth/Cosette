@@ -841,6 +841,14 @@ namespace Cosette.Engine.Board
                    EvaluationConstants.Pieces[Piece.Pawn] * 8;
         }
 
+        public bool IsFieldPassing(int color, int field)
+        {
+            var enemyColor = ColorOperations.Invert(color);
+            var passingArea = PawnOperator.GetPassingArea(color, field);
+
+            return (passingArea & Pieces[enemyColor][Piece.Pawn]) == 0;
+        }
+
         public override string ToString()
         {
             return BoardToFen.Parse(this);

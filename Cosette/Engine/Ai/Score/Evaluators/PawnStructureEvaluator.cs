@@ -77,14 +77,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var isolatedPawns = 0;
             var chainedPawns = 0;
             var passingPawns = 0;
-            var enemyColor = ColorOperations.Invert(color);
 
             for (var file = 0; file < 8; file++)
             {
                 var friendlyPawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & _innerFileMasks[file];
                 var friendlyPawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & _outerFileMasks[file];
-                var enemyPawnsOnInnerMask = board.Pieces[enemyColor][Piece.Pawn] & _innerFileMasks[file];
-                var enemyPawnsOnOuterMask = board.Pieces[enemyColor][Piece.Pawn] & _outerFileMasks[file];
 
                 var pawnsCount = BitOperations.Count(friendlyPawnsOnInnerMask);
                 if (pawnsCount > 1)
@@ -97,11 +94,6 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                     if (friendlyPawnsOnOuterMask == 0)
                     {
                         isolatedPawns += (int)BitOperations.Count(pawnsCount);
-                    }
-
-                    if (enemyPawnsOnInnerMask == 0 && enemyPawnsOnOuterMask == 0)
-                    {
-                        passingPawns++;
                     }
                 }
             }
@@ -117,6 +109,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 if (chain != 0)
                 {
                     chainedPawns += (int)BitOperations.Count(chain);
+                }
+
+                if (board.IsFieldPassing(color, field))
+                {
+                    passingPawns++;
                 }
             }
 

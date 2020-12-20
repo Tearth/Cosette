@@ -258,7 +258,7 @@ namespace Cosette.Engine.Ai.Search
                 {
                     var reducedDepth = depth;
 
-                    if (LMRCanBeApplied(depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
+                    if (LMRCanBeApplied(context, depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
                     {
                         reducedDepth = LMRGetReducedDepth(depth, pvNode);
                     }
@@ -399,10 +399,23 @@ namespace Cosette.Engine.Ai.Search
             return ttEntryType == TranspositionTableEntryFlags.Invalid && depth >= SearchConstants.IIDMinimalDepth && bestMove == Move.Empty;
         }
 
-        private static bool LMRCanBeApplied(int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
+        private static bool LMRCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
         {
-            return depth >= SearchConstants.LMRMinimalDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
-                   moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck;
+            if (depth >= SearchConstants.LMRMinimalDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
+                moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck)
+            {
+                var enemyColor = ColorOperations.Invert(context.BoardState.ColorToMove);
+                var piece = context.BoardState.PieceTable[moves[moveIndex].To];
+
+                if (piece == Piece.Pawn && context.BoardState.IsFieldPassing(enemyColor, moves[moveIndex].To))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private static int LMRGetReducedDepth(int depth, bool pvNode)
