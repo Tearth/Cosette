@@ -263,9 +263,20 @@ namespace Cosette.Engine.Ai.Search
                     }
 
                     score = -FindBestMove(context, depth - lmrReduction - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
+
                     if (score > alpha)
                     {
-                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                        if (pvNode)
+                        {
+                            score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                        }
+                        else
+                        {
+                            if (lmrReduction != 0)
+                            {
+                                score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                            }
+                        }
                     }
                 }
 
