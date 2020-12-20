@@ -60,11 +60,15 @@ namespace Cosette.Uci.Commands
 
                 { "IIDMinimalDepth", p => SearchConstants.IIDMinimalDepth = int.Parse(p) },
                 { "IIDDepthReduction", p => SearchConstants.IIDDepthReduction = int.Parse(p) },
+
                 { "NullWindowMinimalDepth", p => SearchConstants.NullWindowMinimalDepth = int.Parse(p) },
                 { "NullWindowBaseDepthReduction", p => SearchConstants.NullWindowBaseDepthReduction = int.Parse(p) },
                 { "NullWindowDepthDivider", p => SearchConstants.NullWindowDepthDivider = int.Parse(p) },
+
                 { "LMRMinimalDepth", p => SearchConstants.LMRMinimalDepth = int.Parse(p) },
                 { "LMRMovesWithoutReduction", p => SearchConstants.LMRMovesWithoutReduction = int.Parse(p) },
+                { "LMRBaseReduction", p => SearchConstants.LMRBaseReduction = int.Parse(p) },
+                { "LMRMoveIndexDivider", p => SearchConstants.LMRMoveIndexDivider = int.Parse(p) },
                 { "LMRPvNodeMaxReduction", p => SearchConstants.LMRPvNodeMaxReduction = int.Parse(p) },
                 { "LMRNonPvNodeMaxReduction", p => SearchConstants.LMRNonPvNodeMaxReduction = int.Parse(p) },
             };

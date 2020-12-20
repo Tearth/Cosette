@@ -424,7 +424,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static int LMRGetReduction(bool pvNode, int moveIndex)
         {
-            var r = moveIndex / SearchConstants.LMRMovesWithoutReduction;
+            var r = SearchConstants.LMRBaseReduction + moveIndex / SearchConstants.LMRMoveIndexDivider;
             return Math.Min(pvNode ? SearchConstants.LMRPvNodeMaxReduction : SearchConstants.LMRNonPvNodeMaxReduction, r);
         }
     }
