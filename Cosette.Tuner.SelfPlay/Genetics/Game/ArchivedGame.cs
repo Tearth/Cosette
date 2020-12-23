@@ -1,4 +1,4 @@
-﻿namespace Cosette.Tuner.Genetics.Game
+﻿namespace Cosette.Tuner.SelfPlay.Genetics.Game
 {
     public class ArchivedGame
     {

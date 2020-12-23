@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using Cosette.Tuner.Engine;
-using Cosette.Tuner.Settings;
+using Cosette.Tuner.SelfPlay.Engine;
+using Cosette.Tuner.SelfPlay.Settings;
 
-namespace Cosette.Tuner.Genetics.Game
+namespace Cosette.Tuner.SelfPlay.Genetics.Game
 {
     public class GameData
     {

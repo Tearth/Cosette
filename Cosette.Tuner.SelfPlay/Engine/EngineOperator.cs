@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Cosette.Tuner.Settings;
+using Cosette.Tuner.SelfPlay.Settings;
 
-namespace Cosette.Tuner.Engine
+namespace Cosette.Tuner.SelfPlay.Engine
 {
     public class EngineOperator
     {

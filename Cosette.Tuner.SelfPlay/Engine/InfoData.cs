@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace Cosette.Tuner.Engine
+namespace Cosette.Tuner.SelfPlay.Engine
 {
     public class InfoData
     {

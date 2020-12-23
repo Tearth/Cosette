@@ -1,4 +1,4 @@
-﻿namespace Cosette.Tuner.Engine
+﻿namespace Cosette.Tuner.SelfPlay.Engine
 {
     public class BestMoveData
     {

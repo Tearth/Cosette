@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Cosette.Tuner.Common.Requests;
-using Cosette.Tuner.Genetics;
-using Cosette.Tuner.Settings;
-using Cosette.Tuner.Web;
+using Cosette.Tuner.SelfPlay.Genetics;
+using Cosette.Tuner.SelfPlay.Settings;
+using Cosette.Tuner.SelfPlay.Web;
 using GeneticSharp.Domain;
 using GeneticSharp.Domain.Crossovers;
 using GeneticSharp.Domain.Mutations;
@@ -13,7 +12,7 @@ using GeneticSharp.Domain.Populations;
 using GeneticSharp.Domain.Selections;
 using GeneticSharp.Domain.Terminations;
 
-namespace Cosette.Tuner
+namespace Cosette.Tuner.SelfPlay
 {
     public class Program
     {

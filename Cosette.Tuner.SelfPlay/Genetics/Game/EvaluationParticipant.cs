@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Cosette.Tuner.Engine;
+using Cosette.Tuner.SelfPlay.Engine;
 
-namespace Cosette.Tuner.Genetics.Game
+namespace Cosette.Tuner.SelfPlay.Genetics.Game
 {
     public class EvaluationParticipant
     {

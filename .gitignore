@@ -353,7 +353,7 @@ MigrationBackup/
 /cloc.bat
 /Cosette.Arbiter/settings.json
 /Cosette.Arbiter/book.bin
-/Cosette.Tuner/settings.json
-/Cosette.Tuner/book.bin
+/Cosette.Tuner.SelfPlay/settings.json
+/Cosette.Tuner.SelfPlay/book.bin
 /Cosette.Tuner.Web/Database.sqlite
 /Cosette.Tuner.Web/wwwroot/lib/

@@ -1,8 +1,8 @@
-﻿using Cosette.Tuner.Settings;
+﻿using Cosette.Tuner.SelfPlay.Settings;
 using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Randomizations;
 
-namespace Cosette.Tuner.Genetics
+namespace Cosette.Tuner.SelfPlay.Genetics
 {
     public class EvaluationChromosome : ChromosomeBase
     {

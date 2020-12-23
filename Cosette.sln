@@ -21,11 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Polyglot.Tests", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Polyglot", "Cosette.Polyglot\Cosette.Polyglot.csproj", "{AB6B0059-A70B-4A8F-9F55-22DB3A92E83F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Tuner", "Cosette.Tuner\Cosette.Tuner.csproj", "{0EEBE02C-E239-4727-8B8B-6ADD603B73B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Tuner.SelfPlay", "Cosette.Tuner.SelfPlay\Cosette.Tuner.SelfPlay.csproj", "{0EEBE02C-E239-4727-8B8B-6ADD603B73B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosette.Tuner.Web", "Cosette.Tuner.Web\Cosette.Tuner.Web.csproj", "{5AD2DF22-EEB4-4696-B4D0-FA97C1DE871E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Tuner.Web", "Cosette.Tuner.Web\Cosette.Tuner.Web.csproj", "{5AD2DF22-EEB4-4696-B4D0-FA97C1DE871E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosette.Tuner.Common", "Cosette.Tuner.Common\Cosette.Tuner.Common.csproj", "{97466830-B71A-4DC4-AD43-D92CC6F867DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Tuner.Common", "Cosette.Tuner.Common\Cosette.Tuner.Common.csproj", "{97466830-B71A-4DC4-AD43-D92CC6F867DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

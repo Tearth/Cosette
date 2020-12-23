@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Common.Responses;
 using Newtonsoft.Json;
 
-namespace Cosette.Tuner.Web
+namespace Cosette.Tuner.SelfPlay.Web
 {
     public class WebService
     {

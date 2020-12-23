@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Cosette.Polyglot;
-using Cosette.Tuner.Common.Requests;
-using Cosette.Tuner.Engine;
-using Cosette.Tuner.Genetics.Game;
-using Cosette.Tuner.Settings;
-using Cosette.Tuner.Web;
+using Cosette.Tuner.SelfPlay.Engine;
+using Cosette.Tuner.SelfPlay.Genetics.Game;
+using Cosette.Tuner.SelfPlay.Settings;
+using Cosette.Tuner.SelfPlay.Web;
 using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Fitnesses;
 
-namespace Cosette.Tuner.Genetics
+namespace Cosette.Tuner.SelfPlay.Genetics
 {
     public class EvaluationFitness : IFitness
     {

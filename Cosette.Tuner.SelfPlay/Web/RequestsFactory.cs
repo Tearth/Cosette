@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Cosette.Tuner.Common.Requests;
-using Cosette.Tuner.Genetics.Game;
-using Cosette.Tuner.Settings;
+using Cosette.Tuner.SelfPlay.Genetics.Game;
+using Cosette.Tuner.SelfPlay.Settings;
 using GeneticSharp.Domain.Chromosomes;
 
-namespace Cosette.Tuner.Web
+namespace Cosette.Tuner.SelfPlay.Web
 {
     public static class RequestsFactory
     {

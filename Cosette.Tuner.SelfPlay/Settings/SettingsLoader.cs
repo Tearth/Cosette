@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 
-namespace Cosette.Tuner.Settings
+namespace Cosette.Tuner.SelfPlay.Settings
 {
     public static class SettingsLoader
     {
