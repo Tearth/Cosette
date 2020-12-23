@@ -43,8 +43,20 @@ namespace Cosette.Tuner.SelfPlay.Genetics
                 experimentalParticipant.EngineOperator.SetOption(geneName, geneValue);
             }
 
-            referenceParticipant.EngineOperator.ApplyOptions();
-            experimentalParticipant.EngineOperator.ApplyOptions();
+            while (true)
+            {
+                try
+                {
+                    referenceParticipant.EngineOperator.ApplyOptions();
+                    experimentalParticipant.EngineOperator.ApplyOptions();
+                    break;
+                }
+                catch
+                {
+                    referenceParticipant.EngineOperator.Restart();
+                    experimentalParticipant.EngineOperator.Restart();
+                }
+            }
 
             var stopwatch = Stopwatch.StartNew();
             var (whitePlayer, blackPlayer) = (referenceParticipant, experimentalParticipant);
