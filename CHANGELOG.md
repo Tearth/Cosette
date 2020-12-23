@@ -1,4 +1,9 @@
 # Version 4.0 (------), --.--.----
+ - Added Texel project
+ - Adjusted search parameters
+ - Adjusted evaluation parameters
+ - Fixed reduntant saving of transposition table entries
+ - Added new formulas calculating reduction for LMR and NW pruning
 
 # Version 3.0 (Luna), 12.12.2020
  - Added better time control for Arbiter
