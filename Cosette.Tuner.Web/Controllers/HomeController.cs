@@ -49,7 +49,7 @@ namespace Cosette.Tuner.Web.Controllers
 
             return View(new MainViewModel
             {
-                LastTest = _mapper.Map<TestViewModel>(test),
+                CurrentTest = _mapper.Map<TestViewModel>(test),
                 Tests = _mapper.Map<List<TestViewModel>>(allTests),
                 AllGenerations = _mapper.Map<List<GenerationViewModel>>(allGenerations),
                 BestGenerations = _mapper.Map<List<GenerationViewModel>>(bestGenerations),

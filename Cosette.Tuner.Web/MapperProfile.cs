@@ -63,7 +63,8 @@ namespace Cosette.Tuner.Web
 
             CreateMap<TestModel, TestViewModel>()
                 .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
-                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => q.CreationTimeUtc));
+                .ForMember(p => p.CreationTimeUtc, p => p.MapFrom(q => q.CreationTimeUtc))
+                .ForMember(p => p.Type, p => p.MapFrom(q => q.Type));
 
             CreateMap<GenerationModel, GenerationViewModel>()
                 .ForMember(p => p.Id, p => p.MapFrom(q => q.Id))
