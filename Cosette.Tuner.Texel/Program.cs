@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Cosette.Tuner.Common.Services;
 using Cosette.Tuner.Texel.Genetics;
+using Cosette.Tuner.Texel.Genetics.Epd;
 using Cosette.Tuner.Texel.Settings;
 using GeneticSharp.Domain;
 using GeneticSharp.Domain.Crossovers;
@@ -17,6 +18,7 @@ namespace Cosette.Tuner.Texel
     class Program
     {
         private static int _testId;
+        private static EpdLoader _epdLoader;
         private static WebService _webService;
         private static Stopwatch _generationStopwatch;
 
@@ -28,8 +30,11 @@ namespace Cosette.Tuner.Texel
             _webService = new WebService();
             _generationStopwatch = new Stopwatch();
 
-            await _webService.EnableIfAvailable();
-            _testId = await _webService.RegisterTest();
+            // await _webService.EnableIfAvailable();
+            // _testId = await _webService.RegisterTest();
+
+            _epdLoader = new EpdLoader();
+            _epdLoader.Load(SettingsLoader.Data.PositionsDatabasePath);
 
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
