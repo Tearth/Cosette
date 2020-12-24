@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Transposition;
@@ -12,7 +13,7 @@ namespace Cosette
 {
     public class Program
     {
-        private static void Main()
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
@@ -20,7 +21,8 @@ namespace Cosette
             MagicBitboards.InitWithInternalKeys();
             StaticExchangeEvaluation.Init();
 
-            new InteractiveConsole().Run();
+            var silentMode = args.Contains("silent");
+            new InteractiveConsole().Run(silentMode);
         }
 
         public static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)

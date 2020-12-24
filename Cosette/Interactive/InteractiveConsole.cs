@@ -50,12 +50,19 @@ namespace Cosette.Interactive
             CultureInfo.CurrentCulture = new CultureInfo("en-US", false);
         }
 
-        public void Run()
+        public void Run(bool silentMode)
         {
-            DisplayIntro();
+            if (!silentMode)
+            {
+                DisplayIntro();
+            }
+
             while (true)
             {
-                Console.Write("> ");
+                if (!silentMode)
+                {
+                    Console.Write("> ");
+                }
 
                 var input = Console.ReadLine();
                 var splitInput = input.Split(' ');
@@ -68,7 +75,10 @@ namespace Cosette.Interactive
                 }
                 else
                 {
-                    Console.WriteLine("Command not found");
+                    if (!silentMode)
+                    {
+                        Console.WriteLine("Command not found");
+                    }
                 }
             }
         }
