@@ -13,8 +13,19 @@ namespace Cosette.Engine.Fen
             var colorState = split[1];
             var castlingState = split[2];
             var enPassantState = split[3];
-            var halfmoveClock = split.Length > 4 ? int.Parse(split[4]) : 0;
-            var movesCount = split.Length > 5 ? int.Parse(split[5]) : 0;
+
+            var halfmoveClock = 0;
+            var movesCount = 0;
+
+            if (split.Length > 4)
+            {
+                int.TryParse(split[4], out halfmoveClock);
+            }
+
+            if (split.Length > 5)
+            {
+                int.TryParse(split[5], out movesCount);
+            }
 
             var result = new BoardState();
             var currentColor = ParseCurrentColor(colorState);
