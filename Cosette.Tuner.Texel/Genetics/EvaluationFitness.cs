@@ -28,8 +28,28 @@ namespace Cosette.Tuner.Texel.Genetics
 
         public double Evaluate(IChromosome chromosome)
         {
-            var sum = 0.0;
+            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
+            {
+                var geneName = SettingsLoader.Data.Genes[geneIndex].Name;
+                var geneValue = chromosome.GetGene(geneIndex).ToString();
 
+                _engineOperator.SetOption(geneName, geneValue);
+            }
+
+            while (true)
+            {
+                try
+                {
+                    _engineOperator.ApplyOptions();
+                    break;
+                }
+                catch
+                {
+                    _engineOperator.Restart();
+                }
+            }
+
+            var sum = 0.0;
             foreach (var position in _epdLoader.Positions)
             {
                 var evaluation = _engineOperator.Evaluate(position.Fen);
@@ -39,7 +59,11 @@ namespace Cosette.Tuner.Texel.Genetics
                 sum += Math.Pow(desiredEvaluation - sigmoidEvaluation, 2);
             }
 
-            return sum / _epdLoader.Positions.Count;
+            var error = sum / _epdLoader.Positions.Count;
+            var fitness = 1.0 - error;
+
+            Console.WriteLine($"[{DateTime.Now}] Run done! Fitness: {fitness}");
+            return fitness;
         }
 
         private double Sigmoid(int evaluation)

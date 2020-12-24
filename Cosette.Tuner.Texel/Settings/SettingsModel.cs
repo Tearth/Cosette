@@ -25,9 +25,6 @@ namespace Cosette.Tuner.Texel.Settings
         [JsonProperty("generations_count")]
         public int GenerationsCount { get; set; }
 
-        [JsonProperty("games_per_fitness_test")]
-        public int GamesPerFitnessTest { get; set; }
-
         [JsonProperty("scaling_constant")]
         public double ScalingConstant { get; set; }
     }
