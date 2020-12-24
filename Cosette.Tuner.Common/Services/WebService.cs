@@ -41,7 +41,7 @@ namespace Cosette.Tuner.Common.Services
             }
         }
 
-        public async Task<int> RegisterTest()
+        public async Task<int> RegisterTest(RegisterTestRequest requestData)
         {
             if (!_enabled)
             {
@@ -50,7 +50,8 @@ namespace Cosette.Tuner.Common.Services
 
             try
             {
-                var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "test/register"));
+                var httpContent = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("test/register", httpContent);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)

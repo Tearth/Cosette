@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Common.Services;
 using Cosette.Tuner.SelfPlay.Genetics;
 using Cosette.Tuner.SelfPlay.Settings;
@@ -30,7 +31,10 @@ namespace Cosette.Tuner.SelfPlay
             _generationStopwatch = new Stopwatch();
 
             await _webService.EnableIfAvailable();
-            _testId = await _webService.RegisterTest();
+            _testId = await _webService.RegisterTest(new RegisterTestRequest
+            {
+                Type = TestType.SelfPlay
+            });
 
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
