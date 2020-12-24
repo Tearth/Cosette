@@ -12,12 +12,9 @@ namespace Cosette.Tuner.Web.Database.Models
 
         public DateTime CreationTimeUtc { get; set; }
         public double ElapsedTime { get; set; }
-        public int Fitness { get; set; }
-        public int ReferenceEngineWins { get; set; }
-        public int ExperimentalEngineWins { get; set; }
-        public int Draws { get; set; }
+        public double Fitness { get; set; }
 
-        public virtual List<EngineStatisticsModel> EnginesStatistics { get; set; }
+        public virtual List<SelfPlayStatisticsModel> SelfPlayStatistics { get; set; }
         public virtual List<ChromosomeGeneModel> Genes { get; set; }
     }
 }

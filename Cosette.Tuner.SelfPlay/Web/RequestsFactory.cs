@@ -15,24 +15,25 @@ namespace Cosette.Tuner.SelfPlay.Web
                 TestId = testId,
                 ElapsedTime = elapsedTime,
                 Fitness = fitness,
-                ReferenceEngineWins = referenceParticipant.Wins,
-                ExperimentalEngineWins = experimentalParticipant.Wins,
-                Draws = referenceParticipant.Draws,
 
-                ReferenceEngineStatistics = new EngineStatisticsDataRequest
+                ReferenceEngineStatistics = new SelfPlayStatisticsDataRequest
                 {
                     AverageTimePerGame = elapsedTime / SettingsLoader.Data.GamesPerFitnessTest,
                     AverageDepth = referenceParticipant.AverageDepth,
                     AverageNodesCount = referenceParticipant.AverageNodesCount,
-                    AverageNodesPerSecond = referenceParticipant.AverageNps
+                    AverageNodesPerSecond = referenceParticipant.AverageNps,
+                    Wins = referenceParticipant.Wins,
+                    Draws = referenceParticipant.Draws
                 },
 
-                ExperimentalEngineStatistics = new EngineStatisticsDataRequest
+                ExperimentalEngineStatistics = new SelfPlayStatisticsDataRequest
                 {
                     AverageTimePerGame = elapsedTime / SettingsLoader.Data.GamesPerFitnessTest,
                     AverageDepth = experimentalParticipant.AverageDepth,
                     AverageNodesCount = experimentalParticipant.AverageNodesCount,
-                    AverageNodesPerSecond = experimentalParticipant.AverageNps
+                    AverageNodesPerSecond = experimentalParticipant.AverageNps,
+                    Wins = experimentalParticipant.Wins,
+                    Draws = experimentalParticipant.Draws
                 },
 
                 Genes = CreateGenesRequest(chromosome)

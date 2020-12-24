@@ -27,7 +27,7 @@ namespace Cosette.Tuner.Web.Services
         {
             return await _databaseContext.Chromosomes
                 .Where(p => p.TestId == testId)
-                .Include(p => p.EnginesStatistics)
+                .Include(p => p.SelfPlayStatistics)
                 .Include(p => p.Genes)
                 .ToListAsync();
         }

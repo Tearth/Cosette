@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Cosette.Tuner.Web.Database.Models
+namespace Cosette.Tuner.Web.ViewModels
 {
-    public class EngineStatisticsModel
+    public class SelfPlayStatisticsViewModel
     {
         public int Id { get; set; }
-
-        public int ChromosomeId { get; set; }
-        public virtual ChromosomeModel Chromosome { get; set; }
 
         public DateTime CreationTimeUtc { get; set; }
         public bool IsReferenceEngine { get; set; }
@@ -15,5 +15,7 @@ namespace Cosette.Tuner.Web.Database.Models
         public double AverageDepth { get; set; }
         public double AverageNodesCount { get; set; }
         public double AverageNodesPerSecond { get; set; }
+        public int Wins { get; set; }
+        public int Draws { get; set; }
     }
 }
