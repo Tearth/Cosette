@@ -2,6 +2,7 @@
 using Cosette.Engine.Ai.Score;
 using Cosette.Engine.Ai.Score.Evaluators;
 using Cosette.Engine.Board;
+using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
 
 namespace Cosette.Interactive.Commands
@@ -21,6 +22,7 @@ namespace Cosette.Interactive.Commands
         {
             var fen = string.Join(' ', parameters);
             var boardState = FenToBoard.Parse(fen);
+            boardState.ColorToMove = Color.White;
 
             var evaluationStatistics = new EvaluationStatistics();
             var evaluation = Evaluation.Evaluate(boardState, evaluationStatistics);
