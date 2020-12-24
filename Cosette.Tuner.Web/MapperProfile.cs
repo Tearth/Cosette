@@ -20,6 +20,11 @@ namespace Cosette.Tuner.Web
                 .ForMember(p => p.Fitness, p => p.MapFrom(q => q.Fitness))
                 .ForMember(p => p.SelfPlayStatistics, p => p.MapFrom((src, dest, order, context) =>
                 {
+                    if (src.ReferenceEngineStatistics == null && src.ExperimentalEngineStatistics == null)
+                    {
+                        return new List<SelfPlayStatisticsModel>();
+                    }
+
                     var referenceEngineStatistics = context.Mapper.Map<SelfPlayStatisticsModel>(src.ReferenceEngineStatistics);
                     var experimentalEngineStatistics = context.Mapper.Map<SelfPlayStatisticsModel>(src.ExperimentalEngineStatistics);
 

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Common.Services;
 using Cosette.Tuner.Texel.Genetics;
 using Cosette.Tuner.Texel.Genetics.Epd;
 using Cosette.Tuner.Texel.Settings;
+using Cosette.Tuner.Texel.Web;
 using GeneticSharp.Domain;
 using GeneticSharp.Domain.Crossovers;
 using GeneticSharp.Domain.Mutations;
@@ -30,8 +32,11 @@ namespace Cosette.Tuner.Texel
             _webService = new WebService();
             _generationStopwatch = new Stopwatch();
 
-            // await _webService.EnableIfAvailable();
-            // _testId = await _webService.RegisterTest();
+            await _webService.EnableIfAvailable();
+            _testId = await _webService.RegisterTest(new RegisterTestRequest
+            {
+                Type = TestType.Texel
+            });
 
             _epdLoader = new EpdLoader();
             _epdLoader.Load(SettingsLoader.Data.PositionsDatabasePath);
@@ -66,10 +71,10 @@ namespace Cosette.Tuner.Texel
 
                 genesList.Add($"{name}={value}");
             }
-            /*
+            
             var generationDataRequest = RequestsFactory.CreateGenerationRequest(_testId, _generationStopwatch.Elapsed.TotalSeconds, geneticAlgorithm.BestChromosome);
             _webService.SendGenerationData(generationDataRequest).GetAwaiter().GetResult();
-            */
+            
             Console.WriteLine("======================================");
             Console.WriteLine($"[{DateTime.Now}] Generation done!");
             Console.WriteLine($" - best chromosome: {string.Join(", ", genesList)}");

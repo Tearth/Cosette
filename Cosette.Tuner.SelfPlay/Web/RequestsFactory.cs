@@ -8,7 +8,7 @@ namespace Cosette.Tuner.SelfPlay.Web
 {
     public static class RequestsFactory
     {
-        public static ChromosomeDataRequest CreateChromosomeRequest(int testId, int fitness, double elapsedTime, IChromosome chromosome, EvaluationParticipant referenceParticipant, EvaluationParticipant experimentalParticipant)
+        public static ChromosomeDataRequest CreateChromosomeRequest(int testId, double fitness, double elapsedTime, IChromosome chromosome, EvaluationParticipant referenceParticipant, EvaluationParticipant experimentalParticipant)
         {
             return new ChromosomeDataRequest
             {
@@ -45,7 +45,7 @@ namespace Cosette.Tuner.SelfPlay.Web
             return new GenerationDataRequest
             {
                 TestId = testId,
-                BestFitness = (int)chromosome.Fitness,
+                BestFitness = chromosome.Fitness.Value,
                 ElapsedTime = elapsedTime,
                 BestChromosomeGenes = CreateGenesRequest(chromosome)
             };
