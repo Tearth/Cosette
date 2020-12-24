@@ -39,7 +39,7 @@ namespace Cosette.Tuner.Texel
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
-            var fitness = new EvaluationFitness(_testId, _webService);
+            var fitness = new EvaluationFitness(_testId, _epdLoader, _webService);
             var chromosome = new EvaluationChromosome();
             var population = new Population(SettingsLoader.Data.MinPopulation, SettingsLoader.Data.MaxPopulation, chromosome);
 

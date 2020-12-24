@@ -27,5 +27,8 @@ namespace Cosette.Tuner.Texel.Settings
 
         [JsonProperty("games_per_fitness_test")]
         public int GamesPerFitnessTest { get; set; }
+
+        [JsonProperty("scaling_constant")]
+        public double ScalingConstant { get; set; }
     }
 }

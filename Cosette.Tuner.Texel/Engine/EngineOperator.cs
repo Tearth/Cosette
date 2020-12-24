@@ -29,7 +29,12 @@ namespace Cosette.Tuner.Texel.Engine
         public int Evaluate(string fen)
         {
             Write($"evaluateraw {fen}");
-            return int.Parse(Read());
+
+            while (true)
+            {
+                var response = Read();
+                return int.Parse(response);
+            }
         }
 
         public void Write(string message)
