@@ -167,6 +167,11 @@ namespace Cosette.Uci
             while (true)
             {
                 var (command, parameters) = Receive();
+                if (command == "leave")
+                {
+                    break;
+                }
+
                 if (_commands.ContainsKey(command))
                 {
                     _commands[command].Run(parameters);
