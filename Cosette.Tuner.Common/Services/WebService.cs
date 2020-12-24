@@ -6,7 +6,7 @@ using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Common.Responses;
 using Newtonsoft.Json;
 
-namespace Cosette.Tuner.SelfPlay.Web
+namespace Cosette.Tuner.Common.Services
 {
     public class WebService
     {

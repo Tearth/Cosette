@@ -5,7 +5,7 @@ namespace Cosette.Tuner.Texel.Settings
 {
     public class SettingsModel
     {
-        public List<ParameterInfo> Parameters { get; set; }
+        public List<GeneInfo> Genes { get; set; }
 
         [JsonProperty("engine_path")]
         public string EnginePath { get; set; }

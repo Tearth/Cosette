@@ -2,7 +2,7 @@
 
 namespace Cosette.Tuner.Texel.Settings
 {
-    public class ParameterInfo
+    public class GeneInfo
     {
         public string Name { get; set; }
 
