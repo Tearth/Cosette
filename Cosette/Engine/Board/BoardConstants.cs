@@ -31,6 +31,18 @@
         public const ulong NearPromotionAreaWhite = 0xffffff00000000;
         public const ulong NearPromotionAreaBlack = 0xffffff00;
 
+        public static int[] DistanceFromCenter =
+        {
+            3, 3, 3, 3, 3, 3, 3, 3,
+            3, 2, 2, 2, 2, 2, 2, 3,
+            3, 2, 1, 1, 1, 1, 2, 3,
+            3, 2, 1, 0, 0, 1, 2, 3,
+            3, 2, 1, 0, 0, 1, 2, 3,
+            3, 2, 1, 1, 1, 1, 2, 3,
+            3, 2, 2, 2, 2, 2, 2, 3,
+            3, 3, 3, 3, 3, 3, 3, 3
+        };
+
         public const int PhaseResolution = 1024;
     }
 }
