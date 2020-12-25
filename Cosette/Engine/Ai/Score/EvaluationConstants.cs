@@ -29,6 +29,8 @@
         public static int Fianchetto = 20;
         public static int FianchettoWithoutBishop = -20;
 
+        public static int[] KingCentrism = { 15, -15 };
+
         public const int OpeningEndgameEdge = 20500;
 
         public const ulong Center = 0x3c3c3c3c0000;

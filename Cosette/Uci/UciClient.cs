@@ -134,6 +134,8 @@ namespace Cosette.Uci
             Send($"option name PairOfBishops type spin default {EvaluationConstants.PairOfBishops} min -100 max 100");
             Send($"option name Fianchetto type spin default {EvaluationConstants.Fianchetto} min -100 max 100");
             Send($"option name FianchettoWithoutBishop type spin default {EvaluationConstants.FianchettoWithoutBishop} min -100 max 100");
+            Send($"option name KingCentrismOpening type spin default {EvaluationConstants.KingCentrism[GamePhase.Opening]} min -100 max 100");
+            Send($"option name KingCentrismEnding type spin default {EvaluationConstants.KingCentrism[GamePhase.Ending]} min -100 max 100");
 
             Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
             Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");

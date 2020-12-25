@@ -31,14 +31,15 @@ namespace Cosette.Interactive.Commands
 
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
             var castlingEvaluation = CastlingEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(boardState, evaluationStatistics, openingPhase, endingPhase);
+            var pawnStructureEvaluation = PawnStructureEvaluator.EvaluateWithoutCache(boardState, evaluationStatistics, openingPhase, endingPhase);
             var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
             var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
             var pieces = PiecesEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var kingCentrism = KingCentrismEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 
             var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation +
-                        mobility + kingSafety + pieces + fianchetto;
+                        mobility + kingSafety + pieces + fianchetto + kingCentrism;
 
             _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");
@@ -48,8 +49,9 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine($" = Pawns: {pawnStructureEvaluation}");
             _interactiveConsole.WriteLine($" = Mobility: {mobility}");
             _interactiveConsole.WriteLine($" = King safety: {kingSafety}");
-            _interactiveConsole.WriteLine($" = Pieces evaluation: {pieces}");
-            _interactiveConsole.WriteLine($" = Fianchetto evaluation: {fianchetto}");
+            _interactiveConsole.WriteLine($" = Pieces: {pieces}");
+            _interactiveConsole.WriteLine($" = Fianchetto: {fianchetto}");
+            _interactiveConsole.WriteLine($" = King centrism: {kingCentrism}");
             _interactiveConsole.WriteLine();
             _interactiveConsole.WriteLine($" = Total: {total}");
         }

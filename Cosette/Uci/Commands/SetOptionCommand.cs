@@ -47,6 +47,8 @@ namespace Cosette.Uci.Commands
                 { "PairOfBishops", p => EvaluationConstants.PairOfBishops = int.Parse(p) },
                 { "Fianchetto", p => EvaluationConstants.Fianchetto = int.Parse(p) },
                 { "FianchettoWithoutBishop", p => EvaluationConstants.FianchettoWithoutBishop = int.Parse(p) },
+                { "KingCentrismOpening", p => EvaluationConstants.KingCentrism[GamePhase.Opening] = int.Parse(p) },
+                { "KingCentrismEnding", p => EvaluationConstants.KingCentrism[GamePhase.Ending] = int.Parse(p) },
 
                 { "HashMove", p => MoveOrderingConstants.HashMove = short.Parse(p) },
                 { "Promotion", p => MoveOrderingConstants.Promotion = short.Parse(p) },

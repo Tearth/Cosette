@@ -16,6 +16,7 @@ namespace Cosette.Engine.Ai.Score
             result += enableCache ? 
                 PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase) :
                 PawnStructureEvaluator.EvaluateWithoutCache(board, statistics, openingPhase, endingPhase);
+            result += KingCentrismEvaluator.Evaluate(board, openingPhase, endingPhase);
 
             if (endingPhase != BoardConstants.PhaseResolution)
             {
