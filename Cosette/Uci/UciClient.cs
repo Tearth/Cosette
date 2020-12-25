@@ -198,18 +198,17 @@ namespace Cosette.Uci
 
                 var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
                 var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
                 var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
-                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + 
+                var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation + 
                             mobility + kingSafety + pieces;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
-                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
+                     $"pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
                      $"pieces {pieces} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }

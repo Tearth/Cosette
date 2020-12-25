@@ -13,7 +13,6 @@ namespace Cosette.Engine.Ai.Score
             var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
             var result = MaterialEvaluator.Evaluate(board);
-            result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
             result += PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase);
 
             if (endingPhase != BoardConstants.PhaseResolution)
