@@ -5,6 +5,7 @@ using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
 using Cosette.Engine.Moves;
+using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Board
 {
@@ -799,7 +800,7 @@ namespace Cosette.Engine.Board
         public bool IsFieldPassing(int color, int field)
         {
             var enemyColor = ColorOperations.Invert(color);
-            var passingArea = PawnOperator.GetPassingArea(color, field);
+            var passingArea = PassingPatternGenerator.GetPattern(color, field);
 
             return (passingArea & Pieces[enemyColor][Piece.Pawn]) == 0;
         }

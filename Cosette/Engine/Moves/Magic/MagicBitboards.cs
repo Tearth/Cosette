@@ -46,8 +46,8 @@ namespace Cosette.Engine.Moves.Magic
 
             for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
             {
-                masks[fieldIndex] = (FilePatternGenerator.GetPattern(fieldIndex) & ~BoardConstants.TopBottomEdge) |
-                                    (RankPatternGenerator.GetPattern(fieldIndex) & ~BoardConstants.RightLeftEdge);
+                masks[fieldIndex] = (FilePatternGenerator.GetPatternForField(fieldIndex) & ~BoardConstants.TopBottomEdge) |
+                                    (RankPatternGenerator.GetPatternForField(fieldIndex) & ~BoardConstants.RightLeftEdge);
 
                 permutations[fieldIndex] = new ulong[1 << MagicShifts.RookShifts[fieldIndex]];
                 attacks[fieldIndex] = new ulong[1 << MagicShifts.RookShifts[fieldIndex]];

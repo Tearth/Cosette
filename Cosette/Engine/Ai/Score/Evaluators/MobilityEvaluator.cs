@@ -8,8 +8,9 @@ namespace Cosette.Engine.Ai.Score.Evaluators
     {
         public static int Evaluate(BoardState board, int openingPhase, int endingPhase, ref ulong fieldsAttackedByWhite, ref ulong fieldsAttackedByBlack)
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase, ref fieldsAttackedByWhite) - 
-                   Evaluate(board, Color.Black, openingPhase, endingPhase, ref fieldsAttackedByBlack);
+            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase, ref fieldsAttackedByWhite);
+            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase, ref fieldsAttackedByBlack);
+            return whiteEvaluation - blackEvaluation;
         }
 
         public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase, ref ulong fieldsAttackedByColor)

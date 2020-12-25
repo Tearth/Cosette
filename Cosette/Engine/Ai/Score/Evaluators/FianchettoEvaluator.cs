@@ -1,6 +1,5 @@
 ﻿using Cosette.Engine.Board;
 using Cosette.Engine.Common;
-using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Ai.Score.Evaluators
 {
@@ -18,8 +17,9 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
         public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase) -
-                   Evaluate(board, Color.Black, openingPhase, endingPhase);
+            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase);
+            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return whiteEvaluation - blackEvaluation;
         }
 
         public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
@@ -32,27 +32,24 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var pawns = board.Pieces[color][Piece.Pawn];
             var bishops = board.Pieces[color][Piece.Bishop];
 
-            var fianchettoOpeningScore = EvaluationConstants.Fianchetto;
-            var fianchettoPenaltyOpeningScore = EvaluationConstants.FianchettoWithoutBishop;
-
             if ((pawns & kingSidePawnsPattern) == kingSidePawnsPattern)
             {
                 if ((bishops & kingSideBishopPattern) == kingSideBishopPattern)
                 {
-                    return TaperedEvaluation.AdjustToPhase(fianchettoOpeningScore, 0, openingPhase, endingPhase);
+                    return TaperedEvaluation.AdjustToPhase(EvaluationConstants.Fianchetto, 0, openingPhase, endingPhase);
                 }
 
-                return TaperedEvaluation.AdjustToPhase(fianchettoPenaltyOpeningScore, 0, openingPhase, endingPhase);
+                return TaperedEvaluation.AdjustToPhase(EvaluationConstants.FianchettoWithoutBishop, 0, openingPhase, endingPhase);
             }
 
             if ((pawns & queenSidePawnsPattern) == queenSidePawnsPattern)
             {
                 if ((bishops & queenSideBishopPattern) == queenSideBishopPattern)
                 {
-                    return TaperedEvaluation.AdjustToPhase(fianchettoOpeningScore, 0, openingPhase, endingPhase);
+                    return TaperedEvaluation.AdjustToPhase(EvaluationConstants.Fianchetto, 0, openingPhase, endingPhase);
                 }
 
-                return TaperedEvaluation.AdjustToPhase(fianchettoPenaltyOpeningScore, 0, openingPhase, endingPhase);
+                return TaperedEvaluation.AdjustToPhase(EvaluationConstants.FianchettoWithoutBishop, 0, openingPhase, endingPhase);
             }
 
             return 0;

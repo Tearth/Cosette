@@ -8,8 +8,9 @@ namespace Cosette.Engine.Ai.Score.Evaluators
     {
         public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
         {
-            return Evaluate(board, Color.White, openingPhase, endingPhase) -
-                   Evaluate(board, Color.Black, openingPhase, endingPhase);
+            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase);
+            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return whiteEvaluation - blackEvaluation;
         }
 
         public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
@@ -26,7 +27,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 var field = BitOperations.BitScan(lsb);
                 rooks = BitOperations.PopLsb(rooks);
 
-                var file = FilePatternGenerator.GetPattern(field) | lsb;
+                var file = FilePatternGenerator.GetPatternForField(field) | lsb;
                 var rooksOnFile = file & board.Pieces[color][Piece.Rook];
                 var friendlyPawnsOnFile = file & board.Pieces[color][Piece.Pawn];
                 var enemyPawnsOnFile = file & board.Pieces[enemyColor][Piece.Pawn];

@@ -7,29 +7,6 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class PawnOperator
     {
-        private static ulong[][] _passingAreas;
-
-        static PawnOperator()
-        {
-            _passingAreas = new ulong[2][];
-            _passingAreas[Color.White] = new ulong[64];
-            _passingAreas[Color.Black] = new ulong[64];
-
-            for (var color = 0; color < 2; color++)
-            {
-                var offset = color == Color.White ? 8 : -8;
-                for (var field = 0; field < 64; field++)
-                {
-                    var currentField = field + 2 * offset;
-                    while (currentField >= 0 && currentField < 64)
-                    {
-                        _passingAreas[color][field] |= BoxPatternGenerator.GetPattern(currentField);
-                        currentField += offset;
-                    }
-                }
-            }
-        }
-
         public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
         {
             var color = boardState.ColorToMove;
@@ -104,11 +81,6 @@ namespace Cosette.Engine.Board.Operators
             }
 
             return false;
-        }
-
-        public static ulong GetPassingArea(int color, int field)
-        {
-            return _passingAreas[color][field];
         }
 
         private static int GetSinglePush(BoardState boardState, Span<Move> moves, int offset, bool promotionsMode)
