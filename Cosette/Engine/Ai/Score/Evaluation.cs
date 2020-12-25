@@ -28,6 +28,7 @@ namespace Cosette.Engine.Ai.Score
                 result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += FianchettoEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += PiecesEvaluator.Evaluate(board, openingPhase, endingPhase);
+                result += CenterControlEvaluator.Evaluate(board, openingPhase, endingPhase);
             }
 
             return board.ColorToMove == Color.White ? result : -result;

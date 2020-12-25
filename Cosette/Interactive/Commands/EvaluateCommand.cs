@@ -37,9 +37,10 @@ namespace Cosette.Interactive.Commands
             var pieces = PiecesEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var kingCentrism = KingCentrismEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var centerControl = CenterControlEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 
             var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation +
-                        mobility + kingSafety + pieces + fianchetto + kingCentrism;
+                        mobility + kingSafety + pieces + fianchetto + kingCentrism + centerControl;
 
             _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");
@@ -52,6 +53,7 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine($" = Pieces: {pieces}");
             _interactiveConsole.WriteLine($" = Fianchetto: {fianchetto}");
             _interactiveConsole.WriteLine($" = King centrism: {kingCentrism}");
+            _interactiveConsole.WriteLine($" = Center control: {centerControl}");
             _interactiveConsole.WriteLine();
             _interactiveConsole.WriteLine($" = Total: {total}");
         }

@@ -136,6 +136,7 @@ namespace Cosette.Uci
             Send($"option name FianchettoWithoutBishop type spin default {EvaluationConstants.FianchettoWithoutBishop} min -100 max 100");
             Send($"option name KingCentrismOpening type spin default {EvaluationConstants.KingCentrism[GamePhase.Opening]} min -100 max 100");
             Send($"option name KingCentrismEnding type spin default {EvaluationConstants.KingCentrism[GamePhase.Ending]} min -100 max 100");
+            Send($"option name CenterControl type spin default {EvaluationConstants.CenterControl} min -100 max 100");
 
             Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
             Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");
@@ -205,13 +206,16 @@ namespace Cosette.Uci
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
                 var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var kingCentrism = KingCentrismEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var centerControl = CenterControlEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation + 
-                            mobility + kingSafety + pieces;
+                            mobility + kingSafety + pieces + fianchetto + kingCentrism + centerControl;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
                      $"pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"pieces {pieces} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
+                     $"pieces {pieces} fianchetto {fianchetto} kingcentrism {kingCentrism} centercontrol {centerControl} " +
+                     $"irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 
