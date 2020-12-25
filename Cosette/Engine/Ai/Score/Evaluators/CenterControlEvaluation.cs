@@ -21,8 +21,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var piecesCount = (int)BitOperations.Count(piecesInCenter);
 
             var centerControlOpeningScore = piecesCount * EvaluationConstants.CenterControl;
-            var centerControlEndingScore = piecesCount * EvaluationConstants.CenterControl;
-            var centerControlAdjusted = TaperedEvaluation.AdjustToPhase(centerControlOpeningScore, centerControlEndingScore, openingPhase, endingPhase);
+            var centerControlAdjusted = TaperedEvaluation.AdjustToPhase(centerControlOpeningScore, 0, openingPhase, endingPhase);
 
             return centerControlAdjusted;
         }

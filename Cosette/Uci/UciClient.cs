@@ -137,6 +137,7 @@ namespace Cosette.Uci
             Send($"option name KingCentrismOpening type spin default {EvaluationConstants.KingCentrism[GamePhase.Opening]} min -100 max 100");
             Send($"option name KingCentrismEnding type spin default {EvaluationConstants.KingCentrism[GamePhase.Ending]} min -100 max 100");
             Send($"option name CenterControl type spin default {EvaluationConstants.CenterControl} min -100 max 100");
+            Send($"option name PieceOnEdge type spin default {EvaluationConstants.PieceOnEdge} min -100 max 100");
 
             Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
             Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");
@@ -208,13 +209,14 @@ namespace Cosette.Uci
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var kingCentrism = KingCentrismEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var centerControl = CenterControlEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var position = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation + 
-                            mobility + kingSafety + pieces + fianchetto + kingCentrism + centerControl;
+                            mobility + kingSafety + pieces + fianchetto + kingCentrism + centerControl + position;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
                      $"pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"pieces {pieces} fianchetto {fianchetto} kingcentrism {kingCentrism} centercontrol {centerControl} " +
+                     $"pieces {pieces} fianchetto {fianchetto} kingcentrism {kingCentrism} centercontrol {centerControl} position {position} " +
                      $"irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }

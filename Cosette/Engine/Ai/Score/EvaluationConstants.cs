@@ -31,6 +31,7 @@
 
         public static int[] KingCentrism = { 15, -15 };
         public static int CenterControl = 10;
+        public static int PieceOnEdge = -20;
 
         public const int OpeningEndgameEdge = 20500;
 
