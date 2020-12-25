@@ -27,6 +27,7 @@
         public const ulong BoardWithoutEdges = Full & ~Edges;
         public const ulong RightLeftEdge = AFile | HFile;
         public const ulong TopBottomEdge = ARank | HRank;
+        public const ulong Corners = 0x8100000000000081;
 
         public const ulong NearPromotionAreaWhite = 0xffffff00000000;
         public const ulong NearPromotionAreaBlack = 0xffffff00;

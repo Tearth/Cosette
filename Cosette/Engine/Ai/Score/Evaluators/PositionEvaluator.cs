@@ -17,9 +17,12 @@ namespace Cosette.Engine.Ai.Score.Evaluators
         {
             var sensitivePieces = board.Pieces[color][Piece.Knight] | board.Pieces[color][Piece.Bishop] | board.Pieces[color][Piece.Queen];
             var piecesOnEdge = BoardConstants.Edges & sensitivePieces;
-            var piecesCount = (int)BitOperations.Count(piecesOnEdge);
+            var piecesInCorners = BoardConstants.Corners & sensitivePieces;
 
-            var piecesOnEdgeOpeningScore = piecesCount * EvaluationConstants.PieceOnEdge;
+            var piecesOnEdgeCount = (int)BitOperations.Count(piecesOnEdge);
+            var piecesInCornersCount = (int)BitOperations.Count(piecesInCorners);
+
+            var piecesOnEdgeOpeningScore = (piecesOnEdgeCount + piecesInCornersCount) * EvaluationConstants.PieceOnEdge;
             var piecesOnEdgeAdjusted = TaperedEvaluation.AdjustToPhase(piecesOnEdgeOpeningScore, 0, openingPhase, endingPhase);
 
             return piecesOnEdgeAdjusted;
