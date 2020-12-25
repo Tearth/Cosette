@@ -25,7 +25,7 @@ namespace Cosette.Interactive.Commands
             boardState.ColorToMove = Color.White;
 
             var evaluationStatistics = new EvaluationStatistics();
-            var evaluation = Evaluation.Evaluate(boardState, evaluationStatistics);
+            var evaluation = Evaluation.Evaluate(boardState, false, evaluationStatistics);
 
             _interactiveConsole.WriteLine(evaluation.ToString());
         }

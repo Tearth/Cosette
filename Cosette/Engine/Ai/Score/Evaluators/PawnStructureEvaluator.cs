@@ -41,6 +41,13 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             return result;
         }
 
+        public static int EvaluateWithoutCache(BoardState board, EvaluationStatistics statistics, int openingPhase, int endingPhase)
+        {
+            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase);
+            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return whiteEvaluation - blackEvaluation;
+        }
+
         private static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
         {
             var doubledPawns = 0;

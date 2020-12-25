@@ -37,7 +37,7 @@ namespace Cosette.Engine.Ai.Search
             }
             else
             {
-                standPat = Evaluation.Evaluate(context.BoardState, context.Statistics.EvaluationStatistics);
+                standPat = Evaluation.Evaluate(context.BoardState, true, context.Statistics.EvaluationStatistics);
                 EvaluationHashTable.Add(context.BoardState.Hash, (short)standPat);
 
 #if DEBUG

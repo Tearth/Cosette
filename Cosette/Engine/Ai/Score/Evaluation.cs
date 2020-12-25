@@ -7,13 +7,15 @@ namespace Cosette.Engine.Ai.Score
 {
     public class Evaluation
     {
-        public static int Evaluate(BoardState board, EvaluationStatistics statistics)
+        public static int Evaluate(BoardState board, bool enableCache, EvaluationStatistics statistics)
         {
             var openingPhase = board.GetPhaseRatio();
             var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
             var result = MaterialEvaluator.Evaluate(board);
-            result += PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase);
+            result += enableCache ? 
+                PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase) :
+                PawnStructureEvaluator.EvaluateWithoutCache(board, statistics, openingPhase, endingPhase);
 
             if (endingPhase != BoardConstants.PhaseResolution)
             {
