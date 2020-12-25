@@ -35,6 +35,8 @@ namespace Cosette.Uci.Commands
                 { "ChainedPawnsEnding", p => EvaluationConstants.ChainedPawns[GamePhase.Ending] = int.Parse(p) },
                 { "PassingPawnsOpening", p => EvaluationConstants.PassingPawns[GamePhase.Opening] = int.Parse(p) },
                 { "PassingPawnsEnding", p => EvaluationConstants.PassingPawns[GamePhase.Ending] = int.Parse(p) },
+                { "PawnAdvancesOpening", p => EvaluationConstants.PawnAdvances[GamePhase.Opening] = int.Parse(p) },
+                { "PawnAdvancesEnding", p => EvaluationConstants.PawnAdvances[GamePhase.Ending] = int.Parse(p) },
 
                 { "CastlingDone", p => EvaluationConstants.CastlingDone = int.Parse(p) },
                 { "CastlingFailed", p => EvaluationConstants.CastlingFailed = int.Parse(p) },

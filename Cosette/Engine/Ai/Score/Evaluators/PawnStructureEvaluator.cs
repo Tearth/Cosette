@@ -54,6 +54,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var isolatedPawns = 0;
             var chainedPawns = 0;
             var passingPawns = 0;
+            var pawnAdvances = 0;
 
             for (var file = 0; file < 8; file++)
             {
@@ -92,6 +93,9 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 {
                     passingPawns++;
                 }
+
+                var advance = color == Color.White ? field / 8 : 8 - field / 8;
+                pawnAdvances += advance * advance;
             }
 
             var doubledPawnsOpeningScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening];
@@ -110,7 +114,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var passingPawnsEndingScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Ending];
             var passingPawnsAdjusted = TaperedEvaluation.AdjustToPhase(passingPawnsOpeningScore, passingPawnsEndingScore, openingPhase, endingPhase);
 
-            return doubledPawnsAdjusted + isolatedPawnsAdjusted + chainedPawnsAdjusted + passingPawnsAdjusted;
+            var pawnAdvancesOpeningScore = pawnAdvances * EvaluationConstants.PawnAdvances[GamePhase.Opening];
+            var pawnAdvancesEndingScore = pawnAdvances * EvaluationConstants.PawnAdvances[GamePhase.Ending];
+            var pawnAdvancesAdjusted = TaperedEvaluation.AdjustToPhase(pawnAdvancesOpeningScore, pawnAdvancesEndingScore, openingPhase, endingPhase);
+
+            return doubledPawnsAdjusted + isolatedPawnsAdjusted + chainedPawnsAdjusted + passingPawnsAdjusted + pawnAdvancesAdjusted;
         }
     }
 }

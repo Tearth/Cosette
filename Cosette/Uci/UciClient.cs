@@ -122,6 +122,8 @@ namespace Cosette.Uci
             Send($"option name ChainedPawnsEnding type spin default {EvaluationConstants.ChainedPawns[GamePhase.Ending]} min -100 max 100");
             Send($"option name PassingPawnsOpening type spin default {EvaluationConstants.PassingPawns[GamePhase.Opening]} min -100 max 100");
             Send($"option name PassingPawnsEnding type spin default {EvaluationConstants.PassingPawns[GamePhase.Ending]} min -100 max 100");
+            Send($"option name PawnAdvancesOpening type spin default {EvaluationConstants.PawnAdvances[GamePhase.Opening]} min -100 max 100");
+            Send($"option name PawnAdvancesEnding type spin default {EvaluationConstants.PawnAdvances[GamePhase.Ending]} min -100 max 100");
 
             Send($"option name CastlingDone type spin default {EvaluationConstants.CastlingDone} min -100 max 100");
             Send($"option name CastlingFailed type spin default {EvaluationConstants.CastlingFailed} min -100 max 100");
