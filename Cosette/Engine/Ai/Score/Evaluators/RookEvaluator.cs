@@ -4,7 +4,7 @@ using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Ai.Score.Evaluators
 {
-    public static class PiecesEvaluator
+    public static class RookEvaluator
     {
         public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
         {
@@ -17,7 +17,6 @@ namespace Cosette.Engine.Ai.Score.Evaluators
         {
             var doubledRooks = 0;
             var rooksOnOpenFile = 0;
-            var pairOfBishops = 0;
             var enemyColor = ColorOperations.Invert(color);
 
             var rooks = board.Pieces[color][Piece.Rook];
@@ -44,22 +43,13 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
-            var bishops = board.Pieces[color][Piece.Bishop];
-            if (BitOperations.Count(bishops) > 1)
-            {
-                pairOfBishops = 1;
-            }
-
             var doubledRooksOpeningScore = doubledRooks * EvaluationConstants.DoubledRooks;
             var doubledRooksAdjusted = TaperedEvaluation.AdjustToPhase(doubledRooksOpeningScore, 0, openingPhase, endingPhase);
 
             var rooksOnOpenFileOpeningScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile;
             var rooksOnOpenFileAdjusted = TaperedEvaluation.AdjustToPhase(rooksOnOpenFileOpeningScore, 0, openingPhase, endingPhase);
 
-            var pairOfBishopsOpeningScore = pairOfBishops * EvaluationConstants.PairOfBishops;
-            var pairOfBishopsAdjusted = TaperedEvaluation.AdjustToPhase(pairOfBishopsOpeningScore, 0, openingPhase, endingPhase);
-
-            return doubledRooksAdjusted + rooksOnOpenFileAdjusted + pairOfBishopsAdjusted;
+            return doubledRooksAdjusted + rooksOnOpenFileAdjusted;
         }
     }
 }

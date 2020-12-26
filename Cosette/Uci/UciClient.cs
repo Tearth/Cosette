@@ -207,18 +207,19 @@ namespace Cosette.Uci
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-                var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var rooks = RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var bishops = BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var kingCentrism = KingCentrismEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var centerControl = CenterControlEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var position = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation + 
-                            mobility + kingSafety + pieces + fianchetto + kingCentrism + centerControl + position;
+                            mobility + kingSafety + rooks + bishops + fianchetto + kingCentrism + centerControl + position;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
                      $"pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"pieces {pieces} fianchetto {fianchetto} kingcentrism {kingCentrism} centercontrol {centerControl} position {position} " +
+                     $"rooks {rooks} bishops {bishops} fianchetto {fianchetto} kingcentrism {kingCentrism} centercontrol {centerControl} position {position} " +
                      $"irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }

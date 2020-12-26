@@ -27,7 +27,8 @@ namespace Cosette.Engine.Ai.Score
                 result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
                 result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += FianchettoEvaluator.Evaluate(board, openingPhase, endingPhase);
-                result += PiecesEvaluator.Evaluate(board, openingPhase, endingPhase);
+                result += RookEvaluator.Evaluate(board, openingPhase, endingPhase);
+                result += BishopEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += CenterControlEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
             }
