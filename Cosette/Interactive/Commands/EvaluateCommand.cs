@@ -30,6 +30,7 @@ namespace Cosette.Interactive.Commands
             var fieldsAttackedByBlack = 0ul;
 
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
+            var positionEvaluation = PositionEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var pawnStructureEvaluation = PawnStructureEvaluator.EvaluateWithoutCache(boardState, evaluationStatistics, openingPhase, endingPhase);
             var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
             var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
@@ -37,13 +38,14 @@ namespace Cosette.Interactive.Commands
             var bishops = BishopEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 
-            var total = materialEvaluation + pawnStructureEvaluation +
-                        mobility + kingSafety + rooks + bishops + fianchetto;
+            var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation +
+                        mobility + kingSafety + pieces + fianchetto;
 
             _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");
 
             _interactiveConsole.WriteLine($" = Material: {materialEvaluation}");
+            _interactiveConsole.WriteLine($" = Position: {positionEvaluation}");
             _interactiveConsole.WriteLine($" = Pawns: {pawnStructureEvaluation}");
             _interactiveConsole.WriteLine($" = Mobility: {mobility}");
             _interactiveConsole.WriteLine($" = King safety: {kingSafety}");

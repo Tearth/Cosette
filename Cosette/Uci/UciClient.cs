@@ -195,6 +195,7 @@ namespace Cosette.Uci
                 var fieldsAttackedByBlack = 0ul;
 
                 var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
+                var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
@@ -202,13 +203,12 @@ namespace Cosette.Uci
                 var bishops = BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
-                var total = materialEvaluation + pawnStructureEvaluation + 
-                            mobility + kingSafety + rooks + bishops + fianchetto;
+                var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation + 
+                            mobility + kingSafety + pieces;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} " +
-                     $"pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"rooks {rooks} bishops {bishops} fianchetto {fianchetto} " +
-                     $"irrmoves {stats.Board.IrreversibleMovesCount}");
+                     $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
+                     $"pieces {pieces} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 

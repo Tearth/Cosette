@@ -1,6 +1,7 @@
 ﻿using System;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
+using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Board.Operators;
 using Cosette.Engine.Common;
 using Cosette.Engine.Fen;
@@ -23,6 +24,7 @@ namespace Cosette.Engine.Board
 
         public bool[] CastlingDone { get; set; }
         public int[] Material { get; set; }
+        public int[][] Position { get; set; }
 
         public int[] PieceTable { get; set; }
         public int MaterialAtOpening;
@@ -48,6 +50,10 @@ namespace Cosette.Engine.Board
             Occupancy = new ulong[2];
             CastlingDone = new bool[2];
             Material = new int[2];
+
+            Position = new int[2][];
+            Position[Color.White] = new int[2];
+            Position[Color.Black] = new int[2];
 
             PieceTable = new int[64];
 
@@ -92,6 +98,11 @@ namespace Cosette.Engine.Board
 
             Material[Color.White] = CalculateMaterial(Color.White);
             Material[Color.Black] = CalculateMaterial(Color.Black);
+
+            Position[Color.White][GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
+            Position[Color.White][GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
+            Position[Color.Black][GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
+            Position[Color.Black][GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
 
             Array.Fill(PieceTable, -1);
 
@@ -673,6 +684,12 @@ namespace Cosette.Engine.Board
             Occupancy[color] ^= move;
             OccupancySummary ^= move;
 
+            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][from];
+            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][to];
+
+            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][from];
+            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][to];
+
             PieceTable[from] = -1;
             PieceTable[to] = piece;
         }
@@ -686,6 +703,10 @@ namespace Cosette.Engine.Board
             OccupancySummary ^= field;
 
             Material[color] += EvaluationConstants.Pieces[piece];
+
+            Position[color][GamePhase.Opening] += PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
+            Position[color][GamePhase.Ending] += PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
+
             PieceTable[fieldIndex] = piece;
         }
 
@@ -698,6 +719,10 @@ namespace Cosette.Engine.Board
             OccupancySummary ^= field;
 
             Material[color] -= EvaluationConstants.Pieces[piece];
+
+            Position[color][GamePhase.Opening] -= PieceSquareTablesData.Values[piece][color][GamePhase.Opening][fieldIndex];
+            Position[color][GamePhase.Ending] -= PieceSquareTablesData.Values[piece][color][GamePhase.Ending][fieldIndex];
+
             PieceTable[fieldIndex] = -1;
         }
 
@@ -711,6 +736,26 @@ namespace Cosette.Engine.Board
             }
 
             return material;
+        }
+
+        public int CalculatePosition(int color, int phase)
+        {
+            var result = 0;
+
+            for (var pieceIndex = 0; pieceIndex < 6; pieceIndex++)
+            {
+                var pieces = Pieces[color][pieceIndex];
+                while (pieces != 0)
+                {
+                    var lsb = BitOperations.GetLsb(pieces);
+                    pieces = BitOperations.PopLsb(pieces);
+                    var fieldIndex = BitOperations.BitScan(lsb);
+
+                    result += PieceSquareTablesData.Values[pieceIndex][color][phase][fieldIndex];
+                }
+            }
+
+            return result;
         }
 
         public int GetPhaseRatio()
