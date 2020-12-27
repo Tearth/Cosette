@@ -53,6 +53,7 @@ namespace Cosette.Uci.Commands
                 { "KingCentrismEnding", p => EvaluationConstants.KingCentrism[GamePhase.Ending] = int.Parse(p) },
                 { "CenterControl", p => EvaluationConstants.CenterControl = int.Parse(p) },
                 { "PieceOnEdge", p => EvaluationConstants.PieceOnEdge = int.Parse(p) },
+                { "RookOnSeventhRank", p => EvaluationConstants.RookOnSeventhRank = int.Parse(p) },
 
                 { "HashMove", p => MoveOrderingConstants.HashMove = short.Parse(p) },
                 { "Promotion", p => MoveOrderingConstants.Promotion = short.Parse(p) },

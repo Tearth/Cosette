@@ -140,6 +140,7 @@ namespace Cosette.Uci
             Send($"option name KingCentrismEnding type spin default {EvaluationConstants.KingCentrism[GamePhase.Ending]} min -100 max 100");
             Send($"option name CenterControl type spin default {EvaluationConstants.CenterControl} min -100 max 100");
             Send($"option name PieceOnEdge type spin default {EvaluationConstants.PieceOnEdge} min -100 max 100");
+            Send($"option name RookOnSeventhRank type spin default {EvaluationConstants.RookOnSeventhRank} min -100 max 100");
 
             Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
             Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");

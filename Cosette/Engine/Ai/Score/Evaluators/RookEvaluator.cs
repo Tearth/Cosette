@@ -18,6 +18,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var doubledRooks = 0;
             var rooksOnOpenFile = 0;
             var enemyColor = ColorOperations.Invert(color);
+            var seventhRank = color == Color.White ? BoardConstants.GRank : BoardConstants.BRank;
 
             var rooks = board.Pieces[color][Piece.Rook];
             while (rooks != 0)
@@ -43,13 +44,18 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
+            var rooksOnSeventhRank = board.Pieces[color][Piece.Rook] & seventhRank;
+            var rooksOnSeventhRankCount = (int)BitOperations.Count(rooksOnSeventhRank);
+            var rooksOnSeventhRankScore = rooksOnSeventhRankCount * EvaluationConstants.RookOnSeventhRank;
+            var rooksOnSeventhRankAdjusted = TaperedEvaluation.AdjustToPhase(rooksOnSeventhRankScore, 0, openingPhase, endingPhase);
+
             var doubledRooksOpeningScore = doubledRooks * EvaluationConstants.DoubledRooks;
             var doubledRooksAdjusted = TaperedEvaluation.AdjustToPhase(doubledRooksOpeningScore, 0, openingPhase, endingPhase);
 
             var rooksOnOpenFileOpeningScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile;
             var rooksOnOpenFileAdjusted = TaperedEvaluation.AdjustToPhase(rooksOnOpenFileOpeningScore, 0, openingPhase, endingPhase);
 
-            return doubledRooksAdjusted + rooksOnOpenFileAdjusted;
+            return doubledRooksAdjusted + rooksOnOpenFileAdjusted + rooksOnSeventhRankAdjusted;
         }
     }
 }

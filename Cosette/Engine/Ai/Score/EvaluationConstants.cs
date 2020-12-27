@@ -34,6 +34,7 @@
         public static int CenterControl = 15;
         public static int ExtendedCenterControl = 5;
         public static int PieceOnEdge = -5;
+        public static int RookOnSeventhRank = 30;
 
         public const int OpeningEndgameEdge = 20500;
 
