@@ -39,7 +39,7 @@ namespace Cosette.Interactive.Commands
             var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 
             var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation +
-                        mobility + kingSafety + pieces + fianchetto;
+                        mobility + kingSafety + fianchetto;
 
             _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");

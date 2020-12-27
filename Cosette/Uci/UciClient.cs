@@ -204,11 +204,11 @@ namespace Cosette.Uci
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation + 
-                            mobility + kingSafety + pieces;
+                            mobility + kingSafety;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"pieces {pieces} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
+                     $"rooks {rooks} bishops {bishops} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 
