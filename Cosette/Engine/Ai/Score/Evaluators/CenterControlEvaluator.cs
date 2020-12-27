@@ -17,13 +17,20 @@ namespace Cosette.Engine.Ai.Score.Evaluators
         {
             var availablePieces = board.Pieces[color][Piece.Pawn] | board.Pieces[color][Piece.Knight] |
                                   board.Pieces[color][Piece.Bishop] | board.Pieces[color][Piece.Queen];
-            var piecesInCenter = EvaluationConstants.Center & availablePieces;
-            var piecesCount = (int)BitOperations.Count(piecesInCenter);
 
-            var centerControlOpeningScore = piecesCount * EvaluationConstants.CenterControl;
+            var piecesInCenter = EvaluationConstants.Center & availablePieces;
+            var piecesInCenterCount = (int)BitOperations.Count(piecesInCenter);
+
+            var piecesInExtendedCenterRing = EvaluationConstants.ExtendedCenterRing & availablePieces;
+            var piecesInExtendedCenterRingCount = (int)BitOperations.Count(piecesInExtendedCenterRing);
+
+            var centerControlOpeningScore = piecesInCenterCount * EvaluationConstants.CenterControl;
             var centerControlAdjusted = TaperedEvaluation.AdjustToPhase(centerControlOpeningScore, 0, openingPhase, endingPhase);
 
-            return centerControlAdjusted;
+            var extendedCenterControlOpeningScore = piecesInExtendedCenterRingCount * EvaluationConstants.ExtendedCenterControl;
+            var extendedCenterControlAdjusted = TaperedEvaluation.AdjustToPhase(extendedCenterControlOpeningScore, 0, openingPhase, endingPhase);
+
+            return centerControlAdjusted + extendedCenterControlAdjusted;
         }
     }
 }

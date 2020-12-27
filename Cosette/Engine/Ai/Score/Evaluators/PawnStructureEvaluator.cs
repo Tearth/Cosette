@@ -95,7 +95,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
 
                 var advance = color == Color.White ? field / 8 : 8 - field / 8;
-                pawnAdvances += advance * advance;
+                pawnAdvances += advance;
             }
 
             var doubledPawnsOpeningScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening];

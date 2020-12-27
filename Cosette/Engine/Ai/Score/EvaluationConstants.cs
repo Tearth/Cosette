@@ -15,7 +15,7 @@
         public static int[] IsolatedPawns = { -20, -10 };
         public static int[] ChainedPawns = { 5, 5 };
         public static int[] PassingPawns = { 10, 50 };
-        public static int[] PawnAdvances = { 1, 2 };
+        public static int[] PawnAdvances = { 6, 2 };
 
         public static int CenterMobilityModifier = 10;
         public static int OutsideMobilityModifier = 5;
@@ -30,13 +30,16 @@
         public static int Fianchetto = 20;
         public static int FianchettoWithoutBishop = -20;
 
-        public static int[] KingCentrism = { 15, -15 };
-        public static int CenterControl = 10;
-        public static int PieceOnEdge = -20;
+        public static int[] KingCentrism = { 15, -5 };
+        public static int CenterControl = 15;
+        public static int ExtendedCenterControl = 5;
+        public static int PieceOnEdge = -5;
 
         public const int OpeningEndgameEdge = 20500;
 
-        public const ulong Center = 0x3c3c3c3c0000;
+        public const ulong Center = 0x1818000000;
+        public const ulong ExtendedCenter = 0x3c3c3c3c0000;
+        public const ulong ExtendedCenterRing = ExtendedCenter & ~Center;
         public const ulong Outside = 0xffffc3c3c3c3ffff;
     }
 }

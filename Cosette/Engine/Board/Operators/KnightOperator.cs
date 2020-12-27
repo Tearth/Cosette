@@ -103,7 +103,7 @@ namespace Cosette.Engine.Board.Operators
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = KnightMovesGenerator.GetMoves(from);
 
-                centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Center);
+                centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
                 outsideMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Outside);
 
                 fieldsAttackedByColor |= availableMoves;
