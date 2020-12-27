@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Common.Services;
 using Cosette.Tuner.Texel.Genetics;
-using Cosette.Tuner.Texel.Genetics.Epd;
 using Cosette.Tuner.Texel.Settings;
 using Cosette.Tuner.Texel.Web;
 using GeneticSharp.Domain;
@@ -20,7 +19,6 @@ namespace Cosette.Tuner.Texel
     class Program
     {
         private static int _testId;
-        private static EpdLoader _epdLoader;
         private static WebService _webService;
         private static Stopwatch _generationStopwatch;
 
@@ -38,13 +36,10 @@ namespace Cosette.Tuner.Texel
                 Type = TestType.Texel
             });
 
-            _epdLoader = new EpdLoader();
-            _epdLoader.Load(SettingsLoader.Data.PositionsDatabasePath);
-
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
-            var fitness = new EvaluationFitness(_testId, _epdLoader, _webService);
+            var fitness = new EvaluationFitness(_testId, _webService);
             var chromosome = new EvaluationChromosome();
             var population = new Population(SettingsLoader.Data.MinPopulation, SettingsLoader.Data.MaxPopulation, chromosome);
 

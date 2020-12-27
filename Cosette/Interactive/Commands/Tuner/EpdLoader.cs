@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using Cosette.Engine.Fen;
 
-namespace Cosette.Tuner.Texel.Genetics.Epd
+namespace Cosette.Interactive.Commands.Tuner
 {
     public class EpdLoader
     {
-        public List<PositionData> Positions { get; set; }
-
-        public void Load(string epdPath)
+        public List<EpdPositionData> Load(string epdPath)
         {
-            Positions = new List<PositionData>();
-
+            var positions = new List<EpdPositionData>();
             using (var streamReader = new StreamReader(epdPath))
             {
                 while(!streamReader.EndOfStream)
@@ -30,22 +26,24 @@ namespace Cosette.Tuner.Texel.Genetics.Epd
                         continue;
                     }
 
-                    Positions.Add(new PositionData
+                    positions.Add(new EpdPositionData
                     {
                         Fen = trimmedLine,
                         Result = GetGameResult(result)
                     });
                 }
             }
+
+            return positions;
         }
 
-        private GameResult GetGameResult(string result)
+        private EpdGameResult GetGameResult(string result)
         {
             switch (result)
             {
-                case "\"1-0\"": return GameResult.WhiteWon;
-                case "\"0-1\"": return GameResult.BlackWon;
-                case "\"1/2-1/2\"": return GameResult.Draw;
+                case "\"1-0\"": return EpdGameResult.WhiteWon;
+                case "\"0-1\"": return EpdGameResult.BlackWon;
+                case "\"1/2-1/2\"": return EpdGameResult.Draw;
             }
 
             throw new InvalidOperationException();

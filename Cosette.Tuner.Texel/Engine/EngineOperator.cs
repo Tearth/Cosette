@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using Cosette.Tuner.Texel.Settings;
 
 namespace Cosette.Tuner.Texel.Engine
@@ -70,15 +71,23 @@ namespace Cosette.Tuner.Texel.Engine
             Write("leave");
         }
 
-        public int Evaluate(string fen)
+        public void LoadEpd(string epdPath)
         {
-            Write($"evaluateraw {fen}");
+            Write($"tuner load {epdPath}");
 
-            while (true)
+            var response = string.Empty;
+            while (response.Contains("Ok"))
             {
-                var response = Read();
-                return int.Parse(response);
+                response = Read();
             }
+        }
+
+        public double Evaluate()
+        {
+            Write($"tuner evaluate {SettingsLoader.Data.ScalingConstant}");
+
+            var response = Read();
+            return double.Parse(response, CultureInfo.InvariantCulture);
         }
 
         public void Write(string message)
