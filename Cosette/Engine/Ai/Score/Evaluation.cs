@@ -16,7 +16,6 @@ namespace Cosette.Engine.Ai.Score
             result += enableCache ? 
                 PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase) :
                 PawnStructureEvaluator.EvaluateWithoutCache(board, statistics, openingPhase, endingPhase);
-            result += KingCentrismEvaluator.Evaluate(board, openingPhase, endingPhase);
 
             if (endingPhase != BoardConstants.PhaseResolution)
             {
@@ -25,12 +24,9 @@ namespace Cosette.Engine.Ai.Score
 
                 result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-                result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += FianchettoEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += RookEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += BishopEvaluator.Evaluate(board, openingPhase, endingPhase);
-                result += CenterControlEvaluator.Evaluate(board, openingPhase, endingPhase);
-                result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
             }
 
             return board.ColorToMove == Color.White ? result : -result;

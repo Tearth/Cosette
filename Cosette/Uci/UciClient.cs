@@ -122,11 +122,7 @@ namespace Cosette.Uci
             Send($"option name ChainedPawnsEnding type spin default {EvaluationConstants.ChainedPawns[GamePhase.Ending]} min -100 max 100");
             Send($"option name PassingPawnsOpening type spin default {EvaluationConstants.PassingPawns[GamePhase.Opening]} min -100 max 100");
             Send($"option name PassingPawnsEnding type spin default {EvaluationConstants.PassingPawns[GamePhase.Ending]} min -100 max 100");
-            Send($"option name PawnAdvancesOpening type spin default {EvaluationConstants.PawnAdvances[GamePhase.Opening]} min -100 max 100");
-            Send($"option name PawnAdvancesEnding type spin default {EvaluationConstants.PawnAdvances[GamePhase.Ending]} min -100 max 100");
 
-            Send($"option name CastlingDone type spin default {EvaluationConstants.CastlingDone} min -100 max 100");
-            Send($"option name CastlingFailed type spin default {EvaluationConstants.CastlingFailed} min -100 max 100");
             Send($"option name CenterMobilityModifier type spin default {EvaluationConstants.CenterMobilityModifier} min -100 max 100");
             Send($"option name OutsideMobilityModifier type spin default {EvaluationConstants.OutsideMobilityModifier} min -100 max 100");
             Send($"option name KingInDanger type spin default {EvaluationConstants.KingInDanger} min -100 max 100");
@@ -136,11 +132,6 @@ namespace Cosette.Uci
             Send($"option name PairOfBishops type spin default {EvaluationConstants.PairOfBishops} min -100 max 100");
             Send($"option name Fianchetto type spin default {EvaluationConstants.Fianchetto} min -100 max 100");
             Send($"option name FianchettoWithoutBishop type spin default {EvaluationConstants.FianchettoWithoutBishop} min -100 max 100");
-            Send($"option name KingCentrismOpening type spin default {EvaluationConstants.KingCentrism[GamePhase.Opening]} min -100 max 100");
-            Send($"option name KingCentrismEnding type spin default {EvaluationConstants.KingCentrism[GamePhase.Ending]} min -100 max 100");
-            Send($"option name CenterControl type spin default {EvaluationConstants.CenterControl} min -100 max 100");
-            Send($"option name PieceOnEdge type spin default {EvaluationConstants.PieceOnEdge} min -100 max 100");
-            Send($"option name RookOnSeventhRank type spin default {EvaluationConstants.RookOnSeventhRank} min -100 max 100");
 
             Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
             Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");
@@ -204,23 +195,19 @@ namespace Cosette.Uci
                 var fieldsAttackedByBlack = 0ul;
 
                 var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
-                var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
                 var rooks = RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var bishops = BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var kingCentrism = KingCentrismEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var centerControl = CenterControlEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var position = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
-                var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation + 
-                            mobility + kingSafety + rooks + bishops + fianchetto + kingCentrism + centerControl + position;
+                var total = materialEvaluation + pawnStructureEvaluation + 
+                            mobility + kingSafety + rooks + bishops + fianchetto;
 
-                Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
+                Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} " +
                      $"pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"rooks {rooks} bishops {bishops} fianchetto {fianchetto} kingcentrism {kingCentrism} centercontrol {centerControl} position {position} " +
+                     $"rooks {rooks} bishops {bishops} fianchetto {fianchetto} " +
                      $"irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }

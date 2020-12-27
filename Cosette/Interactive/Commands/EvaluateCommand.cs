@@ -30,34 +30,26 @@ namespace Cosette.Interactive.Commands
             var fieldsAttackedByBlack = 0ul;
 
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
-            var castlingEvaluation = CastlingEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var pawnStructureEvaluation = PawnStructureEvaluator.EvaluateWithoutCache(boardState, evaluationStatistics, openingPhase, endingPhase);
             var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
             var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
             var rooks = RookEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var bishops = BishopEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var kingCentrism = KingCentrismEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var centerControl = CenterControlEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var position = PositionEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 
-            var total = materialEvaluation + castlingEvaluation + pawnStructureEvaluation +
-                        mobility + kingSafety + rooks + bishops + fianchetto + kingCentrism + centerControl + position;
+            var total = materialEvaluation + pawnStructureEvaluation +
+                        mobility + kingSafety + rooks + bishops + fianchetto;
 
             _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");
 
             _interactiveConsole.WriteLine($" = Material: {materialEvaluation}");
-            _interactiveConsole.WriteLine($" = Castling: {castlingEvaluation}");
             _interactiveConsole.WriteLine($" = Pawns: {pawnStructureEvaluation}");
             _interactiveConsole.WriteLine($" = Mobility: {mobility}");
             _interactiveConsole.WriteLine($" = King safety: {kingSafety}");
             _interactiveConsole.WriteLine($" = Rooks: {rooks}");
             _interactiveConsole.WriteLine($" = Bishops: {bishops}");
             _interactiveConsole.WriteLine($" = Fianchetto: {fianchetto}");
-            _interactiveConsole.WriteLine($" = King centrism: {kingCentrism}");
-            _interactiveConsole.WriteLine($" = Center control: {centerControl}");
-            _interactiveConsole.WriteLine($" = Position: {position}");
             _interactiveConsole.WriteLine();
             _interactiveConsole.WriteLine($" = Total: {total}");
         }

@@ -114,11 +114,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var passingPawnsEndingScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Ending];
             var passingPawnsAdjusted = TaperedEvaluation.AdjustToPhase(passingPawnsOpeningScore, passingPawnsEndingScore, openingPhase, endingPhase);
 
-            var pawnAdvancesOpeningScore = pawnAdvances * EvaluationConstants.PawnAdvances[GamePhase.Opening];
-            var pawnAdvancesEndingScore = pawnAdvances * EvaluationConstants.PawnAdvances[GamePhase.Ending];
-            var pawnAdvancesAdjusted = TaperedEvaluation.AdjustToPhase(pawnAdvancesOpeningScore, pawnAdvancesEndingScore, openingPhase, endingPhase);
-
-            return doubledPawnsAdjusted + isolatedPawnsAdjusted + chainedPawnsAdjusted + passingPawnsAdjusted + pawnAdvancesAdjusted;
+            return doubledPawnsAdjusted + isolatedPawnsAdjusted + chainedPawnsAdjusted + passingPawnsAdjusted;
         }
     }
 }

@@ -35,11 +35,7 @@ namespace Cosette.Uci.Commands
                 { "ChainedPawnsEnding", p => EvaluationConstants.ChainedPawns[GamePhase.Ending] = int.Parse(p) },
                 { "PassingPawnsOpening", p => EvaluationConstants.PassingPawns[GamePhase.Opening] = int.Parse(p) },
                 { "PassingPawnsEnding", p => EvaluationConstants.PassingPawns[GamePhase.Ending] = int.Parse(p) },
-                { "PawnAdvancesOpening", p => EvaluationConstants.PawnAdvances[GamePhase.Opening] = int.Parse(p) },
-                { "PawnAdvancesEnding", p => EvaluationConstants.PawnAdvances[GamePhase.Ending] = int.Parse(p) },
 
-                { "CastlingDone", p => EvaluationConstants.CastlingDone = int.Parse(p) },
-                { "CastlingFailed", p => EvaluationConstants.CastlingFailed = int.Parse(p) },
                 { "CenterMobilityModifier", p => EvaluationConstants.CenterMobilityModifier = int.Parse(p) },
                 { "OutsideMobilityModifier", p => EvaluationConstants.OutsideMobilityModifier = int.Parse(p) },
                 { "KingInDanger", p => EvaluationConstants.KingInDanger = int.Parse(p) },
@@ -49,11 +45,6 @@ namespace Cosette.Uci.Commands
                 { "PairOfBishops", p => EvaluationConstants.PairOfBishops = int.Parse(p) },
                 { "Fianchetto", p => EvaluationConstants.Fianchetto = int.Parse(p) },
                 { "FianchettoWithoutBishop", p => EvaluationConstants.FianchettoWithoutBishop = int.Parse(p) },
-                { "KingCentrismOpening", p => EvaluationConstants.KingCentrism[GamePhase.Opening] = int.Parse(p) },
-                { "KingCentrismEnding", p => EvaluationConstants.KingCentrism[GamePhase.Ending] = int.Parse(p) },
-                { "CenterControl", p => EvaluationConstants.CenterControl = int.Parse(p) },
-                { "PieceOnEdge", p => EvaluationConstants.PieceOnEdge = int.Parse(p) },
-                { "RookOnSeventhRank", p => EvaluationConstants.RookOnSeventhRank = int.Parse(p) },
 
                 { "HashMove", p => MoveOrderingConstants.HashMove = short.Parse(p) },
                 { "Promotion", p => MoveOrderingConstants.Promotion = short.Parse(p) },
