@@ -25,7 +25,6 @@ namespace Cosette.Engine.Ai.Score
 
                 result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-                result += FianchettoEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += RookEvaluator.Evaluate(board, openingPhase, endingPhase);
                 result += BishopEvaluator.Evaluate(board, openingPhase, endingPhase);
             }

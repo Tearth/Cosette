@@ -201,14 +201,13 @@ namespace Cosette.Uci
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
                 var rooks = RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var bishops = BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation + 
                             mobility + kingSafety;
 
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"rooks {rooks} bishops {bishops} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
+                     $"rooks {rooks} bishops {bishops} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 
