@@ -15,7 +15,7 @@
         public static int[] IsolatedPawns = { -20, -10 };
         public static int[] ChainedPawns = { 5, 5 };
         public static int[] PassingPawns = { 10, 50 };
-        public static int[] PawnAdvances = { 6, 2 };
+        public static int[] PawnAdvances = { 1, 5 };
 
         public static int CenterMobilityModifier = 10;
         public static int OutsideMobilityModifier = 5;
