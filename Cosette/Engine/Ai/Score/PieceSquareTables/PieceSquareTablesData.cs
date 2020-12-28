@@ -13,7 +13,7 @@
                 BishopTables.Build(),
                 RookTables.Build(),
                 QueenTables.Build(),
-                KingTables.Values
+                KingTables.Build()
             };
         }
     }
