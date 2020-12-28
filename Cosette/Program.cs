@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Cosette.Engine.Ai.Ordering;
+using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Interactive;
@@ -20,6 +21,7 @@ namespace Cosette
             HashTableAllocator.Allocate();
             MagicBitboards.InitWithInternalKeys();
             StaticExchangeEvaluation.Init();
+            PieceSquareTablesData.BuildPieceSquareTables();
 
             var silentMode = args.Contains("silent");
             new InteractiveConsole().Run(silentMode);

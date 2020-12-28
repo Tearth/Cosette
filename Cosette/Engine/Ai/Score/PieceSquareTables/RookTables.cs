@@ -4,44 +4,64 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
 {
     public static class RookTables
     {
-        public static int[][] Pattern =
+        public static int O0 = 0;  // Center
+        public static int O1 = 5;  // First rank
+        public static int O2 = 5;  // Edge fields near to rook
+        public static int O3 = 10; // Edge fields near to enemy
+        public static int O4 = 10; // Fields after castling
+
+        public static int E0 = 5;  // Edge
+        public static int E1 = 5;  // Center
+        public static int E2 = 5;  // Center
+        public static int E3 = 5;  // Center
+
+        public static int[][][] Build()
         {
-            // Opening
-            new[] {  10,   0,   0,   0,   0,   0,   0,  10,
-                     10,   0,   0,   0,   0,   0,   0,  10,
-                     10,   0,   0,   0,   0,   0,   0,  10,
-                     10,   0,   0,   0,   0,   0,   0,  10,
-                      5,   0,   0,   0,   0,   0,   0,   5,
-                      5,   0,   0,   0,   0,   0,   0,   5,
-                      5,   0,   0,   0,   0,   0,   0,   5,
-                      0,   0,   0,   10,  5,  10,   0,   0 },
-
-            // Ending
-            new[] {   5,   5,   5,   5,   5,   5,   5,   5,
-                      5,   5,   5,   5,   5,   5,   5,   5,
-                      5,   5,   5,   5,   5,   5,   5,   5,
-                      5,   5,   5,   5,   5,   5,   5,   5,
-                      5,   5,   5,   5,   5,   5,   5,   5,
-                      5,   5,   5,   5,   5,   5,   5,   5,
-                      5,   5,   5,   5,   5,   5,   5,   5,
-                      5,   5,   5,   5,   5,   5,   5,   5 }
-        };
-
-        public static int[][][] Values =
-        {
-            // White
-            new []
+            var pattern = new[]
             {
-                TableOperations.FlipVertically(Pattern[GamePhase.Opening]),
-                TableOperations.FlipVertically(Pattern[GamePhase.Ending])
-            },
+                // Opening
+                new[]
+                {  
+                    O3, O0, O0, O0, O0, O0, O0, O3,
+                    O3, O0, O0, O0, O0, O0, O0, O3,
+                    O3, O0, O0, O0, O0, O0, O0, O3,
+                    O3, O0, O0, O0, O0, O0, O0, O3,
+                    O2, O0, O0, O0, O0, O0, O0, O2,
+                    O2, O0, O0, O0, O0, O0, O0, O2,
+                    O2, O0, O0, O0, O0, O0, O0, O2,
+                    O1, O1, O1, O4, O1, O4, O1, O1
+                },
 
-            // Black
-            new []
+                // Ending
+                new[]
+                {
+                    E0, E0, E0, E0, E0, E0, E0, E0,
+                    E0, E1, E1, E1, E1, E1, E1, E0,
+                    E0, E1, E2, E2, E2, E2, E1, E0,
+                    E0, E1, E2, E3, E3, E2, E1, E0,
+                    E0, E1, E2, E3, E3, E2, E1, E0,
+                    E0, E1, E2, E2, E2, E2, E1, E0,
+                    E0, E1, E1, E1, E1, E1, E1, E0,
+                    E0, E0, E0, E0, E0, E0, E0, E0
+                }
+            };
+
+            return new[]
             {
-                TableOperations.FlipHorizontally(Pattern[GamePhase.Opening]),
-                TableOperations.FlipHorizontally(Pattern[GamePhase.Ending])
-            }
-        };
+                // White
+                new[]
+                {
+                    TableOperations.FlipVertically(pattern[GamePhase.Opening]),
+                    TableOperations.FlipVertically(pattern[GamePhase.Ending])
+                },
+
+                // Black
+                new[]
+                {
+                    TableOperations.FlipHorizontally(pattern[GamePhase.Opening]),
+                    TableOperations.FlipHorizontally(pattern[GamePhase.Ending])
+                }
+            };
+        }
     }
 }

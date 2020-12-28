@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
+using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Ai.Transposition;
 using Cosette.Engine.Common;
@@ -86,6 +87,8 @@ namespace Cosette.Uci.Commands
                 {
                     StaticExchangeEvaluation.Init();
                 }
+                
+                PieceSquareTablesData.BuildPieceSquareTables();
             }
             else
             {
