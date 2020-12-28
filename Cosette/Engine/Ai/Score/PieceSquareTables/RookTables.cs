@@ -10,10 +10,10 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
         public static int O3 = 10; // Edge fields near to enemy
         public static int O4 = 10; // Fields after castling
 
-        public static int E0 = 5;  // Edge
+        public static int E0 = 5;  // Center
         public static int E1 = 5;  // Center
         public static int E2 = 5;  // Center
-        public static int E3 = 5;  // Center
+        public static int E3 = 5;  // Edge
 
         public static int[][][] Build()
         {
@@ -35,14 +35,14 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
                 // Ending
                 new[]
                 {
-                    E0, E0, E0, E0, E0, E0, E0, E0,
-                    E0, E1, E1, E1, E1, E1, E1, E0,
-                    E0, E1, E2, E2, E2, E2, E1, E0,
-                    E0, E1, E2, E3, E3, E2, E1, E0,
-                    E0, E1, E2, E3, E3, E2, E1, E0,
-                    E0, E1, E2, E2, E2, E2, E1, E0,
-                    E0, E1, E1, E1, E1, E1, E1, E0,
-                    E0, E0, E0, E0, E0, E0, E0, E0
+                    E3, E3, E3, E3, E3, E3, E3, E3,
+                    E3, E2, E2, E2, E2, E2, E2, E3,
+                    E3, E2, E1, E1, E1, E1, E2, E3,
+                    E3, E2, E1, E0, E0, E1, E2, E3,
+                    E3, E2, E1, E0, E0, E1, E2, E3,
+                    E3, E2, E1, E1, E1, E1, E2, E3,
+                    E3, E2, E2, E2, E2, E2, E2, E3,
+                    E3, E3, E3, E3, E3, E3, E3, E3
                 }
             };
 

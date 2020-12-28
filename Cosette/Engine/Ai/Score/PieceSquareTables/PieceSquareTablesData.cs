@@ -9,10 +9,10 @@
             Values = new int[6][][][]
             {
                 PawnTables.Values,
-                KnightTables.Values,
-                BishopTables.Values,
+                KnightTables.Build(),
+                BishopTables.Build(),
                 RookTables.Build(),
-                QueenTables.Values,
+                QueenTables.Build(),
                 KingTables.Values
             };
         }
