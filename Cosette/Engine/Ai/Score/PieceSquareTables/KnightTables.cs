@@ -4,12 +4,12 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
 {
     public static class KnightTables
     {
-        public static int O0 = 10; // Center
-        public static int O1 = 5;  // Center
-        public static int O2 = 0;  // Center
-        public static int O3 = 5;  // Original fields
-        public static int O4 = 10; // Edge
-        public static int O5 = 10; // Corners
+        public static int O0 = 10;  // Center
+        public static int O1 = 5;   // Center
+        public static int O2 = 0;   // Center
+        public static int O3 = 5;   // Original fields
+        public static int O4 = -5;  // Edge
+        public static int O5 = -10; // Corners
 
         public static int E0 = 0;   // Center
         public static int E1 = 0;   // Center
