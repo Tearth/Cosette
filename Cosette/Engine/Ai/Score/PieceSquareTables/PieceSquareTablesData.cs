@@ -8,7 +8,7 @@
         {
             Values = new int[6][][][]
             {
-                PawnTables.Values,
+                PawnTables.Build(),
                 KnightTables.Build(),
                 BishopTables.Build(),
                 RookTables.Build(),
