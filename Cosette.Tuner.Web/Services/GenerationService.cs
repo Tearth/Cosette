@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cosette.Tuner.Web.Database;
@@ -24,8 +25,11 @@ namespace Cosette.Tuner.Web.Services
 
         public async Task<List<GenerationModel>> GetAll(int testId)
         {
+            var count = _databaseContext.Generations.Count();
+            var nth = Math.Max(1, count / 500);
+
             return await _databaseContext.Generations
-                .Where(p => p.TestId == testId)
+                .Where(p => p.TestId == testId && p.Id % nth == 0)
                 .Include(p => p.BestGenes)
                 .ToListAsync();
         }
