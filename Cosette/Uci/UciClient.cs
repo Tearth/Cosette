@@ -28,7 +28,7 @@ namespace Cosette.Uci
 
         public UciClient(InteractiveConsole interactiveConsole)
         {
-            BoardState = new BoardState();
+            BoardState = new BoardState(true);
             BoardState.SetDefaultState();
 
             _interactiveConsole = interactiveConsole;

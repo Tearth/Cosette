@@ -16,7 +16,7 @@ namespace Cosette.Tests
         [InlineData("r5R1/8/2Bp3p/2kq4/2N1p3/2KPP3/2pRP1P1/8 w - h3 0 1")]
         public void DividedPerft_DefaultBoard(string fen)
         {
-            var boardFromFen = FenToBoard.Parse(fen);
+            var boardFromFen = FenToBoard.Parse(fen, true);
             Assert.Equal(fen, boardFromFen.ToString());
         }
     }

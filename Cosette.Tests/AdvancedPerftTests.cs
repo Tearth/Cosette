@@ -24,7 +24,7 @@ namespace Cosette.Tests
         public void AdvancedPerft_DefaultBoard(int depth, ulong expectedLeafsCount, ulong expectedCapturesCount, ulong expectedEnPassantsCount,
             ulong expectedCastlesCount, ulong expectedChecksCount, ulong expectedCheckmatesCount)
         {
-            var boardState = new BoardState();
+            var boardState = new BoardState(true);
             boardState.SetDefaultState();
 
             var result = AdvancedPerft.Run(boardState, depth);

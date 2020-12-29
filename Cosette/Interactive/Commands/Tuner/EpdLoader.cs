@@ -28,7 +28,7 @@ namespace Cosette.Interactive.Commands.Tuner
 
                     positions.Add(new EpdPositionData
                     {
-                        Fen = trimmedLine,
+                        BoardState = FenToBoard.Parse(trimmedLine, false),
                         Result = GetGameResult(result)
                     });
                 }

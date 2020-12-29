@@ -6,7 +6,7 @@ namespace Cosette.Engine.Fen
 {
     public static class FenToBoard
     {
-        public static BoardState Parse(string fen)
+        public static BoardState Parse(string fen, bool allocateStacks)
         {
             var split = fen.Split(' ');
             var boardState = split[0];
@@ -27,7 +27,7 @@ namespace Cosette.Engine.Fen
                 int.TryParse(split[5], out movesCount);
             }
 
-            var result = new BoardState();
+            var result = new BoardState(allocateStacks);
             var currentColor = ParseCurrentColor(colorState);
 
             ParseBoardState(boardState, result);

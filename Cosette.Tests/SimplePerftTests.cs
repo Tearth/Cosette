@@ -24,7 +24,7 @@ namespace Cosette.Tests
         [InlineData(7, 3195901860)]
         public void SimplePerft_DefaultBoard(int depth, ulong expectedLeafsCount)
         {
-            var boardState = new BoardState();
+            var boardState = new BoardState(true);
             boardState.SetDefaultState();
 
             var result = SimplePerft.Run(boardState, depth);
@@ -40,7 +40,7 @@ namespace Cosette.Tests
         [InlineData(5, 120955130)]
         public void SimplePerft_MidGameBoard(int depth, ulong expectedLeafsCount)
         {
-            var boardState = FenToBoard.Parse("r2qr1k1/p2n1p2/1pb3pp/2ppN1P1/1R1PpP2/BQP1n1PB/P4N1P/1R4K1 w - - 0 21");
+            var boardState = FenToBoard.Parse("r2qr1k1/p2n1p2/1pb3pp/2ppN1P1/1R1PpP2/BQP1n1PB/P4N1P/1R4K1 w - - 0 21", true);
 
             var result = SimplePerft.Run(boardState, depth);
             Assert.Equal(expectedLeafsCount, result.LeafsCount);
@@ -56,7 +56,7 @@ namespace Cosette.Tests
         [InlineData(6, 108146453)]
         public void SimplePerft_EndGameBoard(int depth, ulong expectedLeafsCount)
         {
-            var boardState = FenToBoard.Parse("7r/8/2k3P1/1p1p2Kp/1P6/2P5/7r/Q7 w - - 0 1");
+            var boardState = FenToBoard.Parse("7r/8/2k3P1/1p1p2Kp/1P6/2P5/7r/Q7 w - - 0 1", true);
 
             var result = SimplePerft.Run(boardState, depth);
             Assert.Equal(expectedLeafsCount, result.LeafsCount);

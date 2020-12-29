@@ -58,10 +58,10 @@ namespace Cosette.Interactive.Commands
 
             foreach (var position in _positions)
             {
-                var boardState = FenToBoard.Parse(position.Fen);
-                boardState.ColorToMove = Color.White;
+                position.BoardState.ColorToMove = Color.White;
+                position.BoardState.RecalculateEvaluationDependentValues();
 
-                var evaluation = Evaluation.Evaluate(boardState, false, evaluationStatistics);
+                var evaluation = Evaluation.Evaluate(position.BoardState, false, evaluationStatistics);
                 var sigmoidEvaluation = Sigmoid(evaluation, scalingFactor);
                 var desiredEvaluation = GetDesiredEvaluation(position.Result);
 

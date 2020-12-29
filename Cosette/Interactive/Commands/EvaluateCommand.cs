@@ -20,7 +20,7 @@ namespace Cosette.Interactive.Commands
         public void Run(params string[] parameters)
         {
             var fen = string.Join(' ', parameters);
-            var boardState = FenToBoard.Parse(fen);
+            var boardState = FenToBoard.Parse(fen, false);
             var evaluationStatistics = new EvaluationStatistics();
 
             var openingPhase = boardState.GetPhaseRatio();

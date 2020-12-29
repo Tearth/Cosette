@@ -40,8 +40,7 @@ namespace Cosette.Engine.Board
         private readonly FastStack<ulong> _pawnHashes;
         private readonly FastStack<int> _irreversibleMovesCounts;
 
-
-        public BoardState()
+        public BoardState(bool allocateStacks)
         {
             Pieces = new ulong[2][];
             Pieces[Color.White] = new ulong[6];
@@ -57,13 +56,16 @@ namespace Cosette.Engine.Board
 
             PieceTable = new int[64];
 
-            _killedPieces = new FastStack<int>(512);
-            _enPassants = new FastStack<ulong>(512);
-            _castlings = new FastStack<Castling>(512);
-            _promotedPieces = new FastStack<int>(512);
-            _hashes = new FastStack<ulong>(512);
-            _pawnHashes = new FastStack<ulong>(512);
-            _irreversibleMovesCounts = new FastStack<int>(512);
+            if (allocateStacks)
+            {
+                _killedPieces = new FastStack<int>(512);
+                _enPassants = new FastStack<ulong>(512);
+                _castlings = new FastStack<Castling>(512);
+                _promotedPieces = new FastStack<int>(512);
+                _hashes = new FastStack<ulong>(512);
+                _pawnHashes = new FastStack<ulong>(512);
+                _irreversibleMovesCounts = new FastStack<int>(512);
+            }
         }
 
         public void SetDefaultState()
@@ -96,30 +98,32 @@ namespace Cosette.Engine.Board
             CastlingDone[Color.White] = false;
             CastlingDone[Color.Black] = false;
 
-            Material[Color.White] = CalculateMaterial(Color.White);
-            Material[Color.Black] = CalculateMaterial(Color.Black);
-
-            Position[Color.White][GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
-            Position[Color.White][GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
-            Position[Color.Black][GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
-            Position[Color.Black][GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
-
-            Array.Fill(PieceTable, -1);
-
             CalculatePieceTable(PieceTable);
 
             Hash = ZobristHashing.CalculateHash(this);
             PawnHash = ZobristHashing.CalculatePawnHash(this);
 
+            RecalculateEvaluationDependentValues();
+
+            _killedPieces?.Clear();
+            _enPassants?.Clear();
+            _castlings?.Clear();
+            _promotedPieces?.Clear();
+            _hashes?.Clear();
+            _pawnHashes?.Clear();
+            _irreversibleMovesCounts?.Clear();
+        }
+
+        public void RecalculateEvaluationDependentValues()
+        {
+            Material[Color.White] = CalculateMaterial(Color.White);
+            Material[Color.Black] = CalculateMaterial(Color.Black);
             MaterialAtOpening = CalculateMaterialAtOpening();
 
-            _killedPieces.Clear();
-            _enPassants.Clear();
-            _castlings.Clear();
-            _promotedPieces.Clear();
-            _hashes.Clear();
-            _pawnHashes.Clear();
-            _irreversibleMovesCounts.Clear();
+            Position[Color.White][GamePhase.Opening] = CalculatePosition(Color.White, GamePhase.Opening);
+            Position[Color.White][GamePhase.Ending] = CalculatePosition(Color.White, GamePhase.Ending);
+            Position[Color.Black][GamePhase.Opening] = CalculatePosition(Color.Black, GamePhase.Opening);
+            Position[Color.Black][GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
         }
 
         public int GetLoudMoves(Span<Move> moves, int offset)
@@ -816,6 +820,7 @@ namespace Cosette.Engine.Board
 
         public void CalculatePieceTable(int[] pieceTable)
         {
+            Array.Fill(PieceTable, -1);
             for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
             {
                 for (var pieceIndex = 0; pieceIndex < 6; pieceIndex++)

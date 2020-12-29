@@ -36,7 +36,7 @@ namespace Cosette.Tuner.Texel
 
             _webService = new WebService();
 
-            var scalingFactorMode = !args.Contains("scaling_factor");
+            var scalingFactorMode = args.Contains("scaling_factor");
             if (scalingFactorMode)
             {
                 SettingsLoader.Data.Genes.Clear();

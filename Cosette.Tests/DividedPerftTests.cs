@@ -15,7 +15,7 @@ namespace Cosette.Tests
         [Fact]
         public void DividedPerft_DefaultBoard()
         {
-            var boardState = new BoardState();
+            var boardState = new BoardState(true);
             boardState.SetDefaultState();
 
             var result = DividedPerft.Run(boardState, 6);

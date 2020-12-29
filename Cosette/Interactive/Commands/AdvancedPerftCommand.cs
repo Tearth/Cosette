@@ -22,7 +22,7 @@ namespace Cosette.Interactive.Commands
                 return;
             }
 
-            var boardState = new BoardState();
+            var boardState = new BoardState(true);
             boardState.SetDefaultState();
 
             for (var i = 0; i <= depth; i++)
