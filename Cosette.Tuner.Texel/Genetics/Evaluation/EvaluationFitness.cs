@@ -51,7 +51,7 @@ namespace Cosette.Tuner.Texel.Genetics
             }
 
             var stopwatch = Stopwatch.StartNew();
-            var error = _engineOperator.Evaluate();
+            var error = _engineOperator.Evaluate(SettingsLoader.Data.ScalingConstant);
             var fitness = 1.0 - error;
             var elapsedTime = (double)stopwatch.ElapsedMilliseconds / 1000;
 

@@ -38,8 +38,8 @@ namespace Cosette.Interactive.Commands
 
                 case "evaluate":
                 {
-                    var k = double.Parse(parameters[1]);
-                    Evaluate(k);
+                    var scalingFactor = double.Parse(parameters[1]);
+                    Evaluate(scalingFactor);
                     break;
                 }
             }
@@ -51,7 +51,7 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine("Ok");
         }
 
-        private void Evaluate(double k)
+        private void Evaluate(double scalingFactor)
         {
             var sum = 0.0;
             var evaluationStatistics = new EvaluationStatistics();
@@ -62,7 +62,7 @@ namespace Cosette.Interactive.Commands
                 boardState.ColorToMove = Color.White;
 
                 var evaluation = Evaluation.Evaluate(boardState, false, evaluationStatistics);
-                var sigmoidEvaluation = Sigmoid(evaluation, k);
+                var sigmoidEvaluation = Sigmoid(evaluation, scalingFactor);
                 var desiredEvaluation = GetDesiredEvaluation(position.Result);
 
                 sum += Math.Pow(desiredEvaluation - sigmoidEvaluation, 2);
@@ -72,9 +72,9 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine(error.ToString());
         }
 
-        private double Sigmoid(int evaluation, double k)
+        private double Sigmoid(int evaluation, double scalingFactor)
         {
-            return 1.0 / (1 + Math.Pow(10, -k * evaluation / 400));
+            return 1.0 / (1 + Math.Pow(10, -scalingFactor * evaluation / 400));
         }
 
         private double GetDesiredEvaluation(EpdGameResult gameResult)

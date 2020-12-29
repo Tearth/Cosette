@@ -82,12 +82,20 @@ namespace Cosette.Tuner.Texel.Engine
             }
         }
 
-        public double Evaluate()
+        public double Evaluate(double scalingFactor)
         {
-            Write($"tuner evaluate {SettingsLoader.Data.ScalingConstant}");
+            Write($"tuner evaluate {scalingFactor}");
 
-            var response = Read();
-            return double.Parse(response, CultureInfo.InvariantCulture);
+            while (true)
+            {
+                var response = Read();
+                if (response == "Ok")
+                {
+                    continue;
+                }
+
+                return double.Parse(response, CultureInfo.InvariantCulture);
+            }
         }
 
         public void Write(string message)

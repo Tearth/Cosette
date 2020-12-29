@@ -32,7 +32,7 @@ namespace Cosette.Tuner.Texel.Web
         public static List<GeneDataRequest> CreateGenesRequest(IChromosome chromosome)
         {
             var genes = new List<GeneDataRequest>();
-            for (var geneIndex = 0; geneIndex < SettingsLoader.Data.Genes.Count; geneIndex++)
+            for (var geneIndex = 0; geneIndex < chromosome.Length; geneIndex++)
             {
                 genes.Add(new GeneDataRequest
                 {

@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Common.Services;
 using Cosette.Tuner.Texel.Genetics;
+using Cosette.Tuner.Texel.Genetics.ScalingFactor;
 using Cosette.Tuner.Texel.Settings;
 using Cosette.Tuner.Texel.Web;
 using GeneticSharp.Domain;
+using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Crossovers;
+using GeneticSharp.Domain.Fitnesses;
 using GeneticSharp.Domain.Mutations;
 using GeneticSharp.Domain.Populations;
 using GeneticSharp.Domain.Selections;
@@ -27,7 +31,37 @@ namespace Cosette.Tuner.Texel
             Console.WriteLine($"[{DateTime.Now}] Tuner start");
             SettingsLoader.Init("settings.json");
 
+            IFitness fitness = null;
+            IChromosome chromosome = null;
+
             _webService = new WebService();
+
+            var scalingFactorMode = !args.Contains("scaling_factor");
+            if (scalingFactorMode)
+            {
+                SettingsLoader.Data.Genes.Clear();
+                SettingsLoader.Data.Genes.Add(new GeneInfo
+                {
+                    Name = "ScalingFactor",
+                    MinValue = 0,
+                    MaxValue = 2000
+                });
+                SettingsLoader.Data.Genes.Add(new GeneInfo
+                {
+                    Name = "Unused",
+                    MinValue = 0,
+                    MaxValue = 1
+                });
+
+                fitness = new ScalingFactorFitness(_testId, _webService);
+                chromosome = new ScalingFactorChromosome();
+            }
+            else
+            {
+                fitness = new EvaluationFitness(_testId, _webService);
+                chromosome = new EvaluationChromosome();
+            }
+
             _generationStopwatch = new Stopwatch();
 
             await _webService.EnableIfAvailable();
@@ -39,10 +73,7 @@ namespace Cosette.Tuner.Texel
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
-            var fitness = new EvaluationFitness(_testId, _webService);
-            var chromosome = new EvaluationChromosome();
             var population = new Population(SettingsLoader.Data.MinPopulation, SettingsLoader.Data.MaxPopulation, chromosome);
-
             var geneticAlgorithm = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
             geneticAlgorithm.Termination = new GenerationNumberTermination(SettingsLoader.Data.GenerationsCount);
             geneticAlgorithm.GenerationRan += GeneticAlgorithm_GenerationRan;
