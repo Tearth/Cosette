@@ -35,6 +35,11 @@ namespace Cosette.Tuner.Texel
             IChromosome chromosome = null;
 
             _webService = new WebService();
+            await _webService.EnableIfAvailable();
+            _testId = await _webService.RegisterTest(new RegisterTestRequest
+            {
+                Type = TestType.Texel
+            });
 
             var scalingFactorMode = args.Contains("scaling_factor");
             if (scalingFactorMode)
@@ -62,14 +67,6 @@ namespace Cosette.Tuner.Texel
                 chromosome = new EvaluationChromosome();
             }
 
-            _generationStopwatch = new Stopwatch();
-
-            await _webService.EnableIfAvailable();
-            _testId = await _webService.RegisterTest(new RegisterTestRequest
-            {
-                Type = TestType.Texel
-            });
-
             var selection = new EliteSelection();
             var crossover = new UniformCrossover(0.5f);
             var mutation = new UniformMutation(true);
@@ -78,6 +75,7 @@ namespace Cosette.Tuner.Texel
             geneticAlgorithm.Termination = new GenerationNumberTermination(SettingsLoader.Data.GenerationsCount);
             geneticAlgorithm.GenerationRan += GeneticAlgorithm_GenerationRan;
 
+            _generationStopwatch = new Stopwatch();
             _generationStopwatch.Start();
             geneticAlgorithm.Start();
 
