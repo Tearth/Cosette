@@ -25,7 +25,7 @@ namespace Cosette.Tuner.Web.Services
 
         public async Task<List<GenerationModel>> GetAll(int testId)
         {
-            var count = _databaseContext.Generations.Count();
+            var count = _databaseContext.Generations.Count(p => p.TestId == testId);
             var nth = Math.Max(1, count / 500);
 
             return await _databaseContext.Generations
