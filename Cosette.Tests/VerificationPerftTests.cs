@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Board;
+﻿using Cosette.Engine.Ai.Score.PieceSquareTables;
+using Cosette.Engine.Board;
 using Cosette.Engine.Fen;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Engine.Perft;
@@ -11,6 +12,7 @@ namespace Cosette.Tests
         public VerificationPerftTests()
         {
             MagicBitboards.InitWithInternalKeys();
+            PieceSquareTablesData.BuildPieceSquareTables();
         }
 
         [Fact]

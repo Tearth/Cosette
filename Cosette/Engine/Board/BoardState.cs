@@ -820,14 +820,12 @@ namespace Cosette.Engine.Board
 
         public void CalculatePieceTable(int[] pieceTable)
         {
-            Array.Fill(PieceTable, -1);
+            Array.Fill(pieceTable, -1);
             for (var fieldIndex = 0; fieldIndex < 64; fieldIndex++)
             {
                 for (var pieceIndex = 0; pieceIndex < 6; pieceIndex++)
                 {
                     var bitboard = Pieces[Color.White][pieceIndex] | Pieces[Color.Black][pieceIndex];
-                    pieceTable[fieldIndex] = -1;
-
                     if ((bitboard & (1ul << fieldIndex)) != 0)
                     {
                         pieceTable[fieldIndex] = pieceIndex;

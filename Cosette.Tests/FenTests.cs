@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Board;
+﻿using Cosette.Engine.Ai.Score.PieceSquareTables;
+using Cosette.Engine.Board;
 using Cosette.Engine.Fen;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Engine.Perft;
@@ -8,6 +9,11 @@ namespace Cosette.Tests
 {
     public class FenTests
     {
+        public FenTests()
+        {
+            PieceSquareTablesData.BuildPieceSquareTables();
+        }
+
         [Theory]
         [InlineData("5r2/2P4p/P5Pp/1b6/P1r1N2N/1pp4K/P7/5k2 w - - 0 10")]
         [InlineData("3K2N1/k7/p1p3qB/3p1R1Q/6P1/1pP4r/P6r/8 w KQ - 20 25")]
