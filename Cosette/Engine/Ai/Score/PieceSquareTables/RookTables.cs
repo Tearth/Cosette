@@ -4,16 +4,16 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
 {
     public static class RookTables
     {
-        public static int O0 = 0;  // Center
-        public static int O1 = 5;  // First rank
-        public static int O2 = 5;  // Edge fields near to rook
-        public static int O3 = 10; // Edge fields near to enemy
-        public static int O4 = 10; // Fields after castling
+        public static int O0 = -15; // Center
+        public static int O1 = -10; // First rank
+        public static int O2 = 10;  // Edge fields near to rook
+        public static int O3 = 5;   // Edge fields near to enemy
+        public static int O4 = 15;  // Fields after castling
 
-        public static int E0 = 5;  // Center
-        public static int E1 = 5;  // Center
-        public static int E2 = 5;  // Center
-        public static int E3 = 5;  // Edge
+        public static int E0 = -5;  // Center
+        public static int E1 = 5;   // Center
+        public static int E2 = 15;  // Center
+        public static int E3 = 10;  // Edge
 
         public static int[][][] Build()
         {

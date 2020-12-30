@@ -4,17 +4,17 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
 {
     public static class PawnTables
     {
-        public static int O0 = 15;  // 7th rank
+        public static int O0 = 5;   // 7th rank
         public static int O1 = 10;  // 6th rank
         public static int O2 = 5;   // 5th rank
         public static int O3 = -15; // 4th rank with penalty
         public static int O4 = 15;  // 4th rank with reward
-        public static int O5 = -10; // 3th, 2th rank with penalty
-        public static int O6 = 10;  // 3th, 2th rank with reward
+        public static int O5 = -5;  // 3th, 2th rank with penalty
+        public static int O6 = 0;   // 3th, 2th rank with reward
 
-        public static int E0 = 80;  // 7th rank
-        public static int E1 = 60;  // 6th rank
-        public static int E2 = 40;  // 5th rank
+        public static int E0 = 100; // 7th rank
+        public static int E1 = 90;  // 6th rank
+        public static int E2 = 50;  // 5th rank
         public static int E3 = 20;  // 4th rank
         public static int E4 = 0;   // 3th, 2th rank
 

@@ -18,7 +18,6 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var doubledRooks = 0;
             var rooksOnOpenFile = 0;
             var enemyColor = ColorOperations.Invert(color);
-            var seventhRank = color == Color.White ? BoardConstants.GRank : BoardConstants.BRank;
 
             var rooks = board.Pieces[color][Piece.Rook];
             while (rooks != 0)

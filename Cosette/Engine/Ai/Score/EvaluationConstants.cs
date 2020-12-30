@@ -2,26 +2,26 @@
 {
     public static class EvaluationConstants
     {
-        public static int[] Pieces = { 100, 320, 330, 500, 1100, 20000 };
+        public static int[] Pieces = { 100, 350, 370, 570, 1190, 20000 };
 
         public const int Checkmate = 32000;
         public const int ThreefoldRepetition = 0;
         public const int InsufficientMaterial = 0;
 
-        public static int[] DoubledPawns = { -20, -10 };
-        public static int[] IsolatedPawns = { -20, -10 };
-        public static int[] ChainedPawns = { 5, 5 };
-        public static int[] PassingPawns = { 10, 50 };
+        public static int[] DoubledPawns = { -10, -20 };
+        public static int[] IsolatedPawns = { -20, -5 };
+        public static int[] ChainedPawns = { 4, 4 };
+        public static int[] PassingPawns = { 0, 25 };
 
-        public static int CenterMobilityModifier = 10;
-        public static int OutsideMobilityModifier = 5;
+        public static int CenterMobilityModifier = 5;
+        public static int OutsideMobilityModifier = 7;
 
         public static int KingInDanger = -10;
-        public static int PawnShield = 15;
+        public static int PawnShield = 30;
 
         public static int DoubledRooks = 40;
-        public static int RookOnOpenFile = 20;
-        public static int PairOfBishops = 30;
+        public static int RookOnOpenFile = 30;
+        public static int PairOfBishops = 50;
 
         public static int Fianchetto = 20;
         public static int FianchettoWithoutBishop = -20;

@@ -6,14 +6,14 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
     {
         public static int O0 = -50; // 8th, 7yh, 6th rank
         public static int O1 = -30; // 5th, 4th rank
-        public static int O2 = -15; // 3th rank
-        public static int O3 = -5;  // 2th, 1th rank
+        public static int O2 = -30; // 3th rank
+        public static int O3 = -15; // 2th, 1th rank
         public static int O4 = 0;   // King original fields
         public static int O5 = 20;  // Fields after castling
 
-        public static int E0 = 15;  // Center
-        public static int E1 = 10;  // Center
-        public static int E2 = 0;   // Center
+        public static int E0 = 20;  // Center
+        public static int E1 = 15;  // Center
+        public static int E2 = 10;  // Center
         public static int E3 = -15; // Edge
 
         public static int[][][] Build()
