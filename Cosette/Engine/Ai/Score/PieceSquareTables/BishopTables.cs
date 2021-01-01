@@ -5,13 +5,13 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
     public static class BishopTables
     {
         public static int O0 = 15;  // Center
-        public static int O1 = 5;   // Center
+        public static int O1 = 10;  // Center
         public static int O2 = 5;   // Center
-        public static int O3 = 5;   // Original fields
+        public static int O3 = 0;   // Original fields
         public static int O4 = -5;  // Edge
         public static int O5 = -15; // Corners
 
-        public static int E0 = 20;  // Center
+        public static int E0 = 15;  // Center
         public static int E1 = 15;  // Center
         public static int E2 = 15;  // Center
         public static int E3 = -10; // Edge

@@ -13,8 +13,8 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
 
         public static int E0 = 20;  // Center
         public static int E1 = 15;  // Center
-        public static int E2 = 10;  // Center
-        public static int E3 = -15; // Edge
+        public static int E2 = -5;  // Center
+        public static int E3 = -20; // Edge
 
         public static int[][][] Build()
         {

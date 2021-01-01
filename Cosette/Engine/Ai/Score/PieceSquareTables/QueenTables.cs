@@ -4,15 +4,15 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
 {
     public static class QueenTables
     {
-        public static int O0 = -15; // Center
-        public static int O1 = -20; // Center
+        public static int O0 = -10; // Center
+        public static int O1 = -15; // Center
         public static int O2 = -5;  // Center
-        public static int O3 = 20;  // Edge
-        public static int O4 = 0;   // Edge
-        public static int O5 = -15; // Corners
+        public static int O3 = 15;  // Edge
+        public static int O4 = 5;   // Edge
+        public static int O5 = -10; // Corners
 
         public static int E0 = -5;  // Center
-        public static int E1 = 20;  // Center
+        public static int E1 = 10;  // Center
         public static int E2 = 10;  // Center
         public static int E3 = -15; // Edge
         public static int E4 = -10; // Corners

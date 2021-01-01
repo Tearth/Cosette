@@ -5,7 +5,7 @@ namespace Cosette.Engine.Ai.Score.PieceSquareTables
     public static class PawnTables
     {
         public static int O0 = 5;   // 7th rank
-        public static int O1 = 10;  // 6th rank
+        public static int O1 = 15;  // 6th rank
         public static int O2 = 5;   // 5th rank
         public static int O3 = -15; // 4th rank with penalty
         public static int O4 = 15;  // 4th rank with reward
