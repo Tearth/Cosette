@@ -205,7 +205,7 @@ namespace Cosette.Engine.Board
             _enPassants.Push(EnPassant);
             _irreversibleMovesCounts.Push(IrreversibleMovesCount);
 
-            if (pieceType == Piece.Pawn || move.IsCapture())
+            if (pieceType == Piece.Pawn || move.IsCapture() || move.IsCastling())
             {
                 IrreversibleMovesCount = 0;
             }
@@ -780,14 +780,20 @@ namespace Cosette.Engine.Board
 
         public bool IsThreefoldRepetition()
         {
-            if (NullMoves == 0 && _hashes.Count() >= 8)
+            var positionsToCheck = Math.Min(_hashes.Count(), IrreversibleMovesCount);
+            if (NullMoves == 0 && positionsToCheck >= 8)
             {
-                var first = _hashes.Peek(3);
-                var second = _hashes.Peek(7);
-
-                if (Hash == first && first == second)
+                var repetitionsCount = 1;
+                for (var positionIndex = 3; positionIndex < positionsToCheck; positionIndex += 4)
                 {
-                    return true;
+                    if (_hashes.Peek(positionIndex) == Hash)
+                    {
+                        repetitionsCount++;
+                        if (repetitionsCount >= 3)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
 
