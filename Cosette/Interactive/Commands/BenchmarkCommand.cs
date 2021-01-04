@@ -124,6 +124,8 @@ namespace Cosette.Interactive.Commands
             _interactiveConsole.WriteLine($"   Valid TT moves: {statistics.TTValidMoves}, Invalid TT moves: {statistics.TTInvalidMoves}, " +
                                           $"IID hits: {statistics.IIDHits}, Loud generations: {statistics.LoudMovesGenerated}, " +
                                           $"Quiet generations: {statistics.QuietMovesGenerated}");
+
+            _interactiveConsole.WriteLine($"   Extensions: {statistics.Extensions}");
 #endif
 
 

@@ -13,10 +13,10 @@ namespace Cosette.Engine.Ai.Search
         public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta)
         {
             var friendlyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
-            return FindBestMove(context, depth, ply, alpha, beta, true, friendlyKingInCheck);
+            return FindBestMove(context, depth, ply, alpha, beta, true, friendlyKingInCheck, 0);
         }
 
-        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool friendlyKingInCheck)
+        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool friendlyKingInCheck, int extensionsCount)
         {
             if (context.Statistics.Nodes >= context.MaxNodesCount)
             {
@@ -152,7 +152,7 @@ namespace Cosette.Engine.Ai.Search
             if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
-                var score = -FindBestMove(context, depth - 1 - NullWindowGetReduction(depth), ply + 1, -beta, -beta + 1, false, false);
+                var score = -FindBestMove(context, depth - 1 - NullWindowGetReduction(depth), ply + 1, -beta, -beta + 1, false, false, extensionsCount);
                 context.BoardState.UndoNullMove();
 
                 if (score >= beta)
@@ -164,7 +164,7 @@ namespace Cosette.Engine.Ai.Search
             
             if (IIDCanBeApplied(depth, entry.Flags, hashMove))
             {
-                FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck);
+                FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck, extensionsCount);
                 
                 var iidEntry = TranspositionTable.Get(context.BoardState.Hash);
                 if (iidEntry.IsKeyValid(context.BoardState.Hash))
@@ -249,10 +249,15 @@ namespace Cosette.Engine.Ai.Search
                 context.BoardState.MakeMove(moves[moveIndex]);
                 
                 var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+                var extension = GetExtensions(depth, extensionsCount, enemyKingInCheck);
+
+#if DEBUG
+                context.Statistics.Extensions += extension;
+#endif
 
                 if (pvs)
                 {
-                    bestScore = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                    bestScore = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
                     pvs = false;
                 }
                 else
@@ -263,18 +268,18 @@ namespace Cosette.Engine.Ai.Search
                         lmrReduction = LMRGetReduction(pvNode, moveIndex);
                     }
 
-                    var score = -FindBestMove(context, depth - lmrReduction - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
+                    var score = -FindBestMove(context, depth - lmrReduction - 1 + extension, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
                     if (score > alpha)
                     {
                         if (pvNode)
                         {
-                            score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                            score = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
                         }
                         else
                         {
                             if (lmrReduction != 0)
                             {
-                                score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                                score = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
                             }
                         }
                     }
@@ -445,6 +450,16 @@ namespace Cosette.Engine.Ai.Search
         {
             var r = SearchConstants.LMRBaseReduction + moveIndex / SearchConstants.LMRMoveIndexDivider;
             return Math.Min(pvNode ? SearchConstants.LMRPvNodeMaxReduction : SearchConstants.LMRNonPvNodeMaxReduction, r);
+        }
+
+        private static int GetExtensions(int depth, int extensionsCount, bool enemyKingInCheck)
+        {
+            if (depth == 1 && extensionsCount == 0 && enemyKingInCheck)
+            {
+                return 1;
+            }
+
+            return 0;
         }
     }
 }

@@ -6,6 +6,8 @@
  - Added new formulas calculating reduction for LMR and NW pruning
  - Added a new way of building Piece-Square tables, better for tuning
  - Improved threefold repetition detection
+ - Added check extension
+ - Added check detection in quiescence search
 
 # Version 3.0 (Luna), 12.12.2020
  - Added better time control for Arbiter
