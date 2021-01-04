@@ -24,6 +24,12 @@ namespace Cosette.Engine.Ai.Search
                 return -EvaluationConstants.Checkmate + ply;
             }
 
+            if (context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+            {
+                context.Statistics.QLeafs++;
+                return EvaluationConstants.Checkmate - ply + 1;
+            }
+
             var standPat = 0;
 
             var evaluationEntry = EvaluationHashTable.Get(context.BoardState.Hash);
