@@ -10,7 +10,7 @@ using Cosette.Engine.Moves.Patterns;
 
 namespace Cosette.Engine.Board
 {
-    public class BoardState
+    public sealed class BoardState
     {
         public ulong[][] Pieces { get; set; }
         public ulong[] Occupancy { get; set; }

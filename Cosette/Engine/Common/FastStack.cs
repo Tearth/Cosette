@@ -1,6 +1,6 @@
 ﻿namespace Cosette.Engine.Common
 {
-    public class FastStack<T>
+    public sealed class FastStack<T>
     {
         private readonly T[] _stack;
         private int _pointer;
