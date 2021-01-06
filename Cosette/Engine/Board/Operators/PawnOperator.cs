@@ -7,21 +7,21 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class PawnOperator
     {
-        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset, ulong evasionMask)
         {
             var color = boardState.ColorToMove;
 
-            offset = GetSinglePush(boardState, moves, offset, true);
-            offset = GetDiagonalAttacks(boardState, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
+            offset = GetSinglePush(boardState, moves, offset, true, evasionMask);
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset, evasionMask);
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset, evasionMask);
 
             return offset;
         }
 
-        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset, ulong evasionMask)
         {
-            offset = GetSinglePush(boardState, moves, offset, false);
-            offset = GetDoublePush(boardState, moves, offset);
+            offset = GetSinglePush(boardState, moves, offset, false, evasionMask);
+            offset = GetDoublePush(boardState, moves, offset, evasionMask);
 
             return offset;
         }
@@ -30,8 +30,8 @@ namespace Cosette.Engine.Board.Operators
         {
             var color = boardState.ColorToMove;
 
-            offset = GetDiagonalAttacks(boardState, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset);
-            offset = GetDiagonalAttacks(boardState, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset);
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 9 : 7, BoardConstants.AFile, moves, offset, ulong.MaxValue);
+            offset = GetDiagonalAttacks(boardState, color == Color.White ? 7 : 9, BoardConstants.HFile, moves, offset, ulong.MaxValue);
 
             return offset;
         }
@@ -83,7 +83,7 @@ namespace Cosette.Engine.Board.Operators
             return false;
         }
 
-        private static int GetSinglePush(BoardState boardState, Span<Move> moves, int offset, bool promotionsMode)
+        private static int GetSinglePush(BoardState boardState, Span<Move> moves, int offset, bool promotionsMode, ulong evasionMask)
         {
             int shift;
             ulong promotionRank, pawns;
@@ -124,6 +124,7 @@ namespace Cosette.Engine.Board.Operators
                 pawns = (pawns >> 8) & ~boardState.OccupancySummary;
             }
 
+            pawns &= evasionMask;
             while (pawns != 0)
             {
                 var piece = BitOperations.GetLsb(pawns);
@@ -149,7 +150,7 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        private static int GetDoublePush(BoardState boardState, Span<Move> moves, int offset)
+        private static int GetDoublePush(BoardState boardState, Span<Move> moves, int offset, ulong evasionMask)
         {
             int shift;
             ulong startRank, pawns;
@@ -172,6 +173,7 @@ namespace Cosette.Engine.Board.Operators
                 pawns = (pawns >> 8) & ~boardState.OccupancySummary;
             }
 
+            pawns &= evasionMask;
             while (pawns != 0)
             {
                 var piece = BitOperations.GetLsb(pawns);
@@ -186,7 +188,7 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        private static int GetDiagonalAttacks(BoardState boardState, int dir, ulong prohibitedFile, Span<Move> moves, int offset)
+        private static int GetDiagonalAttacks(BoardState boardState, int dir, ulong prohibitedFile, Span<Move> moves, int offset, ulong evasionMask)
         {
             int shift;
             ulong promotionRank, enemyOccupancy, pawns;
@@ -209,6 +211,7 @@ namespace Cosette.Engine.Board.Operators
                 pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;
             }
 
+            pawns &= evasionMask;
             while (pawns != 0)
             {
                 var piece = BitOperations.GetLsb(pawns);

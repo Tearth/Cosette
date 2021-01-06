@@ -185,9 +185,19 @@ namespace Cosette.Engine.Ai.Search
             var loudMovesGenerated = false;
             var quietMovesGenerated = false;
 
+            var evasionMask = ulong.MaxValue;
+            if (friendlyKingInCheck && !context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+            {
+                var kingField = context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King];
+                var kingFieldIndex = BitOperations.BitScan(kingField);
+
+                evasionMask = KnightMovesGenerator.GetMoves(kingFieldIndex) | 
+                              QueenMovesGenerator.GetMoves(context.BoardState.OccupancySummary, kingFieldIndex);
+            }
+
             if (hashMove == Move.Empty)
             {
-                movesCount = context.BoardState.GetLoudMoves(moves, 0);
+                movesCount = context.BoardState.GetLoudMoves(moves, 0, evasionMask);
                 MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
                 loudMovesGenerated = true;
 
@@ -195,7 +205,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (movesCount == 0)
                 {
-                    movesCount = context.BoardState.GetQuietMoves(moves, 0);
+                    movesCount = context.BoardState.GetQuietMoves(moves, 0, evasionMask);
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, depth);
                     quietMovesGenerated = true;
 
@@ -225,7 +235,7 @@ namespace Cosette.Engine.Ai.Search
                 {
                     var loudMovesCount = movesCount;
 
-                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount);
+                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount, evasionMask);
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, loudMovesCount, movesCount, depth);
                     MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
                     quietMovesGenerated = true;
@@ -324,7 +334,7 @@ namespace Cosette.Engine.Ai.Search
                 postLoopOperations:
                 if (!loudMovesGenerated)
                 {
-                    movesCount = context.BoardState.GetLoudMoves(moves, 0);
+                    movesCount = context.BoardState.GetLoudMoves(moves, 0, evasionMask);
                     MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
                     moveIndex = -1;
                     loudMovesGenerated = true;
@@ -333,7 +343,7 @@ namespace Cosette.Engine.Ai.Search
 
                     if (movesCount == 0)
                     {
-                        movesCount = context.BoardState.GetQuietMoves(moves, 0);
+                        movesCount = context.BoardState.GetQuietMoves(moves, 0, evasionMask);
                         MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, depth);
                         quietMovesGenerated = true;
 
@@ -345,7 +355,7 @@ namespace Cosette.Engine.Ai.Search
                 {
                     var loudMovesCount = movesCount;
 
-                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount);
+                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount, evasionMask);
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, loudMovesCount, movesCount, depth);
                     quietMovesGenerated = true;
 

@@ -7,7 +7,7 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class KnightOperator
     {
-        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset, ulong evasionMask)
         {
             var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
@@ -20,6 +20,7 @@ namespace Cosette.Engine.Board.Operators
 
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = KnightMovesGenerator.GetMoves(from) & boardState.Occupancy[enemyColor];
+                availableMoves &= evasionMask;
 
                 while (availableMoves != 0)
                 {
@@ -34,7 +35,7 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset, ulong evasionMask)
         {
             var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
@@ -47,6 +48,7 @@ namespace Cosette.Engine.Board.Operators
 
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = KnightMovesGenerator.GetMoves(from) & ~boardState.OccupancySummary;
+                availableMoves &= evasionMask;
 
                 while (availableMoves != 0)
                 {

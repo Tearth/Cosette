@@ -8,6 +8,7 @@
  - Improved threefold repetition detection
  - Added check extension
  - Added check detection in quiescence search
+ - Added evasion moves generator
 
 # Version 3.0 (Luna), 12.12.2020
  - Added better time control for Arbiter

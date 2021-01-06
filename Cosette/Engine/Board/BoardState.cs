@@ -126,25 +126,25 @@ namespace Cosette.Engine.Board
             Position[Color.Black][GamePhase.Ending] = CalculatePosition(Color.Black, GamePhase.Ending);
         }
 
-        public int GetLoudMoves(Span<Move> moves, int offset)
+        public int GetLoudMoves(Span<Move> moves, int offset, ulong evasionMask)
         {
-            var movesCount = PawnOperator.GetLoudMoves(this, moves, offset);
-            movesCount = KnightOperator.GetLoudMoves(this, moves, movesCount);
-            movesCount = BishopOperator.GetLoudMoves(this, moves, movesCount);
-            movesCount = RookOperator.GetLoudMoves(this, moves, movesCount);
-            movesCount = QueenOperator.GetLoudMoves(this, moves, movesCount);
+            var movesCount = PawnOperator.GetLoudMoves(this, moves, offset, evasionMask);
+            movesCount = KnightOperator.GetLoudMoves(this, moves, movesCount, evasionMask);
+            movesCount = BishopOperator.GetLoudMoves(this, moves, movesCount, evasionMask);
+            movesCount = RookOperator.GetLoudMoves(this, moves, movesCount, evasionMask);
+            movesCount = QueenOperator.GetLoudMoves(this, moves, movesCount, evasionMask);
             movesCount = KingOperator.GetLoudMoves(this, moves, movesCount);
 
             return movesCount;
         }
 
-        public int GetQuietMoves(Span<Move> moves, int offset)
+        public int GetQuietMoves(Span<Move> moves, int offset, ulong evasionMask)
         {
-            var movesCount = PawnOperator.GetQuietMoves(this, moves, offset);
-            movesCount = KnightOperator.GetQuietMoves(this, moves, movesCount);
-            movesCount = BishopOperator.GetQuietMoves(this, moves, movesCount);
-            movesCount = RookOperator.GetQuietMoves(this, moves, movesCount);
-            movesCount = QueenOperator.GetQuietMoves(this, moves, movesCount);
+            var movesCount = PawnOperator.GetQuietMoves(this, moves, offset, evasionMask);
+            movesCount = KnightOperator.GetQuietMoves(this, moves, movesCount, evasionMask);
+            movesCount = BishopOperator.GetQuietMoves(this, moves, movesCount, evasionMask);
+            movesCount = RookOperator.GetQuietMoves(this, moves, movesCount, evasionMask);
+            movesCount = QueenOperator.GetQuietMoves(this, moves, movesCount, evasionMask);
             movesCount = KingOperator.GetQuietMoves(this, moves, movesCount);
 
             return movesCount;
@@ -152,8 +152,8 @@ namespace Cosette.Engine.Board
 
         public int GetAllMoves(Span<Move> moves)
         {
-            var movesCount = GetLoudMoves(moves, 0);
-            return GetQuietMoves(moves, movesCount);
+            var movesCount = GetLoudMoves(moves, 0, ulong.MaxValue);
+            return GetQuietMoves(moves, movesCount, ulong.MaxValue);
         }
 
         public int GetAvailableCaptureMoves(Span<Move> moves)
