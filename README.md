@@ -18,11 +18,11 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - bitboards (with make/undo scheme)
  - magic bitboards
  - precalculated arrays with moves for knight and king
+ - moves generator (quiet, loud, captures and evasions)
 
 **Evaluation:**
  - material (incremental updating)
  - position (piece-square tables, incremental updating)
- - castling status
  - mobility
  - king safety
  - pawn structure (cached in pawn hash table)
@@ -61,7 +61,7 @@ The simple console application which allows testing chess engines using super-fa
 
 ### Tuner
 
-The console application + web interface, which allows adjusting engine parameters using standard UCI command setoption. Results are displayed on the local website using a set of tables and charts.
+A set of console applications (selfplay + Texel) + web interface, which allows adjusting engine parameters using standard UCI command setoption. Results are displayed on the local website using a set of tables and charts.
 
 ![Cosette Tuner](https://i.imgur.com/uxXeYW9.png)
 
