@@ -1,4 +1,4 @@
-# Version 4.0 (------), --.--.----
+# Version 4.0 (Komekko), --.--.----
  - Added Texel project
  - Adjusted search parameters
  - Adjusted evaluation parameters
