@@ -148,7 +148,19 @@ namespace Cosette.Engine.Ai.Search
                 context.Statistics.TTNonHits++;
             }
 #endif
-            
+
+            if (FutilityPruningCanBeApplied(depth, friendlyKingInCheck, alpha, beta))
+            {
+                var fastEvaluation = Evaluation.FastEvaluate(context.BoardState);
+                var futilityMargin = SearchConstants.FutilityPruningBaseMargin + depth * SearchConstants.FutilityPruningMarginMultiplier;
+                var futilityScore = fastEvaluation - futilityMargin;
+
+                if (futilityScore >= beta)
+                {
+                    return futilityScore;
+                }
+            }
+
             if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
@@ -419,6 +431,12 @@ namespace Cosette.Engine.Ai.Search
             }
 
             return bestScore;
+        }
+
+        private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, int alpha, int beta)
+        {
+            return depth <= SearchConstants.FutilityPruningMaximalDepth && !friendlyKingInCheck && 
+                   !IterativeDeepening.IsScoreNearCheckmate(alpha) && !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 
         private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)

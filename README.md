@@ -36,7 +36,7 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - negamax
  - alpha-beta pruning
  - transposition table
- - quiescence search
+ - quiescence search with check detection
  - quiescence SEE pruning
  - iterative deepening
  - internal iterative deepening
@@ -44,6 +44,8 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - null-move pruning
  - principal variation search
  - late move reduction
+ - check extension
+ - reversed futility pruning
 
 **Move ordering:**
  - staged move ordering
