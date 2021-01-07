@@ -58,6 +58,8 @@ namespace Cosette.Engine.Ai.Search
         public int LoudMovesGenerated { get; set; }
         public int QuietMovesGenerated { get; set; }
         public int Extensions { get; set; }
+        public int NullMovePrunes { get; set; }
+        public int FutilityPrunes { get; set; }
 
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }

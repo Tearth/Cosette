@@ -157,6 +157,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (futilityScore >= beta)
                 {
+                    context.Statistics.FutilityPrunes++;
                     return futilityScore;
                 }
             }
@@ -169,7 +170,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (score >= beta)
                 {
-                    context.Statistics.BetaCutoffs++;
+                    context.Statistics.NullMovePrunes++;
                     return score;
                 }
             }

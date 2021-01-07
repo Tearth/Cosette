@@ -125,7 +125,8 @@ namespace Cosette.Interactive.Commands
                                           $"IID hits: {statistics.IIDHits}, Loud generations: {statistics.LoudMovesGenerated}, " +
                                           $"Quiet generations: {statistics.QuietMovesGenerated}");
 
-            _interactiveConsole.WriteLine($"   Extensions: {statistics.Extensions}");
+            _interactiveConsole.WriteLine($"   Extensions: {statistics.Extensions}, Null move prunes: {statistics.NullMovePrunes}, " +
+                                          $"Futility prunes: {statistics.FutilityPrunes}");
 #endif
 
 
