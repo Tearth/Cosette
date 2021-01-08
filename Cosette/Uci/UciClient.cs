@@ -150,9 +150,9 @@ namespace Cosette.Uci
             Send($"option name StaticNullMoveBaseMargin type spin default {SearchConstants.StaticNullMoveBaseMargin} min 0 max 500");
             Send($"option name StaticNullMoveMarginMultiplier type spin default {SearchConstants.StaticNullMoveMarginMultiplier} min 0 max 500");
 
-            Send($"option name NullWindowMinimalDepth type spin default {SearchConstants.NullWindowMinimalDepth} min 0 max 32");
-            Send($"option name NullWindowBaseDepthReduction type spin default {SearchConstants.NullWindowBaseDepthReduction} min 0 max 32");
-            Send($"option name NullWindowDepthDivider type spin default {SearchConstants.NullWindowDepthDivider} min 0 max 32");
+            Send($"option name NullMoveMinimalDepth type spin default {SearchConstants.NullMoveMinimalDepth} min 0 max 32");
+            Send($"option name NullMoveBaseDepthReduction type spin default {SearchConstants.NullMoveBaseDepthReduction} min 0 max 32");
+            Send($"option name NullMoveDepthDivider type spin default {SearchConstants.NullMoveDepthDivider} min 0 max 32");
 
             Send($"option name LMRMinimalDepth type spin default {SearchConstants.LMRMinimalDepth} min 0 max 32");
             Send($"option name LMRMovesWithoutReduction type spin default {SearchConstants.LMRMovesWithoutReduction} min 0 max 32");

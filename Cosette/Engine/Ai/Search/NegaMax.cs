@@ -162,10 +162,10 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
+            if (NullMoveCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
-                var score = -FindBestMove(context, depth - 1 - NullWindowGetReduction(depth), ply + 1, -beta, -beta + 1, false, false, extensionsCount);
+                var score = -FindBestMove(context, depth - 1 - NullMoveGetReduction(depth), ply + 1, -beta, -beta + 1, false, false, extensionsCount);
                 context.BoardState.UndoNullMove();
 
                 if (score >= beta)
@@ -440,15 +440,15 @@ namespace Cosette.Engine.Ai.Search
                    !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 
-        private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
+        private static bool NullMoveCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
         {
-            return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
+            return !pvNode && allowNullMove && depth >= SearchConstants.NullMoveMinimalDepth && 
                    board.GetGamePhase() == GamePhase.Opening && !friendlyKingInCheck;
         }
 
-        private static int NullWindowGetReduction(int depth)
+        private static int NullMoveGetReduction(int depth)
         {
-            return SearchConstants.NullWindowBaseDepthReduction + depth / SearchConstants.NullWindowDepthDivider;
+            return SearchConstants.NullMoveBaseDepthReduction + depth / SearchConstants.NullMoveDepthDivider;
         }
 
         private static bool IIDCanBeApplied(int depth, TranspositionTableEntryFlags ttEntryType, Move bestMove)

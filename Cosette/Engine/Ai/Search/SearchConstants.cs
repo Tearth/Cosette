@@ -15,9 +15,9 @@
         public static int StaticNullMoveBaseMargin = 0;
         public static int StaticNullMoveMarginMultiplier = 300;
 
-        public static int NullWindowMinimalDepth = 3;
-        public static int NullWindowBaseDepthReduction = 3;
-        public static int NullWindowDepthDivider = 7;
+        public static int NullMoveMinimalDepth = 3;
+        public static int NullMoveBaseDepthReduction = 3;
+        public static int NullMoveDepthDivider = 7;
 
         public static int LMRMinimalDepth = 2;
         public static int LMRMovesWithoutReduction = 4;

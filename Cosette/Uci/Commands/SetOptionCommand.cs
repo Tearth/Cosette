@@ -64,9 +64,9 @@ namespace Cosette.Uci.Commands
                 { "StaticNullMoveBaseMargin", p => SearchConstants.StaticNullMoveBaseMargin = int.Parse(p) },
                 { "StaticNullMoveMarginMultiplier", p => SearchConstants.StaticNullMoveMarginMultiplier = int.Parse(p) },
 
-                { "NullWindowMinimalDepth", p => SearchConstants.NullWindowMinimalDepth = int.Parse(p) },
-                { "NullWindowBaseDepthReduction", p => SearchConstants.NullWindowBaseDepthReduction = int.Parse(p) },
-                { "NullWindowDepthDivider", p => SearchConstants.NullWindowDepthDivider = int.Parse(p) },
+                { "NullMoveMinimalDepth", p => SearchConstants.NullMoveMinimalDepth = int.Parse(p) },
+                { "NullMoveBaseDepthReduction", p => SearchConstants.NullMoveBaseDepthReduction = int.Parse(p) },
+                { "NullMoveDepthDivider", p => SearchConstants.NullMoveDepthDivider = int.Parse(p) },
 
                 { "LMRMinimalDepth", p => SearchConstants.LMRMinimalDepth = int.Parse(p) },
                 { "LMRMovesWithoutReduction", p => SearchConstants.LMRMovesWithoutReduction = int.Parse(p) },
