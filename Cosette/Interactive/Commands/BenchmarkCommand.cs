@@ -126,7 +126,7 @@ namespace Cosette.Interactive.Commands
                                           $"Quiet generations: {statistics.QuietMovesGenerated}");
 
             _interactiveConsole.WriteLine($"   Extensions: {statistics.Extensions}, Null-move prunes: {statistics.NullMovePrunes}, " +
-                                          $"Static null-move prunes: {statistics.StaticNullMovePrunes}");
+                                          $"Static null-move prunes: {statistics.StaticNullMovePrunes}, Futility prunes: {statistics.FutilityPrunes}");
 #endif
 
 

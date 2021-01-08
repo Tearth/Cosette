@@ -152,12 +152,15 @@ namespace Cosette.Engine.Ai.Search
             if (StaticNullMoveCanBeApplied(depth, friendlyKingInCheck, pvNode, beta))
             {
                 var fastEvaluation = Evaluation.FastEvaluate(context.BoardState);
-                var margin = SearchConstants.StaticNullMoveBaseMargin + depth * SearchConstants.StaticNullMoveMarginMultiplier;
+                var margin = SearchConstants.StaticNullMoveBaseMargin + (depth - 1) * SearchConstants.StaticNullMoveMarginMultiplier;
                 var score = fastEvaluation - margin;
 
                 if (score >= beta)
                 {
+#if DEBUG
                     context.Statistics.StaticNullMovePrunes++;
+#endif
+
                     return score;
                 }
             }
@@ -170,7 +173,10 @@ namespace Cosette.Engine.Ai.Search
 
                 if (score >= beta)
                 {
+#if DEBUG
                     context.Statistics.NullMovePrunes++;
+#endif
+
                     return score;
                 }
             }
@@ -198,7 +204,7 @@ namespace Cosette.Engine.Ai.Search
             {
                 futilityPruningCanBeApplied = true;
                 futilityPruningEvaluation = Evaluation.FastEvaluate(context.BoardState);
-                futilityPruningMargin = SearchConstants.FutilityPruningBaseMargin + depth * SearchConstants.FutilityPruningMarginMultiplier;
+                futilityPruningMargin = SearchConstants.FutilityPruningBaseMargin + (depth - 1) * SearchConstants.FutilityPruningMarginMultiplier;
             }
             
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
@@ -292,6 +298,10 @@ namespace Cosette.Engine.Ai.Search
 
                     if (futilityPruningEvaluation + futilityPruningMargin + gain <= alpha)
                     {
+#if DEBUG
+                        context.Statistics.FutilityPrunes++;
+#endif
+
                         goto postLoopOperations;
                     }
                 }

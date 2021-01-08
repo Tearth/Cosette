@@ -60,6 +60,7 @@ namespace Cosette.Engine.Ai.Search
         public int Extensions { get; set; }
         public int NullMovePrunes { get; set; }
         public int StaticNullMovePrunes { get; set; }
+        public int FutilityPrunes { get; set; }
 
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }
