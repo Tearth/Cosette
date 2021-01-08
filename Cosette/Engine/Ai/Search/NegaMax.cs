@@ -157,7 +157,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (score >= beta)
                 {
-                    context.Statistics.FutilityPrunes++;
+                    context.Statistics.StaticNullMovePrunes++;
                     return score;
                 }
             }
