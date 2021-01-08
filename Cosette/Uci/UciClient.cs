@@ -146,9 +146,9 @@ namespace Cosette.Uci
             Send($"option name IIDMinimalDepth type spin default {SearchConstants.IIDMinimalDepth} min 0 max 32");
             Send($"option name IIDDepthReduction type spin default {SearchConstants.IIDDepthReduction} min 0 max 32");
 
-            Send($"option name FutilityPruningMaximalDepth type spin default {SearchConstants.FutilityPruningMaximalDepth} min 0 max 32");
-            Send($"option name FutilityPruningBaseMargin type spin default {SearchConstants.FutilityPruningBaseMargin} min 0 max 500");
-            Send($"option name FutilityPruningMarginMultiplier type spin default {SearchConstants.FutilityPruningMarginMultiplier} min 0 max 500");
+            Send($"option name StaticNullMoveMaximalDepth type spin default {SearchConstants.StaticNullMoveMaximalDepth} min 0 max 32");
+            Send($"option name StaticNullMoveBaseMargin type spin default {SearchConstants.StaticNullMoveBaseMargin} min 0 max 500");
+            Send($"option name StaticNullMoveMarginMultiplier type spin default {SearchConstants.StaticNullMoveMarginMultiplier} min 0 max 500");
 
             Send($"option name NullWindowMinimalDepth type spin default {SearchConstants.NullWindowMinimalDepth} min 0 max 32");
             Send($"option name NullWindowBaseDepthReduction type spin default {SearchConstants.NullWindowBaseDepthReduction} min 0 max 32");

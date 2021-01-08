@@ -42,10 +42,10 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - internal iterative deepening
  - staged move generating
  - null-move pruning
+ - static null-move pruning
  - principal variation search
  - late move reduction
  - check extension
- - reversed futility pruning
 
 **Move ordering:**
  - staged move ordering

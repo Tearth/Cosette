@@ -11,9 +11,9 @@
         public static int IIDMinimalDepth = 4;
         public static int IIDDepthReduction = 2;
 
-        public static int FutilityPruningMaximalDepth = 3;
-        public static int FutilityPruningBaseMargin = 0;
-        public static int FutilityPruningMarginMultiplier = 300;
+        public static int StaticNullMoveMaximalDepth = 3;
+        public static int StaticNullMoveBaseMargin = 0;
+        public static int StaticNullMoveMarginMultiplier = 300;
 
         public static int NullWindowMinimalDepth = 3;
         public static int NullWindowBaseDepthReduction = 3;

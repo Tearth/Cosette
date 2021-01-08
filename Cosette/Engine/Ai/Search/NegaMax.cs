@@ -149,16 +149,16 @@ namespace Cosette.Engine.Ai.Search
             }
 #endif
 
-            if (FutilityPruningCanBeApplied(depth, friendlyKingInCheck, pvNode, beta))
+            if (StaticNullMoveCanBeApplied(depth, friendlyKingInCheck, pvNode, beta))
             {
                 var fastEvaluation = Evaluation.FastEvaluate(context.BoardState);
-                var futilityMargin = SearchConstants.FutilityPruningBaseMargin + depth * SearchConstants.FutilityPruningMarginMultiplier;
-                var futilityScore = fastEvaluation - futilityMargin;
+                var margin = SearchConstants.StaticNullMoveBaseMargin + depth * SearchConstants.StaticNullMoveMarginMultiplier;
+                var score = fastEvaluation - margin;
 
-                if (futilityScore >= beta)
+                if (score >= beta)
                 {
                     context.Statistics.FutilityPrunes++;
-                    return futilityScore;
+                    return score;
                 }
             }
 
@@ -434,9 +434,9 @@ namespace Cosette.Engine.Ai.Search
             return bestScore;
         }
 
-        private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
+        private static bool StaticNullMoveCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
         {
-            return !pvNode && depth <= SearchConstants.FutilityPruningMaximalDepth && !friendlyKingInCheck && 
+            return !pvNode && depth <= SearchConstants.StaticNullMoveMaximalDepth && !friendlyKingInCheck && 
                    !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 

@@ -9,7 +9,7 @@
  - Added check extension
  - Added check detection in quiescence search
  - Added evasion moves generator
- - Added reversed futility pruning
+ - Added static null-move pruning
 
 # Version 3.0 (Luna), 12.12.2020
  - Added better time control for Arbiter
