@@ -19,6 +19,10 @@
         public static int NullMoveBaseDepthReduction = 3;
         public static int NullMoveDepthDivider = 7;
 
+        public static int FutilityPruningMinimalDepth = 3;
+        public static int FutilityPruningBaseMargin = 0;
+        public static int FutilityPruningMarginMultiplier = 300;
+
         public static int LMRMinimalDepth = 2;
         public static int LMRMovesWithoutReduction = 4;
         public static int LMRBaseReduction = 0;
