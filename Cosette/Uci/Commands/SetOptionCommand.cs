@@ -60,17 +60,17 @@ namespace Cosette.Uci.Commands
                 { "IIDMinimalDepth", p => SearchConstants.IIDMinimalDepth = int.Parse(p) },
                 { "IIDDepthReduction", p => SearchConstants.IIDDepthReduction = int.Parse(p) },
 
-                { "StaticNullMoveBaseMinimalDepth", p => SearchConstants.StaticNullMoveBaseMinimalDepth = int.Parse(p) },
-                { "StaticNullMoveDepthDivider", p => SearchConstants.StaticNullMoveDepthDivider = int.Parse(p) },
-                { "StaticNullMoveBaseMargin", p => SearchConstants.StaticNullMoveBaseMargin = int.Parse(p) },
+                { "StaticNullMoveMaximalDepth", p => SearchConstants.StaticNullMoveMaximalDepth = int.Parse(p) },
+                { "StaticNullMoveMaximalDepthDivider", p => SearchConstants.StaticNullMoveMaximalDepthDivider = int.Parse(p) },
+                { "StaticNullMoveMargin", p => SearchConstants.StaticNullMoveMargin = int.Parse(p) },
                 { "StaticNullMoveMarginMultiplier", p => SearchConstants.StaticNullMoveMarginMultiplier = int.Parse(p) },
 
                 { "NullMoveMinimalDepth", p => SearchConstants.NullMoveMinimalDepth = int.Parse(p) },
-                { "NullMoveBaseDepthReduction", p => SearchConstants.NullMoveBaseDepthReduction = int.Parse(p) },
-                { "NullMoveDepthDivider", p => SearchConstants.NullMoveDepthDivider = int.Parse(p) },
+                { "NullMoveDepthReduction", p => SearchConstants.NullMoveDepthReduction = int.Parse(p) },
+                { "NullMoveDepthReductionDivider", p => SearchConstants.NullMoveDepthReductionDivider = int.Parse(p) },
 
-                { "FutilityPruningMinimalDepth", p => SearchConstants.FutilityPruningMinimalDepth = int.Parse(p) },
-                { "FutilityPruningBaseMargin", p => SearchConstants.FutilityPruningBaseMargin = int.Parse(p) },
+                { "FutilityPruningMaximalDepth", p => SearchConstants.FutilityPruningMaximalDepth = int.Parse(p) },
+                { "FutilityPruningMargin", p => SearchConstants.FutilityPruningMargin = int.Parse(p) },
                 { "FutilityPruningMarginMultiplier", p => SearchConstants.FutilityPruningMarginMultiplier = int.Parse(p) },
 
                 { "LMRMinimalDepth", p => SearchConstants.LMRMinimalDepth = int.Parse(p) },

@@ -152,7 +152,7 @@ namespace Cosette.Engine.Ai.Search
             if (StaticNullMoveCanBeApplied(depth, friendlyKingInCheck, pvNode, beta))
             {
                 var fastEvaluation = Evaluation.FastEvaluate(context.BoardState);
-                var margin = SearchConstants.StaticNullMoveBaseMargin + (depth - 1) * SearchConstants.StaticNullMoveMarginMultiplier;
+                var margin = SearchConstants.StaticNullMoveMargin + (depth - 1) * SearchConstants.StaticNullMoveMarginMultiplier;
                 var score = fastEvaluation - margin;
 
                 if (score >= beta)
@@ -204,7 +204,7 @@ namespace Cosette.Engine.Ai.Search
             {
                 futilityPruningCanBeApplied = true;
                 futilityPruningEvaluation = Evaluation.FastEvaluate(context.BoardState);
-                futilityPruningMargin = SearchConstants.FutilityPruningBaseMargin + (depth - 1) * SearchConstants.FutilityPruningMarginMultiplier;
+                futilityPruningMargin = SearchConstants.FutilityPruningMargin + (depth - 1) * SearchConstants.FutilityPruningMarginMultiplier;
             }
             
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
@@ -473,7 +473,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool StaticNullMoveCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
         {
-            return !pvNode && depth <= SearchConstants.StaticNullMoveBaseMinimalDepth + depth / SearchConstants.StaticNullMoveDepthDivider && 
+            return !pvNode && depth <= SearchConstants.StaticNullMoveMaximalDepth + depth / SearchConstants.StaticNullMoveMaximalDepthDivider && 
                    !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 
@@ -485,7 +485,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static int NullMoveGetReduction(int depth)
         {
-            return SearchConstants.NullMoveBaseDepthReduction + depth / SearchConstants.NullMoveDepthDivider;
+            return SearchConstants.NullMoveDepthReduction + depth / SearchConstants.NullMoveDepthReductionDivider;
         }
 
         private static bool IIDCanBeApplied(int depth, TranspositionTableEntryFlags ttEntryType, Move bestMove)
@@ -495,7 +495,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int alpha)
         {
-            return !pvNode && depth <= SearchConstants.FutilityPruningMinimalDepth && !friendlyKingInCheck && 
+            return !pvNode && depth <= SearchConstants.FutilityPruningMaximalDepth && !friendlyKingInCheck && 
                    !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
