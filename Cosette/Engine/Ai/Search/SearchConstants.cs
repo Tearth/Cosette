@@ -11,8 +11,8 @@
         public static int IIDMinimalDepth = 4;
         public static int IIDDepthReduction = 2;
 
-        public static int StaticNullMoveMaximalDepth = 2;
-        public static int StaticNullMoveMaximalDepthDivider = 5;
+        public static int StaticNullMoveMaximalDepth = 3;
+        public static int StaticNullMoveMaximalDepthDivider = 7;
         public static int StaticNullMoveMargin = 200;
         public static int StaticNullMoveMarginMultiplier = 300;
 
@@ -20,8 +20,8 @@
         public static int NullMoveDepthReduction = 3;
         public static int NullMoveDepthReductionDivider = 7;
 
-        public static int FutilityPruningMaximalDepth = 2;
-        public static int FutilityPruningMaximalDepthDivisor = 5;
+        public static int FutilityPruningMaximalDepth = 3;
+        public static int FutilityPruningMaximalDepthDivisor = 7;
         public static int FutilityPruningMargin = 200;
         public static int FutilityPruningMarginMultiplier = 300;
 
