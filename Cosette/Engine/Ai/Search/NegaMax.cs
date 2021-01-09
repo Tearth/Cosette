@@ -287,7 +287,7 @@ namespace Cosette.Engine.Ai.Search
                     }
                 }
 
-                if (futilityPruningCanBeApplied)
+                if (futilityPruningCanBeApplied && !pvs)
                 {
                     var gain = FutilityPruningGetGain(context, moves[moveIndex]);
                     if (futilityPruningEvaluation + futilityPruningMargin + gain <= alpha)
