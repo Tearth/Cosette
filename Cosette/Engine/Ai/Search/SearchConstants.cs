@@ -11,7 +11,8 @@
         public static int IIDMinimalDepth = 4;
         public static int IIDDepthReduction = 2;
 
-        public static int StaticNullMoveMaximalDepth = 4;
+        public static int StaticNullMoveBaseMinimalDepth = 2;
+        public static int StaticNullMoveDepthDivider = 5;
         public static int StaticNullMoveBaseMargin = 200;
         public static int StaticNullMoveMarginMultiplier = 300;
 

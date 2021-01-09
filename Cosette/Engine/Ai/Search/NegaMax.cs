@@ -473,8 +473,8 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool StaticNullMoveCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
         {
-            return !pvNode && depth <= SearchConstants.StaticNullMoveMaximalDepth && !friendlyKingInCheck && 
-                   !IterativeDeepening.IsScoreNearCheckmate(beta);
+            return !pvNode && depth <= SearchConstants.StaticNullMoveBaseMinimalDepth + depth / SearchConstants.StaticNullMoveDepthDivider && 
+                   !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 
         private static bool NullMoveCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)

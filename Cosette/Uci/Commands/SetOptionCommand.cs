@@ -60,7 +60,8 @@ namespace Cosette.Uci.Commands
                 { "IIDMinimalDepth", p => SearchConstants.IIDMinimalDepth = int.Parse(p) },
                 { "IIDDepthReduction", p => SearchConstants.IIDDepthReduction = int.Parse(p) },
 
-                { "StaticNullMoveMaximalDepth", p => SearchConstants.StaticNullMoveMaximalDepth = int.Parse(p) },
+                { "StaticNullMoveBaseMinimalDepth", p => SearchConstants.StaticNullMoveBaseMinimalDepth = int.Parse(p) },
+                { "StaticNullMoveDepthDivider", p => SearchConstants.StaticNullMoveDepthDivider = int.Parse(p) },
                 { "StaticNullMoveBaseMargin", p => SearchConstants.StaticNullMoveBaseMargin = int.Parse(p) },
                 { "StaticNullMoveMarginMultiplier", p => SearchConstants.StaticNullMoveMarginMultiplier = int.Parse(p) },
 
