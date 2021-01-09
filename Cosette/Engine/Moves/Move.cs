@@ -89,6 +89,11 @@ namespace Cosette.Engine.Moves
             return Flags == MoveFlags.KingCastle || Flags == MoveFlags.QueenCastle;
         }
 
+        public bool IsPromotion()
+        {
+            return ((int)Flags & MoveFlagFields.Promotion) != 0;
+        }
+
         public override string ToString()
         {
             var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";

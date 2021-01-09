@@ -289,13 +289,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (futilityPruningCanBeApplied)
                 {
-                    var gain = 0;
-                    if (moves[moveIndex].IsCapture())
-                    {
-                        var capturedPiece = context.BoardState.PieceTable[moves[moveIndex].To];
-                        gain = capturedPiece != -1 ? EvaluationConstants.Pieces[capturedPiece] : 100;
-                    }
-
+                    var gain = FutilityPruningGetGain(context, moves[moveIndex]);
                     if (futilityPruningEvaluation + futilityPruningMargin + gain <= alpha)
                     {
 #if DEBUG
@@ -503,6 +497,22 @@ namespace Cosette.Engine.Ai.Search
         {
             return !pvNode && depth <= SearchConstants.FutilityPruningMinimalDepth && !friendlyKingInCheck && 
                    !IterativeDeepening.IsScoreNearCheckmate(alpha);
+        }
+
+        private static int FutilityPruningGetGain(SearchContext context, Move move)
+        {
+            if (move.IsPromotion())
+            {
+                return 1000;
+            }
+            
+            if (move.IsCapture())
+            {
+                var capturedPiece = context.BoardState.PieceTable[move.To];
+                return capturedPiece != -1 ? EvaluationConstants.Pieces[capturedPiece] : 100;
+            }
+
+            return 0;
         }
 
         private static bool LMRCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
