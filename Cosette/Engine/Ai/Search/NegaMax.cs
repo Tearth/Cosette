@@ -495,8 +495,8 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int alpha)
         {
-            return !pvNode && depth <= SearchConstants.FutilityPruningMaximalDepth && !friendlyKingInCheck && 
-                   !IterativeDeepening.IsScoreNearCheckmate(alpha);
+            return !pvNode && depth <= SearchConstants.FutilityPruningMaximalDepth + depth / SearchConstants.FutilityPruningMaximalDepthDivisor &&
+                   !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
         private static int FutilityPruningGetGain(SearchContext context, Move move)

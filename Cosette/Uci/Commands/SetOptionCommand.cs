@@ -70,6 +70,7 @@ namespace Cosette.Uci.Commands
                 { "NullMoveDepthReductionDivider", p => SearchConstants.NullMoveDepthReductionDivider = int.Parse(p) },
 
                 { "FutilityPruningMaximalDepth", p => SearchConstants.FutilityPruningMaximalDepth = int.Parse(p) },
+                { "FutilityPruningMaximalDepthDivisor", p => SearchConstants.FutilityPruningMaximalDepthDivisor = int.Parse(p) },
                 { "FutilityPruningMargin", p => SearchConstants.FutilityPruningMargin = int.Parse(p) },
                 { "FutilityPruningMarginMultiplier", p => SearchConstants.FutilityPruningMarginMultiplier = int.Parse(p) },
 

@@ -156,6 +156,7 @@ namespace Cosette.Uci
             Send($"option name NullMoveDepthReductionDivider type spin default {SearchConstants.NullMoveDepthReductionDivider} min 0 max 32");
 
             Send($"option name FutilityPruningMaximalDepth type spin default {SearchConstants.FutilityPruningMaximalDepth} min 0 max 32");
+            Send($"option name FutilityPruningMaximalDepthDivisor type spin default {SearchConstants.FutilityPruningMaximalDepthDivisor} min 0 max 32");
             Send($"option name FutilityPruningMargin type spin default {SearchConstants.FutilityPruningMargin} min 0 max 500");
             Send($"option name FutilityPruningMarginMultiplier type spin default {SearchConstants.FutilityPruningMarginMultiplier} min 0 max 500");
 

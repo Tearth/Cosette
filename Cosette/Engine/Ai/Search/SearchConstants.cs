@@ -20,7 +20,8 @@
         public static int NullMoveDepthReduction = 3;
         public static int NullMoveDepthReductionDivider = 7;
 
-        public static int FutilityPruningMaximalDepth = 4;
+        public static int FutilityPruningMaximalDepth = 2;
+        public static int FutilityPruningMaximalDepthDivisor = 5;
         public static int FutilityPruningMargin = 200;
         public static int FutilityPruningMarginMultiplier = 300;
 
