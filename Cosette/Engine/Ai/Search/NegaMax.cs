@@ -287,7 +287,7 @@ namespace Cosette.Engine.Ai.Search
                     }
                 }
 
-                if (futilityPruningCanBeApplied && !pvs)
+                if (futilityPruningCanBeApplied && FutilityPruningCanBeAppliedForMove(context, moves[moveIndex], pvs))
                 {
                     var gain = FutilityPruningGetGain(context, moves[moveIndex]);
                     if (futilityPruningEvaluation + futilityPruningMargin + gain <= alpha)
@@ -499,13 +499,21 @@ namespace Cosette.Engine.Ai.Search
                    !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
+        private static bool FutilityPruningCanBeAppliedForMove(SearchContext context, Move move, bool pvMove)
+        {
+            if (context.BoardState.PieceTable[move.From] == Piece.Pawn)
+            {
+                if (context.BoardState.IsFieldPassing(context.BoardState.ColorToMove, move.To))
+                {
+                    return false;
+                }
+            }
+
+            return !pvMove && !move.IsPromotion();
+        }
+
         private static int FutilityPruningGetGain(SearchContext context, Move move)
         {
-            if (move.IsPromotion())
-            {
-                return 1000;
-            }
-            
             if (move.IsCapture())
             {
                 var capturedPiece = context.BoardState.PieceTable[move.To];
