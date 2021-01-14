@@ -5,6 +5,17 @@ An UCI-compliant chess engine written in C# for .NET Core platform, with **[an o
 
 ![Cosette interactive console example](https://i.imgur.com/2cSfVBR.png)
 
+On the table below you can see how engines' strength was changing with the versions. Take note that usually the latest one has an estimated value, which will be updated later to a more concrete result.
+
+| Version                                                                | Release date | ELO   |
+|------------------------------------------------------------------------|--------------|-------|
+| [v4.0 (Komekko)](https://github.com/Tearth/Cosette/releases/tag/v4.0)  | --.--.2020   | 2300* |
+| [v3.0 (Luna)](https://github.com/Tearth/Cosette/releases/tag/v3.0)     | 12.12.2020   | 2086  |
+| [v2.0 (Darkness)](https://github.com/Tearth/Cosette/releases/tag/v2.0) | 19.10.2020   | 1985  |
+| [v1.0 (Aqua)](https://github.com/Tearth/Cosette/releases/tag/v1.0)     | 19.09.2020   | 1875  |
+
+**value estimated*
+
 ## How to play?
 The simplest way is to download the newest version from the **[Releases page](https://github.com/Tearth/Cosette/releases)** and use it with a graphical interface like Arena or WinBoard. The engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
 

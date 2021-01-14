@@ -42,8 +42,6 @@
  - Optimized king safety evaluation
  - Updated .NET Core runtime version to 5.0.100
 
-Estimated strength: 2000 ELO
-
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
  - Added new evaluation functions: pawn shield, bishop pair, doubled rooks, a rook on open file
@@ -66,9 +64,5 @@ Estimated strength: 2000 ELO
  - Adjusted move ordering scores
  - Updated .NET Core runtime version to 3.1.403
 
-Estimated strength: 1950 ELO
-
 # Version 1.0 (Aqua), 19.09.2020
  - Initial version
-
-Estimated strength: 1900 ELO
