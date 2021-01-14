@@ -7,12 +7,12 @@ An UCI-compliant chess engine written in C# for .NET Core platform, with **[an o
 
 On the table below you can see how engines' strength was changing with the versions. Take note that usually the latest one has an estimated value, which will be updated later to a more concrete result.
 
-| Version                                                                | Release date | ELO   |
-|------------------------------------------------------------------------|--------------|-------|
-| [v4.0 (Komekko)](https://github.com/Tearth/Cosette/releases/tag/v4.0)  | --.--.2020   | 2300* |
-| [v3.0 (Luna)](https://github.com/Tearth/Cosette/releases/tag/v3.0)     | 12.12.2020   | 2086  |
-| [v2.0 (Darkness)](https://github.com/Tearth/Cosette/releases/tag/v2.0) | 19.10.2020   | 1985  |
-| [v1.0 (Aqua)](https://github.com/Tearth/Cosette/releases/tag/v1.0)     | 19.09.2020   | 1875  |
+| Version                                                                | Release date | ELO   | Main changes |
+|------------------------------------------------------------------------|--------------|-------| ------------ |
+| [v4.0 (Komekko)](https://github.com/Tearth/Cosette/releases/tag/v4.0)  | --.--.2020   | 2300* | Futility pruning, static null-move pruning, evasion move generator, check extensions, adjusted parameters of search and evaluation. 
+| [v3.0 (Luna)](https://github.com/Tearth/Cosette/releases/tag/v3.0)     | 12.12.2020   | 2086  | Multi-stage move generation and move ordering, internal iterative deepening, SEE pruning in quiescence search. New evaluation function for fianchetto. |
+| [v2.0 (Darkness)](https://github.com/Tearth/Cosette/releases/tag/v2.0) | 19.10.2020   | 1985  | A bunch of improvements for transposition tables, time management and move ordering. New evaluation functions: pawn shield, bishop pair, doubled rooks, a rook on the open file. |
+| [v1.0 (Aqua)](https://github.com/Tearth/Cosette/releases/tag/v1.0)     | 19.09.2020   | 1875  | Initial release. |
 
 **value estimated*
 
