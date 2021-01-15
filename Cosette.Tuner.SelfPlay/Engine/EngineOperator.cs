@@ -84,6 +84,8 @@ namespace Cosette.Tuner.SelfPlay.Engine
             if (moves.Count > 0)
             {
                 Write($"position startpos moves {movesJoined}");
+                Write("isready");
+                WaitForMessage("readyok");
             }
 
             Write($"go wtime {whiteClock} btime {blackClock} winc {SettingsLoader.Data.IncTime} binc {SettingsLoader.Data.IncTime}");
