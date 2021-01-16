@@ -11,6 +11,7 @@
  - Added evasion moves generator
  - Added static null-move pruning
  - Added futility pruning
+ - Updated .NET runtime version to 5.0.102
 
 # Version 3.0 (Luna), 12.12.2020
  - Added better time control for Arbiter
@@ -40,7 +41,7 @@
  - Disabled returning of exact transposition table entries in the PV nodes
  - Adjusted evaluation scores
  - Optimized king safety evaluation
- - Updated .NET Core runtime version to 5.0.100
+ - Updated .NET runtime version to 5.0.100
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
