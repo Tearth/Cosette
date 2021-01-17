@@ -27,8 +27,8 @@
 
         public static int LMRMinimalDepth = 2;
         public static int LMRMovesWithoutReduction = 4;
-        public static int LMRBaseReduction = 0;
-        public static int LMRMoveIndexDivider = 4;
+        public static int LMRBaseReduction = 1;
+        public static int LMRMoveIndexDivider = 2;
         public static int LMRPvNodeMaxReduction = 2;
         public static int LMRNonPvNodeMaxReduction = 4;
     }

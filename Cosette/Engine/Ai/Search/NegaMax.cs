@@ -473,8 +473,8 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool StaticNullMoveCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
         {
-            return !pvNode && depth <= SearchConstants.StaticNullMoveMaximalDepth + depth / SearchConstants.StaticNullMoveMaximalDepthDivider && 
-                   !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(beta);
+            var maxDepth = SearchConstants.StaticNullMoveMaximalDepth + depth / SearchConstants.StaticNullMoveMaximalDepthDivider;
+            return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 
         private static bool NullMoveCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
@@ -495,8 +495,8 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int alpha)
         {
-            return !pvNode && depth <= SearchConstants.FutilityPruningMaximalDepth + depth / SearchConstants.FutilityPruningMaximalDepthDivisor &&
-                   !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
+            var maxDepth = SearchConstants.FutilityPruningMaximalDepth + depth / SearchConstants.FutilityPruningMaximalDepthDivisor;
+            return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
         private static bool FutilityPruningCanBeAppliedForMove(SearchContext context, Move move, bool pvMove)
@@ -544,7 +544,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static int LMRGetReduction(bool pvNode, int moveIndex)
         {
-            var r = SearchConstants.LMRBaseReduction + moveIndex / SearchConstants.LMRMoveIndexDivider;
+            var r = SearchConstants.LMRBaseReduction + (moveIndex - SearchConstants.LMRMovesWithoutReduction) / SearchConstants.LMRMoveIndexDivider;
             return Math.Min(pvNode ? SearchConstants.LMRPvNodeMaxReduction : SearchConstants.LMRNonPvNodeMaxReduction, r);
         }
 
