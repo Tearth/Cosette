@@ -57,24 +57,24 @@ namespace Cosette.Uci.Commands
                 { "HistoryHeuristicMaxScore", p => MoveOrderingConstants.HistoryHeuristicMaxScore = uint.Parse(p) },
                 { "KillerSlots", p => MoveOrderingConstants.KillerSlots = int.Parse(p) },
 
-                { "IIDMinimalDepth", p => SearchConstants.IIDMinimalDepth = int.Parse(p) },
+                { "IIDMinDepth", p => SearchConstants.IIDMinDepth = int.Parse(p) },
                 { "IIDDepthReduction", p => SearchConstants.IIDDepthReduction = int.Parse(p) },
 
-                { "StaticNullMoveMaximalDepth", p => SearchConstants.StaticNullMoveMaximalDepth = int.Parse(p) },
-                { "StaticNullMoveMaximalDepthDivider", p => SearchConstants.StaticNullMoveMaximalDepthDivider = int.Parse(p) },
+                { "StaticNullMoveMaxDepth", p => SearchConstants.StaticNullMoveMaxDepth = int.Parse(p) },
+                { "StaticNullMoveMaxDepthDivider", p => SearchConstants.StaticNullMoveMaxDepthDivider = int.Parse(p) },
                 { "StaticNullMoveMargin", p => SearchConstants.StaticNullMoveMargin = int.Parse(p) },
                 { "StaticNullMoveMarginMultiplier", p => SearchConstants.StaticNullMoveMarginMultiplier = int.Parse(p) },
 
-                { "NullMoveMinimalDepth", p => SearchConstants.NullMoveMinimalDepth = int.Parse(p) },
+                { "NullMoveMinDepth", p => SearchConstants.NullMoveMinDepth = int.Parse(p) },
                 { "NullMoveDepthReduction", p => SearchConstants.NullMoveDepthReduction = int.Parse(p) },
                 { "NullMoveDepthReductionDivider", p => SearchConstants.NullMoveDepthReductionDivider = int.Parse(p) },
 
-                { "FutilityPruningMaximalDepth", p => SearchConstants.FutilityPruningMaximalDepth = int.Parse(p) },
-                { "FutilityPruningMaximalDepthDivisor", p => SearchConstants.FutilityPruningMaximalDepthDivisor = int.Parse(p) },
+                { "FutilityPruningMaxDepth", p => SearchConstants.FutilityPruningMaxDepth = int.Parse(p) },
+                { "FutilityPruningMaxDepthDivisor", p => SearchConstants.FutilityPruningMaxDepthDivisor = int.Parse(p) },
                 { "FutilityPruningMargin", p => SearchConstants.FutilityPruningMargin = int.Parse(p) },
                 { "FutilityPruningMarginMultiplier", p => SearchConstants.FutilityPruningMarginMultiplier = int.Parse(p) },
 
-                { "LMRMinimalDepth", p => SearchConstants.LMRMinimalDepth = int.Parse(p) },
+                { "LMRMinDepth", p => SearchConstants.LMRMinDepth = int.Parse(p) },
                 { "LMRMovesWithoutReduction", p => SearchConstants.LMRMovesWithoutReduction = int.Parse(p) },
                 { "LMRBaseReduction", p => SearchConstants.LMRBaseReduction = int.Parse(p) },
                 { "LMRMoveIndexDivider", p => SearchConstants.LMRMoveIndexDivider = int.Parse(p) },

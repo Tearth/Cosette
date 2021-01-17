@@ -473,13 +473,13 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool StaticNullMoveCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
         {
-            var maxDepth = SearchConstants.StaticNullMoveMaximalDepth + depth / SearchConstants.StaticNullMoveMaximalDepthDivider;
+            var maxDepth = SearchConstants.StaticNullMoveMaxDepth + depth / SearchConstants.StaticNullMoveMaxDepthDivider;
             return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 
         private static bool NullMoveCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
         {
-            return !pvNode && allowNullMove && depth >= SearchConstants.NullMoveMinimalDepth && 
+            return !pvNode && allowNullMove && depth >= SearchConstants.NullMoveMinDepth && 
                    board.GetGamePhase() == GamePhase.Opening && !friendlyKingInCheck;
         }
 
@@ -490,12 +490,12 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool IIDCanBeApplied(int depth, TranspositionTableEntryFlags ttEntryType, Move bestMove)
         {
-            return ttEntryType == TranspositionTableEntryFlags.Invalid && depth >= SearchConstants.IIDMinimalDepth && bestMove == Move.Empty;
+            return ttEntryType == TranspositionTableEntryFlags.Invalid && depth >= SearchConstants.IIDMinDepth && bestMove == Move.Empty;
         }
 
         private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int alpha)
         {
-            var maxDepth = SearchConstants.FutilityPruningMaximalDepth + depth / SearchConstants.FutilityPruningMaximalDepthDivisor;
+            var maxDepth = SearchConstants.FutilityPruningMaxDepth + depth / SearchConstants.FutilityPruningMaxDepthDivisor;
             return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
@@ -525,7 +525,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool LMRCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
         {
-            if (depth >= SearchConstants.LMRMinimalDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
+            if (depth >= SearchConstants.LMRMinDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
                 moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck)
             {
                 var enemyColor = ColorOperations.Invert(context.BoardState.ColorToMove);
