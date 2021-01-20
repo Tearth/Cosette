@@ -14,7 +14,7 @@
         public static int StaticNullMoveMaxDepth = 3;
         public static int StaticNullMoveMaxDepthDivider = 7;
         public static int StaticNullMoveMargin = 150;
-        public static int StaticNullMoveMarginMultiplier = 90;
+        public static int StaticNullMoveMarginMultiplier = 100;
 
         public static int NullMoveMinDepth = 3;
         public static int NullMoveDepthReduction = 3;
@@ -22,8 +22,8 @@
 
         public static int FutilityPruningMaxDepth = 3;
         public static int FutilityPruningMaxDepthDivisor = 7;
-        public static int FutilityPruningMargin = 220;
-        public static int FutilityPruningMarginMultiplier = 230;
+        public static int FutilityPruningMargin = 200;
+        public static int FutilityPruningMarginMultiplier = 250;
 
         public static int LMRMinDepth = 2;
         public static int LMRMovesWithoutReduction = 4;
