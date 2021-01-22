@@ -75,7 +75,7 @@ The simple console application which allows testing chess engines using super-fa
 
 ### Tuner
 
-A set of console applications (selfplay + Texel) + web interface, which allows adjusting engine parameters using standard UCI command setoption. Results are displayed on the local website using a set of tables and charts.
+A set of console applications (selfplay + Texel) and web interface, which allows adjusting engine parameters using standard UCI command setoption. Results are displayed on the local website using a set of tables and charts.
 
 ![Cosette Tuner](https://i.imgur.com/uxXeYW9.png)
 
