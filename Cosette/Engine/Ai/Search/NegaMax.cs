@@ -13,10 +13,10 @@ namespace Cosette.Engine.Ai.Search
         public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta)
         {
             var friendlyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
-            return FindBestMove(context, depth, ply, alpha, beta, true, friendlyKingInCheck);
+            return FindBestMove(context, depth, ply, alpha, beta, true, friendlyKingInCheck, 0);
         }
 
-        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool friendlyKingInCheck)
+        public static int FindBestMove(SearchContext context, int depth, int ply, int alpha, int beta, bool allowNullMove, bool friendlyKingInCheck, int extensionsCount)
         {
             if (context.Statistics.Nodes >= context.MaxNodesCount)
             {
@@ -148,23 +148,42 @@ namespace Cosette.Engine.Ai.Search
                 context.Statistics.TTNonHits++;
             }
 #endif
-            
-            if (NullWindowCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
+
+            if (StaticNullMoveCanBeApplied(depth, friendlyKingInCheck, pvNode, beta))
+            {
+                var fastEvaluation = Evaluation.FastEvaluate(context.BoardState);
+                var margin = SearchConstants.StaticNullMoveMargin + (depth - 1) * SearchConstants.StaticNullMoveMarginMultiplier;
+                var score = fastEvaluation - margin;
+
+                if (score >= beta)
+                {
+#if DEBUG
+                    context.Statistics.StaticNullMovePrunes++;
+#endif
+
+                    return score;
+                }
+            }
+
+            if (NullMoveCanBeApplied(context.BoardState, depth, allowNullMove, pvNode, friendlyKingInCheck))
             {
                 context.BoardState.MakeNullMove();
-                var score = -FindBestMove(context, depth - 1 - SearchConstants.NullWindowDepthReduction, ply + 1, -beta, -beta + 1, false, false);
+                var score = -FindBestMove(context, depth - 1 - NullMoveGetReduction(depth), ply + 1, -beta, -beta + 1, false, false, extensionsCount);
                 context.BoardState.UndoNullMove();
 
                 if (score >= beta)
                 {
-                    context.Statistics.BetaCutoffs++;
+#if DEBUG
+                    context.Statistics.NullMovePrunes++;
+#endif
+
                     return score;
                 }
             }
             
             if (IIDCanBeApplied(depth, entry.Flags, hashMove))
             {
-                FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck);
+                FindBestMove(context, depth - 1 - SearchConstants.IIDDepthReduction, ply, alpha, beta, allowNullMove, friendlyKingInCheck, extensionsCount);
                 
                 var iidEntry = TranspositionTable.Get(context.BoardState.Hash);
                 if (iidEntry.IsKeyValid(context.BoardState.Hash))
@@ -176,6 +195,17 @@ namespace Cosette.Engine.Ai.Search
 #endif
                 }
             }
+
+            var futilityPruningCanBeApplied = false;
+            var futilityPruningEvaluation = 0;
+            var futilityPruningMargin = 0;
+
+            if (FutilityPruningCanBeApplied(depth, friendlyKingInCheck, pvNode, alpha))
+            {
+                futilityPruningCanBeApplied = true;
+                futilityPruningEvaluation = Evaluation.FastEvaluate(context.BoardState);
+                futilityPruningMargin = SearchConstants.FutilityPruningMargin + (depth - 1) * SearchConstants.FutilityPruningMarginMultiplier;
+            }
             
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
@@ -185,9 +215,19 @@ namespace Cosette.Engine.Ai.Search
             var loudMovesGenerated = false;
             var quietMovesGenerated = false;
 
+            var evasionMask = ulong.MaxValue;
+            if (friendlyKingInCheck && !context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+            {
+                var kingField = context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King];
+                var kingFieldIndex = BitOperations.BitScan(kingField);
+
+                evasionMask = KnightMovesGenerator.GetMoves(kingFieldIndex) | 
+                              QueenMovesGenerator.GetMoves(context.BoardState.OccupancySummary, kingFieldIndex);
+            }
+
             if (hashMove == Move.Empty)
             {
-                movesCount = context.BoardState.GetLoudMoves(moves, 0);
+                movesCount = context.BoardState.GetLoudMoves(moves, 0, evasionMask);
                 MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
                 loudMovesGenerated = true;
 
@@ -195,7 +235,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (movesCount == 0)
                 {
-                    movesCount = context.BoardState.GetQuietMoves(moves, 0);
+                    movesCount = context.BoardState.GetQuietMoves(moves, 0, evasionMask);
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, depth);
                     quietMovesGenerated = true;
 
@@ -210,6 +250,9 @@ namespace Cosette.Engine.Ai.Search
             }
 
             var pvs = true;
+            var bestScore = 0;
+            var allMovesPruned = true;
+
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
@@ -223,7 +266,7 @@ namespace Cosette.Engine.Ai.Search
                 {
                     var loudMovesCount = movesCount;
 
-                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount);
+                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount, evasionMask);
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, loudMovesCount, movesCount, depth);
                     MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
                     quietMovesGenerated = true;
@@ -240,41 +283,73 @@ namespace Cosette.Engine.Ai.Search
                 {
                     if (!context.MoveRestrictions.Contains(moves[moveIndex]))
                     {
-                        continue;
+                        goto postLoopOperations;
+                    }
+                }
+
+                if (futilityPruningCanBeApplied && FutilityPruningCanBeAppliedForMove(context, moves[moveIndex], pvs))
+                {
+                    var gain = FutilityPruningGetGain(context, moves[moveIndex]);
+                    if (futilityPruningEvaluation + futilityPruningMargin + gain <= alpha)
+                    {
+#if DEBUG
+                        context.Statistics.FutilityPrunes++;
+#endif
+
+                        goto postLoopOperations;
                     }
                 }
 
                 context.BoardState.MakeMove(moves[moveIndex]);
-                
-                var score = 0;
+                allMovesPruned = false;
+
                 var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+                var extension = GetExtensions(depth, extensionsCount, enemyKingInCheck);
+
+#if DEBUG
+                context.Statistics.Extensions += extension;
+#endif
 
                 if (pvs)
                 {
-                    score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                    bestScore = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
                     pvs = false;
                 }
                 else
                 {
-                    var reducedDepth = depth;
-
-                    if (LMRCanBeApplied(depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
+                    var lmrReduction = 0;
+                    if (LMRCanBeApplied(context, depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
                     {
-                        reducedDepth = LMRGetReducedDepth(depth, pvNode);
+                        lmrReduction = LMRGetReduction(pvNode, moveIndex);
                     }
 
-                    score = -FindBestMove(context, reducedDepth - 1, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck);
+                    var score = -FindBestMove(context, depth - lmrReduction - 1 + extension, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
                     if (score > alpha)
                     {
-                        score = -FindBestMove(context, depth - 1, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck);
+                        if (pvNode)
+                        {
+                            score = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
+                        }
+                        else
+                        {
+                            if (lmrReduction != 0)
+                            {
+                                score = -FindBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
+                            }
+                        }
+                    }
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
                     }
                 }
 
                 context.BoardState.UndoMove(moves[moveIndex]);
 
-                if (score > alpha)
+                if (bestScore > alpha)
                 {
-                    alpha = score;
+                    alpha = bestScore;
                     bestMove = moves[moveIndex];
 
                     if (alpha >= beta)
@@ -304,7 +379,7 @@ namespace Cosette.Engine.Ai.Search
                 postLoopOperations:
                 if (!loudMovesGenerated)
                 {
-                    movesCount = context.BoardState.GetLoudMoves(moves, 0);
+                    movesCount = context.BoardState.GetLoudMoves(moves, 0, evasionMask);
                     MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
                     moveIndex = -1;
                     loudMovesGenerated = true;
@@ -313,7 +388,7 @@ namespace Cosette.Engine.Ai.Search
 
                     if (movesCount == 0)
                     {
-                        movesCount = context.BoardState.GetQuietMoves(moves, 0);
+                        movesCount = context.BoardState.GetQuietMoves(moves, 0, evasionMask);
                         MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, depth);
                         quietMovesGenerated = true;
 
@@ -325,7 +400,7 @@ namespace Cosette.Engine.Ai.Search
                 {
                     var loudMovesCount = movesCount;
 
-                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount);
+                    movesCount = context.BoardState.GetQuietMoves(moves, movesCount, evasionMask);
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, loudMovesCount, movesCount, depth);
                     quietMovesGenerated = true;
 
@@ -339,77 +414,148 @@ namespace Cosette.Engine.Ai.Search
                 return 0;
             }
 
-            // Don't add invalid move (done after checkmate) to prevent strange behaviors
-            if (alpha == -(-EvaluationConstants.Checkmate + ply + 1))
+            if (allMovesPruned)
             {
                 return alpha;
             }
 
-            // Return draw score or checkmate score as leafs
-            if (alpha == -EvaluationConstants.Checkmate + ply + 2)
+            // Don't add invalid move (done after checkmate) to prevent strange behaviors
+            if (bestScore == -(-EvaluationConstants.Checkmate + ply + 1))
             {
-                if (context.BoardState.IsKingChecked(context.BoardState.ColorToMove))
+                return bestScore;
+            }
+
+            // Return draw score or checkmate score as leafs
+            if (bestScore == -EvaluationConstants.Checkmate + ply + 2)
+            {
+                if (friendlyKingInCheck)
                 {
-                    return alpha;
+                    return bestScore;
                 }
                 
                 return 0;
             }
 
-            if (entry.Age != context.TranspositionTableEntryAge || entry.Depth <= depth)
+            if (entry.Flags == TranspositionTableEntryFlags.Invalid || alpha != originalAlpha)
             {
-                var valueToSave = alpha;
-                var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
-                    alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
-                    TranspositionTableEntryFlags.ExactScore;
-
-                if (entryType == TranspositionTableEntryFlags.ExactScore)
+                if (entry.Age != context.TranspositionTableEntryAge || entry.Depth <= depth)
                 {
-                    valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
-                }
+                    var valueToSave = alpha;
+                    var entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags.AlphaScore :
+                        alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
+                        TranspositionTableEntryFlags.ExactScore;
 
-                TranspositionTable.Add(context.BoardState.Hash, new TranspositionTableEntry(
-                    context.BoardState.Hash, 
-                    (short)valueToSave, bestMove, 
-                    (byte)depth, entryType, 
-                    (byte)context.TranspositionTableEntryAge)
-                );
+                    if (entryType == TranspositionTableEntryFlags.ExactScore)
+                    {
+                        valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
+                    }
+
+                    TranspositionTable.Add(context.BoardState.Hash, new TranspositionTableEntry(
+                        context.BoardState.Hash,
+                        (short)valueToSave, bestMove,
+                        (byte)depth, entryType,
+                        (byte)context.TranspositionTableEntryAge)
+                    );
 
 #if DEBUG
-                if (entry.Flags != TranspositionTableEntryFlags.Invalid)
-                {
-                    context.Statistics.TTReplacements++;
-                }
+                    if (entry.Flags != TranspositionTableEntryFlags.Invalid)
+                    {
+                        context.Statistics.TTReplacements++;
+                    }
 
-                context.Statistics.TTAddedEntries++;
+                    context.Statistics.TTAddedEntries++;
 #endif
+                }
             }
 
-            return alpha;
+            return bestScore;
         }
 
-        private static bool NullWindowCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
+        private static bool StaticNullMoveCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
         {
-            return !pvNode && allowNullMove && depth >= SearchConstants.NullWindowMinimalDepth && 
+            var maxDepth = SearchConstants.StaticNullMoveMaxDepth + depth / SearchConstants.StaticNullMoveMaxDepthDivider;
+            return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(beta);
+        }
+
+        private static bool NullMoveCanBeApplied(BoardState board, int depth, bool allowNullMove, bool pvNode, bool friendlyKingInCheck)
+        {
+            return !pvNode && allowNullMove && depth >= SearchConstants.NullMoveMinDepth && 
                    board.GetGamePhase() == GamePhase.Opening && !friendlyKingInCheck;
+        }
+
+        private static int NullMoveGetReduction(int depth)
+        {
+            return SearchConstants.NullMoveDepthReduction + depth / SearchConstants.NullMoveDepthReductionDivider;
         }
 
         private static bool IIDCanBeApplied(int depth, TranspositionTableEntryFlags ttEntryType, Move bestMove)
         {
-            return ttEntryType == TranspositionTableEntryFlags.Invalid && depth >= SearchConstants.IIDMinimalDepth && bestMove == Move.Empty;
+            return ttEntryType == TranspositionTableEntryFlags.Invalid && depth >= SearchConstants.IIDMinDepth && bestMove == Move.Empty;
         }
 
-        private static bool LMRCanBeApplied(int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
+        private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int alpha)
         {
-            return depth >= SearchConstants.LMRMinimalDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
-                   moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck;
+            var maxDepth = SearchConstants.FutilityPruningMaxDepth + depth / SearchConstants.FutilityPruningMaxDepthDivisor;
+            return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
-        private static int LMRGetReducedDepth(int depth, bool pvNode)
+        private static bool FutilityPruningCanBeAppliedForMove(SearchContext context, Move move, bool pvMove)
         {
-            return pvNode ? 
-                depth - SearchConstants.LMRPvNodeDepthReduction : 
-                depth - depth / SearchConstants.LMRNonPvNodeDepthDivisor;
+            if (context.BoardState.PieceTable[move.From] == Piece.Pawn)
+            {
+                if (context.BoardState.IsFieldPassing(context.BoardState.ColorToMove, move.To))
+                {
+                    return false;
+                }
+            }
+
+            return !pvMove && !move.IsPromotion();
+        }
+
+        private static int FutilityPruningGetGain(SearchContext context, Move move)
+        {
+            if (move.IsCapture())
+            {
+                var capturedPiece = context.BoardState.PieceTable[move.To];
+                return capturedPiece != -1 ? EvaluationConstants.Pieces[capturedPiece] : 100;
+            }
+
+            return 0;
+        }
+
+        private static bool LMRCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
+        {
+            if (depth >= SearchConstants.LMRMinDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
+                moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck)
+            {
+                var enemyColor = ColorOperations.Invert(context.BoardState.ColorToMove);
+                var piece = context.BoardState.PieceTable[moves[moveIndex].To];
+
+                if (piece == Piece.Pawn && context.BoardState.IsFieldPassing(enemyColor, moves[moveIndex].To))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private static int LMRGetReduction(bool pvNode, int moveIndex)
+        {
+            var r = SearchConstants.LMRBaseReduction + (moveIndex - SearchConstants.LMRMovesWithoutReduction) / SearchConstants.LMRMoveIndexDivider;
+            return Math.Min(pvNode ? SearchConstants.LMRPvNodeMaxReduction : SearchConstants.LMRNonPvNodeMaxReduction, r);
+        }
+
+        private static int GetExtensions(int depth, int extensionsCount, bool enemyKingInCheck)
+        {
+            if (depth == 1 && extensionsCount == 0 && enemyKingInCheck)
+            {
+                return 1;
+            }
+
+            return 0;
         }
     }
 }

@@ -35,11 +35,11 @@ namespace Cosette.Tuner.Web.Controllers
 
         [HttpPost]
         [Route("api/test/register")]
-        public async Task<IActionResult> RegisterTest()
+        public async Task<IActionResult> RegisterTest([FromBody] RegisterTestRequest requestData)
         {
             var response = new TestDataResponse
             {
-                Id = await _testService.GenerateNewTest()
+                Id = await _testService.GenerateNewTest(requestData.Type)
             };
 
             return new JsonResult(response);

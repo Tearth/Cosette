@@ -140,7 +140,7 @@ namespace Cosette.Arbiter.Tournament
                 Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}, {wonGamesPercent}%): " +
                                   $"{participant.Wins} wins ({winsByTime} by time), {participant.Losses} losses ({lossesByTime} by time), " +
                                   $"{participant.Draws} draws");
-                Console.WriteLine($" === {participant.AverageDepth:F1} average depth, {participant.AverageNodesCount} average nodes, " +
+                Console.WriteLine($" === {participant.AverageDepth:F} average depth, {participant.AverageNodesCount} average nodes, " +
                                   $"{participant.AverageNps} average nodes per second");
                 Console.WriteLine($"Executable hash: {participant.EngineOperator.ExecutableHash.Value}");
                 Console.WriteLine();

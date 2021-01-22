@@ -48,7 +48,7 @@ namespace Cosette.Uci.Commands
 
         private void ParseFen(string fen, List<string> moves)
         {
-            _uciClient.BoardState = FenToBoard.Parse(fen);
+            _uciClient.BoardState = FenToBoard.Parse(fen, true);
             ParseMoves(moves);
         }
 

@@ -1,4 +1,5 @@
-﻿using Cosette.Engine.Board;
+﻿using Cosette.Engine.Ai.Score.PieceSquareTables;
+using Cosette.Engine.Board;
 using Cosette.Engine.Moves.Magic;
 using Cosette.Engine.Perft;
 using Xunit;
@@ -10,6 +11,7 @@ namespace Cosette.Tests
         public AdvancedPerftTests()
         {
             MagicBitboards.InitWithInternalKeys();
+            PieceSquareTablesData.BuildPieceSquareTables();
         }
 
         [Theory]
@@ -24,7 +26,7 @@ namespace Cosette.Tests
         public void AdvancedPerft_DefaultBoard(int depth, ulong expectedLeafsCount, ulong expectedCapturesCount, ulong expectedEnPassantsCount,
             ulong expectedCastlesCount, ulong expectedChecksCount, ulong expectedCheckmatesCount)
         {
-            var boardState = new BoardState();
+            var boardState = new BoardState(true);
             boardState.SetDefaultState();
 
             var result = AdvancedPerft.Run(boardState, depth);

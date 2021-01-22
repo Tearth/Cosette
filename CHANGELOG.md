@@ -1,3 +1,18 @@
+# Version 4.0 (Komekko), 22.01.2021
+ - Added Texel project
+ - Added check extension
+ - Added check detection in quiescence search
+ - Added evasion moves generator
+ - Added static null-move pruning
+ - Added futility pruning
+ - Added new formulas calculating reduction for LMR and null move pruning
+ - Added a new way of building Piece-Square tables, better for tuning
+ - Fixed reduntant saving of transposition table entries
+ - Adjusted search parameters
+ - Adjusted evaluation parameters
+ - Improved threefold repetition detection
+ - Updated .NET runtime version to 5.0.102
+
 # Version 3.0 (Luna), 12.12.2020
  - Added better time control for Arbiter
  - Added more UCI options
@@ -26,9 +41,7 @@
  - Disabled returning of exact transposition table entries in the PV nodes
  - Adjusted evaluation scores
  - Optimized king safety evaluation
- - Updated .NET Core runtime version to 5.0.100
-
-Estimated strength: 2000 ELO
+ - Updated .NET runtime version to 5.0.100
 
 # Version 2.0 (Darkness), 19.10.2020
  - Added fifty-move rule detection
@@ -52,9 +65,5 @@ Estimated strength: 2000 ELO
  - Adjusted move ordering scores
  - Updated .NET Core runtime version to 3.1.403
 
-Estimated strength: 1950 ELO
-
 # Version 1.0 (Aqua), 19.09.2020
  - Initial version
-
-Estimated strength: 1900 ELO

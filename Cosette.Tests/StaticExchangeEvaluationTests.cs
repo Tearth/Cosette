@@ -1,4 +1,5 @@
 ﻿using Cosette.Engine.Ai.Ordering;
+using Cosette.Engine.Ai.Score.PieceSquareTables;
 using Cosette.Engine.Common;
 using Xunit;
 
@@ -9,6 +10,7 @@ namespace Cosette.Tests
         public StaticExchangeEvaluationTests()
         {
             StaticExchangeEvaluation.Init();
+            PieceSquareTablesData.BuildPieceSquareTables();
         }
 
         [Theory]

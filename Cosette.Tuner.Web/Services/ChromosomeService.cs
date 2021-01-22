@@ -25,9 +25,12 @@ namespace Cosette.Tuner.Web.Services
 
         public async Task<List<ChromosomeModel>> GetAll(int testId)
         {
+            var count = _databaseContext.Chromosomes.Count(p => p.TestId == testId);
+            var nth = Math.Max(1, count / 500);
+
             return await _databaseContext.Chromosomes
-                .Where(p => p.TestId == testId)
-                .Include(p => p.EnginesStatistics)
+                .Where(p => p.TestId == testId && p.Id % nth == 0)
+                .Include(p => p.SelfPlayStatistics)
                 .Include(p => p.Genes)
                 .ToListAsync();
         }

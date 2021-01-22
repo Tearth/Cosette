@@ -6,33 +6,36 @@ namespace Cosette.Engine.Fen
 {
     public static class FenToBoard
     {
-        public static BoardState Parse(string fen)
+        public static BoardState Parse(string fen, bool allocateStacks)
         {
             var split = fen.Split(' ');
             var boardState = split[0];
             var colorState = split[1];
             var castlingState = split[2];
             var enPassantState = split[3];
-            var halfmoveClock = split.Length > 4 ? int.Parse(split[4]) : 0;
-            var movesCount = split.Length > 5 ? int.Parse(split[5]) : 0;
 
-            var result = new BoardState();
+            var halfmoveClock = 0;
+            var movesCount = 0;
+
+            if (split.Length > 4)
+            {
+                int.TryParse(split[4], out halfmoveClock);
+            }
+
+            if (split.Length > 5)
+            {
+                int.TryParse(split[5], out movesCount);
+            }
+
+            var result = new BoardState(allocateStacks);
             var currentColor = ParseCurrentColor(colorState);
 
             ParseBoardState(boardState, result);
             ParseCastlingState(castlingState, result);
             ParseEnPassantState(enPassantState, result);
 
-            result.Material[Color.White] = result.CalculateMaterial(Color.White);
-            result.Material[Color.Black] = result.CalculateMaterial(Color.Black);
-
-            result.Position[Color.White][GamePhase.Opening] = result.CalculatePosition(Color.White, GamePhase.Opening);
-            result.Position[Color.White][GamePhase.Ending] = result.CalculatePosition(Color.White, GamePhase.Ending);
-            result.Position[Color.Black][GamePhase.Opening] = result.CalculatePosition(Color.Black, GamePhase.Opening);
-            result.Position[Color.Black][GamePhase.Ending] = result.CalculatePosition(Color.Black, GamePhase.Ending);
-
+            result.RecalculateEvaluationDependentValues();
             result.CalculatePieceTable(result.PieceTable);
-            result.MaterialAtOpening = result.CalculateMaterialAtOpening();
 
             result.MovesCount = movesCount;
             result.IrreversibleMovesCount = halfmoveClock;

@@ -9,7 +9,7 @@ namespace Cosette.Tuner.Web.Database
     {
         public virtual DbSet<ChromosomeGeneModel> ChromosomeGenes { get; set; }
         public virtual DbSet<ChromosomeModel> Chromosomes { get; set; }
-        public virtual DbSet<EngineStatisticsModel> EngineStatistics { get; set; }
+        public virtual DbSet<SelfPlayStatisticsModel> SelfPlayStatistics { get; set; }
         public virtual DbSet<GenerationGeneModel> GenerationGenes { get; set; }
         public virtual DbSet<GenerationModel> Generations { get; set; }
         public virtual DbSet<TestModel> Tests { get; set; }

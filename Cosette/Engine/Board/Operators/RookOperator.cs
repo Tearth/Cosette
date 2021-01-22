@@ -7,7 +7,7 @@ namespace Cosette.Engine.Board.Operators
 {
     public static class RookOperator
     {
-        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetLoudMoves(BoardState boardState, Span<Move> moves, int offset, ulong evasionMask)
         {
             var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
@@ -20,6 +20,7 @@ namespace Cosette.Engine.Board.Operators
 
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = RookMovesGenerator.GetMoves(boardState.OccupancySummary, from) & boardState.Occupancy[enemyColor];
+                availableMoves &= evasionMask;
 
                 while (availableMoves != 0)
                 {
@@ -34,7 +35,7 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset)
+        public static int GetQuietMoves(BoardState boardState, Span<Move> moves, int offset, ulong evasionMask)
         {
             var color = boardState.ColorToMove;
             var enemyColor = ColorOperations.Invert(color);
@@ -47,6 +48,7 @@ namespace Cosette.Engine.Board.Operators
 
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = RookMovesGenerator.GetMoves(boardState.OccupancySummary, from) & ~boardState.OccupancySummary;
+                availableMoves &= evasionMask;
 
                 while (availableMoves != 0)
                 {
@@ -88,10 +90,9 @@ namespace Cosette.Engine.Board.Operators
             return offset;
         }
 
-        public static int GetMobility(BoardState boardState, int color, ref ulong fieldsAttackedByColor)
+        public static (int, int) GetMobility(BoardState boardState, int color, ref ulong fieldsAttackedByColor)
         {
             var centerMobility = 0;
-            var extendedCenterMobility = 0;
             var outsideMobility = 0;
 
             var rooks = boardState.Pieces[color][Piece.Rook];
@@ -104,16 +105,13 @@ namespace Cosette.Engine.Board.Operators
                 var from = BitOperations.BitScan(piece);
                 var availableMoves = RookMovesGenerator.GetMoves(boardState.OccupancySummary, from);
 
-                centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Center);
-                extendedCenterMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
+                centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
                 outsideMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Outside);
 
                 fieldsAttackedByColor |= availableMoves;
             }
 
-            return EvaluationConstants.CenterMobilityModifier * centerMobility +
-                   EvaluationConstants.ExtendedCenterMobilityModifier * extendedCenterMobility +
-                   EvaluationConstants.OutsideMobilityModifier * outsideMobility;
+            return (centerMobility, outsideMobility);
         }
 
         public static bool IsMoveLegal(BoardState boardState, Move move)

@@ -7,14 +7,16 @@ namespace Cosette.Engine.Ai.Score
 {
     public class Evaluation
     {
-        public static int Evaluate(BoardState board, EvaluationStatistics statistics)
+        public static int Evaluate(BoardState board, bool enableCache, EvaluationStatistics statistics)
         {
             var openingPhase = board.GetPhaseRatio();
             var endingPhase = BoardConstants.PhaseResolution - openingPhase;
 
             var result = MaterialEvaluator.Evaluate(board);
+            result += enableCache ? 
+                PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase) :
+                PawnStructureEvaluator.EvaluateWithoutCache(board, statistics, openingPhase, endingPhase);
             result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
-            result += PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase);
 
             if (endingPhase != BoardConstants.PhaseResolution)
             {
@@ -23,9 +25,8 @@ namespace Cosette.Engine.Ai.Score
 
                 result += MobilityEvaluator.Evaluate(board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 result += KingSafetyEvaluator.Evaluate(board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-                result += CastlingEvaluator.Evaluate(board, openingPhase, endingPhase);
-                result += FianchettoEvaluator.Evaluate(board, openingPhase, endingPhase);
-                result += PiecesEvaluator.Evaluate(board, openingPhase, endingPhase);
+                result += RookEvaluator.Evaluate(board, openingPhase, endingPhase);
+                result += BishopEvaluator.Evaluate(board, openingPhase, endingPhase);
             }
 
             return board.ColorToMove == Color.White ? result : -result;

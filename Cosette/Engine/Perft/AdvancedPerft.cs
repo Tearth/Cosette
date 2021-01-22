@@ -70,7 +70,6 @@ namespace Cosette.Engine.Perft
                     if (moves[i].Flags == MoveFlags.EnPassant)
                     {
                         result.EnPassants++;
-                        result.Captures++;
                     }
 
                     if (boardState.IsKingChecked(boardState.ColorToMove))

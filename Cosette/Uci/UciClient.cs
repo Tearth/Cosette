@@ -28,7 +28,7 @@ namespace Cosette.Uci
 
         public UciClient(InteractiveConsole interactiveConsole)
         {
-            BoardState = new BoardState();
+            BoardState = new BoardState(true);
             BoardState.SetDefaultState();
 
             _interactiveConsole = interactiveConsole;
@@ -123,11 +123,7 @@ namespace Cosette.Uci
             Send($"option name PassingPawnsOpening type spin default {EvaluationConstants.PassingPawns[GamePhase.Opening]} min -100 max 100");
             Send($"option name PassingPawnsEnding type spin default {EvaluationConstants.PassingPawns[GamePhase.Ending]} min -100 max 100");
 
-            Send($"option name CastlingDone type spin default {EvaluationConstants.CastlingDone} min -100 max 100");
-            Send($"option name CastlingFailed type spin default {EvaluationConstants.CastlingFailed} min -100 max 100");
-            Send($"option name Mobility type spin default {EvaluationConstants.Mobility} min -100 max 100");
             Send($"option name CenterMobilityModifier type spin default {EvaluationConstants.CenterMobilityModifier} min -100 max 100");
-            Send($"option name ExtendedCenterMobilityModifier type spin default {EvaluationConstants.ExtendedCenterMobilityModifier} min -100 max 100");
             Send($"option name OutsideMobilityModifier type spin default {EvaluationConstants.OutsideMobilityModifier} min -100 max 100");
             Send($"option name KingInDanger type spin default {EvaluationConstants.KingInDanger} min -100 max 100");
             Send($"option name PawnShield type spin default {EvaluationConstants.PawnShield} min -100 max 100");
@@ -147,14 +143,29 @@ namespace Cosette.Uci
             Send($"option name HistoryHeuristicMaxScore type spin default {MoveOrderingConstants.HistoryHeuristicMaxScore} min -10000 max 10000");
             Send($"option name KillerSlots type spin default {MoveOrderingConstants.KillerSlots} min -10000 max 10000");
 
-            Send($"option name IIDMinimalDepth type spin default {SearchConstants.IIDMinimalDepth} min 0 max 32");
+            Send($"option name IIDMinDepth type spin default {SearchConstants.IIDMinDepth} min 0 max 32");
             Send($"option name IIDDepthReduction type spin default {SearchConstants.IIDDepthReduction} min 0 max 32");
-            Send($"option name NullWindowMinimalDepth type spin default {SearchConstants.NullWindowMinimalDepth} min 0 max 32");
-            Send($"option name NullWindowDepthReduction type spin default {SearchConstants.NullWindowDepthReduction} min 0 max 32");
-            Send($"option name LMRMinimalDepth type spin default {SearchConstants.LMRMinimalDepth} min 0 max 32");
+
+            Send($"option name StaticNullMoveMaxDepth type spin default {SearchConstants.StaticNullMoveMaxDepth} min 0 max 32");
+            Send($"option name StaticNullMoveMaxDepthDivider type spin default {SearchConstants.StaticNullMoveMaxDepthDivider} min 0 max 32");
+            Send($"option name StaticNullMoveMargin type spin default {SearchConstants.StaticNullMoveMargin} min 0 max 500");
+            Send($"option name StaticNullMoveMarginMultiplier type spin default {SearchConstants.StaticNullMoveMarginMultiplier} min 0 max 500");
+
+            Send($"option name NullMoveMinDepth type spin default {SearchConstants.NullMoveMinDepth} min 0 max 32");
+            Send($"option name NullMoveDepthReduction type spin default {SearchConstants.NullMoveDepthReduction} min 0 max 32");
+            Send($"option name NullMoveDepthReductionDivider type spin default {SearchConstants.NullMoveDepthReductionDivider} min 0 max 32");
+
+            Send($"option name FutilityPruningMaxDepth type spin default {SearchConstants.FutilityPruningMaxDepth} min 0 max 32");
+            Send($"option name FutilityPruningMaxDepthDivisor type spin default {SearchConstants.FutilityPruningMaxDepthDivisor} min 0 max 32");
+            Send($"option name FutilityPruningMargin type spin default {SearchConstants.FutilityPruningMargin} min 0 max 500");
+            Send($"option name FutilityPruningMarginMultiplier type spin default {SearchConstants.FutilityPruningMarginMultiplier} min 0 max 500");
+
+            Send($"option name LMRMinDepth type spin default {SearchConstants.LMRMinDepth} min 0 max 32");
             Send($"option name LMRMovesWithoutReduction type spin default {SearchConstants.LMRMovesWithoutReduction} min 0 max 32");
-            Send($"option name LMRPvNodeDepthReduction type spin default {SearchConstants.LMRPvNodeDepthReduction} min 0 max 32");
-            Send($"option name LMRNonPvNodeDepthDivisor type spin default {SearchConstants.LMRNonPvNodeDepthDivisor} min 0 max 32");
+            Send($"option name LMRBaseReduction type spin default {SearchConstants.LMRBaseReduction} min 0 max 32");
+            Send($"option name LMRMoveIndexDivider type spin default {SearchConstants.LMRMoveIndexDivider} min 0 max 32");
+            Send($"option name LMRPvNodeMaxReduction type spin default {SearchConstants.LMRPvNodeMaxReduction} min 0 max 32");
+            Send($"option name LMRNonPvNodeMaxReduction type spin default {SearchConstants.LMRNonPvNodeMaxReduction} min 0 max 32");
 
             Send("uciok");
         }
@@ -164,6 +175,11 @@ namespace Cosette.Uci
             while (true)
             {
                 var (command, parameters) = Receive();
+                if (command == "leave")
+                {
+                    break;
+                }
+
                 if (_commands.ContainsKey(command))
                 {
                     _commands[command].Run(parameters);
@@ -189,20 +205,19 @@ namespace Cosette.Uci
                 var fieldsAttackedByBlack = 0ul;
 
                 var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
-                var castlingEvaluation = CastlingEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
                 var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
                 var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
                 var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-                var pieces = PiecesEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var fianchetto = FianchettoEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var rooks = RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var bishops = BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
-                var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation + 
-                            mobility + kingSafety + pieces;
+                var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation + 
+                            mobility + kingSafety;
 
-                Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} castling {castlingEvaluation} " +
+                Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
-                     $"pieces {pieces} fianchetto {fianchetto} irrmoves {stats.Board.IrreversibleMovesCount}");
+                     $"rooks {rooks} bishops {bishops} irrmoves {stats.Board.IrreversibleMovesCount}");
             }
         }
 

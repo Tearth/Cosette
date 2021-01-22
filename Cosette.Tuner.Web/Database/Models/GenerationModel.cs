@@ -12,7 +12,7 @@ namespace Cosette.Tuner.Web.Database.Models
 
         public DateTime CreationTimeUtc { get; set; }
         public double ElapsedTime { get; set; }
-        public int BestFitness { get; set; }
+        public double BestFitness { get; set; }
 
         public virtual List<GenerationGeneModel> BestGenes { get; set; }
     }

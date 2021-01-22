@@ -36,6 +36,7 @@ namespace Cosette.Interactive
             _commands["benchmark"] = new BenchmarkCommand(this);
             _commands["verify"] = new VerifyCommand(this);
             _commands["evaluate"] = new EvaluateCommand(this);
+            _commands["tuner"] = new TunerCommand(this);
             _commands["uci"] = new UciCommand(this);
             _commands["quit"] = new QuitCommand(this);
 
@@ -49,12 +50,19 @@ namespace Cosette.Interactive
             CultureInfo.CurrentCulture = new CultureInfo("en-US", false);
         }
 
-        public void Run()
+        public void Run(bool silentMode)
         {
-            DisplayIntro();
+            if (!silentMode)
+            {
+                DisplayIntro();
+            }
+
             while (true)
             {
-                Console.Write("> ");
+                if (!silentMode)
+                {
+                    Console.Write("> ");
+                }
 
                 var input = Console.ReadLine();
                 var splitInput = input.Split(' ');
@@ -67,7 +75,10 @@ namespace Cosette.Interactive
                 }
                 else
                 {
-                    Console.WriteLine("Command not found");
+                    if (!silentMode)
+                    {
+                        Console.WriteLine("Command not found");
+                    }
                 }
             }
         }
@@ -118,11 +129,11 @@ namespace Cosette.Interactive
             var runtimeVersion = $"{Environment.Version.Major}.{Environment.Version.Minor}.{Environment.Version.Build}";
             var executableHash = GetExecutableHash();
 
-            Console.WriteLine($"Cosette v3.0 (Luna), 12.12.2020 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
+            Console.WriteLine($"Cosette v4.0 (Komekko), 22.01.2021 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
             Console.WriteLine("Distributed under AGPL license, homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine($"Executable hash: {executableHash}");
             Console.WriteLine();
-            Console.WriteLine("\"When you see a good move, look for a better one.\" ~ Emanuel Lasker");
+            Console.WriteLine("\"One bad move nullifies forty good ones.\" ~ Bernhard Horwitz");
             Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
         }

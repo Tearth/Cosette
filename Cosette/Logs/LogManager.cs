@@ -8,7 +8,9 @@ namespace Cosette.Logs
         private static readonly string _logFile;
         private static readonly string _basePath;
 
+#if LOGGER
         private static StreamWriter _infoLogStreamWriter;
+#endif
 
         static LogManager()
         {

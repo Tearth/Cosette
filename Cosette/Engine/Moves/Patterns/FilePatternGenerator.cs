@@ -5,25 +5,29 @@ namespace Cosette.Engine.Moves.Patterns
 {
     public static class FilePatternGenerator
     {
-        private static readonly ulong[] _patterns = new ulong[64];
+        private static readonly ulong[] _patterns = new ulong[8];
 
         static FilePatternGenerator()
         {
             for (var i = 0; i < _patterns.Length; i++)
             {
-                _patterns[i] = GetPatternForField(i) & ~(1ul << i);
+                _patterns[i] = GeneratePatternForField(i);
             }
         }
 
-        public static ulong GetPattern(int fieldIndex)
+        public static ulong GetPatternForField(int fieldIndex)
         {
-            return _patterns[fieldIndex];
+            return _patterns[fieldIndex % 8] & ~(1ul << fieldIndex);
         }
 
-        private static ulong GetPatternForField(int fieldIndex)
+        public static ulong GetPatternForFile(int rank)
         {
-            var position = Position.FromFieldIndex(fieldIndex);
-            return BoardConstants.AFile >> position.X;
+            return _patterns[rank % 8];
+        }
+
+        private static ulong GeneratePatternForField(int file)
+        {
+            return BoardConstants.HFile << file;
         }
     }
 }

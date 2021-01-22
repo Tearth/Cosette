@@ -20,7 +20,7 @@ namespace Cosette.Interactive.Commands
         public void Run(params string[] parameters)
         {
             var fen = string.Join(' ', parameters);
-            var boardState = FenToBoard.Parse(fen);
+            var boardState = FenToBoard.Parse(fen, false);
             var evaluationStatistics = new EvaluationStatistics();
 
             var openingPhase = boardState.GetPhaseRatio();
@@ -30,28 +30,26 @@ namespace Cosette.Interactive.Commands
             var fieldsAttackedByBlack = 0ul;
 
             var materialEvaluation = MaterialEvaluator.Evaluate(boardState);
-            var castlingEvaluation = CastlingEvaluator.Evaluate(boardState, openingPhase, endingPhase);
             var positionEvaluation = PositionEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(boardState, evaluationStatistics, openingPhase, endingPhase);
+            var pawnStructureEvaluation = PawnStructureEvaluator.EvaluateWithoutCache(boardState, evaluationStatistics, openingPhase, endingPhase);
             var mobility = MobilityEvaluator.Evaluate(boardState, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
             var kingSafety = KingSafetyEvaluator.Evaluate(boardState, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-            var pieces = PiecesEvaluator.Evaluate(boardState, openingPhase, endingPhase);
-            var fianchetto = FianchettoEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var rooks = RookEvaluator.Evaluate(boardState, openingPhase, endingPhase);
+            var bishops = BishopEvaluator.Evaluate(boardState, openingPhase, endingPhase);
 
-            var total = materialEvaluation + castlingEvaluation + positionEvaluation + pawnStructureEvaluation +
-                        mobility + kingSafety + pieces + fianchetto;
+            var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation +
+                        mobility + kingSafety;
 
             _interactiveConsole.WriteLine($"Evaluation for board with hash {boardState.Hash} (phase {openingPhase}, " +
                                           $"{boardState.IrreversibleMovesCount} irreversible moves)");
 
             _interactiveConsole.WriteLine($" = Material: {materialEvaluation}");
-            _interactiveConsole.WriteLine($" = Castling: {castlingEvaluation}");
             _interactiveConsole.WriteLine($" = Position: {positionEvaluation}");
             _interactiveConsole.WriteLine($" = Pawns: {pawnStructureEvaluation}");
             _interactiveConsole.WriteLine($" = Mobility: {mobility}");
             _interactiveConsole.WriteLine($" = King safety: {kingSafety}");
-            _interactiveConsole.WriteLine($" = Pieces evaluation: {pieces}");
-            _interactiveConsole.WriteLine($" = Fianchetto evaluation: {fianchetto}");
+            _interactiveConsole.WriteLine($" = Rooks: {rooks}");
+            _interactiveConsole.WriteLine($" = Bishops: {bishops}");
             _interactiveConsole.WriteLine();
             _interactiveConsole.WriteLine($" = Total: {total}");
         }

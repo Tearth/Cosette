@@ -11,8 +11,8 @@ namespace Cosette.Tuner.Web.ViewModels
 
         public DateTime CreationTimeUtc { get; set; }
         public double ElapsedTime { get; set; }
-        public int BestFitness { get; set; }
+        public double BestFitness { get; set; }
 
-        public virtual List<GeneViewModel> BestGenes { get; set; }
+        public List<GeneViewModel> BestGenes { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cosette.Tuner.Common.Requests;
 using Cosette.Tuner.Web.Database;
 using Cosette.Tuner.Web.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,12 @@ namespace Cosette.Tuner.Web.Services
             _databaseContext = databaseContext;
         }
 
-        public async Task<int> GenerateNewTest()
+        public async Task<int> GenerateNewTest(TestType type)
         {
             var entityTracking = await _databaseContext.Tests.AddAsync(new TestModel
             {
                 CreationTimeUtc = DateTime.Now,
+                Type = type
             });
 
             await _databaseContext.SaveChangesAsync();

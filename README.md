@@ -1,9 +1,20 @@
 # Cosette
-**Current version: v3.0 (Luna), 12.12.2020**
+**Current version: v4.0 (Komekko), 22.01.2021**
 
 An UCI-compliant chess engine written in C# for .NET Core platform, with **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/compare_engines.cgi?family=Cosette&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)** (Computer Chess Rating Lists) where you can check the best strength estimation. Feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
 
-![Cosette interactive console example](https://i.imgur.com/2cSfVBR.png)
+![Cosette interactive console example](https://i.imgur.com/nwPkim6.png)
+
+On the table below you can see how engines' strength was changing with the versions. Take note that usually the latest one has an estimated value, which will be updated later to a more concrete result.
+
+| Version                                                                | Release date | ELO   | Main changes |
+|------------------------------------------------------------------------|--------------|-------| ------------ |
+| [v4.0 (Komekko)](https://github.com/Tearth/Cosette/releases/tag/v4.0)  | 22.01.2021   | 2300* | Futility pruning, static null-move pruning, evasion move generator, check extensions, adjusted parameters of search and evaluation. |
+| [v3.0 (Luna)](https://github.com/Tearth/Cosette/releases/tag/v3.0)     | 12.12.2020   | 2086  | Multi-stage move generation and move ordering, internal iterative deepening, SEE pruning in quiescence search. New evaluation function for fianchetto. |
+| [v2.0 (Darkness)](https://github.com/Tearth/Cosette/releases/tag/v2.0) | 19.10.2020   | 1985  | A bunch of improvements for transposition tables, time management and move ordering. New evaluation functions: pawn shield, bishop pair, doubled rooks, a rook on the open file. |
+| [v1.0 (Aqua)](https://github.com/Tearth/Cosette/releases/tag/v1.0)     | 19.09.2020   | 1875  | Initial release. |
+
+**value estimated*
 
 ## How to play?
 The simplest way is to download the newest version from the **[Releases page](https://github.com/Tearth/Cosette/releases)** and use it with a graphical interface like Arena or WinBoard. The engine has been tested extensively on the first one, but should work with every UCI-compliant GUI.
@@ -18,11 +29,11 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - bitboards (with make/undo scheme)
  - magic bitboards
  - precalculated arrays with moves for knight and king
+ - moves generator (quiet, loud, captures and evasions)
 
 **Evaluation:**
  - material (incremental updating)
  - position (piece-square tables, incremental updating)
- - castling status
  - mobility
  - king safety
  - pawn structure (cached in pawn hash table)
@@ -36,14 +47,17 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - negamax
  - alpha-beta pruning
  - transposition table
- - quiescence search
+ - quiescence search with check detection
  - quiescence SEE pruning
  - iterative deepening
  - internal iterative deepening
  - staged move generating
  - null-move pruning
+ - static null-move pruning
  - principal variation search
  - late move reduction
+ - check extension
+ - futility pruning
 
 **Move ordering:**
  - staged move ordering
@@ -61,7 +75,7 @@ The simple console application which allows testing chess engines using super-fa
 
 ### Tuner
 
-The console application + web interface, which allows adjusting engine parameters using standard UCI command setoption. Results are displayed on the local website using a set of tables and charts.
+A set of console applications (selfplay + Texel) and web interface, which allows adjusting engine parameters using standard UCI command setoption. Results are displayed on the local website using a set of tables and charts.
 
 ![Cosette Tuner](https://i.imgur.com/uxXeYW9.png)
 

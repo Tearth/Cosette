@@ -1,4 +1,5 @@
-﻿@model Cosette.Tuner.Web.ViewModels.MainViewModel
+﻿@using Cosette.Tuner.Common.Requests
+@model Cosette.Tuner.Web.ViewModels.MainViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -20,7 +21,7 @@
             <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <h4 class="navbar-nav ml-auto mt-2 mt-lg-0">Test @Model.LastTest?.Id (@Model.LastTest?.CreationTimeUtc)</h4>
+                <h4 class="navbar-nav ml-auto mt-2 mt-lg-0">Test @Model.CurrentTest?.Id (@Model.CurrentTest?.CreationTimeUtc)</h4>
             </div>
         </nav>
         
@@ -42,23 +43,26 @@
                     </div>
                 </div>
             </div>
-            <div class="row container-fluid">
-                <div class="col-md-4">
-                    <div class="chart-container">
-                        <canvas id="average-depth-canvas"></canvas>
+            @if (Model.CurrentTest.Type == TestType.SelfPlay)
+            {
+                <div class="row container-fluid">
+                    <div class="col-md-4">
+                        <div class="chart-container">
+                            <canvas id="average-depth-canvas"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-container">
+                            <canvas id="average-nodes-count-canvas"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-container">
+                            <canvas id="average-time-per-game-canvas"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="chart-container">
-                        <canvas id="average-nodes-count-canvas"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="chart-container">
-                        <canvas id="average-time-per-game-canvas"></canvas>
-                    </div>
-                </div>
-            </div>
+            }
             <div class="row">
                 <div class="col-md">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -108,13 +112,13 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Creation time UTC</th>
-                                        <th>Elapsed time</th>
-                                        <th>Fitness</th>
-                                        <th>Genes</th>
-                                    </tr>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Creation time UTC</th>
+                                            <th>Elapsed time</th>
+                                            <th>Fitness</th>
+                                            <th>Genes</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         @for (var i = 0; i < Model.BestGenerations.Count; i++)
@@ -142,9 +146,12 @@
                                             <th>Creation time UTC</th>
                                             <th>Elapsed time</th>
                                             <th>Fitness</th>
-                                            <th>EE wins</th>
-                                            <th>EE losses</th>
-                                            <th>EE draws</th>
+                                            @if (Model.CurrentTest.Type == TestType.SelfPlay)
+                                            {
+                                                <th>EE wins</th>
+                                                <th>EE losses</th>
+                                                <th>EE draws</th>
+                                            }
                                             <th>Genes</th>
                                         </tr>
                                     </thead>
@@ -156,9 +163,12 @@
                                                 <td>@Model.BestChromosomes[i].CreationTimeUtc</td>
                                                 <td>@Model.BestChromosomes[i].ElapsedTime.ToString("F1")</td>
                                                 <td>@Model.BestChromosomes[i].Fitness</td>
-                                                <td>@Model.BestChromosomes[i].ExperimentalEngineWins</td>
-                                                <td>@Model.BestChromosomes[i].ReferenceEngineWins</td>
-                                                <td>@Model.BestChromosomes[i].Draws</td>
+                                                @if (Model.CurrentTest.Type == TestType.SelfPlay)
+                                                {
+                                                    <td>@Model.BestChromosomes[i].ExperimentalEngineStatistics.Wins</td>
+                                                    <td>@Model.BestChromosomes[i].ReferenceEngineStatistics.Wins</td>
+                                                    <td>@Model.BestChromosomes[i].ReferenceEngineStatistics.Draws</td>
+                                                }
                                                 <td>
                                                     @string.Join(", ", Model.BestChromosomes[i].Genes.Select(p => $"{p.Name}={p.Value}"))
                                                 </td>
@@ -172,16 +182,19 @@
                             <div class="container-fluid">
                                 <table class="table table-striped">
                                     <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Creation time UTC</th>
-                                        <th>Elapsed time</th>
-                                        <th>Fitness</th>
-                                        <th>EE wins</th>
-                                        <th>EE losses</th>
-                                        <th>EE draws</th>
-                                        <th>Genes</th>
-                                    </tr>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Creation time UTC</th>
+                                            <th>Elapsed time</th>
+                                            <th>Fitness</th>
+                                            @if (Model.CurrentTest.Type == TestType.SelfPlay)
+                                            {
+                                                <th>EE wins</th>
+                                                <th>EE losses</th>
+                                                <th>EE draws</th>
+                                            }
+                                            <th>Genes</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         @for (var i = Model.AllChromosomes.Count - 1; i >= 0; i--)
@@ -191,9 +204,12 @@
                                                 <td>@Model.AllChromosomes[i].CreationTimeUtc</td>
                                                 <td>@Model.AllChromosomes[i].ElapsedTime.ToString("F1")</td>
                                                 <td>@Model.AllChromosomes[i].Fitness</td>
-                                                <td>@Model.AllChromosomes[i].ExperimentalEngineWins</td>
-                                                <td>@Model.AllChromosomes[i].ReferenceEngineWins</td>
-                                                <td>@Model.AllChromosomes[i].Draws</td>
+                                                @if (Model.CurrentTest.Type == TestType.SelfPlay)
+                                                {
+                                                    <td>@Model.AllChromosomes[i].ExperimentalEngineStatistics.Wins</td>
+                                                    <td>@Model.AllChromosomes[i].ReferenceEngineStatistics.Wins</td>
+                                                    <td>@Model.AllChromosomes[i].ReferenceEngineStatistics.Draws</td>
+                                                }
                                                 <td>
                                                     @string.Join(", ", Model.AllChromosomes[i].Genes.Select(p => $"{p.Name}={p.Value}"))
                                                 </td>

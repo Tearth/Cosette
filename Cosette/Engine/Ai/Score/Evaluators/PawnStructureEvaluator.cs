@@ -7,37 +7,6 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class PawnStructureEvaluator
     {
-        private static readonly ulong[] _innerFileMasks;
-        private static readonly ulong[] _outerFileMasks;
-        private static readonly ulong[] _chainMasks;
-
-        static PawnStructureEvaluator()
-        {
-            _innerFileMasks = new ulong[8];
-            _outerFileMasks = new ulong[8];
-            _chainMasks = new ulong[64];
-
-            for (var i = 0; i < 8; i++)
-            {
-                _innerFileMasks[i] = BoardConstants.AFile >> i;
-
-                if (i - 1 >= 0)
-                {
-                    _outerFileMasks[i] |= BoardConstants.AFile >> (i - 1);
-                }
-
-                if (i + 1 < 8)
-                {
-                    _outerFileMasks[i] |= BoardConstants.AFile >> (i + 1);
-                }
-            }
-
-            for (var i = 0; i < 64; i++)
-            {
-                _chainMasks[i] = DiagonalPatternGenerator.GetPattern(i) & BoxPatternGenerator.GetPattern(i);
-            }
-        }
-
         public static int Evaluate(BoardState board, EvaluationStatistics statistics, int openingPhase, int endingPhase)
         {
             var entry = PawnHashTable.Get(board.PawnHash);
@@ -60,8 +29,9 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
 #endif
 
-            var result = Evaluate(board, Color.White, openingPhase, endingPhase) - 
-                         Evaluate(board, Color.Black, openingPhase, endingPhase);
+            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase);
+            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase);
+            var result = whiteEvaluation - blackEvaluation;
 
             PawnHashTable.Add(board.PawnHash, (short)result);
 
@@ -71,20 +41,25 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             return result;
         }
 
-        public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
+        public static int EvaluateWithoutCache(BoardState board, EvaluationStatistics statistics, int openingPhase, int endingPhase)
+        {
+            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase);
+            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase);
+            return whiteEvaluation - blackEvaluation;
+        }
+
+        private static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
         {
             var doubledPawns = 0;
             var isolatedPawns = 0;
             var chainedPawns = 0;
             var passingPawns = 0;
-            var enemyColor = ColorOperations.Invert(color);
+            var pawnAdvances = 0;
 
             for (var file = 0; file < 8; file++)
             {
-                var friendlyPawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & _innerFileMasks[file];
-                var friendlyPawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & _outerFileMasks[file];
-                var enemyPawnsOnInnerMask = board.Pieces[enemyColor][Piece.Pawn] & _innerFileMasks[file];
-                var enemyPawnsOnOuterMask = board.Pieces[enemyColor][Piece.Pawn] & _outerFileMasks[file];
+                var friendlyPawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & FilePatternGenerator.GetPatternForFile(file);
+                var friendlyPawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & OuterFilesPatternGenerator.GetPatternForFile(file);
 
                 var pawnsCount = BitOperations.Count(friendlyPawnsOnInnerMask);
                 if (pawnsCount > 1)
@@ -98,11 +73,6 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                     {
                         isolatedPawns += (int)BitOperations.Count(pawnsCount);
                     }
-
-                    if (enemyPawnsOnInnerMask == 0 && enemyPawnsOnOuterMask == 0)
-                    {
-                        passingPawns++;
-                    }
                 }
             }
 
@@ -113,11 +83,19 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 var field = BitOperations.BitScan(lsb);
                 pieces = BitOperations.PopLsb(pieces);
 
-                var chain = _chainMasks[field] & board.Pieces[color][Piece.Pawn];
+                var chain = ChainPatternGenerator.GetPattern(field) & board.Pieces[color][Piece.Pawn];
                 if (chain != 0)
                 {
                     chainedPawns += (int)BitOperations.Count(chain);
                 }
+
+                if (board.IsFieldPassing(color, field))
+                {
+                    passingPawns++;
+                }
+
+                var advance = color == Color.White ? field / 8 : 8 - field / 8;
+                pawnAdvances += advance;
             }
 
             var doubledPawnsOpeningScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening];

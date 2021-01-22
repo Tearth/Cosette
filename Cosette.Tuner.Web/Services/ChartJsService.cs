@@ -12,11 +12,11 @@ namespace Cosette.Tuner.Web.Services
         private const string ReferenceColor = "#4dc9f6";
         private const string ExperimentalColor = "#ff0000";
 
-        public ChartJsData<int> GenerateGenerationFitnessData(List<GenerationModel> generations)
+        public ChartJsData<double> GenerateGenerationFitnessData(List<GenerationModel> generations)
         {
             var labels = Enumerable.Range(0, generations.Count).Select(p => p.ToString()).ToList();
             var values = generations.Select(p => p.BestFitness).ToList();
-            var datasets = new List<ChartJsDataset<int>>
+            var datasets = new List<ChartJsDataset<double>>
             {
                 GenerateDataset("Fitness", values, ReferenceColor)
             };
@@ -24,11 +24,11 @@ namespace Cosette.Tuner.Web.Services
             return GenerateData(labels, datasets);
         }
 
-        public ChartJsData<int> GenerateChromosomeFitnessData(List<ChromosomeModel> chromosomes)
+        public ChartJsData<double> GenerateChromosomeFitnessData(List<ChromosomeModel> chromosomes)
         {
             var labels = Enumerable.Range(0, chromosomes.Count).Select(p => p.ToString()).ToList();
             var values = chromosomes.Select(p => p.Fitness).ToList();
-            var datasets = new List<ChartJsDataset<int>>
+            var datasets = new List<ChartJsDataset<double>>
             {
                 GenerateDataset("Fitness", values, ReferenceColor)
             };
@@ -52,12 +52,12 @@ namespace Cosette.Tuner.Web.Services
         {
             var labels = Enumerable.Range(0, chromosomes.Count).Select(p => p.ToString()).ToList();
             var referenceValues = chromosomes
-                .SelectMany(p => p.EnginesStatistics)
+                .SelectMany(p => p.SelfPlayStatistics)
                 .Where(p => p.IsReferenceEngine)
                 .Select(p => p.AverageDepth)
                 .ToList();
             var experimentalValues = chromosomes
-                .SelectMany(p => p.EnginesStatistics)
+                .SelectMany(p => p.SelfPlayStatistics)
                 .Where(p => !p.IsReferenceEngine)
                 .Select(p => p.AverageDepth)
                 .ToList();
@@ -75,12 +75,12 @@ namespace Cosette.Tuner.Web.Services
         {
             var labels = Enumerable.Range(0, chromosomes.Count).Select(p => p.ToString()).ToList();
             var referenceValues = chromosomes
-                .SelectMany(p => p.EnginesStatistics)
+                .SelectMany(p => p.SelfPlayStatistics)
                 .Where(p => p.IsReferenceEngine)
                 .Select(p => p.AverageNodesCount)
                 .ToList();
             var experimentalValues = chromosomes
-                .SelectMany(p => p.EnginesStatistics)
+                .SelectMany(p => p.SelfPlayStatistics)
                 .Where(p => !p.IsReferenceEngine)
                 .Select(p => p.AverageNodesCount)
                 .ToList();
@@ -98,7 +98,7 @@ namespace Cosette.Tuner.Web.Services
         {
             var labels = Enumerable.Range(0, chromosomes.Count).Select(p => p.ToString()).ToList();
             var values = chromosomes
-                .SelectMany(p => p.EnginesStatistics)
+                .SelectMany(p => p.SelfPlayStatistics)
                 .Where(p => p.IsReferenceEngine)
                 .Select(p => p.AverageTimePerGame)
                 .ToList();
