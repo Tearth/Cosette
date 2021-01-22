@@ -1,16 +1,16 @@
-# Version 4.0 (Komekko), --.--.----
+# Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
- - Adjusted search parameters
- - Adjusted evaluation parameters
- - Fixed reduntant saving of transposition table entries
- - Added new formulas calculating reduction for LMR and NW pruning
- - Added a new way of building Piece-Square tables, better for tuning
- - Improved threefold repetition detection
  - Added check extension
  - Added check detection in quiescence search
  - Added evasion moves generator
  - Added static null-move pruning
  - Added futility pruning
+ - Added new formulas calculating reduction for LMR and null move pruning
+ - Added a new way of building Piece-Square tables, better for tuning
+ - Fixed reduntant saving of transposition table entries
+ - Adjusted search parameters
+ - Adjusted evaluation parameters
+ - Improved threefold repetition detection
  - Updated .NET runtime version to 5.0.102
 
 # Version 3.0 (Luna), 12.12.2020
