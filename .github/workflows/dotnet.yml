@@ -1,16 +1,11 @@
 name: .NET
-
 on:
   push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
@@ -21,5 +16,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Test Cosette.Polyglot.Tests
+      run: dotnet test Cosette.Polyglot.Tests --no-build --verbosity normal
+    - name: Test Cosette.Tests
+      run: dotnet test Cosette.Tests --no-build --verbosity normal

@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		CHANGELOG.md = CHANGELOG.md
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -27,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Tuner.Web", "Cosett
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Tuner.Common", "Cosette.Tuner.Common\Cosette.Tuner.Common.csproj", "{97466830-B71A-4DC4-AD43-D92CC6F867DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosette.Tuner.Texel", "Cosette.Tuner.Texel\Cosette.Tuner.Texel.csproj", "{AC5C8DF9-E46A-4F9B-9AE9-7380E3044263}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cosette.Tuner.Texel", "Cosette.Tuner.Texel\Cosette.Tuner.Texel.csproj", "{AC5C8DF9-E46A-4F9B-9AE9-7380E3044263}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
