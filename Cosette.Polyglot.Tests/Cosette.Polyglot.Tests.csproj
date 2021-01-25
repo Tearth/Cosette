@@ -7,7 +7,7 @@
 
     <Configurations>Debug;Release;BMI;CCRL</Configurations>
 
-    <Platforms>AnyCPU</Platforms>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
