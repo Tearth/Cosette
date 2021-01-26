@@ -1,3 +1,6 @@
+# Version 5.0 (-------), xx.xx.2021
+ - Enabled support for BMI instruction set (only if CPU supports it)
+
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
  - Added check extension
