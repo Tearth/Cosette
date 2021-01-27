@@ -33,7 +33,7 @@ namespace Cosette.Engine.Ai.Ordering
 
         public static short GetHistoryMoveValue(int color, int from, int to)
         {
-            return (short)(_historyMoves[color][from][to] / ((float)_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
+            return (short)Math.Ceiling(_historyMoves[color][from][to] / ((float)_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
         }
 
         public static void Clear()
