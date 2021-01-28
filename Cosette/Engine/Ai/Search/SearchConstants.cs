@@ -24,6 +24,7 @@
         public static int FutilityPruningMaxDepthDivisor = 7;
         public static int FutilityPruningMargin = 200;
         public static int FutilityPruningMarginMultiplier = 250;
+        public static int QFutilityPruningMargin = 100;
 
         public static int LMRMinDepth = 2;
         public static int LMRMovesWithoutReduction = 4;

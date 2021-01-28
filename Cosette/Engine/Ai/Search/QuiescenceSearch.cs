@@ -78,9 +78,20 @@ namespace Cosette.Engine.Ai.Search
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
 
-                if (moveValues[moveIndex] < -50)
+                if (moveValues[moveIndex] < 0)
                 {
+#if DEBUG
+                    context.Statistics.QSEEPrunes++;
+#endif
                     break;
+                }
+
+                if (standPat + moveValues[moveIndex] + SearchConstants.QFutilityPruningMargin < alpha)
+                {
+#if DEBUG
+                    context.Statistics.QFutilityPrunes++;
+#endif
+                    continue;
                 }
 
                 context.BoardState.MakeMove(moves[moveIndex]);

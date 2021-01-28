@@ -127,6 +127,7 @@ namespace Cosette.Interactive.Commands
 
             _interactiveConsole.WriteLine($"   Extensions: {statistics.Extensions}, Null-move prunes: {statistics.NullMovePrunes}, " +
                                           $"Static null-move prunes: {statistics.StaticNullMovePrunes}, Futility prunes: {statistics.FutilityPrunes}");
+            _interactiveConsole.WriteLine($"   Q SEE prunes: {statistics.QSEEPrunes}, Q futility prunes: {statistics.QFutilityPrunes}");
 #endif
 
 
