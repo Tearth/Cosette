@@ -149,7 +149,7 @@ namespace Cosette.Engine.Ai.Search
             }
 #endif
 
-            if (StaticNullMoveCanBeApplied(depth, friendlyKingInCheck, pvNode, beta))
+            if (StaticNullMoveCanBeApplied(depth, context.Statistics.Depth, friendlyKingInCheck, pvNode, beta))
             {
                 var fastEvaluation = Evaluation.FastEvaluate(context.BoardState);
                 var margin = SearchConstants.StaticNullMoveMargin + (depth - 1) * SearchConstants.StaticNullMoveMarginMultiplier;
@@ -200,7 +200,7 @@ namespace Cosette.Engine.Ai.Search
             var futilityPruningEvaluation = 0;
             var futilityPruningMargin = 0;
 
-            if (FutilityPruningCanBeApplied(depth, friendlyKingInCheck, pvNode, alpha))
+            if (FutilityPruningCanBeApplied(depth, context.Statistics.Depth, friendlyKingInCheck, pvNode, alpha))
             {
                 futilityPruningCanBeApplied = true;
                 futilityPruningEvaluation = Evaluation.FastEvaluate(context.BoardState);
@@ -471,9 +471,9 @@ namespace Cosette.Engine.Ai.Search
             return bestScore;
         }
 
-        private static bool StaticNullMoveCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int beta)
+        private static bool StaticNullMoveCanBeApplied(int depth, int rootDepth, bool friendlyKingInCheck, bool pvNode, int beta)
         {
-            var maxDepth = SearchConstants.StaticNullMoveMaxDepth + depth / SearchConstants.StaticNullMoveMaxDepthDivider;
+            var maxDepth = SearchConstants.StaticNullMoveMaxDepth + rootDepth / SearchConstants.StaticNullMoveMaxDepthDivider;
             return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(beta);
         }
 
@@ -493,9 +493,9 @@ namespace Cosette.Engine.Ai.Search
             return ttEntryType == TranspositionTableEntryFlags.Invalid && depth >= SearchConstants.IIDMinDepth && bestMove == Move.Empty;
         }
 
-        private static bool FutilityPruningCanBeApplied(int depth, bool friendlyKingInCheck, bool pvNode, int alpha)
+        private static bool FutilityPruningCanBeApplied(int depth, int rootDepth, bool friendlyKingInCheck, bool pvNode, int alpha)
         {
-            var maxDepth = SearchConstants.FutilityPruningMaxDepth + depth / SearchConstants.FutilityPruningMaxDepthDivisor;
+            var maxDepth = SearchConstants.FutilityPruningMaxDepth + rootDepth / SearchConstants.FutilityPruningMaxDepthDivisor;
             return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
