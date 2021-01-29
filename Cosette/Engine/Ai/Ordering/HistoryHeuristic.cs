@@ -36,6 +36,23 @@ namespace Cosette.Engine.Ai.Ordering
             return (short)Math.Ceiling(_historyMoves[color][from][to] / ((float)_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
         }
 
+        public static void ReduceValues()
+        {
+            for (var color = 0; color < 2; color++)
+            {
+                for (var from = 0; from < 64; from++)
+                {
+                    for (var to = 0; to < 64; to++)
+                    {
+                        _historyMoves[color][from][to] /= 2;
+                    }
+                }
+            }
+            
+            _max /= 2;
+            _max = Math.Max(_max, MoveOrderingConstants.HistoryHeuristicMaxScore);
+        }
+
         public static void Clear()
         {
             for (var color = 0; color < 2; color++)
@@ -45,8 +62,6 @@ namespace Cosette.Engine.Ai.Ordering
                     Array.Clear(_historyMoves[color][from], 0, 64);
                 }
             }
-
-            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
         }
     }
 }

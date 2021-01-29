@@ -16,7 +16,7 @@ namespace Cosette.Engine.Ai.Search
 
         public static Move FindBestMove(SearchContext context)
         {
-            HistoryHeuristic.Clear();
+            HistoryHeuristic.ReduceValues();
 
             var expectedExecutionTime = 0;
             var alpha = SearchConstants.MinValue;

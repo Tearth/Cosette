@@ -2,6 +2,7 @@
  - Enabled support for BMI instruction set (only if CPU supports it)
  - Added futility pruning to quiescence search
  - Adjusted search parameters
+ - Allowed to use history heuristic values from the previous iterations
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
