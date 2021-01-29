@@ -485,7 +485,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static int NullMoveGetReduction(int depth)
         {
-            return SearchConstants.NullMoveDepthReduction + depth / SearchConstants.NullMoveDepthReductionDivider;
+            return SearchConstants.NullMoveDepthReduction + (depth - SearchConstants.NullMoveMinDepth) / SearchConstants.NullMoveDepthReductionDivider;
         }
 
         private static bool IIDCanBeApplied(int depth, TranspositionTableEntryFlags ttEntryType, Move bestMove)
