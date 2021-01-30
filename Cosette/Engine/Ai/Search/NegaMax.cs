@@ -151,7 +151,7 @@ namespace Cosette.Engine.Ai.Search
 
             if (StaticNullMoveCanBeApplied(depth, context.Statistics.Depth, friendlyKingInCheck, pvNode, beta))
             {
-                var fastEvaluation = Evaluation.FastEvaluate(context.BoardState);
+                var fastEvaluation = Evaluation.FastEvaluate(context.BoardState, context.Statistics.EvaluationStatistics);
                 var margin = SearchConstants.StaticNullMoveMargin + (depth - 1) * SearchConstants.StaticNullMoveMarginMultiplier;
                 var score = fastEvaluation - margin;
 
@@ -203,7 +203,7 @@ namespace Cosette.Engine.Ai.Search
             if (FutilityPruningCanBeApplied(depth, context.Statistics.Depth, friendlyKingInCheck, pvNode, alpha))
             {
                 futilityPruningCanBeApplied = true;
-                futilityPruningEvaluation = Evaluation.FastEvaluate(context.BoardState);
+                futilityPruningEvaluation = Evaluation.FastEvaluate(context.BoardState, context.Statistics.EvaluationStatistics);
                 futilityPruningMargin = SearchConstants.FutilityPruningMargin + (depth - 1) * SearchConstants.FutilityPruningMarginMultiplier;
             }
             
