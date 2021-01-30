@@ -67,15 +67,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
 
             var pairOfBishopsOpeningScore = pairOfBishops * EvaluationConstants.PairOfBishops;
-            var pairOfBishopsAdjusted = TaperedEvaluation.AdjustToPhase(pairOfBishopsOpeningScore, 0, openingPhase, endingPhase);
-
             var fianchettosScore = fianchettos * EvaluationConstants.Fianchetto;
-            var fianchettosAdjusted = TaperedEvaluation.AdjustToPhase(fianchettosScore, 0, openingPhase, endingPhase);
-
             var fianchettosWithoutBishopScore = fianchettosWithoutBishop * EvaluationConstants.FianchettoWithoutBishop;
-            var fianchettosWithoutBishopAdjusted = TaperedEvaluation.AdjustToPhase(fianchettosWithoutBishopScore, 0, openingPhase, endingPhase);
+            var openingScore = pairOfBishopsOpeningScore + fianchettosScore + fianchettosWithoutBishopScore;
 
-            return pairOfBishopsAdjusted + fianchettosAdjusted + fianchettosWithoutBishopAdjusted;
+            return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }
     }
 }

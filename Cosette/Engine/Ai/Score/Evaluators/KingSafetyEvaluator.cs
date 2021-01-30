@@ -21,21 +21,20 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
             var attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
             var attackersCount = (int)BitOperations.Count(attackedFieldsAroundKing);
+            var pawnShieldOpeningScore = 0;
 
-            var pawnShieldAdjusted = 0;
             if (board.CastlingDone[board.ColorToMove])
             {
                 var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
                 var pawnShield = (int)BitOperations.Count(pawnsNearKing);
 
-                var pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield;
-                pawnShieldAdjusted = TaperedEvaluation.AdjustToPhase(pawnShieldOpeningScore, 0, openingPhase, endingPhase);
+                pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield;
             }
 
             var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger;
-            var attackersCountAdjusted = TaperedEvaluation.AdjustToPhase(attackersCountOpeningScore, 0, openingPhase, endingPhase);
+            var openingScore = pawnShieldOpeningScore + attackersCountOpeningScore;
 
-            return attackersCountAdjusted + pawnShieldAdjusted;
+            return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }
     }
 }
