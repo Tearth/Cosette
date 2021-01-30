@@ -15,25 +15,28 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 #if DEBUG
                 statistics.PHTHits++;
 #endif
-                return entry.Score;
+                return TaperedEvaluation.AdjustToPhase(entry.OpeningScore, entry.EndingScore, openingPhase, endingPhase);
             }
 #if DEBUG
             else
             {
                 statistics.PHTNonHits++;
 
-                if (entry.Key != 0 || entry.Score != 0)
+                if (entry.Key != 0 || entry.OpeningScore != 0 || entry.EndingScore != 0)
                 {
                     statistics.PHTReplacements++;
                 }
             }
 #endif
 
-            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase);
-            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase);
-            var result = whiteEvaluation - blackEvaluation;
+            var (openingWhiteScore, endingWhiteScore) = Evaluate(board, Color.White, openingPhase, endingPhase);
+            var (openingBlackScore, endingBlackScore) = Evaluate(board, Color.Black, openingPhase, endingPhase);
 
-            PawnHashTable.Add(board.PawnHash, (short)result);
+            var openingScore = openingWhiteScore - openingBlackScore;
+            var endingScore = endingWhiteScore - endingBlackScore;
+            var result = TaperedEvaluation.AdjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
+
+            PawnHashTable.Add(board.PawnHash, (short)openingScore, (short)endingScore);
 
 #if DEBUG
             statistics.PHTAddedEntries++;
@@ -43,12 +46,16 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
         public static int EvaluateWithoutCache(BoardState board, EvaluationStatistics statistics, int openingPhase, int endingPhase)
         {
-            var whiteEvaluation = Evaluate(board, Color.White, openingPhase, endingPhase);
-            var blackEvaluation = Evaluate(board, Color.Black, openingPhase, endingPhase);
-            return whiteEvaluation - blackEvaluation;
+            var (openingWhiteScore, endingWhiteScore) = Evaluate(board, Color.White, openingPhase, endingPhase);
+            var (openingBlackScore, endingBlackScore) = Evaluate(board, Color.Black, openingPhase, endingPhase);
+
+            var openingScore = openingWhiteScore - openingBlackScore;
+            var endingScore = endingWhiteScore - endingBlackScore;
+
+            return TaperedEvaluation.AdjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
         }
 
-        private static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
+        private static (int openingScore, int endingScore) Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
         {
             var doubledPawns = 0;
             var isolatedPawns = 0;
@@ -109,7 +116,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var openingScore = doubledPawnsOpeningScore + isolatedPawnsOpeningScore + chainedPawnsOpeningScore + passingPawnsOpeningScore;
             var endingScore = doubledPawnsEndingScore + isolatedPawnsEndingScore + chainedPawnsEndingScore + passingPawnsEndingScore;
 
-            return TaperedEvaluation.AdjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
+            return (openingScore, endingScore);
         }
     }
 }
