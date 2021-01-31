@@ -3,6 +3,7 @@
  - Added futility pruning to quiescence search
  - Adjusted search parameters
  - Allowed to use history heuristic values from the previous iterations
+ - Added more detailed evaluation info in pawn hash table entry
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
