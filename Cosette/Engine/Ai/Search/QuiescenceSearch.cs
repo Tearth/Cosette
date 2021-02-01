@@ -91,7 +91,7 @@ namespace Cosette.Engine.Ai.Search
 #if DEBUG
                     context.Statistics.QFutilityPrunes++;
 #endif
-                    continue;
+                    break;
                 }
 
                 context.BoardState.MakeMove(moves[moveIndex]);
