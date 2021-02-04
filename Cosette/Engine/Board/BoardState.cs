@@ -815,6 +815,14 @@ namespace Cosette.Engine.Board
             var drawEdge = EvaluationConstants.Pieces[Piece.King] + 4 * EvaluationConstants.Pieces[Piece.Pawn];
             if (Material[Color.White] < drawEdge && Material[Color.Black] < drawEdge)
             {
+                var whiteKnightOrBishopPresent = (Pieces[Color.White][Piece.Knight] | Pieces[Color.White][Piece.Bishop]) != 0;
+                var blackKnightOrBishopPresent = (Pieces[Color.Black][Piece.Knight] | Pieces[Color.Black][Piece.Bishop]) != 0;
+
+                if (whiteKnightOrBishopPresent && blackKnightOrBishopPresent)
+                {
+                    return false;
+                }
+
                 if (Pieces[Color.White][Piece.Pawn] == 0 && Pieces[Color.Black][Piece.Pawn] == 0)
                 {
                     return true;
