@@ -4,6 +4,8 @@
  - Adjusted search parameters
  - Allowed to use history heuristic values from the previous iterations
  - Added more detailed evaluation info in pawn hash table entry
+ - Improved time management when incrementation is present
+ - Fixed insufficient material detection when both sides had knight or bishop
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
