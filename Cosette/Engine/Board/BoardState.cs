@@ -780,11 +780,11 @@ namespace Cosette.Engine.Board
 
         public bool IsThreefoldRepetition()
         {
-            var positionsToCheck = Math.Min(_hashes.Count(), IrreversibleMovesCount);
+            var positionsToCheck = Math.Min(_hashes.Count(), IrreversibleMovesCount + 1);
             if (NullMoves == 0 && positionsToCheck >= 8)
             {
                 var repetitionsCount = 1;
-                for (var positionIndex = 3; positionIndex < positionsToCheck; positionIndex += 4)
+                for (var positionIndex = 1; positionIndex < positionsToCheck; positionIndex += 2)
                 {
                     if (_hashes.Peek(positionIndex) == Hash)
                     {
