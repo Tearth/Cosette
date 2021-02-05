@@ -43,14 +43,14 @@ namespace Cosette.Engine.Board.Operators
 
             if (!move.IsCapture())
             {
-                if (move.Flags == MoveFlags.Quiet || ((int)move.Flags & MoveFlagFields.Promotion) != 0)
+                if (move.IsSinglePush() || move.IsPromotion())
                 {
                     if ((boardState.OccupancySummary & toField) == 0)
                     {
                         return true;
                     }
                 }
-                else if (move.Flags == MoveFlags.DoublePush)
+                else if (move.IsDoublePush())
                 {
                     var middleField = 1ul << ((move.From + move.To) / 2);
                     if ((boardState.OccupancySummary & middleField) == 0 && (boardState.OccupancySummary & toField) == 0)
@@ -61,7 +61,7 @@ namespace Cosette.Engine.Board.Operators
             }
             else
             {
-                if (move.Flags == MoveFlags.EnPassant)
+                if (move.IsEnPassant())
                 {
                     if ((boardState.EnPassant & toField) != 0)
                     {

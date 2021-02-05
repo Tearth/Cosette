@@ -221,7 +221,7 @@ namespace Cosette.Engine.Board
                 EnPassant = 0;
             }
 
-            if (move.Flags == MoveFlags.Quiet)
+            if (move.IsSinglePush())
             {
                 MovePiece(ColorToMove, pieceType, move.From, move.To);
                 Hash = ZobristHashing.MovePiece(Hash, ColorToMove, pieceType, move.From, move.To);
@@ -231,7 +231,7 @@ namespace Cosette.Engine.Board
                     PawnHash = ZobristHashing.MovePiece(PawnHash, ColorToMove, pieceType, move.From, move.To);
                 }
             }
-            else if (move.Flags == MoveFlags.DoublePush)
+            else if (move.IsDoublePush())
             {
                 MovePiece(ColorToMove, pieceType, move.From, move.To);
                 Hash = ZobristHashing.MovePiece(Hash, ColorToMove, pieceType, move.From, move.To);
@@ -243,7 +243,7 @@ namespace Cosette.Engine.Board
                 EnPassant |= enPassantField;
                 Hash = ZobristHashing.ToggleEnPassant(Hash, enPassantFieldIndex % 8);
             }
-            else if (move.Flags == MoveFlags.EnPassant)
+            else if (move.IsEnPassant())
             {
                 var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
                 var killedPiece = PieceTable[enemyPieceField];
@@ -300,8 +300,7 @@ namespace Cosette.Engine.Board
                     }
                 }
 
-                // Promotion
-                if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
+                if (move.IsPromotion())
                 {
                     var promotionPiece = GetPromotionPiece(move.Flags);
 
@@ -327,10 +326,10 @@ namespace Cosette.Engine.Board
 
                 _killedPieces.Push(killedPiece);
             }
-            else if (move.Flags == MoveFlags.KingCastle || move.Flags == MoveFlags.QueenCastle)
+            else if (move.IsCastling())
             {
                 // Short castling
-                if (move.Flags == MoveFlags.KingCastle)
+                if (move.IsKingCastling())
                 {
                     if (ColorToMove == Color.White)
                     {
@@ -385,7 +384,7 @@ namespace Cosette.Engine.Board
 
                 CastlingDone[ColorToMove] = true;
             }
-            else if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
+            else if (move.IsPromotion())
             {
                 var promotionPiece = GetPromotionPiece(move.Flags);
 
@@ -399,7 +398,7 @@ namespace Cosette.Engine.Board
                 _promotedPieces.Push(promotionPiece);
             }
 
-            if (pieceType == Piece.King && move.Flags != MoveFlags.KingCastle && move.Flags != MoveFlags.QueenCastle)
+            if (pieceType == Piece.King && !move.IsCastling())
             {
                 if (ColorToMove == Color.White)
                 {
@@ -447,11 +446,11 @@ namespace Cosette.Engine.Board
             var pieceType = PieceTable[move.To];
             ColorToMove = ColorOperations.Invert(ColorToMove);
 
-            if (move.Flags == MoveFlags.Quiet || move.Flags == MoveFlags.DoublePush)
+            if (move.IsSinglePush() || move.IsDoublePush())
             {
                 MovePiece(ColorToMove, pieceType, move.To, move.From);
             }
-            else if (move.Flags == MoveFlags.EnPassant)
+            else if (move.IsEnPassant())
             {
                 var enemyColor = ColorOperations.Invert(ColorToMove);
                 var enemyPieceField = ColorToMove == Color.White ? (byte)(move.To - 8) : (byte)(move.To + 8);
@@ -466,7 +465,7 @@ namespace Cosette.Engine.Board
                 var killedPiece = _killedPieces.Pop();
 
                 // Promotion
-                if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
+                if (move.IsPromotion())
                 {
                     var promotionPiece = _promotedPieces.Pop();
                     RemovePiece(ColorToMove, promotionPiece, move.To);
@@ -479,10 +478,10 @@ namespace Cosette.Engine.Board
 
                 AddPiece(enemyColor, killedPiece, move.To);
             }
-            else if (move.Flags == MoveFlags.KingCastle || move.Flags == MoveFlags.QueenCastle)
+            else if (move.IsCastling())
             {
                 // Short castling
-                if (move.Flags == MoveFlags.KingCastle)
+                if (move.IsKingCastling())
                 {
                     if (ColorToMove == Color.White)
                     {
@@ -512,7 +511,7 @@ namespace Cosette.Engine.Board
 
                 CastlingDone[ColorToMove] = false;
             }
-            else if (((byte)move.Flags & MoveFlagFields.Promotion) != 0)
+            else if (move.IsPromotion())
             {
                 var promotionPiece = _promotedPieces.Pop();
                 RemovePiece(ColorToMove, promotionPiece, move.To);
