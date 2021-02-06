@@ -16,7 +16,7 @@ namespace Cosette.Engine.Ai.Search
 
         public static Move FindBestMove(SearchContext context)
         {
-            HistoryHeuristic.ReduceValues();
+            HistoryHeuristic.AgeValues();
             KillerHeuristic.AgeKillers();
 
             var expectedExecutionTime = 0;

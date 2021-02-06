@@ -36,7 +36,7 @@ namespace Cosette.Engine.Ai.Ordering
             return (short)Math.Ceiling(_historyMoves[color][from][to] / ((float)_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
         }
 
-        public static void ReduceValues()
+        public static void AgeValues()
         {
             for (var color = 0; color < 2; color++)
             {
