@@ -48,11 +48,11 @@ namespace Cosette.Engine.Ai.Ordering
             }
         }
 
-        public static void AssignQuietValues(BoardState board, Span<Move> moves, Span<short> moveValues, int startIndex, int movesCount, int depth)
+        public static void AssignQuietValues(BoardState board, Span<Move> moves, Span<short> moveValues, int startIndex, int movesCount, int ply)
         {
             for (var moveIndex = startIndex; moveIndex < movesCount; moveIndex++)
             {
-                if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, depth))
+                if (KillerHeuristic.KillerMoveExists(moves[moveIndex], board.ColorToMove, ply))
                 {
                     moveValues[moveIndex] = MoveOrderingConstants.KillerMove;
                 }

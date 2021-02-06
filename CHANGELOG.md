@@ -7,6 +7,8 @@
  - Improved time management when incrementation is present
  - Fixed insufficient material detection when both sides had knight or bishop
  - Fixed threefold repetition detection
+ - Fixed invalid depth in killer heuristic
+ - Added reuse of killer table between moves
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
