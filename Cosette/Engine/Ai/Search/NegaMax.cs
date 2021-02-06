@@ -145,6 +145,7 @@ namespace Cosette.Engine.Ai.Search
 #if DEBUG
             else
             {
+                entry = TranspositionTableEntry.Empty;
                 context.Statistics.TTNonHits++;
             }
 #endif
