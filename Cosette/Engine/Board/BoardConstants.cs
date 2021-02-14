@@ -29,8 +29,8 @@
         public const ulong TopBottomEdge = ARank | HRank;
         public const ulong Corners = 0x8100000000000081;
 
-        public const ulong NearPromotionAreaWhite = 0xffffff00000000;
-        public const ulong NearPromotionAreaBlack = 0xffffff00;
+        public const ulong NearPromotionAreaWhite = 0xffff0000000000;
+        public const ulong NearPromotionAreaBlack = 0xffff00;
 
         public static int[] DistanceFromCenter =
         {
