@@ -63,6 +63,7 @@ namespace Cosette.Engine.Ai.Search
         public int FutilityPrunes { get; set; }
         public int QSEEPrunes { get; set; }
         public int QFutilityPrunes { get; set; }
+        public int Razorings { get; set; }
 
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }

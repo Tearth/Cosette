@@ -146,10 +146,16 @@ namespace Cosette.Uci
             Send($"option name IIDMinDepth type spin default {SearchConstants.IIDMinDepth} min 0 max 32");
             Send($"option name IIDDepthReduction type spin default {SearchConstants.IIDDepthReduction} min 0 max 32");
 
+            Send($"option name RazoringMinDepth type spin default {SearchConstants.RazoringMinDepth} min 0 max 32");
+            Send($"option name RazoringMaxDepth type spin default {SearchConstants.RazoringMaxDepth} min 0 max 32");
+            Send($"option name RazoringMaxDepthDivider type spin default {SearchConstants.RazoringMaxDepthDivider} min 0 max 32");
+            Send($"option name RazoringMargin type spin default {SearchConstants.RazoringMargin} min 0 max 1000");
+            Send($"option name RazoringMarginMultiplier type spin default {SearchConstants.RazoringMarginMultiplier} min 0 max 1000");
+
             Send($"option name StaticNullMoveMaxDepth type spin default {SearchConstants.StaticNullMoveMaxDepth} min 0 max 32");
             Send($"option name StaticNullMoveMaxDepthDivider type spin default {SearchConstants.StaticNullMoveMaxDepthDivider} min 0 max 32");
-            Send($"option name StaticNullMoveMargin type spin default {SearchConstants.StaticNullMoveMargin} min 0 max 500");
-            Send($"option name StaticNullMoveMarginMultiplier type spin default {SearchConstants.StaticNullMoveMarginMultiplier} min 0 max 500");
+            Send($"option name StaticNullMoveMargin type spin default {SearchConstants.StaticNullMoveMargin} min 0 max 1000");
+            Send($"option name StaticNullMoveMarginMultiplier type spin default {SearchConstants.StaticNullMoveMarginMultiplier} min 0 max 1000");
 
             Send($"option name NullMoveMinDepth type spin default {SearchConstants.NullMoveMinDepth} min 0 max 32");
             Send($"option name NullMoveDepthReduction type spin default {SearchConstants.NullMoveDepthReduction} min 0 max 32");
@@ -157,9 +163,9 @@ namespace Cosette.Uci
 
             Send($"option name FutilityPruningMaxDepth type spin default {SearchConstants.FutilityPruningMaxDepth} min 0 max 32");
             Send($"option name FutilityPruningMaxDepthDivisor type spin default {SearchConstants.FutilityPruningMaxDepthDivisor} min 0 max 32");
-            Send($"option name FutilityPruningMargin type spin default {SearchConstants.FutilityPruningMargin} min 0 max 500");
-            Send($"option name FutilityPruningMarginMultiplier type spin default {SearchConstants.FutilityPruningMarginMultiplier} min 0 max 500");
-            Send($"option name QFutilityPruningMargin type spin default {SearchConstants.QFutilityPruningMargin} min 0 max 500");
+            Send($"option name FutilityPruningMargin type spin default {SearchConstants.FutilityPruningMargin} min 0 max 1000");
+            Send($"option name FutilityPruningMarginMultiplier type spin default {SearchConstants.FutilityPruningMarginMultiplier} min 0 max 1000");
+            Send($"option name QFutilityPruningMargin type spin default {SearchConstants.QFutilityPruningMargin} min 0 max 1000");
 
             Send($"option name LMRMinDepth type spin default {SearchConstants.LMRMinDepth} min 0 max 32");
             Send($"option name LMRMovesWithoutReduction type spin default {SearchConstants.LMRMovesWithoutReduction} min 0 max 32");

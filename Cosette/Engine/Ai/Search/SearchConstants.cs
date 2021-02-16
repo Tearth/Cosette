@@ -11,6 +11,12 @@
         public static int IIDMinDepth = 4;
         public static int IIDDepthReduction = 2;
 
+        public static int RazoringMinDepth = 2;
+        public static int RazoringMaxDepth = 2;
+        public static int RazoringMaxDepthDivider = 100;
+        public static int RazoringMargin = 200;
+        public static int RazoringMarginMultiplier = 0;
+
         public static int StaticNullMoveMaxDepth = 3;
         public static int StaticNullMoveMaxDepthDivider = 7;
         public static int StaticNullMoveMargin = 300;

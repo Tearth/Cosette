@@ -60,6 +60,12 @@ namespace Cosette.Uci.Commands
                 { "IIDMinDepth", p => SearchConstants.IIDMinDepth = int.Parse(p) },
                 { "IIDDepthReduction", p => SearchConstants.IIDDepthReduction = int.Parse(p) },
 
+                { "RazoringMinDepth", p => SearchConstants.RazoringMinDepth = int.Parse(p) },
+                { "RazoringMaxDepth", p => SearchConstants.RazoringMaxDepth = int.Parse(p) },
+                { "RazoringMaxDepthDivider", p => SearchConstants.RazoringMaxDepthDivider = int.Parse(p) },
+                { "RazoringMargin", p => SearchConstants.RazoringMargin = int.Parse(p) },
+                { "RazoringMarginMultiplier", p => SearchConstants.RazoringMarginMultiplier = int.Parse(p) },
+
                 { "StaticNullMoveMaxDepth", p => SearchConstants.StaticNullMoveMaxDepth = int.Parse(p) },
                 { "StaticNullMoveMaxDepthDivider", p => SearchConstants.StaticNullMoveMaxDepthDivider = int.Parse(p) },
                 { "StaticNullMoveMargin", p => SearchConstants.StaticNullMoveMargin = int.Parse(p) },

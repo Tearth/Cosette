@@ -150,6 +150,25 @@ namespace Cosette.Engine.Ai.Search
             }
 #endif
 
+            if (RazoringCanBeApplied(depth, context.Statistics.Depth, friendlyKingInCheck, pvNode, alpha))
+            {
+                var fastEvaluation = Evaluation.FastEvaluate(context.BoardState, context.Statistics.EvaluationStatistics);
+                var margin = SearchConstants.RazoringMargin + (depth - 1) * SearchConstants.RazoringMarginMultiplier;
+                var futileAlpha = alpha - margin;
+
+                if (fastEvaluation < futileAlpha)
+                {
+                    var result = QuiescenceSearch.FindBestMove(context, depth, ply, futileAlpha, futileAlpha + 1);
+                    if (result <= futileAlpha)
+                    {
+#if DEBUG
+                        context.Statistics.Razorings++;
+#endif
+                        return futileAlpha;
+                    }
+                }
+            }
+
             if (StaticNullMoveCanBeApplied(depth, context.Statistics.Depth, friendlyKingInCheck, pvNode, beta))
             {
                 var fastEvaluation = Evaluation.FastEvaluate(context.BoardState, context.Statistics.EvaluationStatistics);
@@ -470,6 +489,12 @@ namespace Cosette.Engine.Ai.Search
             }
 
             return bestScore;
+        }
+
+        private static bool RazoringCanBeApplied(int depth, int rootDepth, bool friendlyKingInCheck, bool pvNode, int alpha)
+        {
+            var maxDepth = SearchConstants.RazoringMaxDepth + rootDepth / SearchConstants.RazoringMaxDepthDivider;
+            return !pvNode && depth >= SearchConstants.RazoringMinDepth && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
         private static bool StaticNullMoveCanBeApplied(int depth, int rootDepth, bool friendlyKingInCheck, bool pvNode, int beta)
