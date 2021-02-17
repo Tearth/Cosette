@@ -153,7 +153,7 @@ namespace Cosette.Engine.Ai.Search
             if (RazoringCanBeApplied(depth, context.Statistics.Depth, friendlyKingInCheck, pvNode, alpha))
             {
                 var fastEvaluation = Evaluation.FastEvaluate(context.BoardState, context.Statistics.EvaluationStatistics);
-                var margin = SearchConstants.RazoringMargin + (depth - 1) * SearchConstants.RazoringMarginMultiplier;
+                var margin = SearchConstants.RazoringMargin + (depth - SearchConstants.RazoringMinDepth) * SearchConstants.RazoringMarginMultiplier;
                 var futileAlpha = alpha - margin;
 
                 if (fastEvaluation < futileAlpha)
