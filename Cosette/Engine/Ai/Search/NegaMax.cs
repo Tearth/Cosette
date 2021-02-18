@@ -166,6 +166,12 @@ namespace Cosette.Engine.Ai.Search
 #endif
                         return futileAlpha;
                     }
+#if DEBUG
+                    else
+                    {
+                        context.Statistics.RazoringsRejected++;
+                    }
+#endif
                 }
             }
 
