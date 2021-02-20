@@ -9,6 +9,7 @@
  - Fixed threefold repetition detection
  - Fixed invalid depth in killer heuristic
  - Added reuse of killer table between moves
+ - Added razoring
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
