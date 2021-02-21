@@ -16,7 +16,7 @@
         public static int CenterMobilityModifier = 7;
         public static int OutsideMobilityModifier = 6;
 
-        public static int KingInDanger = -10;
+        public static int KingInDanger = -20;
         public static int PawnShield = 20;
 
         public static int DoubledRooks = 40;

@@ -2,6 +2,7 @@
  - Enabled support for BMI instruction set (only if CPU supports it)
  - Added futility pruning to quiescence search
  - Adjusted search parameters
+ - Adjusted evaluation parameters
  - Allowed to use history heuristic values from the previous iterations
  - Added more detailed evaluation info in pawn hash table entry
  - Improved time management when incrementation is present
