@@ -202,8 +202,11 @@ namespace Cosette.Uci
             Send($"info depth {stats.Depth} seldepth {stats.SelectiveDepth} time {stats.SearchTime} " +
                  $"score {score} nodes {stats.TotalNodes} nps {stats.TotalNodesPerSecond} pv {principalVariation}");
 
-            if (_debugMode)
+            if (_debugMode && stats.PrincipalVariationMovesCount > 0 && stats.PrincipalVariation[0] != Move.Empty)
             {
+                var sign = stats.Board.ColorToMove == Color.White ? 1 : -1;
+                stats.Board.MakeMove(stats.PrincipalVariation[0]);
+
                 var evaluationStatistics = new EvaluationStatistics();
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = BoardConstants.PhaseResolution - openingPhase;
@@ -211,13 +214,13 @@ namespace Cosette.Uci
                 var fieldsAttackedByWhite = 0ul;
                 var fieldsAttackedByBlack = 0ul;
 
-                var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
-                var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
-                var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
-                var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-                var rooks = RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var bishops = BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var materialEvaluation = sign * MaterialEvaluator.Evaluate(stats.Board);
+                var positionEvaluation = sign * PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var pawnStructureEvaluation = sign * PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
+                var mobility = sign * MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
+                var kingSafety = sign * KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
+                var rooks = sign * RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var bishops = sign * BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation + 
                             mobility + kingSafety;
@@ -225,6 +228,8 @@ namespace Cosette.Uci
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
                      $"rooks {rooks} bishops {bishops} irrmoves {stats.Board.IrreversibleMovesCount}");
+
+                stats.Board.UndoMove(stats.PrincipalVariation[0]);
             }
         }
 
