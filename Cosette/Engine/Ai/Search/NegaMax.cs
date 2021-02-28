@@ -45,7 +45,8 @@ namespace Cosette.Engine.Ai.Search
 
             if (context.BoardState.IsInsufficientMaterial())
             {
-                if (!friendlyKingInCheck && !context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+                var enemyColor = ColorOperations.Invert(context.BoardState.ColorToMove);
+                if (!friendlyKingInCheck && !context.BoardState.IsKingChecked(enemyColor))
                 {
                     context.Statistics.Leafs++;
                     return EvaluationConstants.InsufficientMaterial;
@@ -55,12 +56,6 @@ namespace Cosette.Engine.Ai.Search
             if (context.BoardState.IsFiftyMoveRuleDraw())
             {
                 context.Statistics.Leafs++;
-                
-                if (context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
-                {
-                    return EvaluationConstants.Checkmate + ply;
-                }
-                
                 return EvaluationConstants.ThreefoldRepetition;
             }
 
