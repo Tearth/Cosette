@@ -67,6 +67,14 @@ namespace Cosette.Engine.Ai.Search
 
         public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
+            if (IsScoreNearCheckmate(context.Statistics.Score))
+            {
+                if (depth - 1 >= GetMovesToCheckmate(context.Statistics.Score) * 2)
+                {
+                    return false;
+                }
+            }
+
             return depth < context.MaxDepth && expectedExecutionTime <= context.MaxTime;
         }
 
