@@ -4,6 +4,7 @@
     {
         public const int MinValue = short.MinValue;
         public const int MaxValue = short.MaxValue;
+        public const int NoKingValue = MinValue - 10;
         public const int MaxDepth = 32;
         public const int MaxMovesCount = 218;
         public const float DeadlineFactor = 1.5f;

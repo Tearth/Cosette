@@ -79,7 +79,7 @@ namespace Cosette.Engine.Ai.Search
 
         public static int GetMovesToCheckmate(int score)
         {
-            return Math.Abs(Math.Abs(score) - EvaluationConstants.Checkmate) / 2;
+            return (int)Math.Ceiling((float)Math.Abs(Math.Abs(score) - EvaluationConstants.Checkmate) / 2);
         }
 
         private static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)

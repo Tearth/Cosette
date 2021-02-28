@@ -34,7 +34,7 @@ namespace Cosette.Engine.Ai.Search
             if (context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King] == 0)
             {
                 context.Statistics.Leafs++;
-                return -EvaluationConstants.Checkmate + ply;
+                return SearchConstants.NoKingValue;
             }
 
             if (context.BoardState.IsThreefoldRepetition())
@@ -441,17 +441,17 @@ namespace Cosette.Engine.Ai.Search
             }
 
             // Don't add invalid move (done after checkmate) to prevent strange behaviors
-            if (bestScore == -(-EvaluationConstants.Checkmate + ply + 1))
+            if (bestScore == -SearchConstants.NoKingValue)
             {
                 return bestScore;
             }
 
             // Return draw score or checkmate score as leafs
-            if (bestScore == -EvaluationConstants.Checkmate + ply + 2)
+            if (bestScore == SearchConstants.NoKingValue)
             {
                 if (friendlyKingInCheck)
                 {
-                    return bestScore;
+                    return -EvaluationConstants.Checkmate + ply;
                 }
                 
                 return 0;
