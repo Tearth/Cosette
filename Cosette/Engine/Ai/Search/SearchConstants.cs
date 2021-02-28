@@ -6,7 +6,6 @@
         public const int MaxValue = short.MaxValue;
         public const int MaxDepth = 32;
         public const int MaxMovesCount = 218;
-        public const int MateScoresToStopSearch = 3;
         public const float DeadlineFactor = 1.5f;
 
         public static int IIDMinDepth = 4;

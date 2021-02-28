@@ -26,12 +26,9 @@ namespace Cosette.Engine.Ai.Search
             var bestMove = Move.Empty;
             var stopwatch = Stopwatch.StartNew();
 
-            var mateScoresCount = 0;
-            var lastMateScore = 0;
-
             context.Statistics = new SearchStatistics();
 
-            for (var depth = 1; ShouldContinueDeepening(context, depth, expectedExecutionTime, mateScoresCount); depth++)
+            for (var depth = 1; ShouldContinueDeepening(context, depth, expectedExecutionTime); depth++)
             {
                 context.Statistics.Board = context.BoardState;
                 context.Statistics.Depth = depth;
@@ -47,19 +44,6 @@ namespace Cosette.Engine.Ai.Search
                 bestMove = context.Statistics.PrincipalVariation[0];
 
                 OnSearchUpdate?.Invoke(null, context.Statistics);
-
-                if (IsScoreNearCheckmate(context.Statistics.Score))
-                {
-                    if (lastMateScore != context.Statistics.Score)
-                    {
-                        lastMateScore = context.Statistics.Score;
-                        mateScoresCount = 1;
-                    }
-                    else
-                    {
-                        mateScoresCount++;
-                    }
-                }
 
                 if (lastSearchTime != 0)
                 {
@@ -81,9 +65,9 @@ namespace Cosette.Engine.Ai.Search
             return bestMove;
         }
 
-        public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime, int mateScoresCount)
+        public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
-            return depth < context.MaxDepth && expectedExecutionTime <= context.MaxTime && mateScoresCount < SearchConstants.MateScoresToStopSearch;
+            return depth < context.MaxDepth && expectedExecutionTime <= context.MaxTime;
         }
 
         public static bool IsScoreNearCheckmate(int score)
