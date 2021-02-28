@@ -11,6 +11,7 @@
  - Fixed invalid depth in killer heuristic
  - Added reuse of killer table between moves
  - Added razoring
+ - Allowed to stop search when stable mate score is detected
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
