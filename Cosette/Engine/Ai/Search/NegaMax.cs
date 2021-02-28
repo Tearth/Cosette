@@ -70,6 +70,7 @@ namespace Cosette.Engine.Ai.Search
 
             var entry = TranspositionTable.Get(context.BoardState.Hash);
             var hashMove = Move.Empty;
+            var bestMove = Move.Empty;
 
             if (entry.Flags != TranspositionTableEntryFlags.Invalid && entry.IsKeyValid(context.BoardState.Hash))
             {
@@ -110,10 +111,9 @@ namespace Cosette.Engine.Ai.Search
 
                         case TranspositionTableEntryFlags.ExactScore:
                         {
-                            if (!pvNode)
+                            if (!pvNode || IterativeDeepening.IsScoreNearCheckmate(entry.Score))
                             {
-                                entry.Score = (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
-                                return entry.Score;
+                                return (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
                             }
 
                             break;
@@ -124,6 +124,7 @@ namespace Cosette.Engine.Ai.Search
                             if (entry.Score > alpha)
                             {
                                 alpha = entry.Score;
+                                bestMove = entry.BestMove;
                             }
 
                             break;
@@ -230,7 +231,6 @@ namespace Cosette.Engine.Ai.Search
             
             Span<Move> moves = stackalloc Move[SearchConstants.MaxMovesCount];
             Span<short> moveValues = stackalloc short[SearchConstants.MaxMovesCount];
-            var bestMove = Move.Empty;
             var movesCount = 0;
 
             var loudMovesGenerated = false;
