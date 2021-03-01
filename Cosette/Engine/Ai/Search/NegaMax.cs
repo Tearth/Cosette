@@ -97,6 +97,7 @@ namespace Cosette.Engine.Ai.Search
 
                 if (entry.Depth >= depth)
                 {
+                    entry.Score = (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
                     switch (entry.Flags)
                     {
                         case TranspositionTableEntryFlags.AlphaScore:
@@ -113,7 +114,7 @@ namespace Cosette.Engine.Ai.Search
                         {
                             if (!pvNode || IterativeDeepening.IsScoreNearCheckmate(entry.Score))
                             {
-                                return (short)TranspositionTable.TTToRegularScore(entry.Score, ply);
+                                return entry.Score;
                             }
 
                             break;
@@ -466,10 +467,7 @@ namespace Cosette.Engine.Ai.Search
                         alpha >= beta ? TranspositionTableEntryFlags.BetaScore :
                         TranspositionTableEntryFlags.ExactScore;
 
-                    if (entryType == TranspositionTableEntryFlags.ExactScore)
-                    {
-                        valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
-                    }
+                    valueToSave = TranspositionTable.RegularToTTScore(alpha, ply);
 
                     TranspositionTable.Add(context.BoardState.Hash, new TranspositionTableEntry(
                         context.BoardState.Hash,
