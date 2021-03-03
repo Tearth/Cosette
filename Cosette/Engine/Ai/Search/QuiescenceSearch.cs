@@ -121,11 +121,6 @@ namespace Cosette.Engine.Ai.Search
                 }
             }
 
-            if (alpha == SearchConstants.NoKingValue)
-            {
-                return -EvaluationConstants.Checkmate + ply;
-            }
-
             return alpha;
         }
     }
