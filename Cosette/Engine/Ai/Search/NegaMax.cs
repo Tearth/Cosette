@@ -37,6 +37,12 @@ namespace Cosette.Engine.Ai.Search
                 return SearchConstants.NoKingValue;
             }
 
+            if (context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
+            {
+                context.Statistics.Leafs++;
+                return -SearchConstants.NoKingValue;
+            }
+
             if (context.BoardState.IsThreefoldRepetition())
             {
                 context.Statistics.Leafs++;
