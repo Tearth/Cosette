@@ -13,6 +13,7 @@
  - Added razoring
  - Added ability to stop search if reliable mate score was found
  - Improved Fianchetto detection
+ - Added search cut when enemy king is checked
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
