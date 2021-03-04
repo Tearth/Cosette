@@ -89,6 +89,7 @@ namespace Cosette.Engine.Ai.Search
                     if (isMoveLegal)
                     {
                         hashMove = entry.BestMove;
+                        bestMove = entry.BestMove;
 #if DEBUG
                         context.Statistics.TTValidMoves++;
 #endif
@@ -131,7 +132,6 @@ namespace Cosette.Engine.Ai.Search
                             if (entry.Score > alpha)
                             {
                                 alpha = entry.Score;
-                                bestMove = entry.BestMove;
                             }
 
                             break;
@@ -256,7 +256,7 @@ namespace Cosette.Engine.Ai.Search
             if (hashMove == Move.Empty)
             {
                 movesCount = context.BoardState.GetLoudMoves(moves, 0, evasionMask);
-                MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
+                MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, Move.Empty);
                 loudMovesGenerated = true;
 
                 context.Statistics.LoudMovesGenerated++;
@@ -408,7 +408,7 @@ namespace Cosette.Engine.Ai.Search
                 if (!loudMovesGenerated)
                 {
                     movesCount = context.BoardState.GetLoudMoves(moves, 0, evasionMask);
-                    MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, bestMove);
+                    MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, hashMove);
                     moveIndex = -1;
                     loudMovesGenerated = true;
 
