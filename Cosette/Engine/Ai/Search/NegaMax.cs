@@ -315,7 +315,16 @@ namespace Cosette.Engine.Ai.Search
                     }
                 }
 
-                if (futilityPruningCanBeApplied && FutilityPruningCanBeAppliedForMove(context, moves[moveIndex], pvs))
+                context.BoardState.MakeMove(moves[moveIndex]);
+                
+                var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
+                var extension = GetExtensions(depth, extensionsCount, enemyKingInCheck);
+
+#if DEBUG
+                context.Statistics.Extensions += extension;
+#endif
+
+                if (futilityPruningCanBeApplied && FutilityPruningCanBeAppliedForMove(context, moves[moveIndex], enemyKingInCheck, pvs))
                 {
                     var gain = FutilityPruningGetGain(context, moves[moveIndex]);
                     if (futilityPruningEvaluation + futilityPruningMargin + gain <= alpha)
@@ -324,19 +333,12 @@ namespace Cosette.Engine.Ai.Search
                         context.Statistics.FutilityPrunes++;
 #endif
 
+                        context.BoardState.UndoMove(moves[moveIndex]);
                         goto postLoopOperations;
                     }
                 }
 
-                context.BoardState.MakeMove(moves[moveIndex]);
                 allMovesPruned = false;
-
-                var enemyKingInCheck = context.BoardState.IsKingChecked(context.BoardState.ColorToMove);
-                var extension = GetExtensions(depth, extensionsCount, enemyKingInCheck);
-
-#if DEBUG
-                context.Statistics.Extensions += extension;
-#endif
 
                 if (pvs)
                 {
@@ -530,8 +532,13 @@ namespace Cosette.Engine.Ai.Search
             return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
-        private static bool FutilityPruningCanBeAppliedForMove(SearchContext context, Move move, bool pvMove)
+        private static bool FutilityPruningCanBeAppliedForMove(SearchContext context, Move move, bool enemyKingInCheck, bool pvMove)
         {
+            if (enemyKingInCheck)
+            {
+                return false;
+            }
+
             if (context.BoardState.PieceTable[move.From] == Piece.Pawn)
             {
                 if (context.BoardState.IsFieldPassing(context.BoardState.ColorToMove, move.To))
