@@ -7,7 +7,7 @@ An UCI-compliant chess engine written in C# for .NET Core platform, with **[an o
 
 On the table below you can see how engines' strength was changing with the versions. Take note that usually the latest one has an estimated value, which will be updated later to a more concrete result.
 
-| Version                                                                | Release date | ELO   | Main changes |
+| Version                                                                | Release date | Elo   | Main changes |
 |------------------------------------------------------------------------|--------------|-------| ------------ |
 | [v4.0 (Komekko)](https://github.com/Tearth/Cosette/releases/tag/v4.0)  | 22.01.2021   | 2384  | Futility pruning, static null-move pruning, evasion move generator, check extensions, adjusted parameters of search and evaluation. |
 | [v3.0 (Luna)](https://github.com/Tearth/Cosette/releases/tag/v3.0)     | 12.12.2020   | 2086  | Multi-stage move generation and move ordering, internal iterative deepening, SEE pruning in quiescence search. New evaluation function for fianchetto. |

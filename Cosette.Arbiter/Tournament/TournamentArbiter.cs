@@ -137,7 +137,7 @@ namespace Cosette.Arbiter.Tournament
                 var winsByTime = participant.History.Count(p => p.Result == GameResult.Win && p.TimeFlag);
                 var lossesByTime = participant.History.Count(p => p.Result == GameResult.Loss && p.TimeFlag);
 
-                Console.WriteLine($"{participant.EngineData.Name} {originalRating} ELO ({performance:+0;-#}, {wonGamesPercent}%): " +
+                Console.WriteLine($"{participant.EngineData.Name} {originalRating} Elo ({performance:+0;-#}, {wonGamesPercent}%): " +
                                   $"{participant.Wins} wins ({winsByTime} by time), {participant.Losses} losses ({lossesByTime} by time), " +
                                   $"{participant.Draws} draws");
                 Console.WriteLine($" === {participant.AverageDepth:F} average depth, {participant.AverageNodesCount} average nodes, " +
