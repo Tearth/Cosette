@@ -28,16 +28,27 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger;
 
             var pawnShieldOpeningScore = 0;
+            var openFilesNextToKingScore = 0;
             if (board.CastlingDone[board.ColorToMove])
             {
                 var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
                 var pawnShield = (int)BitOperations.Count(pawnsNearKing);
 
                 pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield;
+
+                var openFileCheckFrom = Math.Max(0, kingPosition.X - 1);
+                var openFileCheckTo = Math.Min(7, kingPosition.X + 1);
+                for (var file = openFileCheckFrom; file < openFileCheckTo; file++)
+                {
+                    if ((FilePatternGenerator.GetPatternForFile(file) & board.Pieces[color][Piece.Pawn]) == 0)
+                    {
+                        openFilesNextToKingScore += EvaluationConstants.OpenFileNextToKing;
+                    }
+                }
             }
 
             var tropismOpeningScore = 0;
-            for (var pieceType = Piece.Pawn; pieceType <= Piece.Queen; pieceType++)
+            for (var pieceType = Piece.Knight; pieceType <= Piece.Queen; pieceType++)
             {
                 var pieces = board.Pieces[enemyColor][pieceType];
                 while (pieces != 0)
@@ -47,18 +58,6 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                     pieces = BitOperations.PopLsb(pieces);
 
                     tropismOpeningScore += Distance.Table[kingField][fieldIndex] * EvaluationConstants.Tropism[pieceType];
-                }
-            }
-
-            var openFileCheckFrom = Math.Max(0, kingPosition.X - 1);
-            var openFileCheckTo = Math.Min(7, kingPosition.X + 1);
-            var openFilesNextToKingScore = 0;
-
-            for (var file = openFileCheckFrom; file < openFileCheckTo; file++)
-            {
-                if ((FilePatternGenerator.GetPatternForFile(file) & board.Pieces[color][Piece.Pawn]) == 0)
-                {
-                    openFilesNextToKingScore += EvaluationConstants.OpenFileNextToKing;
                 }
             }
 
