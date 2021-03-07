@@ -26,6 +26,8 @@
         public static int Fianchetto = 25;
         public static int FianchettoWithoutBishop = -25;
 
+        public static int[] Tropism = { 4, 4, 4, 4, 4 };
+
         public const int OpeningEndgameEdge = 20500;
 
         public const ulong Center = 0x1818000000;

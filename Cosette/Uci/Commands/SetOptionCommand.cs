@@ -47,6 +47,12 @@ namespace Cosette.Uci.Commands
                 { "Fianchetto", p => EvaluationConstants.Fianchetto = int.Parse(p) },
                 { "FianchettoWithoutBishop", p => EvaluationConstants.FianchettoWithoutBishop = int.Parse(p) },
 
+                { "TropismPawn", p => EvaluationConstants.Tropism[Piece.Pawn] = int.Parse(p) },
+                { "TropismKnight", p => EvaluationConstants.Tropism[Piece.Knight] = int.Parse(p) },
+                { "TropismBishop", p => EvaluationConstants.Tropism[Piece.Bishop] = int.Parse(p) },
+                { "TropismRook", p => EvaluationConstants.Tropism[Piece.Rook] = int.Parse(p) },
+                { "TropismQueen", p => EvaluationConstants.Tropism[Piece.Queen] = int.Parse(p) },
+
                 { "HashMove", p => MoveOrderingConstants.HashMove = short.Parse(p) },
                 { "Promotion", p => MoveOrderingConstants.Promotion = short.Parse(p) },
                 { "Castling", p => MoveOrderingConstants.Castling = short.Parse(p) },

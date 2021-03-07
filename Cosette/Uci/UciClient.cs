@@ -133,6 +133,12 @@ namespace Cosette.Uci
             Send($"option name Fianchetto type spin default {EvaluationConstants.Fianchetto} min -100 max 100");
             Send($"option name FianchettoWithoutBishop type spin default {EvaluationConstants.FianchettoWithoutBishop} min -100 max 100");
 
+            Send($"option name TropismPawn type spin default {EvaluationConstants.Tropism[Piece.Pawn]} min 0 max 10");
+            Send($"option name TropismKnight type spin default {EvaluationConstants.Tropism[Piece.Knight]} min 0 max 10");
+            Send($"option name TropismBishop type spin default {EvaluationConstants.Tropism[Piece.Bishop]} min 0 max 10");
+            Send($"option name TropismRook type spin default {EvaluationConstants.Tropism[Piece.Rook]} min 0 max 10");
+            Send($"option name TropismQueen type spin default {EvaluationConstants.Tropism[Piece.Queen]} min 0 max 10");
+
             Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
             Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");
             Send($"option name Castling type spin default {MoveOrderingConstants.Castling} min -10000 max 10000");
