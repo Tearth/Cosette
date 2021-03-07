@@ -46,6 +46,7 @@ namespace Cosette.Uci.Commands
                 { "PairOfBishops", p => EvaluationConstants.PairOfBishops = int.Parse(p) },
                 { "Fianchetto", p => EvaluationConstants.Fianchetto = int.Parse(p) },
                 { "FianchettoWithoutBishop", p => EvaluationConstants.FianchettoWithoutBishop = int.Parse(p) },
+                { "OpenFileNextToKing", p => EvaluationConstants.OpenFileNextToKing = int.Parse(p) },
 
                 { "TropismPawn", p => EvaluationConstants.Tropism[Piece.Pawn] = int.Parse(p) },
                 { "TropismKnight", p => EvaluationConstants.Tropism[Piece.Knight] = int.Parse(p) },

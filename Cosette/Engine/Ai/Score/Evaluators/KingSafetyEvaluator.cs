@@ -1,6 +1,7 @@
 ﻿using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves.Patterns;
+using System;
 
 namespace Cosette.Engine.Ai.Score.Evaluators
 {
@@ -19,6 +20,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
             var king = board.Pieces[color][Piece.King];
             var kingField = BitOperations.BitScan(king);
+            var kingPosition = Position.FromFieldIndex(kingField);
             var fieldsAroundKing = ForwardBoxPatternGenerator.GetPattern(color, kingField);
 
             var attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
@@ -48,7 +50,19 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                 }
             }
 
-            var openingScore = pawnShieldOpeningScore + attackersCountOpeningScore + tropismOpeningScore;
+            var openFileCheckFrom = Math.Max(0, kingPosition.X - 1);
+            var openFileCheckTo = Math.Min(7, kingPosition.X + 1);
+            var openFilesNextToKingScore = 0;
+
+            for (var file = openFileCheckFrom; file < openFileCheckTo; file++)
+            {
+                if ((FilePatternGenerator.GetPatternForFile(file) & board.Pieces[color][Piece.Pawn]) == 0)
+                {
+                    openFilesNextToKingScore += EvaluationConstants.OpenFileNextToKing;
+                }
+            }
+
+            var openingScore = pawnShieldOpeningScore + attackersCountOpeningScore + tropismOpeningScore + openFilesNextToKingScore;
             return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }
     }
