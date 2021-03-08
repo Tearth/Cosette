@@ -48,7 +48,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
             
             var tropismOpeningScore = 0;
-            for (var pieceType = Piece.Knight; pieceType <= Piece.Queen; pieceType++)
+            for (var pieceType = Piece.Pawn; pieceType <= Piece.Queen; pieceType++)
             {
                 var pieces = board.Pieces[enemyColor][pieceType];
                 while (pieces != 0)
