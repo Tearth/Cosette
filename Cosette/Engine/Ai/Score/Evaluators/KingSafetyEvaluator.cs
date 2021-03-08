@@ -29,7 +29,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
             var pawnShieldOpeningScore = 0;
             var openFilesNextToKingScore = 0;
-            if (board.CastlingDone[board.ColorToMove])
+            if (board.CastlingDone[color])
             {
                 var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
                 var pawnShield = (int)BitOperations.Count(pawnsNearKing);
@@ -38,15 +38,15 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
                 var openFileCheckFrom = Math.Max(0, kingPosition.X - 1);
                 var openFileCheckTo = Math.Min(7, kingPosition.X + 1);
-                for (var file = openFileCheckFrom; file < openFileCheckTo; file++)
+                for (var file = openFileCheckFrom; file <= openFileCheckTo; file++)
                 {
-                    if ((FilePatternGenerator.GetPatternForFile(file) & board.Pieces[color][Piece.Pawn]) == 0)
+                    if ((FilePatternGenerator.GetPatternForFile(7 - file) & board.Pieces[color][Piece.Pawn]) == 0)
                     {
                         openFilesNextToKingScore += EvaluationConstants.OpenFileNextToKing;
                     }
                 }
             }
-
+            
             var tropismOpeningScore = 0;
             for (var pieceType = Piece.Knight; pieceType <= Piece.Queen; pieceType++)
             {
