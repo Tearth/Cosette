@@ -46,9 +46,10 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                     }
                 }
             }
-            
+
             var tropismOpeningScore = 0;
-            for (var pieceType = Piece.Pawn; pieceType <= Piece.Queen; pieceType++)
+            /*
+            for (var pieceType = Piece.Knight; pieceType <= Piece.Queen; pieceType++)
             {
                 var pieces = board.Pieces[enemyColor][pieceType];
                 while (pieces != 0)
@@ -60,7 +61,7 @@ namespace Cosette.Engine.Ai.Score.Evaluators
                     tropismOpeningScore += Distance.Table[kingField][fieldIndex] * EvaluationConstants.Tropism[pieceType];
                 }
             }
-
+            */
             var openingScore = pawnShieldOpeningScore + attackersCountOpeningScore + tropismOpeningScore + openFilesNextToKingScore;
             return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }

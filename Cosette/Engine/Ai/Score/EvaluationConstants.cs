@@ -27,7 +27,7 @@
         public static int FianchettoWithoutBishop = -25;
         public static int OpenFileNextToKing = -30;
 
-        public static int[] Tropism = { 1, 2, 2, 2, 3 };
+        public static int[] Tropism = { 0, 1, 1, 2, 2 };
 
         public const int OpeningEndgameEdge = 20500;
 
