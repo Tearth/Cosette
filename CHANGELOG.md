@@ -15,6 +15,7 @@
  - Improved Fianchetto detection
  - Added search cut when enemy king is checked
  - Disabled futility pruning when enemy king is checked
+ - Added detection of open file next to the king in the evaluation
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
