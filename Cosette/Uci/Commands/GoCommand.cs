@@ -76,7 +76,7 @@ namespace Cosette.Uci.Commands
                 var stopwatch = Stopwatch.StartNew();
                 while (stopwatch.ElapsedMilliseconds < deadline || _uciClient.SearchContext.Statistics.Depth <= 1)
                 {
-                    Task.Delay(1).GetAwaiter().GetResult();
+                    Thread.Sleep(1);
 
                     if (cancellationToken.IsCancellationRequested)
                     {
