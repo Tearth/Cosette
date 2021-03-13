@@ -1,4 +1,4 @@
-# Version 5.0 (-------), xx.xx.2021
+# Version 5.0 (Megumin), xx.xx.2021
  - Enabled support for BMI instruction set (only if CPU supports it)
  - Added futility pruning to quiescence search
  - Adjusted search parameters
