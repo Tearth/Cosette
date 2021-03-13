@@ -129,7 +129,7 @@ namespace Cosette.Interactive
             var runtimeVersion = $"{Environment.Version.Major}.{Environment.Version.Minor}.{Environment.Version.Build}";
             var executableHash = GetExecutableHash();
 
-            Console.WriteLine($"Cosette v5.0 (Megumin), 22.01.2021 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
+            Console.WriteLine($"Cosette v5.0 (Megumin), xx.xx.2021 @ {Environment.OSVersion} (.NET {runtimeVersion})");
             Console.WriteLine("Distributed under AGPL license, homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine($"Executable hash: {executableHash}");
             Console.WriteLine();
