@@ -631,8 +631,8 @@ namespace Cosette.Engine.Board
                 result |= 1 << SeePiece.Bishop;
             }
 
-            var occupancyWithoutFileRantPieces = OccupancySummary & ~Pieces[color][Piece.Rook] & ~Pieces[color][Piece.Queen];
-            var fileRankAttacks = RookMovesGenerator.GetMoves(occupancyWithoutFileRantPieces, fieldIndex) & Occupancy[color];
+            var occupancyWithoutFileRankPieces = OccupancySummary & ~Pieces[color][Piece.Rook] & ~Pieces[color][Piece.Queen];
+            var fileRankAttacks = RookMovesGenerator.GetMoves(occupancyWithoutFileRankPieces, fieldIndex) & Occupancy[color];
             var attackingRooks = fileRankAttacks & Pieces[color][Piece.Rook];
             var attackingRooksCount = BitOperations.Count(attackingRooks);
             if (attackingRooksCount != 0)
