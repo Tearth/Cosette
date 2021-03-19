@@ -25,7 +25,7 @@
 
         public static int NullMoveMinDepth = 2;
         public static int NullMoveDepthReduction = 3;
-        public static int NullMoveDepthReductionDivider = 3;
+        public static int NullMoveDepthReductionDivider = 4;
 
         public static int FutilityPruningMaxDepth = 3;
         public static int FutilityPruningMaxDepthDivisor = 7;
