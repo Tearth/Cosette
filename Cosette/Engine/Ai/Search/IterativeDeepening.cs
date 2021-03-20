@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
@@ -56,7 +57,7 @@ namespace Cosette.Engine.Ai.Search
 
             while (context.WaitForStopCommand)
             {
-                Task.Delay(1).GetAwaiter().GetResult();
+                Thread.Sleep(1);
             }
 
             context.AbortSearch = false;
