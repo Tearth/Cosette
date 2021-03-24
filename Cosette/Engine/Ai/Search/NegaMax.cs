@@ -574,6 +574,12 @@ namespace Cosette.Engine.Ai.Search
                     return false;
                 }
 
+                if (HistoryHeuristic.GetRawMoveValue(enemyColor, moves[moveIndex].From, moves[moveIndex].To) >= HistoryHeuristic.GetMaxValue() / SearchConstants.LMRMaxHistoryValueDivider)
+                {
+                    return false;
+                }
+
+                context.Statistics.LMRReductions++;
                 return true;
             }
 

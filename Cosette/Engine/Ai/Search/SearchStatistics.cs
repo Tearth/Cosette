@@ -65,6 +65,7 @@ namespace Cosette.Engine.Ai.Search
         public int QFutilityPrunes { get; set; }
         public int Razorings { get; set; }
         public int RazoringsRejected { get; set; }
+        public int LMRReductions { get; set; }
 
         public Move[] PrincipalVariation { get; set; }
         public int PrincipalVariationMovesCount { get; set; }

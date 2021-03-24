@@ -31,9 +31,19 @@ namespace Cosette.Engine.Ai.Ordering
             _historyMoves[color][from][to] = newValue;
         }
 
-        public static short GetHistoryMoveValue(int color, int from, int to)
+        public static short GetMoveValue(int color, int from, int to)
         {
             return (short)Math.Ceiling(_historyMoves[color][from][to] / ((float)_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
+        }
+
+        public static uint GetRawMoveValue(int color, int from, int to)
+        {
+            return _historyMoves[color][from][to];
+        }
+
+        public static uint GetMaxValue()
+        {
+            return _max;
         }
 
         public static void AgeValues()
@@ -62,6 +72,8 @@ namespace Cosette.Engine.Ai.Ordering
                     Array.Clear(_historyMoves[color][from], 0, 64);
                 }
             }
+
+            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
         }
     }
 }

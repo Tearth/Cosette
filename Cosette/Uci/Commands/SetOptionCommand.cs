@@ -88,6 +88,7 @@ namespace Cosette.Uci.Commands
                 { "LMRMoveIndexDivider", p => SearchConstants.LMRMoveIndexDivider = int.Parse(p) },
                 { "LMRPvNodeMaxReduction", p => SearchConstants.LMRPvNodeMaxReduction = int.Parse(p) },
                 { "LMRNonPvNodeMaxReduction", p => SearchConstants.LMRNonPvNodeMaxReduction = int.Parse(p) },
+                { "LMRMaxHistoryValueDivider", p => SearchConstants.LMRMaxHistoryValueDivider = int.Parse(p) },
 
                 { "Pawn.O0", p => PawnTables.O0 = int.Parse(p) },
                 { "Pawn.O1", p => PawnTables.O1 = int.Parse(p) },

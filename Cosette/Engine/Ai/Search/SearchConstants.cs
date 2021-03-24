@@ -34,10 +34,11 @@
         public static int QFutilityPruningMargin = 100;
 
         public static int LMRMinDepth = 2;
-        public static int LMRMovesWithoutReduction = 4;
+        public static int LMRMovesWithoutReduction = 3;
         public static int LMRBaseReduction = 1;
         public static int LMRMoveIndexDivider = 4;
         public static int LMRPvNodeMaxReduction = 2;
         public static int LMRNonPvNodeMaxReduction = 4;
+        public static int LMRMaxHistoryValueDivider = 4;
     }
 }
