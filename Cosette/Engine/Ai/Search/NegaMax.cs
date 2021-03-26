@@ -387,7 +387,7 @@ namespace Cosette.Engine.Ai.Search
                         if (moves[moveIndex].IsQuiet())
                         {
                             KillerHeuristic.AddKillerMove(moves[moveIndex], context.BoardState.ColorToMove, ply);
-                            HistoryHeuristic.AddHistoryMove(context.BoardState.ColorToMove, moves[moveIndex].From, moves[moveIndex].To, depth);
+                            HistoryHeuristic.AddHistoryMove(context.BoardState.ColorToMove, context.BoardState.PieceTable[moves[moveIndex].From], moves[moveIndex].To, depth);
                         }
 
 #if DEBUG
@@ -569,12 +569,12 @@ namespace Cosette.Engine.Ai.Search
                 var enemyColor = ColorOperations.Invert(context.BoardState.ColorToMove);
                 var piece = context.BoardState.PieceTable[moves[moveIndex].To];
 
-                if (piece == Piece.Pawn && context.BoardState.IsFieldPassing(enemyColor, moves[moveIndex].To))
+                if (HistoryHeuristic.GetRawMoveValue(enemyColor, piece, moves[moveIndex].To) >= HistoryHeuristic.GetMaxValue() / SearchConstants.LMRMaxHistoryValueDivider)
                 {
                     return false;
                 }
 
-                if (HistoryHeuristic.GetRawMoveValue(enemyColor, moves[moveIndex].From, moves[moveIndex].To) >= HistoryHeuristic.GetMaxValue() / SearchConstants.LMRMaxHistoryValueDivider)
+                if (piece == Piece.Pawn && context.BoardState.IsFieldPassing(enemyColor, moves[moveIndex].To))
                 {
                     return false;
                 }
