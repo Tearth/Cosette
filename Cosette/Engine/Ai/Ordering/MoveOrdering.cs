@@ -58,7 +58,7 @@ namespace Cosette.Engine.Ai.Ordering
                 }
                 else
                 {
-                    moveValues[moveIndex] = HistoryHeuristic.GetMoveValue(board.ColorToMove, board.PieceTable[moves[moveIndex].From], moves[moveIndex].To);
+                    moveValues[moveIndex] = HistoryHeuristic.GetMoveValue(board.ColorToMove, board.PieceTable[moves[moveIndex].From], moves[moveIndex].To, MoveOrderingConstants.HistoryHeuristicMaxScore);
                 }
             }
         }

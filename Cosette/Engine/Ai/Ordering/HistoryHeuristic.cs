@@ -20,7 +20,7 @@ namespace Cosette.Engine.Ai.Ordering
                 _historyMoves[Color.Black][piece] = new uint[64];
             }
 
-            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
+            _max = 1;
         }
 
         public static void AddHistoryMove(int color, int piece, int to, int depth)
@@ -31,9 +31,9 @@ namespace Cosette.Engine.Ai.Ordering
             _historyMoves[color][piece][to] = newValue;
         }
 
-        public static short GetMoveValue(int color, int piece, int to)
+        public static short GetMoveValue(int color, int piece, int to, uint scale)
         {
-            return (short)Math.Ceiling(_historyMoves[color][piece][to] / ((float)_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
+            return (short)(_historyMoves[color][piece][to] * scale / _max);
         }
 
         public static uint GetRawMoveValue(int color, int piece, int to)
@@ -59,8 +59,7 @@ namespace Cosette.Engine.Ai.Ordering
                 }
             }
             
-            _max /= 2;
-            _max = Math.Max(_max, MoveOrderingConstants.HistoryHeuristicMaxScore);
+            _max = Math.Max(_max / 2, 1);
         }
 
         public static void Clear()
@@ -73,7 +72,7 @@ namespace Cosette.Engine.Ai.Ordering
                 }
             }
 
-            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
+            _max = 1;
         }
     }
 }
