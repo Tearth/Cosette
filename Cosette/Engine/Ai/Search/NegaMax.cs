@@ -283,6 +283,11 @@ namespace Cosette.Engine.Ai.Search
 
             for (var moveIndex = 0; moveIndex < movesCount; moveIndex++)
             {
+                if (LMPCanBeApplied(context, depth, friendlyKingInCheck, quietMovesGenerated, moveIndex, movesCount, pvNode))
+                {
+                    break;
+                }
+
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
 
                 if (loudMovesGenerated && moves[moveIndex] == hashMove)
@@ -559,6 +564,12 @@ namespace Cosette.Engine.Ai.Search
             }
 
             return 0;
+        }
+
+        private static bool LMPCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool quietMovesGenerated, int moveIndex, int movesCount, bool pvNode)
+        {
+            return depth <= SearchConstants.LMPMaxDepth && !pvNode && !friendlyKingInCheck && quietMovesGenerated &&
+                   moveIndex >= (SearchConstants.LMPBasePercentMovesToPrune + (depth - 1) * SearchConstants.LMPPercentIncreasePerDepth) * movesCount / 100;
         }
 
         private static bool LMRCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)

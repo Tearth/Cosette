@@ -19,6 +19,7 @@
  - Fixed memory usage issues during search
  - Added history heuristic veto in LMR
  - Improve history table structure
+ - Added late move pruning
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project

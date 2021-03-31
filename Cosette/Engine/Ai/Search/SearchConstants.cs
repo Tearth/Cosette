@@ -40,5 +40,9 @@
         public static int LMRPvNodeMaxReduction = 2;
         public static int LMRNonPvNodeMaxReduction = 4;
         public static int LMRMaxHistoryValueDivider = 2;
+
+        public static int LMPMaxDepth = 4;
+        public static int LMPBasePercentMovesToPrune = 30;
+        public static int LMPPercentIncreasePerDepth = 20;
     }
 }

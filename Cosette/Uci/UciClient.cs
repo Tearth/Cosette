@@ -176,6 +176,10 @@ namespace Cosette.Uci
             Send($"option name LMRNonPvNodeMaxReduction type spin default {SearchConstants.LMRNonPvNodeMaxReduction} min 0 max 32");
             Send($"option name LMRMaxHistoryValueDivider type spin default {SearchConstants.LMRMaxHistoryValueDivider} min 0 max 32");
 
+            Send($"option name LMPMaxDepth type spin default {SearchConstants.LMPMaxDepth} min 0 max 32");
+            Send($"option name LMPBasePercentMovesToPrune type spin default {SearchConstants.LMPBasePercentMovesToPrune} min 0 max 100");
+            Send($"option name LMPPercentIncreasePerDepth type spin default {SearchConstants.LMPPercentIncreasePerDepth} min 0 max 100");
+
             Send("uciok");
         }
 
