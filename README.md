@@ -56,8 +56,10 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - static null-move pruning
  - principal variation search
  - late move reduction
+ - late move pruning
  - check extension
  - futility pruning
+ - razoring
 
 **Move ordering:**
  - staged move ordering
