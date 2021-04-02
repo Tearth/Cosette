@@ -353,7 +353,7 @@ namespace Cosette.Engine.Ai.Search
                 else
                 {
                     var lmrReduction = 0;
-                    if (LMRCanBeApplied(context, depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves))
+                    if (LMRCanBeApplied(context, depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves, moveValues))
                     {
                         lmrReduction = LMRGetReduction(pvNode, moveIndex);
                     }
@@ -572,10 +572,10 @@ namespace Cosette.Engine.Ai.Search
                    moveIndex >= (SearchConstants.LMPBasePercentMovesToPrune + (depth - 1) * SearchConstants.LMPPercentIncreasePerDepth) * movesCount / 100;
         }
 
-        private static bool LMRCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves)
+        private static bool LMRCanBeApplied(SearchContext context, int depth, bool friendlyKingInCheck, bool enemyKingInCheck, int moveIndex, Span<Move> moves, Span<short> moveValues)
         {
             if (depth >= SearchConstants.LMRMinDepth && moveIndex >= SearchConstants.LMRMovesWithoutReduction &&
-                moves[moveIndex].IsQuiet() && !friendlyKingInCheck && !enemyKingInCheck)
+                (moves[moveIndex].IsQuiet() || (moves[moveIndex].IsCapture() && moveValues[moveIndex] < 0)) && !friendlyKingInCheck && !enemyKingInCheck)
             {
                 var enemyColor = ColorOperations.Invert(context.BoardState.ColorToMove);
                 var piece = context.BoardState.PieceTable[moves[moveIndex].To];

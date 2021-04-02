@@ -20,6 +20,7 @@
  - Added history heuristic veto in LMR
  - Improve history table structure
  - Added late move pruning
+ - Allowed late move reduction when capture has negative score
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
