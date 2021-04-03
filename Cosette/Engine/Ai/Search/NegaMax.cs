@@ -259,7 +259,9 @@ namespace Cosette.Engine.Ai.Search
                 MoveOrdering.AssignLoudValues(context.BoardState, moves, moveValues, movesCount, depth, Move.Empty);
                 loudMovesGenerated = true;
 
+#if DEBUG
                 context.Statistics.LoudMovesGenerated++;
+#endif
 
                 if (movesCount == 0)
                 {
@@ -267,7 +269,9 @@ namespace Cosette.Engine.Ai.Search
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, ply);
                     quietMovesGenerated = true;
 
+#if DEBUG
                     context.Statistics.QuietMovesGenerated++;
+#endif
                 }
             }
             else
@@ -304,7 +308,9 @@ namespace Cosette.Engine.Ai.Search
                     MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
                     quietMovesGenerated = true;
 
+#if DEBUG
                     context.Statistics.QuietMovesGenerated++;
+#endif
 
                     if (moves[moveIndex] == hashMove)
                     {
@@ -419,7 +425,9 @@ namespace Cosette.Engine.Ai.Search
                     moveIndex = -1;
                     loudMovesGenerated = true;
 
+#if DEBUG
                     context.Statistics.LoudMovesGenerated++;
+#endif
 
                     if (movesCount == 0)
                     {
@@ -427,7 +435,9 @@ namespace Cosette.Engine.Ai.Search
                         MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, 0, movesCount, ply);
                         quietMovesGenerated = true;
 
+#if DEBUG
                         context.Statistics.QuietMovesGenerated++;
+#endif
                     }
                 }
 
@@ -439,7 +449,9 @@ namespace Cosette.Engine.Ai.Search
                     MoveOrdering.AssignQuietValues(context.BoardState, moves, moveValues, loudMovesCount, movesCount, ply);
                     quietMovesGenerated = true;
 
+#if DEBUG
                     context.Statistics.QuietMovesGenerated++;
+#endif
                 }
             }
 
@@ -590,7 +602,10 @@ namespace Cosette.Engine.Ai.Search
                     return false;
                 }
 
+#if DEBUG
                 context.Statistics.LMRReductions++;
+#endif
+
                 return true;
             }
 
