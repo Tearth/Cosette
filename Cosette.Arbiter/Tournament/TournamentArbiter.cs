@@ -30,7 +30,7 @@ namespace Cosette.Arbiter.Tournament
                 _participants.Add(tournamentParticipant);
             }
 
-            _scheduler.Init(_participants.Count);
+            _scheduler.Init(_participants.Count, SettingsLoader.Data.Gauntlet);
         }
 
         public void Run()
@@ -131,13 +131,12 @@ namespace Cosette.Arbiter.Tournament
         {
             foreach (var participant in _participants)
             {
-                var originalRating = participant.EngineData.Rating;
-                var performance = participant.CalculatePerformanceRating() - originalRating;
+                var performance = participant.CalculatePerformanceRating();
                 var wonGamesPercent = participant.WonGamesPercent();
                 var winsByTime = participant.History.Count(p => p.Result == GameResult.Win && p.TimeFlag);
                 var lossesByTime = participant.History.Count(p => p.Result == GameResult.Loss && p.TimeFlag);
 
-                Console.WriteLine($"{participant.EngineData.Name} {originalRating} Elo ({performance:+0;-#}, {wonGamesPercent}%): " +
+                Console.WriteLine($"{participant.EngineData.Name} ({performance:+0;-#}, {wonGamesPercent}%): " +
                                   $"{participant.Wins} wins ({winsByTime} by time), {participant.Losses} losses ({lossesByTime} by time), " +
                                   $"{participant.Draws} draws");
                 Console.WriteLine($" === {participant.AverageDepth:F} average depth, {participant.AverageNodesCount} average nodes, " +
