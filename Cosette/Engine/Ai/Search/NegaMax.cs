@@ -517,8 +517,7 @@ namespace Cosette.Engine.Ai.Search
 
         private static bool RazoringCanBeApplied(int depth, int rootDepth, bool friendlyKingInCheck, bool pvNode, int alpha)
         {
-            var maxDepth = SearchConstants.RazoringMaxDepth + rootDepth / SearchConstants.RazoringMaxDepthDivider;
-            return !pvNode && depth >= SearchConstants.RazoringMinDepth && depth <= maxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
+            return !pvNode && depth >= SearchConstants.RazoringMinDepth && depth <= SearchConstants.RazoringMaxDepth && !friendlyKingInCheck && !IterativeDeepening.IsScoreNearCheckmate(alpha);
         }
 
         private static bool StaticNullMoveCanBeApplied(int depth, int rootDepth, bool friendlyKingInCheck, bool pvNode, int beta)

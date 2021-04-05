@@ -14,7 +14,6 @@
 
         public static int RazoringMinDepth = 1;
         public static int RazoringMaxDepth = 3;
-        public static int RazoringMaxDepthDivider = 7;
         public static int RazoringMargin = 70;
         public static int RazoringMarginMultiplier = 150;
 

@@ -149,7 +149,6 @@ namespace Cosette.Uci
 
             Send($"option name RazoringMinDepth type spin default {SearchConstants.RazoringMinDepth} min 0 max 32");
             Send($"option name RazoringMaxDepth type spin default {SearchConstants.RazoringMaxDepth} min 0 max 32");
-            Send($"option name RazoringMaxDepthDivider type spin default {SearchConstants.RazoringMaxDepthDivider} min 0 max 32");
             Send($"option name RazoringMargin type spin default {SearchConstants.RazoringMargin} min 0 max 1000");
             Send($"option name RazoringMarginMultiplier type spin default {SearchConstants.RazoringMarginMultiplier} min 0 max 1000");
 
