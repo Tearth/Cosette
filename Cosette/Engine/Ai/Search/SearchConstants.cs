@@ -41,7 +41,7 @@
         public static int LMRMaxHistoryValueDivider = 2;
 
         public static int LMPMaxDepth = 2;
-        public static int LMPBasePercentMovesToPrune = 30;
-        public static int LMPPercentIncreasePerDepth = 40;
+        public static int LMPBasePercentMovesToPrune = 50;
+        public static int LMPPercentIncreasePerDepth = 25;
     }
 }
