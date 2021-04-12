@@ -1,26 +1,26 @@
-# Version 5.0 (Megumin), xx.xx.2021
- - Enabled support for BMI instruction set (only if CPU supports it)
- - Added futility pruning to quiescence search
- - Adjusted search parameters
- - Adjusted evaluation parameters
- - Allowed to use history heuristic values from the previous iterations
+# Version 5.0 (Megumin), 12.04.2021
  - Added more detailed evaluation info in pawn hash table entry
- - Improved time management when incrementation is present
- - Fixed insufficient material detection when both sides had knight or bishop
- - Fixed threefold repetition detection
- - Fixed invalid depth in killer heuristic
+ - Added futility pruning to quiescence search
  - Added reuse of killer table between moves
  - Added razoring
  - Added ability to stop search if reliable mate score was found
- - Improved Fianchetto detection
  - Added search cut when enemy king is checked
- - Disabled futility pruning when enemy king is checked
  - Added detection of open file next to the king in the evaluation
- - Fixed memory usage issues during search
  - Added history heuristic veto in LMR
- - Improve history table structure
  - Added late move pruning
+ - Fixed insufficient material detection when both sides had knight or bishop
+ - Fixed threefold repetition detection
+ - Fixed invalid depth in killer heuristic
+ - Fixed memory usage issues during search
+ - Adjusted search parameters
+ - Adjusted evaluation parameters
+ - Allowed to use history heuristic values from the previous iterations
  - Allowed late move reduction when capture has negative score
+ - Improved time management when incrementation is present
+ - Improved Fianchetto detection
+ - Improved history table structure
+ - Enabled support for BMI instruction set (only if CPU supports it)
+ - Disabled futility pruning when enemy king is checked
 
 # Version 4.0 (Komekko), 22.01.2021
  - Added Texel project
