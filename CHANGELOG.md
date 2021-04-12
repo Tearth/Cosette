@@ -3,19 +3,19 @@
  - Added futility pruning to quiescence search
  - Added reuse of killer table between moves
  - Added razoring
- - Added ability to stop search if reliable mate score was found
+ - Added ability to stop the search if reliable mate score was found
  - Added search cut when enemy king is checked
- - Added detection of open file next to the king in the evaluation
+ - Added detection of the open file next to the king in the evaluation
  - Added history heuristic veto in LMR
  - Added late move pruning
  - Fixed insufficient material detection when both sides had knight or bishop
  - Fixed threefold repetition detection
  - Fixed invalid depth in killer heuristic
- - Fixed memory usage issues during search
+ - Fixed memory usage issues during the search
  - Adjusted search parameters
  - Adjusted evaluation parameters
  - Allowed to use history heuristic values from the previous iterations
- - Allowed late move reduction when capture has negative score
+ - Allowed late move reduction when capture has a negative score
  - Improved time management when incrementation is present
  - Improved Fianchetto detection
  - Improved history table structure
