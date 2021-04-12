@@ -25,5 +25,8 @@ namespace Cosette.Arbiter.Settings
 
         [JsonProperty("games_count")]
         public int GamesCount { get; set; }
+
+        [JsonProperty("gauntlet")]
+        public bool Gauntlet { get; set; }
     }
 }

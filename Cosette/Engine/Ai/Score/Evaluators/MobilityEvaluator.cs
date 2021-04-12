@@ -22,13 +22,12 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
             var centerMobility = knightCenter + bishopCenter + rookCenter + queenCenter;
             var centerMobilityScore = centerMobility * EvaluationConstants.CenterMobilityModifier;
-            var centerMobilityScoreAdjusted = TaperedEvaluation.AdjustToPhase(centerMobilityScore, 0, openingPhase, endingPhase);
 
             var outsideMobility = knightOutside + bishopOutside + rookOutside + queenOutside;
             var outsideMobilityScore = outsideMobility * EvaluationConstants.OutsideMobilityModifier;
-            var outsideMobilityScoreAdjusted = TaperedEvaluation.AdjustToPhase(outsideMobilityScore, 0, openingPhase, endingPhase);
 
-            return centerMobilityScoreAdjusted + outsideMobilityScoreAdjusted;
+            var openingScore = centerMobilityScore + outsideMobilityScore;
+            return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }
     }
 }

@@ -21,13 +21,13 @@ namespace Cosette.Engine.Ai.Search
             if (context.BoardState.Pieces[context.BoardState.ColorToMove][Piece.King] == 0)
             {
                 context.Statistics.QLeafs++;
-                return -EvaluationConstants.Checkmate + ply;
+                return SearchConstants.NoKingValue;
             }
 
             if (context.BoardState.IsKingChecked(ColorOperations.Invert(context.BoardState.ColorToMove)))
             {
                 context.Statistics.QLeafs++;
-                return EvaluationConstants.Checkmate - ply + 1;
+                return -SearchConstants.NoKingValue;
             }
 
             var standPat = 0;
@@ -78,8 +78,19 @@ namespace Cosette.Engine.Ai.Search
             {
                 MoveOrdering.SortNextBestMove(moves, moveValues, movesCount, moveIndex);
 
-                if (moveValues[moveIndex] < -50)
+                if (moveValues[moveIndex] < 0)
                 {
+#if DEBUG
+                    context.Statistics.QSEEPrunes++;
+#endif
+                    break;
+                }
+
+                if (standPat + moveValues[moveIndex] + SearchConstants.QFutilityPruningMargin < alpha)
+                {
+#if DEBUG
+                    context.Statistics.QFutilityPrunes++;
+#endif
                     break;
                 }
 

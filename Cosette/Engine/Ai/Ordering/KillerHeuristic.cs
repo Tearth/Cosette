@@ -15,28 +15,28 @@ namespace Cosette.Engine.Ai.Ordering
             _killerMoves[Color.White] = new Move[SearchConstants.MaxDepth][];
             _killerMoves[Color.Black] = new Move[SearchConstants.MaxDepth][];
 
-            for (var depth = 0; depth < SearchConstants.MaxDepth; depth++)
+            for (var ply = 0; ply < SearchConstants.MaxDepth; ply++)
             {
-                _killerMoves[Color.White][depth] = new Move[MoveOrderingConstants.KillerSlots];
-                _killerMoves[Color.Black][depth] = new Move[MoveOrderingConstants.KillerSlots];
+                _killerMoves[Color.White][ply] = new Move[MoveOrderingConstants.KillerSlots];
+                _killerMoves[Color.Black][ply] = new Move[MoveOrderingConstants.KillerSlots];
             }
         }
 
-        public static void AddKillerMove(Move move, int color, int depth)
+        public static void AddKillerMove(Move move, int color, int ply)
         {
             for (var slot = MoveOrderingConstants.KillerSlots - 2; slot >= 0; slot--)
             {
-                _killerMoves[color][depth][slot + 1] = _killerMoves[color][depth][slot];
+                _killerMoves[color][ply][slot + 1] = _killerMoves[color][ply][slot];
             }
 
-            _killerMoves[color][depth][0] = move;
+            _killerMoves[color][ply][0] = move;
         }
 
-        public static bool KillerMoveExists(Move move, int color, int depth)
+        public static bool KillerMoveExists(Move move, int color, int ply)
         {
             for (var slot = 0; slot < MoveOrderingConstants.KillerSlots; slot++)
             {
-                if (_killerMoves[color][depth][slot] == move)
+                if (_killerMoves[color][ply][slot] == move)
                 {
                     return true;
                 }
@@ -45,13 +45,32 @@ namespace Cosette.Engine.Ai.Ordering
             return false;
         }
 
+        public static void AgeKillers()
+        {
+            for (var color = 0; color < 2; color++)
+            {
+                for (var ply = 0; ply < SearchConstants.MaxDepth - 2; ply++)
+                {
+                    _killerMoves[color][ply] = _killerMoves[color][ply + 2];
+                }
+            }
+
+            for (var color = 0; color < 2; color++)
+            {
+                for (var ply = SearchConstants.MaxDepth - 2; ply < SearchConstants.MaxDepth; ply++)
+                {
+                    _killerMoves[color][ply] = new Move[MoveOrderingConstants.KillerSlots];
+                }
+            }
+        }
+
         public static void Clear()
         {
             for (var color = 0; color < 2; color++)
             {
-                for (var depth = 0; depth < SearchConstants.MaxDepth; depth++)
+                for (var ply = 0; ply < SearchConstants.MaxDepth; ply++)
                 {
-                    Array.Clear(_killerMoves[color][depth], 0, MoveOrderingConstants.KillerSlots);
+                    Array.Clear(_killerMoves[color][ply], 0, MoveOrderingConstants.KillerSlots);
                 }
             }
         }

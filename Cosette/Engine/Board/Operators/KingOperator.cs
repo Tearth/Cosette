@@ -115,17 +115,17 @@ namespace Cosette.Engine.Board.Operators
             var availableMoves = KingMovesGenerator.GetMoves(move.From);
             var toField = 1ul << move.To;
 
-            if (move.Flags == MoveFlags.Quiet && (availableMoves & toField) != 0 && (boardState.OccupancySummary & toField) == 0)
+            if (move.IsSinglePush() && (availableMoves & toField) != 0 && (boardState.OccupancySummary & toField) == 0)
             {
                 return true;
             }
 
-            if (move.Flags == MoveFlags.Capture && (availableMoves & toField) != 0 && (boardState.Occupancy[enemyColor] & toField) != 0)
+            if (move.IsCapture() && (availableMoves & toField) != 0 && (boardState.Occupancy[enemyColor] & toField) != 0)
             {
                 return true;
             }
 
-            if (move.Flags == MoveFlags.KingCastle)
+            if (move.IsKingCastling())
             {
                 if (boardState.ColorToMove == Color.White && IsWhiteKingCastlingAvailable(boardState, boardState.ColorToMove))
                 {
@@ -137,7 +137,7 @@ namespace Cosette.Engine.Board.Operators
                 }
             }
 
-            if (move.Flags == MoveFlags.QueenCastle)
+            if (move.IsQueenCastling())
             {
                 if (boardState.ColorToMove == Color.White && IsWhiteQueenCastlingAvailable(boardState, boardState.ColorToMove))
                 {

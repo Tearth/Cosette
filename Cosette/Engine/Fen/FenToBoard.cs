@@ -43,6 +43,9 @@ namespace Cosette.Engine.Fen
             result.Hash = ZobristHashing.CalculateHash(result);
             result.PawnHash = ZobristHashing.CalculatePawnHash(result);
 
+            result.CastlingDone[Color.White] = (result.Castling & Castling.WhiteCastling) == 0;
+            result.CastlingDone[Color.Black] = (result.Castling & Castling.BlackCastling) == 0;
+
             return result;
         }
 

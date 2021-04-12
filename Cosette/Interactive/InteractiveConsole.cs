@@ -129,11 +129,11 @@ namespace Cosette.Interactive
             var runtimeVersion = $"{Environment.Version.Major}.{Environment.Version.Minor}.{Environment.Version.Build}";
             var executableHash = GetExecutableHash();
 
-            Console.WriteLine($"Cosette v4.0 (Komekko), 22.01.2021 @ {Environment.OSVersion} (.NET Core {runtimeVersion})");
+            Console.WriteLine($"Cosette v5.0 (Megumin), 12.04.2021 @ {Environment.OSVersion} (.NET {runtimeVersion})");
             Console.WriteLine("Distributed under AGPL license, homepage and source code: https://github.com/Tearth/Cosette");
             Console.WriteLine($"Executable hash: {executableHash}");
             Console.WriteLine();
-            Console.WriteLine("\"One bad move nullifies forty good ones.\" ~ Bernhard Horwitz");
+            Console.WriteLine("\"Nobody ever won a chess game by resigning.\" ~ Savielly Tartakower");
             Console.WriteLine();
             Console.WriteLine("Type \"help\" to display all available commands");
         }

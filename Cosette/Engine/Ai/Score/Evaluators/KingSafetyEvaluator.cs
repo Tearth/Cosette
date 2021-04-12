@@ -1,6 +1,7 @@
 ﻿using Cosette.Engine.Board;
 using Cosette.Engine.Common;
 using Cosette.Engine.Moves.Patterns;
+using System;
 
 namespace Cosette.Engine.Ai.Score.Evaluators
 {
@@ -15,27 +16,39 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
         public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase, ulong fieldsAttackedByEnemy)
         {
+            var enemyColor = ColorOperations.Invert(color);
+
             var king = board.Pieces[color][Piece.King];
             var kingField = BitOperations.BitScan(king);
+            var kingPosition = Position.FromFieldIndex(kingField);
             var fieldsAroundKing = ForwardBoxPatternGenerator.GetPattern(color, kingField);
 
             var attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
             var attackersCount = (int)BitOperations.Count(attackedFieldsAroundKing);
+            var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger;
 
-            var pawnShieldAdjusted = 0;
-            if (board.CastlingDone[board.ColorToMove])
+            var pawnShieldOpeningScore = 0;
+            var openFilesNextToKingScore = 0;
+            if (board.CastlingDone[color])
             {
                 var pawnsNearKing = fieldsAroundKing & board.Pieces[color][Piece.Pawn];
                 var pawnShield = (int)BitOperations.Count(pawnsNearKing);
 
-                var pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield;
-                pawnShieldAdjusted = TaperedEvaluation.AdjustToPhase(pawnShieldOpeningScore, 0, openingPhase, endingPhase);
+                pawnShieldOpeningScore = pawnShield * EvaluationConstants.PawnShield;
+
+                var openFileCheckFrom = Math.Max(0, kingPosition.X - 1);
+                var openFileCheckTo = Math.Min(7, kingPosition.X + 1);
+                for (var file = openFileCheckFrom; file <= openFileCheckTo; file++)
+                {
+                    if ((FilePatternGenerator.GetPatternForFile(7 - file) & board.Pieces[color][Piece.Pawn]) == 0)
+                    {
+                        openFilesNextToKingScore += EvaluationConstants.OpenFileNextToKing;
+                    }
+                }
             }
 
-            var attackersCountOpeningScore = attackersCount * EvaluationConstants.KingInDanger;
-            var attackersCountAdjusted = TaperedEvaluation.AdjustToPhase(attackersCountOpeningScore, 0, openingPhase, endingPhase);
-
-            return attackersCountAdjusted + pawnShieldAdjusted;
+            var openingScore = pawnShieldOpeningScore + attackersCountOpeningScore + openFilesNextToKingScore;
+            return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }
     }
 }

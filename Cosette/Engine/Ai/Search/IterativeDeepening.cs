@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Cosette.Engine.Ai.Ordering;
 using Cosette.Engine.Ai.Score;
@@ -16,7 +17,8 @@ namespace Cosette.Engine.Ai.Search
 
         public static Move FindBestMove(SearchContext context)
         {
-            HistoryHeuristic.Clear();
+            HistoryHeuristic.AgeValues();
+            KillerHeuristic.AgeKillers();
 
             var expectedExecutionTime = 0;
             var alpha = SearchConstants.MinValue;
@@ -55,7 +57,7 @@ namespace Cosette.Engine.Ai.Search
 
             while (context.WaitForStopCommand)
             {
-                Task.Delay(1).GetAwaiter().GetResult();
+                Thread.Sleep(1);
             }
 
             context.AbortSearch = false;
@@ -66,6 +68,14 @@ namespace Cosette.Engine.Ai.Search
 
         public static bool ShouldContinueDeepening(SearchContext context, int depth, int expectedExecutionTime)
         {
+            if (IsScoreNearCheckmate(context.Statistics.Score))
+            {
+                if (depth - 1 >= GetMovesToCheckmate(context.Statistics.Score) * 2)
+                {
+                    return false;
+                }
+            }
+
             return depth < context.MaxDepth && expectedExecutionTime <= context.MaxTime;
         }
 
@@ -78,7 +88,7 @@ namespace Cosette.Engine.Ai.Search
 
         public static int GetMovesToCheckmate(int score)
         {
-            return Math.Abs(Math.Abs(score) - EvaluationConstants.Checkmate) / 2;
+            return (int)Math.Ceiling((float)Math.Abs(Math.Abs(score) - EvaluationConstants.Checkmate) / 2);
         }
 
         private static int GetPrincipalVariation(BoardState board, Move[] moves, int movesCount)

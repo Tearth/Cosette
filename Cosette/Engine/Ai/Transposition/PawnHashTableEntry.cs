@@ -1,21 +1,39 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Cosette.Engine.Ai.Transposition
+﻿namespace Cosette.Engine.Ai.Transposition
 {
     public struct PawnHashTableEntry
     {
-        public ushort Key { get; set; }
-        public short Score { get; set; }
-
-        public PawnHashTableEntry(ulong hash, short score)
+        public ushort Key => (ushort)(_data >> 20);
+        public short EndingScore
         {
-            Key = (ushort)(hash >> 48);
-            Score = score;
+            get
+            {
+                var result = (short)((_data >> 10) & 0x3FF);
+                return result < 512 ? result : (short)(result - 1024);
+            }
+        }
+        public short OpeningScore
+        {
+            get
+            {
+                var result = (short)(_data & 0x3FF);
+                return result < 512 ? result : (short)(result - 1024);
+            }
+        }
+
+        private uint _data;
+
+        public PawnHashTableEntry(ulong hash, short openingScore, short endingScore)
+        {
+            var hashPart = (uint)((hash >> 52) << 20);
+            var endingScorePart = (uint)((endingScore & 0x3FF) << 10);
+            var openingScorePart = (uint)(openingScore & 0x3FF);
+
+            _data = hashPart | endingScorePart | openingScorePart;
         }
 
         public bool IsKeyValid(ulong hash)
         {
-            return Key == hash >> 48;
+            return Key == hash >> 52;
         }
     }
 }

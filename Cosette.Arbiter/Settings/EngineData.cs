@@ -5,6 +5,5 @@
         public string Name { get; set; }
         public string Path { get; set; }
         public string Arguments { get; set; }
-        public int Rating { get; set; }
     }
 }

@@ -16,7 +16,7 @@
         public static int CenterMobilityModifier = 7;
         public static int OutsideMobilityModifier = 6;
 
-        public static int KingInDanger = -10;
+        public static int KingInDanger = -20;
         public static int PawnShield = 20;
 
         public static int DoubledRooks = 40;
@@ -25,6 +25,7 @@
 
         public static int Fianchetto = 25;
         public static int FianchettoWithoutBishop = -25;
+        public static int OpenFileNextToKing = -30;
 
         public const int OpeningEndgameEdge = 20500;
 

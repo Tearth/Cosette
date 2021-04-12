@@ -1,14 +1,15 @@
 # Cosette
-**Current version: v4.0 (Komekko), 22.01.2021**
+**Current version: v5.0 (Megumin), 12.04.2021**
 
-An UCI-compliant chess engine written in C# for .NET Core platform, with **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/compare_engines.cgi?family=Cosette&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)** (Computer Chess Rating Lists) where you can check the best strength estimation. Feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
+An UCI-compliant chess engine written in C# for .NET platform, with **[an official profile on CCRL](http://ccrl.chessdom.com/ccrl/404/cgi/compare_engines.cgi?family=Cosette&print=Rating+list&print=Results+table&print=LOS+table&print=Ponder+hit+table&print=Eval+difference+table&print=Comopp+gamenum+table&print=Overlap+table&print=Score+with+common+opponents)** (Computer Chess Rating Lists) where you can check the best strength estimation. Feel free to visit **[a dedicated forum thread](http://kirill-kryukov.com/chess/discussion-board/viewtopic.php?f=7&t=12402)** for Cosette releases and discussions!
 
-![Cosette interactive console example](https://i.imgur.com/nwPkim6.png)
+![Cosette interactive console example](https://i.imgur.com/w4fibmf.png)
 
 On the table below you can see how engines' strength was changing with the versions. Take note that usually the latest one has an estimated value, which will be updated later to a more concrete result.
 
-| Version                                                                | Release date | ELO   | Main changes |
+| Version                                                                | Release date | Elo   | Main changes |
 |------------------------------------------------------------------------|--------------|-------| ------------ |
+| [v5.0 (Megumin)](https://github.com/Tearth/Cosette/releases/tag/v5.0)  | 12.04.2021   | 2500* | Futility pruning for quiescence search, razoring, late move pruning, BMI enabled by default, adjusted parameters of search and evaluation. |
 | [v4.0 (Komekko)](https://github.com/Tearth/Cosette/releases/tag/v4.0)  | 22.01.2021   | 2384  | Futility pruning, static null-move pruning, evasion move generator, check extensions, adjusted parameters of search and evaluation. |
 | [v3.0 (Luna)](https://github.com/Tearth/Cosette/releases/tag/v3.0)     | 12.12.2020   | 2086  | Multi-stage move generation and move ordering, internal iterative deepening, SEE pruning in quiescence search. New evaluation function for fianchetto. |
 | [v2.0 (Darkness)](https://github.com/Tearth/Cosette/releases/tag/v2.0) | 19.10.2020   | 1985  | A bunch of improvements for transposition tables, time management and move ordering. New evaluation functions: pawn shield, bishop pair, doubled rooks, a rook on the open file. |
@@ -56,8 +57,10 @@ Cosette has an official account on **[lichess.org](https://lichess.org/)** platf
  - static null-move pruning
  - principal variation search
  - late move reduction
+ - late move pruning
  - check extension
  - futility pruning
+ - razoring
 
 **Move ordering:**
  - staged move ordering

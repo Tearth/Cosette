@@ -62,12 +62,12 @@ namespace Cosette.Engine.Perft
                         result.Captures++;
                     }
 
-                    if (moves[i].Flags == MoveFlags.KingCastle || moves[i].Flags == MoveFlags.QueenCastle)
+                    if (moves[i].IsCastling())
                     {
                         result.Castles++;
                     }
 
-                    if (moves[i].Flags == MoveFlags.EnPassant)
+                    if (moves[i].IsEnPassant())
                     {
                         result.EnPassants++;
                     }

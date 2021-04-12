@@ -44,12 +44,10 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
 
             var doubledRooksOpeningScore = doubledRooks * EvaluationConstants.DoubledRooks;
-            var doubledRooksAdjusted = TaperedEvaluation.AdjustToPhase(doubledRooksOpeningScore, 0, openingPhase, endingPhase);
-
             var rooksOnOpenFileOpeningScore = rooksOnOpenFile * EvaluationConstants.RookOnOpenFile;
-            var rooksOnOpenFileAdjusted = TaperedEvaluation.AdjustToPhase(rooksOnOpenFileOpeningScore, 0, openingPhase, endingPhase);
+            var openingScore = doubledRooksOpeningScore + rooksOnOpenFileOpeningScore;
 
-            return doubledRooksAdjusted + rooksOnOpenFileAdjusted;
+            return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }
     }
 }

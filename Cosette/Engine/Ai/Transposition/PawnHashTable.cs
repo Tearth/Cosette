@@ -15,9 +15,9 @@ namespace Cosette.Engine.Ai.Transposition
             _table = new PawnHashTableEntry[_size];
         }
 
-        public static void Add(ulong hash, short score)
+        public static void Add(ulong hash, short openingScore, short endingScore)
         {
-            _table[hash % _size] = new PawnHashTableEntry(hash, score);
+            _table[hash % _size] = new PawnHashTableEntry(hash, openingScore, endingScore);
         }
 
         public static PawnHashTableEntry Get(ulong hash)
@@ -30,7 +30,7 @@ namespace Cosette.Engine.Ai.Transposition
             var filledEntries = 0;
             for (var i = 0; i < 1000; i++)
             {
-                if (_table[i].Key != 0 || _table[i].Score != 0)
+                if (_table[i].Key != 0 || _table[i].OpeningScore != 0 || _table[i].EndingScore != 0)
                 {
                     filledEntries++;
                 }

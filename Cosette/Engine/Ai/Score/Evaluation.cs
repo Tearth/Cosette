@@ -32,9 +32,14 @@ namespace Cosette.Engine.Ai.Score
             return board.ColorToMove == Color.White ? result : -result;
         }
 
-        public static int FastEvaluate(BoardState board)
+        public static int FastEvaluate(BoardState board, EvaluationStatistics statistics)
         {
+            var openingPhase = board.GetPhaseRatio();
+            var endingPhase = BoardConstants.PhaseResolution - openingPhase;
+
             var result = MaterialEvaluator.Evaluate(board);
+            result += PawnStructureEvaluator.Evaluate(board, statistics, openingPhase, endingPhase);
+            result += PositionEvaluator.Evaluate(board, openingPhase, endingPhase);
             return board.ColorToMove == Color.White ? result : -result;
         }
     }

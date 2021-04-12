@@ -38,6 +38,10 @@ namespace Cosette.Arbiter.Engine
             Write("uci");
             WaitForMessage("uciok");
 
+            Write("debug off");
+            Write("isready");
+            WaitForMessage("readyok");
+
             ApplyOptions();
 
             Write("isready");

@@ -11,42 +11,68 @@ namespace Cosette.Engine.Ai.Ordering
         static HistoryHeuristic()
         {
             _historyMoves = new uint[2][][];
-            _historyMoves[Color.White] = new uint[64][];
-            _historyMoves[Color.Black] = new uint[64][];
+            _historyMoves[Color.White] = new uint[6][];
+            _historyMoves[Color.Black] = new uint[6][];
 
-            for (var from = 0; from < 64; from++)
+            for (var piece = 0; piece < 6; piece++)
             {
-                _historyMoves[Color.White][from] = new uint[64];
-                _historyMoves[Color.Black][from] = new uint[64];
+                _historyMoves[Color.White][piece] = new uint[64];
+                _historyMoves[Color.Black][piece] = new uint[64];
             }
 
-            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
+            _max = 1;
         }
 
-        public static void AddHistoryMove(int color, int from, int to, int depth)
+        public static void AddHistoryMove(int color, int piece, int to, int depth)
         {
-            var newValue = _historyMoves[color][from][to] + (uint)(depth * depth);
+            var newValue = _historyMoves[color][piece][to] + (uint)(depth * depth);
 
             _max = Math.Max(_max, newValue);
-            _historyMoves[color][from][to] = newValue;
+            _historyMoves[color][piece][to] = newValue;
         }
 
-        public static short GetHistoryMoveValue(int color, int from, int to)
+        public static short GetMoveValue(int color, int piece, int to, uint scale)
         {
-            return (short)(_historyMoves[color][from][to] / ((float)_max / MoveOrderingConstants.HistoryHeuristicMaxScore));
+            return (short)(_historyMoves[color][piece][to] * scale / _max);
+        }
+
+        public static uint GetRawMoveValue(int color, int piece, int to)
+        {
+            return _historyMoves[color][piece][to];
+        }
+
+        public static uint GetMaxValue()
+        {
+            return _max;
+        }
+
+        public static void AgeValues()
+        {
+            for (var color = 0; color < 2; color++)
+            {
+                for (var piece = 0; piece < 6; piece++)
+                {
+                    for (var to = 0; to < 64; to++)
+                    {
+                        _historyMoves[color][piece][to] /= 2;
+                    }
+                }
+            }
+            
+            _max = Math.Max(_max / 2, 1);
         }
 
         public static void Clear()
         {
             for (var color = 0; color < 2; color++)
             {
-                for (var from = 0; from < 64; from++)
+                for (var piece = 0; piece < 6; piece++)
                 {
-                    Array.Clear(_historyMoves[color][from], 0, 64);
+                    Array.Clear(_historyMoves[color][piece], 0, 64);
                 }
             }
 
-            _max = MoveOrderingConstants.HistoryHeuristicMaxScore;
+            _max = 1;
         }
     }
 }

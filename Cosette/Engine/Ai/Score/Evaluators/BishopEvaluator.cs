@@ -6,15 +6,12 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 {
     public static class BishopEvaluator
     {
-        private const ulong KingSideWhitePawnsFianchettoPattern = 132352;
-        private const ulong KingSideWhiteBishopFianchettoPattern = 512;
-        private const ulong QueenSideWhitePawnsFianchettoPattern = 4235264;
-        private const ulong QueenSideWhiteBishopFianchettoPattern = 16384;
-
-        private const ulong KingSideBlackPawnsFianchettoPattern = 1409573906808832;
-        private const ulong KingSideBlackBishopFianchettoPattern = 562949953421312;
-        private const ulong QueenSideBlackPawnsFianchettoPattern = 45106365017882624;
-        private const ulong QueenSideBlackBishopFianchettoPattern = 18014398509481984;
+        private const ulong WhiteKingFianchettoPattern = 7;
+        private const ulong WhitePawnsFianchettoPattern = 132352;
+        private const ulong WhiteBishopFianchettoPattern = 512;
+        private const ulong BlackKingFianchettoPatteren = 504403158265495552;
+        private const ulong BlackPawnsFianchettoPattern = 1409573906808832;
+        private const ulong BlackBishopFianchettoPattern = 562949953421312;
 
         public static int Evaluate(BoardState board, int openingPhase, int endingPhase)
         {
@@ -25,38 +22,21 @@ namespace Cosette.Engine.Ai.Score.Evaluators
 
         public static int Evaluate(BoardState board, int color, int openingPhase, int endingPhase)
         {
-            var kingSidePawnsPattern = color == Color.White ? KingSideWhitePawnsFianchettoPattern : KingSideBlackPawnsFianchettoPattern;
-            var kingSideBishopPattern = color == Color.White ? KingSideWhiteBishopFianchettoPattern : KingSideBlackBishopFianchettoPattern;
-            var queenSidePawnsPattern = color == Color.White ? QueenSideWhitePawnsFianchettoPattern : QueenSideBlackPawnsFianchettoPattern;
-            var queenSideBishopPattern = color == Color.White ? QueenSideWhiteBishopFianchettoPattern : QueenSideBlackBishopFianchettoPattern;
-
             var pairOfBishops = 0;
-            var pawns = board.Pieces[color][Piece.Pawn];
-            var bishops = board.Pieces[color][Piece.Bishop];
-            
-            if (BitOperations.Count(bishops) > 1)
+            if (BitOperations.Count(board.Pieces[color][Piece.Bishop]) > 1)
             {
                 pairOfBishops = 1;
             }
 
             var fianchettos = 0;
             var fianchettosWithoutBishop = 0;
+            var kingPattern = color == Color.White ? WhiteKingFianchettoPattern : BlackKingFianchettoPatteren;
+            var pawnsPattern = color == Color.White ? WhitePawnsFianchettoPattern : BlackPawnsFianchettoPattern;
+            var bishopPattern = color == Color.White ? WhiteBishopFianchettoPattern : BlackBishopFianchettoPattern;
 
-            if ((pawns & kingSidePawnsPattern) == kingSidePawnsPattern)
+            if (board.CastlingDone[color] && (board.Pieces[color][Piece.King] & kingPattern) != 0 && (board.Pieces[color][Piece.Pawn] & pawnsPattern) == pawnsPattern)
             {
-                if ((bishops & kingSideBishopPattern) == kingSideBishopPattern)
-                {
-                    fianchettos++;
-                }
-                else
-                {
-                    fianchettosWithoutBishop++;
-                }
-            }
-
-            if ((pawns & queenSidePawnsPattern) == queenSidePawnsPattern)
-            {
-                if ((bishops & queenSideBishopPattern) == queenSideBishopPattern)
+                if ((board.Pieces[color][Piece.Bishop] & bishopPattern) == bishopPattern)
                 {
                     fianchettos++;
                 }
@@ -67,15 +47,11 @@ namespace Cosette.Engine.Ai.Score.Evaluators
             }
 
             var pairOfBishopsOpeningScore = pairOfBishops * EvaluationConstants.PairOfBishops;
-            var pairOfBishopsAdjusted = TaperedEvaluation.AdjustToPhase(pairOfBishopsOpeningScore, 0, openingPhase, endingPhase);
-
             var fianchettosScore = fianchettos * EvaluationConstants.Fianchetto;
-            var fianchettosAdjusted = TaperedEvaluation.AdjustToPhase(fianchettosScore, 0, openingPhase, endingPhase);
-
             var fianchettosWithoutBishopScore = fianchettosWithoutBishop * EvaluationConstants.FianchettoWithoutBishop;
-            var fianchettosWithoutBishopAdjusted = TaperedEvaluation.AdjustToPhase(fianchettosWithoutBishopScore, 0, openingPhase, endingPhase);
+            var openingScore = pairOfBishopsOpeningScore + fianchettosScore + fianchettosWithoutBishopScore;
 
-            return pairOfBishopsAdjusted + fianchettosAdjusted + fianchettosWithoutBishopAdjusted;
+            return TaperedEvaluation.AdjustToPhase(openingScore, 0, openingPhase, endingPhase);
         }
     }
 }

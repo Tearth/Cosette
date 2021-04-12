@@ -120,12 +120,12 @@ namespace Cosette.Engine.Board.Operators
             var availableMoves = KnightMovesGenerator.GetMoves(move.From);
             var toField = 1ul << move.To;
 
-            if (move.Flags == MoveFlags.Quiet && (availableMoves & toField) != 0 && (boardState.OccupancySummary & toField) == 0)
+            if (move.IsSinglePush() && (availableMoves & toField) != 0 && (boardState.OccupancySummary & toField) == 0)
             {
                 return true;
             }
 
-            if (move.Flags == MoveFlags.Capture && (availableMoves & toField) != 0 && (boardState.Occupancy[enemyColor] & toField) != 0)
+            if (move.IsCapture() && (availableMoves & toField) != 0 && (boardState.Occupancy[enemyColor] & toField) != 0)
             {
                 return true;
             }

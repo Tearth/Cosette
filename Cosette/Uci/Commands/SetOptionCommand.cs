@@ -46,6 +46,7 @@ namespace Cosette.Uci.Commands
                 { "PairOfBishops", p => EvaluationConstants.PairOfBishops = int.Parse(p) },
                 { "Fianchetto", p => EvaluationConstants.Fianchetto = int.Parse(p) },
                 { "FianchettoWithoutBishop", p => EvaluationConstants.FianchettoWithoutBishop = int.Parse(p) },
+                { "OpenFileNextToKing", p => EvaluationConstants.OpenFileNextToKing = int.Parse(p) },
 
                 { "HashMove", p => MoveOrderingConstants.HashMove = short.Parse(p) },
                 { "Promotion", p => MoveOrderingConstants.Promotion = short.Parse(p) },
@@ -60,6 +61,11 @@ namespace Cosette.Uci.Commands
                 { "IIDMinDepth", p => SearchConstants.IIDMinDepth = int.Parse(p) },
                 { "IIDDepthReduction", p => SearchConstants.IIDDepthReduction = int.Parse(p) },
 
+                { "RazoringMinDepth", p => SearchConstants.RazoringMinDepth = int.Parse(p) },
+                { "RazoringMaxDepth", p => SearchConstants.RazoringMaxDepth = int.Parse(p) },
+                { "RazoringMargin", p => SearchConstants.RazoringMargin = int.Parse(p) },
+                { "RazoringMarginMultiplier", p => SearchConstants.RazoringMarginMultiplier = int.Parse(p) },
+
                 { "StaticNullMoveMaxDepth", p => SearchConstants.StaticNullMoveMaxDepth = int.Parse(p) },
                 { "StaticNullMoveMaxDepthDivider", p => SearchConstants.StaticNullMoveMaxDepthDivider = int.Parse(p) },
                 { "StaticNullMoveMargin", p => SearchConstants.StaticNullMoveMargin = int.Parse(p) },
@@ -73,6 +79,7 @@ namespace Cosette.Uci.Commands
                 { "FutilityPruningMaxDepthDivisor", p => SearchConstants.FutilityPruningMaxDepthDivisor = int.Parse(p) },
                 { "FutilityPruningMargin", p => SearchConstants.FutilityPruningMargin = int.Parse(p) },
                 { "FutilityPruningMarginMultiplier", p => SearchConstants.FutilityPruningMarginMultiplier = int.Parse(p) },
+                { "QFutilityPruningMargin", p => SearchConstants.QFutilityPruningMargin = int.Parse(p) },
 
                 { "LMRMinDepth", p => SearchConstants.LMRMinDepth = int.Parse(p) },
                 { "LMRMovesWithoutReduction", p => SearchConstants.LMRMovesWithoutReduction = int.Parse(p) },
@@ -80,6 +87,11 @@ namespace Cosette.Uci.Commands
                 { "LMRMoveIndexDivider", p => SearchConstants.LMRMoveIndexDivider = int.Parse(p) },
                 { "LMRPvNodeMaxReduction", p => SearchConstants.LMRPvNodeMaxReduction = int.Parse(p) },
                 { "LMRNonPvNodeMaxReduction", p => SearchConstants.LMRNonPvNodeMaxReduction = int.Parse(p) },
+                { "LMRMaxHistoryValueDivider", p => SearchConstants.LMRMaxHistoryValueDivider = int.Parse(p) },
+
+                { "LMPMaxDepth", p => SearchConstants.LMPMaxDepth = int.Parse(p) },
+                { "LMPBasePercentMovesToPrune", p => SearchConstants.LMPBasePercentMovesToPrune = int.Parse(p) },
+                { "LMPPercentIncreasePerDepth", p => SearchConstants.LMPPercentIncreasePerDepth = int.Parse(p) },
 
                 { "Pawn.O0", p => PawnTables.O0 = int.Parse(p) },
                 { "Pawn.O1", p => PawnTables.O1 = int.Parse(p) },

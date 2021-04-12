@@ -132,6 +132,7 @@ namespace Cosette.Uci
             Send($"option name PairOfBishops type spin default {EvaluationConstants.PairOfBishops} min -100 max 100");
             Send($"option name Fianchetto type spin default {EvaluationConstants.Fianchetto} min -100 max 100");
             Send($"option name FianchettoWithoutBishop type spin default {EvaluationConstants.FianchettoWithoutBishop} min -100 max 100");
+            Send($"option name OpenFileNextToKing type spin default {EvaluationConstants.OpenFileNextToKing} min -100 max 0");
 
             Send($"option name HashMove type spin default {MoveOrderingConstants.HashMove} min -10000 max 10000");
             Send($"option name Promotion type spin default {MoveOrderingConstants.Promotion} min -10000 max 10000");
@@ -146,10 +147,15 @@ namespace Cosette.Uci
             Send($"option name IIDMinDepth type spin default {SearchConstants.IIDMinDepth} min 0 max 32");
             Send($"option name IIDDepthReduction type spin default {SearchConstants.IIDDepthReduction} min 0 max 32");
 
+            Send($"option name RazoringMinDepth type spin default {SearchConstants.RazoringMinDepth} min 0 max 32");
+            Send($"option name RazoringMaxDepth type spin default {SearchConstants.RazoringMaxDepth} min 0 max 32");
+            Send($"option name RazoringMargin type spin default {SearchConstants.RazoringMargin} min 0 max 1000");
+            Send($"option name RazoringMarginMultiplier type spin default {SearchConstants.RazoringMarginMultiplier} min 0 max 1000");
+
             Send($"option name StaticNullMoveMaxDepth type spin default {SearchConstants.StaticNullMoveMaxDepth} min 0 max 32");
             Send($"option name StaticNullMoveMaxDepthDivider type spin default {SearchConstants.StaticNullMoveMaxDepthDivider} min 0 max 32");
-            Send($"option name StaticNullMoveMargin type spin default {SearchConstants.StaticNullMoveMargin} min 0 max 500");
-            Send($"option name StaticNullMoveMarginMultiplier type spin default {SearchConstants.StaticNullMoveMarginMultiplier} min 0 max 500");
+            Send($"option name StaticNullMoveMargin type spin default {SearchConstants.StaticNullMoveMargin} min 0 max 1000");
+            Send($"option name StaticNullMoveMarginMultiplier type spin default {SearchConstants.StaticNullMoveMarginMultiplier} min 0 max 1000");
 
             Send($"option name NullMoveMinDepth type spin default {SearchConstants.NullMoveMinDepth} min 0 max 32");
             Send($"option name NullMoveDepthReduction type spin default {SearchConstants.NullMoveDepthReduction} min 0 max 32");
@@ -157,8 +163,9 @@ namespace Cosette.Uci
 
             Send($"option name FutilityPruningMaxDepth type spin default {SearchConstants.FutilityPruningMaxDepth} min 0 max 32");
             Send($"option name FutilityPruningMaxDepthDivisor type spin default {SearchConstants.FutilityPruningMaxDepthDivisor} min 0 max 32");
-            Send($"option name FutilityPruningMargin type spin default {SearchConstants.FutilityPruningMargin} min 0 max 500");
-            Send($"option name FutilityPruningMarginMultiplier type spin default {SearchConstants.FutilityPruningMarginMultiplier} min 0 max 500");
+            Send($"option name FutilityPruningMargin type spin default {SearchConstants.FutilityPruningMargin} min 0 max 1000");
+            Send($"option name FutilityPruningMarginMultiplier type spin default {SearchConstants.FutilityPruningMarginMultiplier} min 0 max 1000");
+            Send($"option name QFutilityPruningMargin type spin default {SearchConstants.QFutilityPruningMargin} min 0 max 1000");
 
             Send($"option name LMRMinDepth type spin default {SearchConstants.LMRMinDepth} min 0 max 32");
             Send($"option name LMRMovesWithoutReduction type spin default {SearchConstants.LMRMovesWithoutReduction} min 0 max 32");
@@ -166,6 +173,11 @@ namespace Cosette.Uci
             Send($"option name LMRMoveIndexDivider type spin default {SearchConstants.LMRMoveIndexDivider} min 0 max 32");
             Send($"option name LMRPvNodeMaxReduction type spin default {SearchConstants.LMRPvNodeMaxReduction} min 0 max 32");
             Send($"option name LMRNonPvNodeMaxReduction type spin default {SearchConstants.LMRNonPvNodeMaxReduction} min 0 max 32");
+            Send($"option name LMRMaxHistoryValueDivider type spin default {SearchConstants.LMRMaxHistoryValueDivider} min 0 max 32");
+
+            Send($"option name LMPMaxDepth type spin default {SearchConstants.LMPMaxDepth} min 0 max 32");
+            Send($"option name LMPBasePercentMovesToPrune type spin default {SearchConstants.LMPBasePercentMovesToPrune} min 0 max 100");
+            Send($"option name LMPPercentIncreasePerDepth type spin default {SearchConstants.LMPPercentIncreasePerDepth} min 0 max 100");
 
             Send("uciok");
         }
@@ -195,8 +207,11 @@ namespace Cosette.Uci
             Send($"info depth {stats.Depth} seldepth {stats.SelectiveDepth} time {stats.SearchTime} " +
                  $"score {score} nodes {stats.TotalNodes} nps {stats.TotalNodesPerSecond} pv {principalVariation}");
 
-            if (_debugMode)
+            if (_debugMode && stats.PrincipalVariationMovesCount > 0 && stats.PrincipalVariation[0] != Move.Empty)
             {
+                var sign = stats.Board.ColorToMove == Color.White ? 1 : -1;
+                stats.Board.MakeMove(stats.PrincipalVariation[0]);
+
                 var evaluationStatistics = new EvaluationStatistics();
                 var openingPhase = stats.Board.GetPhaseRatio();
                 var endingPhase = BoardConstants.PhaseResolution - openingPhase;
@@ -204,13 +219,13 @@ namespace Cosette.Uci
                 var fieldsAttackedByWhite = 0ul;
                 var fieldsAttackedByBlack = 0ul;
 
-                var materialEvaluation = MaterialEvaluator.Evaluate(stats.Board);
-                var positionEvaluation = PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var pawnStructureEvaluation = PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
-                var mobility = MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
-                var kingSafety = KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
-                var rooks = RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
-                var bishops = BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var materialEvaluation = sign * MaterialEvaluator.Evaluate(stats.Board);
+                var positionEvaluation = sign * PositionEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var pawnStructureEvaluation = sign * PawnStructureEvaluator.Evaluate(stats.Board, evaluationStatistics, openingPhase, endingPhase);
+                var mobility = sign * MobilityEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, ref fieldsAttackedByWhite, ref fieldsAttackedByBlack);
+                var kingSafety = sign * KingSafetyEvaluator.Evaluate(stats.Board, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
+                var rooks = sign * RookEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
+                var bishops = sign * BishopEvaluator.Evaluate(stats.Board, openingPhase, endingPhase);
 
                 var total = materialEvaluation + positionEvaluation + pawnStructureEvaluation + 
                             mobility + kingSafety;
@@ -218,6 +233,8 @@ namespace Cosette.Uci
                 Send($"info string evaluation {total} phase {openingPhase} material {materialEvaluation} " +
                      $"position {positionEvaluation} pawns {pawnStructureEvaluation} mobility {mobility} ksafety {kingSafety} " +
                      $"rooks {rooks} bishops {bishops} irrmoves {stats.Board.IrreversibleMovesCount}");
+
+                stats.Board.UndoMove(stats.PrincipalVariation[0]);
             }
         }
 

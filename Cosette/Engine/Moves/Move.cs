@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Cosette.Engine.Ai.Search;
 using Cosette.Engine.Board;
 using Cosette.Engine.Common;
@@ -79,6 +80,21 @@ namespace Cosette.Engine.Moves
             return Flags == MoveFlags.Quiet || Flags == MoveFlags.DoublePush;
         }
 
+        public bool IsSinglePush()
+        {
+            return Flags == MoveFlags.Quiet;
+        }
+
+        public bool IsDoublePush()
+        {
+            return Flags == MoveFlags.DoublePush;
+        }
+
+        public bool IsEnPassant()
+        {
+            return Flags == MoveFlags.EnPassant;
+        }
+
         public bool IsCapture()
         {
             return ((int)Flags & MoveFlagFields.Capture) != 0;
@@ -89,6 +105,16 @@ namespace Cosette.Engine.Moves
             return Flags == MoveFlags.KingCastle || Flags == MoveFlags.QueenCastle;
         }
 
+        public bool IsKingCastling()
+        {
+            return Flags == MoveFlags.KingCastle;
+        }
+
+        public bool IsQueenCastling()
+        {
+            return Flags == MoveFlags.QueenCastle;
+        }
+
         public bool IsPromotion()
         {
             return ((int)Flags & MoveFlagFields.Promotion) != 0;
@@ -97,7 +123,7 @@ namespace Cosette.Engine.Moves
         public override string ToString()
         {
             var baseMove = $"{Position.FromFieldIndex(From)}{Position.FromFieldIndex(To)}";
-            if (((byte)Flags & MoveFlagFields.Promotion) != 0)
+            if (IsPromotion())
             {
                 return baseMove + GetPromotionSymbol(Flags);
             }

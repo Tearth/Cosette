@@ -13,6 +13,8 @@ namespace Cosette.Engine.Ai.Transposition
         public byte Age => (byte)(_ageFlagsField >> 3);
         public TranspositionTableEntryFlags Flags => (TranspositionTableEntryFlags)(_ageFlagsField & 7);
 
+        public static TranspositionTableEntry Empty = new TranspositionTableEntry();
+
         private byte _ageFlagsField;
 
         public TranspositionTableEntry(ulong hash, short score, Move bestMove, byte depth, TranspositionTableEntryFlags flags, byte age)
