@@ -9,7 +9,7 @@ On the table below you can see how engines' strength was changing with the versi
 
 | Version                                                                | Release date | Elo   | Main changes |
 |------------------------------------------------------------------------|--------------|-------| ------------ |
-| [v5.0 (Megumin)](https://github.com/Tearth/Cosette/releases/tag/v5.0)  | 12.04.2021   | 2500* | Futility pruning for quiescence search, razoring, late move pruning, BMI enabled by default, adjusted parameters of search and evaluation. |
+| [v5.0 (Megumin)](https://github.com/Tearth/Cosette/releases/tag/v5.0)  | 12.04.2021   | 2503  | Futility pruning for quiescence search, razoring, late move pruning, BMI enabled by default, adjusted parameters of search and evaluation. |
 | [v4.0 (Komekko)](https://github.com/Tearth/Cosette/releases/tag/v4.0)  | 22.01.2021   | 2384  | Futility pruning, static null-move pruning, evasion move generator, check extensions, adjusted parameters of search and evaluation. |
 | [v3.0 (Luna)](https://github.com/Tearth/Cosette/releases/tag/v3.0)     | 12.12.2020   | 2086  | Multi-stage move generation and move ordering, internal iterative deepening, SEE pruning in quiescence search. New evaluation function for fianchetto. |
 | [v2.0 (Darkness)](https://github.com/Tearth/Cosette/releases/tag/v2.0) | 19.10.2020   | 1985  | A bunch of improvements for transposition tables, time management and move ordering. New evaluation functions: pawn shield, bishop pair, doubled rooks, a rook on the open file. |
