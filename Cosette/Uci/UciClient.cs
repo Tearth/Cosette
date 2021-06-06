@@ -95,12 +95,12 @@ namespace Cosette.Uci
 
         private void SendName()
         {
-            Send("id name Cosette");
+            Send("id name Cosette v5.1");
         }
 
         private void SendAuthor()
         {
-            Send("id author Tearth");
+            Send("id author Paweł Osikowski");
         }
 
         private void SendOptions()
