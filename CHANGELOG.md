@@ -1,3 +1,6 @@
+# Version 5.1 (Megumin), 07.06.2021
+ - Fixed Shredder and Fritz issues
+
 # Version 5.0 (Megumin), 12.04.2021
  - Added more detailed evaluation info in pawn hash table entry
  - Added futility pruning to quiescence search
